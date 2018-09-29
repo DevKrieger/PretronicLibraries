@@ -37,6 +37,5 @@ public abstract class SubCommand extends Command {
         return mainCommand;
     }
 
-
     public abstract void execute(CommandSender sender, String[] args);
 }

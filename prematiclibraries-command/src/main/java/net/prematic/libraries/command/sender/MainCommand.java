@@ -37,40 +37,40 @@ public class MainCommand extends Command {
         this.subCommands = new LinkedList<>();
     }
 
-    public List<SubCommand> getSubCommands() {
+    public List<SubCommand> getsubCommands() {
         return subCommands;
     }
 
-    private int getMaxPages() {
+    private int getmaxPages() {
         return GenerellUtil.getMaxPages(8, subCommands);
     }
 
-    public void registerSubCommand(SubCommand subCommand){
+    public void registersubCommand(SubCommand subCommand){
         this.subCommands.add(subCommand);
     }
 
     public void sendHelp(CommandSender sender, int page) {
-        int maxpages = getMaxPages();
-        if(page > maxpages) page = 1;
-        int nextpage = page+1;
-        if(nextpage > maxpages) nextpage = 1;
-        if(nextpage == page){
-            sender.sendMessage("Seite " + page + "/" + maxpages);
-        }else sender.sendMessage("Seite " + page + "/" + maxpages + " | Weitere Hilfeseiten mit " + getName() + " " + nextpage);
+        int maxPages = getmaxPages();
+        if(page > maxPages) page = 1;
+        int nextPage = page+1;
+        if(nextPage > maxPages) nextPage = 1;
+        if(nextPage == page) sender.sendMessage("Seite " + page + "/" + maxPages);
+        else sender.sendMessage("Seite " + page + "/" + maxPages + " | Weitere Hilfeseiten mit " + getName() + " " + nextPage);
         int from = 1;
         if(page > 1) from = 8 * (page - 1) + 1;
         int to = 8 * page;
         for(int h = from; h <= to; h++) {
             if(h > subCommands.size()) break;
-            SubCommand subcommand = subCommands.get(h - 1);
-            if(sender.hasPermission(subcommand.getPermission()) || subcommand.getPermission().equalsIgnoreCase("")){
-                sender.sendMessage("/"+getName()+" "+subcommand.getUsage()+" "+subcommand.getDescription());
+            SubCommand subCommand = subCommands.get(h - 1);
+            if(sender.hasPermission(subCommand.getPermission()) || subCommand.getPermission().equalsIgnoreCase("")){
+                sender.sendMessage("/"+getName()+" "+subCommand.getUsage()+" "+subCommand.getDescription());
             }
         }
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        onMainCommandExecute(sender, args);
         if(args.length >= 1) {
             for (SubCommand subCommand : subCommands) {
                 if (subCommand.hasAliases(args[0])) {
@@ -86,5 +86,9 @@ public class MainCommand extends Command {
             }
         }
         sendHelp(sender, 1);
+    }
+
+    public void onMainCommandExecute(CommandSender sender, String[] args){
+
     }
 }
