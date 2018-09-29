@@ -37,20 +37,20 @@ public class MainCommand extends Command {
         this.subCommands = new LinkedList<>();
     }
 
-    public List<SubCommand> getsubCommands() {
+    public List<SubCommand> getSubCommands() {
         return subCommands;
     }
 
-    private int getmaxPages() {
+    private int getMaxPages() {
         return GenerellUtil.getMaxPages(8, subCommands);
     }
 
-    public void registersubCommand(SubCommand subCommand){
+    public void registerSubCommand(SubCommand subCommand){
         this.subCommands.add(subCommand);
     }
 
     public void sendHelp(CommandSender sender, int page) {
-        int maxPages = getmaxPages();
+        int maxPages = getMaxPages();
         if(page > maxPages) page = 1;
         int nextPage = page+1;
         if(nextPage > maxPages) nextPage = 1;
