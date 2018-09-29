@@ -66,6 +66,22 @@ public abstract class Command {
         if(this.name.equalsIgnoreCase(command)) return true;
         return aliases.contains(command);
     }
+    public Command setUsage(String usage) {
+        this.usage = usage;
+        return this;
+    }
+    public Command setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+    public Command setPermission(String permission) {
+        this.permission = permission;
+        return this;
+    }
+    public Command addAlias(String... aliases) {
+        this.aliases.addAll(Arrays.asList(aliases));
+        return this;
+    }
     public void init(CommandOwner owner){
         this.owner = owner;
     }
