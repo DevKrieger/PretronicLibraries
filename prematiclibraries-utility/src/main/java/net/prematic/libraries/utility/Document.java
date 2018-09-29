@@ -111,6 +111,9 @@ public class Document {
     public String toJson(){
         return datas.toString();
     }
+    public void setDatas(JsonObject datas){
+        this.datas = datas;
+    }
     public void saveData(File file){
         try{
             saveDataSave(file);
