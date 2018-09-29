@@ -41,7 +41,7 @@ public class MainCommand extends Command {
         return subCommands;
     }
 
-    private int getMaxPages() {
+    protected int getMaxPages() {
         return GenerellUtil.getMaxPages(8, subCommands);
     }
 
