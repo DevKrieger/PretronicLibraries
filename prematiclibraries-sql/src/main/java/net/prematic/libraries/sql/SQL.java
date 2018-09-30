@@ -28,4 +28,23 @@ public interface SQL {
 
     public void execute(String query);
 
+    /*
+    insert
+    find
+    update
+    replace
+    delete
+
+
+
+
+
+    key (String) value (Object)
+
+
+
+
+
+     */
+
 }

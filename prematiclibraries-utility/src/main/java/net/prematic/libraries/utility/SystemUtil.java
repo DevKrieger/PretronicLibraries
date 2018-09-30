@@ -12,6 +12,11 @@ import java.lang.management.ManagementFactory;
 
 public class SystemUtil {
 
+    public static void sleepUninterrupt(Long millis){
+        try{
+            Thread.sleep(millis);
+        }catch (Exception exception){}
+    }
     public static double getCpuUsage() {
         return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getSystemCpuLoad()*100;
     }
