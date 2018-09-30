@@ -15,7 +15,7 @@ import java.util.LinkedList;
  *
  */
 
-public class PrematicCommandManager implements CommandManager{
+public class PrematicCommandManager implements CommandManager {
 
     private final Collection<Command> commands;
     private String commandnotfound;
