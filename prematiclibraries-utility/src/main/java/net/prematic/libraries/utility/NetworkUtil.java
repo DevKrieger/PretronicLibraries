@@ -4,9 +4,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.net.InetAddress;
 import java.net.Socket;
@@ -33,6 +36,9 @@ public class NetworkUtil {
     }
     public static EventLoopGroup getNewEventLoopGroup(int threads) {
         if(EPOLL) return new EpollEventLoopGroup(threads); else return new NioEventLoopGroup(threads);
+    }
+    public static Class<? extends SocketChannel> getNewSocketChannel() {
+        if(EPOLL) return EpollSocketChannel.class; else return NioSocketChannel.class;
     }
     public static Class<? extends ServerSocketChannel> getNewServerSocketChannel() {
         if(EPOLL) return EpollServerSocketChannel.class; else return NioServerSocketChannel.class;
