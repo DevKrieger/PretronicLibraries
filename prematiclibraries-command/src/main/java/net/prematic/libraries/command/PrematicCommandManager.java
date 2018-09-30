@@ -39,12 +39,12 @@ public class PrematicCommandManager implements CommandManager {
         this.commandnotfound = commandnotfound;
     }
     public void registerCommand(CommandOwner owner, Command command) {
-        command.init(owner);
+        command.init(owner, this);
         this.commands.add(command);
     }
     public void registerHelpCommand() {
         Command command = new HelpCommand(this);
-        command.init(new SystemCommandOwner());
+        command.init(new SystemCommandOwner(), this);
         this.commands.add(command);
     }
     public void unregisterCommand(String name){

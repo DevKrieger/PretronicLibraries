@@ -16,6 +16,7 @@ public abstract class Command {
 
     private String name, description, permission, usage;
     private CommandOwner owner;
+    private CommandManager commandManager;
     private List<String> aliases;
 
     public Command(String name) {
@@ -62,6 +63,9 @@ public abstract class Command {
     public List<String> getAliases() {
         return this.aliases;
     }
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
     public Boolean hasAliases(String command){
         if(this.name.equalsIgnoreCase(command)) return true;
         return aliases.contains(command);
@@ -82,8 +86,9 @@ public abstract class Command {
         this.aliases.addAll(Arrays.asList(aliases));
         return this;
     }
-    public void init(CommandOwner owner){
+    public void init(CommandOwner owner, CommandManager commandManager){
         this.owner = owner;
+        this.commandManager = commandManager;
     }
     public abstract void execute(CommandSender sender, String[] args);
 }
