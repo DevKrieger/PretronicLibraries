@@ -43,6 +43,12 @@ public class MongoDBUtil {
     public static void replaceOne(MongoCollection collection,Bson bson, Object object){
         collection.replaceOne(bson,toDocument(object));
     }
+    public static void deleteOne(MongoCollection collection,Bson bson){
+        collection.deleteOne(bson);
+    }
+    public static void deleteMany(MongoCollection collection,Bson bson){
+        collection.deleteOne(bson);
+    }
     public static <O> List<O> findALL(MongoCollection collection,Class<O> clazz){
         FindIterable<Document> documents = collection.find();
         List<O> list = new LinkedList<>();
