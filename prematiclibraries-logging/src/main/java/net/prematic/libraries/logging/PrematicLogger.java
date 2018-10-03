@@ -58,7 +58,7 @@ public class PrematicLogger extends Logger {
             this.queue = new LinkedBlockingQueue<>();
             this.worker = new Printer();
             this.formatter = new LoggingFormatter();
-            this.reader = new ConsoleReader(System.in, System.out);
+            this.reader = new ConsoleReader(System.in,System.out);
             this.reader.setExpandEvents(false);
             this.debugging = debugging;
 
