@@ -1,5 +1,7 @@
-package net.prematic.libraries.command;
+package net.prematic.libraries.command.commandmanager;
 
+import net.prematic.libraries.command.defaultcommands.HelpCommand;
+import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.owner.CommandOwner;
 import net.prematic.libraries.command.owner.SystemCommandOwner;
 import net.prematic.libraries.command.sender.CommandSender;
@@ -11,7 +13,7 @@ import java.util.LinkedList;
 
 /*
  *
- *  * Copyright (c) 2018 Davide Wietlisbach on 02.09.18 14:13
+ *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 04.10.18 14:32
  *
  */
 

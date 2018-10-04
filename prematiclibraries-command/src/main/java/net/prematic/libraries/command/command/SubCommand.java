@@ -1,15 +1,14 @@
-package net.prematic.libraries.command;
+package net.prematic.libraries.command.command;
+
+import net.prematic.libraries.command.sender.CommandSender;
 
 /*
  *
- *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 29.09.18 12:31
+ *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 04.10.18 14:31
  *
  */
 
-import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.command.sender.MainCommand;
-
-public abstract class SubCommand extends Command {
+public abstract class SubCommand extends MainCommand {
 
     private final MainCommand mainCommand;
 
@@ -37,5 +36,5 @@ public abstract class SubCommand extends Command {
         return mainCommand;
     }
 
-    public abstract void execute(CommandSender sender, String[] args);
+    public abstract void onSubCommandExecute(CommandSender sender, String[] args);
 }
