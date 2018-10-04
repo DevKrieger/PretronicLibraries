@@ -24,6 +24,23 @@ public class FileUtil {
 
     private static FileUtil instance = new FileUtil();
 
+    public static void deleteDirectory(String path){
+        deleteDirectory(new File(path));
+    }
+    public static void deleteDirectory(File file){
+        if(file.exists()){
+            File[] files = file.listFiles();
+            if(files == null) return;
+            for(File entries : files){
+                if(entries.isDirectory()) deleteDirectory(entries.getAbsolutePath());
+                else entries.delete();
+            }
+        }
+        file.delete();
+    }
+    public static void deleteFile(File file){
+        if(file.exists()) file.delete();
+    }
     public static byte[] getFileContent(File file){
         if(!file.exists()) return null;
         try{
