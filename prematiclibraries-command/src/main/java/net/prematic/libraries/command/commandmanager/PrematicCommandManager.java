@@ -45,7 +45,7 @@ public class PrematicCommandManager implements CommandManager {
         this.commands.add(command);
     }
     public void registerHelpCommand() {
-        Command command = new HelpCommand(this);
+        Command command = new HelpCommand();
         command.init(new SystemCommandOwner(), this);
         this.commands.add(command);
     }

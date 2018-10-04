@@ -12,16 +12,14 @@ import net.prematic.libraries.command.sender.CommandSender;
 
 public class HelpCommand extends Command {
 
-    private CommandManager commandmanager;
-
-    public HelpCommand(CommandManager commandManager) {
-        super("help", "Shows information about all command", "hilfe");
-        this.commandmanager = commandManager;
+    public HelpCommand() {
+        super("help", "Shows information about all command");
+        addAlias("hilfe");
     }
     @Override
     public void execute(CommandSender sender, String[] args) {
         sender.sendMessage("Available Commands:");
-        for(Command command : this.commandmanager.getCommands()){
+        for(Command command : getCommandManager().getCommands()) {
             if(command != this) sender.sendMessage(command.getName()+" | "+command.getDescription() + (command.hasUsage() ? " | " + command.getUsage() : ""));
         }
     }

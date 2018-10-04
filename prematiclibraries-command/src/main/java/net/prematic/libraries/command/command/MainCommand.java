@@ -74,11 +74,11 @@ public class MainCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        onMainCommandExecute(sender, args);
+        mainCommandExecute(sender, args);
         if(args.length >= 1) {
             for (SubCommand subCommand : subCommands) {
                 if (subCommand.hasAliases(args[0])) {
-                    subCommand.onSubCommandExecute(sender, Arrays.copyOfRange(args, 1, args.length));
+                    subCommand.subCommandExecute(sender, Arrays.copyOfRange(args, 1, args.length));
                     subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
                     return;
                 }
@@ -95,7 +95,7 @@ public class MainCommand extends Command {
         }
     }
 
-    public void onMainCommandExecute(CommandSender sender, String[] args) {
+    public void mainCommandExecute(CommandSender sender, String[] args) {
 
     }
 }
