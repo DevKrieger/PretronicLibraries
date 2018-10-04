@@ -1,7 +1,6 @@
-package net.prematic.libraries.command.defaultcommands;
+package net.prematic.libraries.command.defaults;
 
 import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.command.commandmanager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
 
 /*

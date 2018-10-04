@@ -1,4 +1,4 @@
-package net.prematic.libraries.command.commandmanager;
+package net.prematic.libraries.command.manager;
 
 import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.owner.CommandOwner;

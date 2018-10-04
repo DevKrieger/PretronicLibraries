@@ -1,6 +1,6 @@
 package net.prematic.libraries.command.command;
 
-import net.prematic.libraries.command.commandmanager.CommandManager;
+import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.owner.CommandOwner;
 import net.prematic.libraries.command.sender.CommandSender;
 import java.util.Arrays;

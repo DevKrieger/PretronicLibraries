@@ -1,6 +1,6 @@
-package net.prematic.libraries.command.commandmanager;
+package net.prematic.libraries.command.manager;
 
-import net.prematic.libraries.command.defaultcommands.HelpCommand;
+import net.prematic.libraries.command.defaults.HelpCommand;
 import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.owner.CommandOwner;
 import net.prematic.libraries.command.owner.SystemCommandOwner;
