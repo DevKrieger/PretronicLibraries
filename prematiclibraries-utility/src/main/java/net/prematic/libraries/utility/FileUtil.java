@@ -7,7 +7,9 @@ package net.prematic.libraries.utility;
  */
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -190,5 +192,19 @@ public class FileUtil {
             }
             zis.closeEntry();
         }catch (Exception exception){throw new RuntimeException(exception);}
+    }
+    public static void downloadFile(String url, File destination){
+        try{
+            URLConnection connection = null;
+            try{
+                connection = new java.net.URL(url).openConnection();
+                connection.connect();
+                Files.copy(connection.getInputStream(),destination.toPath());
+            }finally {
+                if(connection != null) connection.getInputStream().close();
+            }
+        }catch (Exception exception){
+            throw new RuntimeException(exception);
+        }
     }
 }
