@@ -1,5 +1,6 @@
-package net.prematic.libraries.command;
+package net.prematic.libraries.command.command;
 
+import net.prematic.libraries.command.commandmanager.CommandManager;
 import net.prematic.libraries.command.owner.CommandOwner;
 import net.prematic.libraries.command.sender.CommandSender;
 import java.util.Arrays;
@@ -8,7 +9,7 @@ import java.util.List;
 
 /*
  *
- *  * Copyright (c) 2018 Davide Wietlisbach on 01.09.18 18:12
+ *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 04.10.18 14:31
  *
  */
 
@@ -66,7 +67,7 @@ public abstract class Command {
     public CommandManager getCommandManager() {
         return commandManager;
     }
-    public Boolean hasAliases(String command){
+    public boolean hasAliases(String command) {
         if(this.name.equalsIgnoreCase(command)) return true;
         return aliases.contains(command);
     }
@@ -86,7 +87,7 @@ public abstract class Command {
         this.aliases.addAll(Arrays.asList(aliases));
         return this;
     }
-    public void init(CommandOwner owner, CommandManager commandManager){
+    public void init(CommandOwner owner, CommandManager commandManager) {
         this.owner = owner;
         this.commandManager = commandManager;
     }

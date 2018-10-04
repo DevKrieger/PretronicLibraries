@@ -1,10 +1,11 @@
-package net.prematic.libraries.command;
+package net.prematic.libraries.command.commandmanager;
 
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.command.sender.ConsoleCommandSender;
+
 /*
  *
- *  * Copyright (c) 2018 Davide Wietlisbach on 03.09.18 19:42
+ *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 04.10.18 14:32
  *
  */
 

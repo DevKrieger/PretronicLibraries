@@ -1,17 +1,16 @@
-package net.prematic.libraries.command.sender;
+package net.prematic.libraries.command.command;
 
-/*
- *
- *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 29.09.18 12:49
- *
- */
-
-import net.prematic.libraries.command.Command;
-import net.prematic.libraries.command.SubCommand;
+import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.GenerellUtil;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+/*
+ *
+ *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 04.10.18 14:31
+ *
+ */
 
 public class MainCommand extends Command {
 
@@ -45,7 +44,7 @@ public class MainCommand extends Command {
         return GenerellUtil.getMaxPages(8, subCommands);
     }
 
-    public void registerSubCommand(SubCommand subCommand){
+    public void registerSubCommand(SubCommand subCommand) {
         this.subCommands.add(subCommand);
     }
 
@@ -62,33 +61,41 @@ public class MainCommand extends Command {
         for(int h = from; h <= to; h++) {
             if(h > subCommands.size()) break;
             SubCommand subCommand = subCommands.get(h - 1);
-            if(sender.hasPermission(subCommand.getPermission()) || subCommand.getPermission().equalsIgnoreCase("")){
-                sender.sendMessage("/"+getName()+" "+subCommand.getUsage()+" "+subCommand.getDescription());
+            if(sender.hasPermission(subCommand.getPermission())) {
+                sender.sendMessage(getName()+(subCommand.getUsage() != null ? " " + subCommand.getUsage() : "") + (subCommand.getDescription() != null ? " " + subCommand.getDescription() : ""));
+                if(!subCommand.getSubCommands().isEmpty()){
+                    for(SubCommand nextSubCommand : subCommand.getSubCommands()) {
+                        sender.sendMessage(getName() +" "+ subCommand.getName()+(nextSubCommand.getUsage() != null ? " " + nextSubCommand.getUsage() : "")+(nextSubCommand.getDescription() != null ? " " + nextSubCommand.getDescription() : ""));
+                    }
+                }
             }
         }
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        onMainCommandExecute(sender, args);
+        executeMainCommand(sender, args);
         if(args.length >= 1) {
             for (SubCommand subCommand : subCommands) {
                 if (subCommand.hasAliases(args[0])) {
+                    subCommand.executeSubCommand(sender, Arrays.copyOfRange(args, 1, args.length));
                     subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
                     return;
                 }
             }
         }
-        if(args.length == 1){
-            if(GenerellUtil.isNumber(args[0])){
-                sendHelp(sender, Integer.valueOf(args[0]));
-                return;
+        if(!(this instanceof SubCommand)) {
+            if (args.length == 1) {
+                if (GenerellUtil.isNumber(args[0])) {
+                    sendHelp(sender, Integer.valueOf(args[0]));
+                    return;
+                }
             }
+            sendHelp(sender, 1);
         }
-        sendHelp(sender, 1);
     }
 
-    public void onMainCommandExecute(CommandSender sender, String[] args){
+    public void executeMainCommand(CommandSender sender, String[] args) {
 
     }
 }

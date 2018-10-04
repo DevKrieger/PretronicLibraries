@@ -6,7 +6,7 @@ package net.prematic.libraries.plugin;
  *
  */
 
-import net.prematic.libraries.command.CommandManager;
+import net.prematic.libraries.command.commandmanager.CommandManager;
 import net.prematic.libraries.event.EventManager;
 import net.prematic.libraries.tasking.TaskScheduler;
 
