@@ -18,6 +18,8 @@ public interface Task extends Runnable{
 
     public Runnable getRunnable();
 
+    public boolean isAsync();
+
     public void setRunning(Boolean running);
 
     public void cancel();

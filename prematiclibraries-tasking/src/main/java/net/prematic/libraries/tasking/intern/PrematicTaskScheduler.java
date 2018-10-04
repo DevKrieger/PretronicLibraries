@@ -29,21 +29,61 @@ public class PrematicTaskScheduler implements TaskScheduler {
     public Collection<Task> getTasks() {
         return this.tasks.values();
     }
+
+    @Override
     public Task runTaskAsync(TaskOwner owner, Runnable runnable) {
         return runTaskAsynchronously(owner,runnable);
     }
+
+    @Override
     public Task runTaskAsynchronously(TaskOwner owner, Runnable runnable) {
-        return runTaskLater(owner,runnable,0L,TimeUnit.MILLISECONDS);
+        return runTaskAsynchronouslyLater(owner,runnable,0L,TimeUnit.SECONDS);
     }
+
+    @Override
+    public Task runTaskAsynchronouslyLater(TaskOwner owner, Runnable runnable, Long delay, TimeUnit unit) {
+        return runTaskLater(owner,runnable,delay,unit,true);
+    }
+
+    @Override
+    public Task scheduleAsynchronously(TaskOwner owner, Runnable runnable, Long period, TimeUnit unit) {
+        return schedule(owner,runnable,period,unit,true);
+    }
+
+    @Override
+    public Task scheduleAsynchronously(TaskOwner owner, Runnable runnable, Long delay, Long period, TimeUnit unit) {
+        return schedule(owner,runnable,delay,period,unit,true);
+    }
+
+    @Override
     public Task runTaskLater(TaskOwner owner, Runnable runnable, Long delay, TimeUnit unit) {
-        return schedule(owner,runnable,delay,0L,unit);
+        return runTaskLater(owner,runnable,delay,unit,false);
     }
+
+    @Override
+    public Task runTaskLater(TaskOwner owner, Runnable runnable, Long delay, TimeUnit unit, boolean async) {
+        return schedule(owner,runnable,delay,0L,unit,async);
+    }
+
+    @Override
     public Task schedule(TaskOwner owner, Runnable runnable, Long period, TimeUnit unit) {
-        return schedule(owner,runnable,0L,period,unit);
+        return schedule(owner,runnable,period,unit,false);
     }
+
+    @Override
+    public Task schedule(TaskOwner owner, Runnable runnable, Long period, TimeUnit unit, boolean async) {
+        return schedule(owner,runnable,0L,period,unit,async);
+    }
+
+    @Override
     public Task schedule(TaskOwner owner, Runnable runnable, Long delay, Long period, TimeUnit unit) {
+        return schedule(owner,runnable,delay,period,unit,false);
+    }
+
+    @Override
+    public Task schedule(TaskOwner owner, Runnable runnable, Long delay, Long period, TimeUnit unit, boolean async) {
         PrematicTask task = new PrematicTask(this.nexttaskid.getAndIncrement(),unit.toMillis(delay)
-                ,unit.toMillis(period),this,owner,runnable);
+                ,unit.toMillis(period),this,owner,runnable,async);
         owner.getExecutor().execute(task);
         return task;
     }

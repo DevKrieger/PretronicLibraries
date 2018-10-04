@@ -17,11 +17,23 @@ public interface TaskScheduler {
 
     public Task runTaskAsynchronously(TaskOwner owner, Runnable runnable);
 
+    public Task runTaskAsynchronouslyLater(TaskOwner owner, Runnable runnable, Long delay, TimeUnit unit);
+
+    public Task scheduleAsynchronously(TaskOwner owner, Runnable runnable, Long period, TimeUnit unit);
+
+    public Task scheduleAsynchronously(TaskOwner owner, Runnable runnable, Long delay, Long period, TimeUnit unit);
+
     public Task runTaskLater(TaskOwner owner, Runnable runnable, Long delay, TimeUnit unit);
+
+    public Task runTaskLater(TaskOwner owner, Runnable runnable, Long delay, TimeUnit unit, boolean async);
 
     public Task schedule(TaskOwner owner, Runnable runnable, Long period, TimeUnit unit);
 
+    public Task schedule(TaskOwner owner, Runnable runnable, Long period, TimeUnit unit, boolean async);
+
     public Task schedule(TaskOwner owner, Runnable runnable, Long delay, Long period, TimeUnit unit);
+
+    public Task schedule(TaskOwner owner, Runnable runnable, Long delay, Long period, TimeUnit unit, boolean async);
 
     public void cancelTask(int id);
 

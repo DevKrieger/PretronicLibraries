@@ -14,18 +14,19 @@ public class PrematicTask implements Task {
 
     private int id;
     private Long delay, period;
-    private Boolean running;
+    private boolean async, running;
     private TaskScheduler scheduler;
     private TaskOwner owner;
     private Runnable runnable;
 
-    public PrematicTask(int id,Long delay,Long period,TaskScheduler scheduler,TaskOwner owner, Runnable runnable) {
+    public PrematicTask(int id,Long delay,Long period,TaskScheduler scheduler,TaskOwner owner, Runnable runnable, Boolean async) {
         this.id = id;
         this.delay = delay;
         this.period = period;
         this.scheduler = scheduler;
         this.owner = owner;
         this.runnable = runnable;
+        this.async = async;
         this.running = false;
     }
     public int getID() {
@@ -45,6 +46,9 @@ public class PrematicTask implements Task {
     }
     public TaskOwner getOwner() {
         return this.owner;
+    }
+    public boolean isAsync() {
+        return this.async;
     }
     public Runnable getRunnable() {
         return this.runnable;
@@ -67,7 +71,8 @@ public class PrematicTask implements Task {
         }
         while(this.running){
             try{
-                this.runnable.run();
+                if(this.async) this.owner.getExecutor().execute(this.runnable);
+                else this.runnable.run();
             }catch (Throwable throwable){
                 throwable.printStackTrace();
             }
