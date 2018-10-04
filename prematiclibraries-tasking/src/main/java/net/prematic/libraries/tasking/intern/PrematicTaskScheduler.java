@@ -4,10 +4,7 @@ import net.prematic.libraries.tasking.Task;
 import net.prematic.libraries.tasking.TaskOwner;
 import net.prematic.libraries.tasking.TaskScheduler;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -84,6 +81,7 @@ public class PrematicTaskScheduler implements TaskScheduler {
     public Task schedule(TaskOwner owner, Runnable runnable, Long delay, Long period, TimeUnit unit, boolean async) {
         PrematicTask task = new PrematicTask(this.nexttaskid.getAndIncrement(),unit.toMillis(delay)
                 ,unit.toMillis(period),this,owner,runnable,async);
+        this.tasks.put(task.getID(),task);
         owner.getExecutor().execute(task);
         return task;
     }
@@ -95,10 +93,10 @@ public class PrematicTaskScheduler implements TaskScheduler {
         task.setRunning(false);
     }
     public void cancelTask(TaskOwner owner) {
-        for(Task task : new LinkedHashSet<>(this.tasks.values()))if(task.getOwner().equals(owner)) cancelTask(task);
+        for(Task task : new LinkedList<>(this.tasks.values())) if(task.getOwner().equals(owner)) cancelTask(task);
     }
     public void cancelALL(){
-        for(Task task : new LinkedHashSet<>(this.tasks.values())) cancelTask(task);
+        for(Task task : new LinkedList<>(this.tasks.values())) cancelTask(task);
         this.tasks.clear();
     }
 }

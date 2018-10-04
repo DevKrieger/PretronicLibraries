@@ -38,7 +38,7 @@ public class PrematicTask implements Task {
     public Long getPeriod() {
         return this.period;
     }
-    public Boolean isRunning() {
+    public boolean isRunning() {
         return this.running;
     }
     public TaskScheduler getScheduler() {
@@ -53,7 +53,7 @@ public class PrematicTask implements Task {
     public Runnable getRunnable() {
         return this.runnable;
     }
-    public void setRunning(Boolean running) {
+    public void setRunning(boolean running) {
         this.running = running;
     }
     public void cancel(){

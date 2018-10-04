@@ -10,7 +10,7 @@ public interface Task extends Runnable{
 
     public int getID();
 
-    public Boolean isRunning();
+    public boolean isRunning();
 
     public TaskOwner getOwner();
 
@@ -20,7 +20,7 @@ public interface Task extends Runnable{
 
     public boolean isAsync();
 
-    public void setRunning(Boolean running);
+    public void setRunning(boolean running);
 
     public void cancel();
 
