@@ -95,14 +95,10 @@ public class PrematicTaskScheduler implements TaskScheduler {
         task.setRunning(false);
     }
     public void cancelTask(TaskOwner owner) {
-        for(Task task : new LinkedHashSet<>(this.tasks.values()))
-            if(task.getOwner().equals(owner)){
-                this.tasks.remove(task.getID());
-                task.setRunning(false);
-            }
+        for(Task task : new LinkedHashSet<>(this.tasks.values()))if(task.getOwner().equals(owner)) cancelTask(task);
     }
     public void cancelALL(){
-        for(Task task : new LinkedHashSet<Task>(this.tasks.values())) task.cancel();
+        for(Task task : new LinkedHashSet<>(this.tasks.values())) cancelTask(task);
         this.tasks.clear();
     }
 }

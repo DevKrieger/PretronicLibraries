@@ -66,7 +66,7 @@ public class NetworkUtil {
             return false;
         }
     }
-    public static Boolean isPortAvalibal(String host, int port){
+    public static Boolean isPortAvailable(String host, int port){
         Socket socket = null;
         try{
             socket = new Socket(host, port);
