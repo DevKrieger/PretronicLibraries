@@ -9,9 +9,13 @@ package net.prematic.libraries.utility;
 import com.sun.management.OperatingSystemMXBean;
 
 import java.lang.management.ManagementFactory;
+import java.util.concurrent.TimeUnit;
 
 public class SystemUtil {
 
+    public static void sleepUninterrupt(Long time, TimeUnit unit){
+       sleepUninterrupt(unit.toMillis(time));
+    }
     public static void sleepUninterrupt(Long millis){
         try{
             Thread.sleep(millis);
