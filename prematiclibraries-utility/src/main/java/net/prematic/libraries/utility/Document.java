@@ -47,10 +47,10 @@ public class Document {
     }
     public <T> T getObject(String key,Class<T> classof){
         if(!this.datas.has(key)) return null;
-        return GenerellUtil.GSON.fromJson(this.datas.get(key),classof);
+        return GeneralUtil.GSON.fromJson(this.datas.get(key),classof);
     }
     public <T> T getObject(String key, Type type) {
-        return GenerellUtil.GSON.fromJson(datas.get(key), type);
+        return GeneralUtil.GSON.fromJson(datas.get(key), type);
     }
     public Boolean contains(String key){
         return this.datas.has(key);
@@ -76,7 +76,7 @@ public class Document {
         return this;
     }
     public Document append(String key, Object value){
-        if(value != null) this.datas.add(key,GenerellUtil.GSON.toJsonTree(value));
+        if(value != null) this.datas.add(key, GeneralUtil.GSON.toJsonTree(value));
         return this;
     }
     public Document appendDefault(String key, String value){
@@ -101,7 +101,7 @@ public class Document {
     }
     public Document appendDefault(String key, Object value){
         if(contains(key) || value == null) return this;
-        this.datas.add(key,GenerellUtil.GSON.toJsonTree(value));
+        this.datas.add(key, GeneralUtil.GSON.toJsonTree(value));
         return this;
     }
     public Document remove(String key){
@@ -122,7 +122,7 @@ public class Document {
     public void saveDataSave(File file) throws Exception{
         file.createNewFile();
         OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), "UTF-8");
-        GenerellUtil.GSON.toJson(this.datas,writer);
+        GeneralUtil.GSON.toJson(this.datas,writer);
         writer.close();
     }
     public static Document loadData(String gsonstring){
@@ -133,7 +133,7 @@ public class Document {
     }
     public static Document loadDataSave(String gsonstring) throws Exception{
         InputStreamReader reader = new InputStreamReader(new StringBufferInputStream(gsonstring), "UTF-8");
-        return new Document(GenerellUtil.PARSER.parse(new BufferedReader(reader)).getAsJsonObject());
+        return new Document(GeneralUtil.PARSER.parse(new BufferedReader(reader)).getAsJsonObject());
     }
     public static Document loadData(File file){
         try{
@@ -144,7 +144,7 @@ public class Document {
     public static Document loadDataSave(File file) throws Exception{
         InputStreamReader reader = new InputStreamReader(Files.newInputStream(file.toPath()), "UTF-8");
         BufferedReader bufferedreader = new BufferedReader(reader);
-        JsonObject datas = GenerellUtil.PARSER.parse(bufferedreader).getAsJsonObject();
+        JsonObject datas = GeneralUtil.PARSER.parse(bufferedreader).getAsJsonObject();
         return new Document(datas);
     }
     @Override

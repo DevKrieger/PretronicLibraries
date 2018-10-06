@@ -1,7 +1,7 @@
 package net.prematic.libraries.command.command;
 
 import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.utility.GenerellUtil;
+import net.prematic.libraries.utility.GeneralUtil;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class MainCommand extends Command {
     }
 
     protected int getMaxPages() {
-        return GenerellUtil.getMaxPages(8, subCommands);
+        return GeneralUtil.getMaxPages(8, subCommands);
     }
 
     public void registerSubCommand(SubCommand subCommand) {
@@ -86,7 +86,7 @@ public class MainCommand extends Command {
         }
         if(!(this instanceof SubCommand)) {
             if (args.length == 1) {
-                if (GenerellUtil.isNumber(args[0])) {
+                if (GeneralUtil.isNumber(args[0])) {
                     sendHelp(sender, Integer.valueOf(args[0]));
                     return;
                 }

@@ -21,10 +21,10 @@ public class MongoDBUtil {
             .int64Converter((value, writer) -> writer.writeNumber(value.toString())).build();
 
     public static <O> O toObject(Document document,Class<O> clazz){
-        return GenerellUtil.GSON.fromJson(document.toJson(MONGOJSONSETTINGS),clazz);
+        return GeneralUtil.GSON.fromJson(document.toJson(MONGOJSONSETTINGS),clazz);
     }
     public static Document toDocument(Object object){
-        return Document.parse(GenerellUtil.GSON.toJson(object));
+        return Document.parse(GeneralUtil.GSON.toJson(object));
     }
     public static void insertOne(MongoCollection collection, Object object){
         collection.insertOne(toDocument(object));

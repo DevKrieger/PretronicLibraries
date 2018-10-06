@@ -16,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.*;
 
-public class GenerellUtil {
+public class GeneralUtil {
 
     public static final Random RANDOM = new Random();
     public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
