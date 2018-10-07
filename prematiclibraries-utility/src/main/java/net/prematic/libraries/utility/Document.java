@@ -38,7 +38,7 @@ public class Document {
         return 0L;
     }
     public Boolean getBoolean(String key){
-        if(this.datas.has(key)) this.datas.get(key).getAsBoolean();
+        if(this.datas.has(key)) return this.datas.get(key).getAsBoolean();
         return false;
     }
     public Document getDocument(String key){
