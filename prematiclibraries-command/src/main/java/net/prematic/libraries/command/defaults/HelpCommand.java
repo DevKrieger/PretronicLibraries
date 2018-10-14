@@ -18,8 +18,10 @@ public class HelpCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         sender.sendMessage("Available Commands:");
+        String helpMessage = "";
         for(Command command : getCommandManager().getCommands()) {
-            if(command != this) sender.sendMessage(command.getName()+" | "+command.getDescription() + (command.hasUsage() ? " | " + command.getUsage() : ""));
+            if(command != this) helpMessage+=command.getName()+" | "+command.getDescription() + (command.hasUsage() ? " | " + command.getUsage() : "") + "\n";
         }
+        sender.sendMessage(helpMessage);
     }
 }

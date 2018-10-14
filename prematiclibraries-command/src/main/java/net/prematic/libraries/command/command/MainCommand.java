@@ -64,9 +64,11 @@ public class MainCommand extends Command {
             if(sender.hasPermission(subCommand.getPermission())) {
                 sender.sendMessage(getName()+(subCommand.getUsage() != null ? " " + subCommand.getUsage() : "") + (subCommand.getDescription() != null ? " " + subCommand.getDescription() : ""));
                 if(!subCommand.getSubCommands().isEmpty()){
+                    String helpMessage = "";
                     for(SubCommand nextSubCommand : subCommand.getSubCommands()) {
-                        sender.sendMessage(getName() +" "+ subCommand.getName()+(nextSubCommand.getUsage() != null ? " " + nextSubCommand.getUsage() : "")+(nextSubCommand.getDescription() != null ? " " + nextSubCommand.getDescription() : ""));
+                        helpMessage+=getName() +" "+ subCommand.getName()+(nextSubCommand.getUsage() != null ? " " + nextSubCommand.getUsage() : "")+(nextSubCommand.getDescription() != null ? " " + nextSubCommand.getDescription() : "")+"\n";
                     }
+                    sender.sendMessage(helpMessage);
                 }
             }
         }
