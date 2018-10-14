@@ -57,6 +57,7 @@ public class PrematicTask implements Task {
         this.running = running;
     }
     public void cancel(){
+        setRunning(false);
         this.scheduler.cancelTask(this);
     }
     public void run() {
@@ -76,14 +77,14 @@ public class PrematicTask implements Task {
             }catch (Throwable throwable){
                 throwable.printStackTrace();
             }
-            if(this.period != null){
+            if(this.period != null && this.period > 0L){
                 try {
                     Thread.sleep(this.period);
                 }catch(InterruptedException exception) {
                     Thread.currentThread().interrupt();
                     cancel();
                 }
-            }
+            }else cancel();
         }
         cancel();
     }

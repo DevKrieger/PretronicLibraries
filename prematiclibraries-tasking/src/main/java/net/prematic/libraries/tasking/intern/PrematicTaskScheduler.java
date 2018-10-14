@@ -36,7 +36,6 @@ public class PrematicTaskScheduler implements TaskScheduler {
     public Task runTaskAsynchronously(TaskOwner owner, Runnable runnable) {
         return runTaskAsynchronouslyLater(owner,runnable,0L,TimeUnit.SECONDS);
     }
-
     @Override
     public Task runTaskAsynchronouslyLater(TaskOwner owner, Runnable runnable, Long delay, TimeUnit unit) {
         return runTaskLater(owner,runnable,delay,unit,true);
