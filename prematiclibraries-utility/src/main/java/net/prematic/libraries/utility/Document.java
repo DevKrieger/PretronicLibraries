@@ -42,7 +42,8 @@ public class Document {
         return false;
     }
     public Document getDocument(String key){
-        if(this.datas.has(key)) new Document(this.datas.get(key).getAsJsonObject());
+        String value = getString(key);
+        if(value != null) return Document.loadData(value);
         return new Document();
     }
     public <T> T getObject(String key,Class<T> classof){
@@ -72,7 +73,7 @@ public class Document {
         return this;
     }
     public Document append(String key, Document value){
-        if(value != null) this.datas.add(key,value.getJsonObject());
+        if(value != null) return append(key,value.toJson());
         return this;
     }
     public Document append(String key, Object value){

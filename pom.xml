@@ -34,5 +34,6 @@
         <module>prematiclibraries-utility</module>
         <module>prematiclibraries-sql</module>
         <module>prematiclibraries-permission</module>
+        <module>prematiclibraries-caching</module>
     </modules>
 </project>
