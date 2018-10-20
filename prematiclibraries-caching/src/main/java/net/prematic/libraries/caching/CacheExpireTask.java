@@ -31,14 +31,11 @@ public class CacheExpireTask<O> implements Runnable{
         this.running = true;
         while(this.running){
             try{
-                Thread.sleep(3000L);
+                Thread.sleep(200L);
                 try{
-                    Iterator<CacheEntry<O>> iterator = this.cache.getAsList().iterator();
-                    CacheEntry entry = null;
-                    while((entry = iterator.next()) != null){
-                        if(entry.getEntered()+this.cache.getExpireTime() < System.currentTimeMillis())
-                            cache.getAsList().remove(entry.getObject());
-                    }
+                    Iterator<PrematicCache<O>.CacheEntry> iterator = this.cache.getAsList().iterator();
+                    PrematicCache.CacheEntry entry = null;
+                    while((entry = iterator.next()) != null) if(entry.getEntered()+this.cache.getExpireTime() <= System.currentTimeMillis())iterator.remove();
                 }catch (Exception exception){}
             }catch (Exception exception){}
         }

@@ -7,6 +7,9 @@ package net.prematic.libraries.caching;
  */
 
 
+import net.prematic.libraries.caching.object.CacheObjectLoader;
+import net.prematic.libraries.caching.object.CacheObjectQuery;
+
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,12 +22,31 @@ public class PrematicCache<O> implements Cache<O> {
     private int maxSize;
     private long expireTime;
     private CacheExpireTask expireTask;
-    private List<CacheEntry<O>> objects;
-    private Map<String, ObjectQuery<O>> queries;
+    private List<CacheEntry> objects;
+    private Map<String,CacheObjectQuery<O>> queries;
+    private Map<String,CacheObjectLoader<O>> loaders;
 
     public PrematicCache() {
         this.objects = new ArrayList<>();
         this.queries = new LinkedHashMap<>();
+        this.loaders = new LinkedHashMap<>();
+    }
+    public List<O> getAll(){
+        List<O> objects = new LinkedList<>();
+        Iterator<CacheEntry> iterator = this.objects.iterator();
+        CacheEntry entry = null;
+        while((entry = iterator.next()) != null) objects.add(entry.getObject());
+        return objects;
+    }
+
+    public List<CacheEntry> getObjects() {
+        return objects;
+    }
+    public Map<String, CacheObjectQuery<O>> getQueries() {
+        return queries;
+    }
+    public Map<String, CacheObjectLoader<O>> getLoaders() {
+        return loaders;
     }
     public int size(){
         return this.objects.size();
@@ -32,21 +54,20 @@ public class PrematicCache<O> implements Cache<O> {
     public long getExpireTime() {
         return this.expireTime;
     }
-    public List<CacheEntry<O>> getAsList(){
+    public List<CacheEntry> getAsList(){
         return this.objects;
     }
     public O get(String identifierName, Object identifier) {
         try{
-            ObjectQuery<O> query = this.queries.get(identifierName.toLowerCase());
+            CacheObjectQuery<O> query = this.queries.get(identifierName.toLowerCase());
             if(query != null){
-                Iterator<CacheEntry<O>> iterator = this.objects.iterator();
+                Iterator<CacheEntry> iterator = this.objects.iterator();
                 CacheEntry entry = null;
-                while((entry = iterator.next()) != null) if(query.is(identifier,(O)entry.getObject())) return (O)entry.getObject();
+                while((entry = iterator.next()) != null) if(query.is(identifier,entry.getObject())) return entry.getObject();
             }
-            return null;
-        }catch (Exception exception){
-            return null;
-        }
+        }catch (Exception exception){}
+        CacheObjectLoader<O> loader = this.loaders.get(identifierName.toLowerCase());
+        return loader.load(identifier);
     }
     public PrematicCache<O> setMaxSize(int maxSize) {
         this.maxSize = maxSize;
@@ -59,15 +80,27 @@ public class PrematicCache<O> implements Cache<O> {
     }
     public void insert(O object) {
         if(this.maxSize > 0 && size() >= this.maxSize) this.objects.remove(0);
-        this.objects.add(new CacheEntry<>(System.currentTimeMillis(),object));
+        this.objects.add(new CacheEntry(System.currentTimeMillis(),object));
     }
     public O remove(String identifierName, Object identifier) {
-        O object = get(identifierName,identifier);
-        this.objects.remove(object);
-        return object;
+        CacheObjectQuery<O> query = this.queries.get(identifierName.toLowerCase());
+        if(query != null){
+            Iterator<CacheEntry> iterator = this.objects.iterator();
+            CacheEntry entry = null;
+            while((entry = iterator.next()) != null){
+                if(query.is(identifier,entry.getObject())){
+                    iterator.remove();
+                    return entry.getObject();
+                }
+            }
+        }
+        return null;
     }
-    public void registerQuery(String name, ObjectQuery<O> query){
+    public void registerQuery(String name, CacheObjectQuery<O> query){
         this.queries.put(name.toLowerCase(),query);
+    }
+    public void registerLoader(String name, CacheObjectLoader<O> loader){
+        this.loaders.put(name.toLowerCase(),loader);
     }
     private void createExpireTask(){
         if(EXECUTOR == null) EXECUTOR = Executors.newSingleThreadExecutor();
@@ -78,4 +111,22 @@ public class PrematicCache<O> implements Cache<O> {
     public void shutdown(){
         if(this.expireTask != null) this.expireTask.shutdown();
     }
+
+    public class CacheEntry {
+
+        private long entered;
+        private O object;
+
+        public CacheEntry(long entered, O object) {
+            this.entered = entered;
+            this.object = object;
+        }
+        public long getEntered() {
+            return entered;
+        }
+        public O getObject() {
+            return object;
+        }
+    }
 }
+
