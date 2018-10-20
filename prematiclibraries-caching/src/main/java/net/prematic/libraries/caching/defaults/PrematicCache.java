@@ -1,12 +1,6 @@
-package net.prematic.libraries.caching;
+package net.prematic.libraries.caching.defaults;
 
-/*
- *
- *  * Copyright (c) 2018 Davide Wietlisbach on 20.10.18 16:21
- *
- */
-
-
+import net.prematic.libraries.caching.Cache;
 import net.prematic.libraries.caching.object.CacheObjectLoader;
 import net.prematic.libraries.caching.object.CacheObjectQuery;
 
@@ -14,6 +8,12 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+/*
+ *
+ *  * Copyright (c) 2018 Davide Wietlisbach on 20.10.18 20:06
+ *
+ */
 
 public class PrematicCache<O> implements Cache<O> {
 
@@ -105,14 +105,14 @@ public class PrematicCache<O> implements Cache<O> {
     private void createExpireTask(){
         if(EXECUTOR == null) EXECUTOR = Executors.newSingleThreadExecutor();
         shutdown();
-        this.expireTask = new CacheExpireTask<>(this);
+        this.expireTask = new CacheExpireTask(this);
         EXECUTOR.execute(this.expireTask);
     }
     public void shutdown(){
         if(this.expireTask != null) this.expireTask.shutdown();
     }
 
-    public class CacheEntry {
+    private class CacheEntry {
 
         private long entered;
         private O object;
@@ -128,5 +128,39 @@ public class PrematicCache<O> implements Cache<O> {
             return object;
         }
     }
+    private class CacheExpireTask implements Runnable{
+
+        private boolean running;
+        private PrematicCache<O> cache;
+
+        public CacheExpireTask(PrematicCache<O> cache) {
+            this.cache = cache;
+            this.running = false;
+        }
+        public boolean isRunning() {
+            return running;
+        }
+        public PrematicCache<O> getCache() {
+            return cache;
+        }
+        public void shutdown(){
+            this.running = false;
+        }
+        @Override
+        public void run() {
+            this.running = true;
+            while(this.running){
+                try{
+                    Thread.sleep(200L);
+                    try{
+                        Iterator<PrematicCache<O>.CacheEntry> iterator = this.cache.getAsList().iterator();
+                        PrematicCache.CacheEntry entry = null;
+                        while((entry = iterator.next()) != null) if(entry.getEntered()+this.cache.getExpireTime() <= System.currentTimeMillis())iterator.remove();
+                    }catch (Exception exception){}
+                }catch (Exception exception){}
+            }
+        }
+    }
 }
+
 

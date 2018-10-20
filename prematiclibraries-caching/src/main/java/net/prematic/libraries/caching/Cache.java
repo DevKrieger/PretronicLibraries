@@ -7,10 +7,10 @@ package net.prematic.libraries.caching;
  */
 
 
+import net.prematic.libraries.caching.defaults.PrematicCache;
 import net.prematic.libraries.caching.object.CacheObjectLoader;
 import net.prematic.libraries.caching.object.CacheObjectQuery;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
