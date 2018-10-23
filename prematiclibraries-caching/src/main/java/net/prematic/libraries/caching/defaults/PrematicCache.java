@@ -1,6 +1,7 @@
 package net.prematic.libraries.caching.defaults;
 
 import net.prematic.libraries.caching.Cache;
+import net.prematic.libraries.caching.object.CacheObjectExpireDeletion;
 import net.prematic.libraries.caching.object.CacheObjectLoader;
 import net.prematic.libraries.caching.object.CacheObjectQuery;
 
@@ -22,6 +23,7 @@ public class PrematicCache<O> implements Cache<O> {
     private int maxSize;
     private long expireTime;
     private CacheExpireTask expireTask;
+    private CacheObjectExpireDeletion<O> expireDeletion;
     private List<CacheEntry> objects;
     private Map<String,CacheObjectQuery<O>> queries;
     private Map<String,CacheObjectLoader<O>> loaders;
@@ -39,14 +41,18 @@ public class PrematicCache<O> implements Cache<O> {
         return objects;
     }
 
+    public CacheObjectExpireDeletion<O> getExpireDeletion() {
+        return expireDeletion;
+    }
+
     public List<CacheEntry> getObjects() {
-        return objects;
+        return this.objects;
     }
     public Map<String, CacheObjectQuery<O>> getQueries() {
-        return queries;
+        return this.queries;
     }
     public Map<String, CacheObjectLoader<O>> getLoaders() {
-        return loaders;
+        return this.loaders;
     }
     public int size(){
         return this.objects.size();
@@ -78,6 +84,10 @@ public class PrematicCache<O> implements Cache<O> {
         createExpireTask();
         return this;
     }
+    public PrematicCache<O>  setExpireDeletion(CacheObjectExpireDeletion<O> expireDeletion) {
+        this.expireDeletion = expireDeletion;
+        return this;
+    }
     public void insert(O object) {
         if(this.maxSize > 0 && size() >= this.maxSize) this.objects.remove(0);
         this.objects.add(new CacheEntry(System.currentTimeMillis(),object));
@@ -105,7 +115,7 @@ public class PrematicCache<O> implements Cache<O> {
     private void createExpireTask(){
         if(EXECUTOR == null) EXECUTOR = Executors.newSingleThreadExecutor();
         shutdown();
-        this.expireTask = new CacheExpireTask(this);
+        this.expireTask = new CacheExpireTask();
         EXECUTOR.execute(this.expireTask);
     }
     public void shutdown(){
@@ -131,17 +141,12 @@ public class PrematicCache<O> implements Cache<O> {
     private class CacheExpireTask implements Runnable{
 
         private boolean running;
-        private PrematicCache<O> cache;
 
-        public CacheExpireTask(PrematicCache<O> cache) {
-            this.cache = cache;
+        public CacheExpireTask() {
             this.running = false;
         }
         public boolean isRunning() {
             return running;
-        }
-        public PrematicCache<O> getCache() {
-            return cache;
         }
         public void shutdown(){
             this.running = false;
@@ -153,9 +158,10 @@ public class PrematicCache<O> implements Cache<O> {
                 try{
                     Thread.sleep(200L);
                     try{
-                        Iterator<PrematicCache<O>.CacheEntry> iterator = this.cache.getAsList().iterator();
+                        Iterator<PrematicCache<O>.CacheEntry> iterator = objects.iterator();
                         PrematicCache.CacheEntry entry = null;
-                        while((entry = iterator.next()) != null) if(entry.getEntered()+this.cache.getExpireTime() <= System.currentTimeMillis())iterator.remove();
+                        while((entry = iterator.next()) != null) if(entry.getEntered()+getExpireTime() <= System.currentTimeMillis()
+                                && (expireDeletion == null || !(expireDeletion.delete((O)entry.getObject())))) iterator.remove();
                     }catch (Exception exception){}
                 }catch (Exception exception){}
             }
