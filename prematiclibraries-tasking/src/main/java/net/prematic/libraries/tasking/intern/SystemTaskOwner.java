@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 
 public class SystemTaskOwner implements TaskOwner {
 
+    public static SystemTaskOwner DEFAULT = new SystemTaskOwner();
     private static ExecutorService EXECUTOR;
     private String name;
 
