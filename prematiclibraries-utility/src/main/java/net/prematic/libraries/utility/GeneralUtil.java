@@ -19,7 +19,7 @@ import java.util.*;
 public class GeneralUtil {
 
     public static final Random RANDOM = new Random();
-    public static Gson GSON = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
+    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final JsonParser PARSER = new JsonParser();
 
     public static String getRandomString(final int size){
