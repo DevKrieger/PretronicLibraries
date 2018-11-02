@@ -73,7 +73,9 @@ public class PrematicCache<O> implements Cache<O> {
             }
         }catch (Exception exception){}
         CacheObjectLoader<O> loader = this.loaders.get(identifierName.toLowerCase());
-        return loader.load(identifier);
+        O object = loader.load(identifier);
+        if(object != null) insert(object);
+        return object;
     }
     public PrematicCache<O> setMaxSize(int maxSize) {
         this.maxSize = maxSize;
