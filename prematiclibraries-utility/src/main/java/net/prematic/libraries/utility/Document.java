@@ -42,8 +42,8 @@ public class Document {
         return false;
     }
     public Document getDocument(String key){
-        String value = getString(key);
-        if(value != null) return Document.loadData(value);
+        JsonObject value = this.datas.get(key).getAsJsonObject();
+        if(value != null) return new Document(value);
         return new Document();
     }
     public <T> T getObject(String key,Class<T> classof){
