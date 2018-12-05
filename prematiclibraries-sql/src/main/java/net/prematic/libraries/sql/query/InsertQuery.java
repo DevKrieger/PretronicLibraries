@@ -7,17 +7,20 @@ import java.sql.SQLException;
 
 /*
  * Copyright (c) 2018 Dkrieger on 16.05.18 15:49
+ * Copyright (c) 2018 Philipp Elvin Friedhoff 05.12.18 14:32
  */
 
-public class InsertQuery extends Query{
+public class InsertQuery extends ExecuteQuery {
 
     public InsertQuery(Connection connection, String query) {
         super(connection, query);
     }
+
     public InsertQuery insert(String insert) {
         query += "`"+insert+"`,";
         return this;
     }
+
     public InsertQuery value(Object value) {
         query = query.substring(0, query.length() - 1);
         if(firstvalue){
@@ -27,58 +30,42 @@ public class InsertQuery extends Query{
         values.add(value);
         return this;
     }
-    public void execute(){
-        PreparedStatement pstatement = null;
+
+    public Object executeAndGetKey() {
         try {
-            pstatement = connection.prepareStatement(query);
-            int i = 1;
-            for (Object object : values) {
-                pstatement.setString(i, object.toString());
-                i++;
-            }
-            pstatement.executeUpdate();
-            pstatement.close();
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public Object executeAndGetKey(){
-        PreparedStatement pstatement = null;
-        try {
-            pstatement = connection.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
             int i = 1;
             for(Object object : values) {
-                pstatement.setString(i, object.toString());
+                preparedStatement.setString(i, object.toString());
                 i++;
             }
-            pstatement.executeUpdate();
-            ResultSet result = pstatement.getGeneratedKeys();
+            preparedStatement.executeUpdate();
+            ResultSet result = preparedStatement.getGeneratedKeys();
             if(result != null){
                 if(result.next()) return result.getObject(1);
             }
             if(result != null) result.close();
-            pstatement.close();
+            preparedStatement.close();
         }catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-    public int executeAndGetKeyInInt(){
-        PreparedStatement pstatement = null;
+    public int executeAndGetKeyAsInt(){
         try {
-            pstatement = connection.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
             int i = 1;
             for(Object object : values) {
-                pstatement.setString(i, object.toString());
+                preparedStatement.setString(i, object.toString());
                 i++;
             }
-            pstatement.executeUpdate();
-            ResultSet result = pstatement.getGeneratedKeys();
+            preparedStatement.executeUpdate();
+            ResultSet result = preparedStatement.getGeneratedKeys();
             if(result != null){
                 if(result.next()) return result.getInt(1);
             }
             if(result != null) result.close();
-            pstatement.close();
+            preparedStatement.close();
         }catch (SQLException e) {
             e.printStackTrace();
         }

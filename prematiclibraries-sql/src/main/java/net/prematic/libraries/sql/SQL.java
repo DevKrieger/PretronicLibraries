@@ -2,49 +2,19 @@ package net.prematic.libraries.sql;
 
 /*
  *
- *  * Copyright (c) 2018 Davide Wietlisbach on 04.09.18 18:49
+ *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 04.12.1018 21:10
  *
  */
 
-import net.prematic.libraries.sql.query.Query;
+import net.prematic.libraries.multistorage.Storage;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.SQLException;
 
-public interface SQL {
-
-    public Connection getConnection();
-
-    public void loadDriver();
-
-    public Boolean connect();
-
-    public Boolean disconnect();
-
-    public Boolean reconnect();
-
-    public Boolean isConnected();
-
-    public void execute(Query query);
-
-    public void execute(String query);
-
-    /*
-    insert
-    find
-    update
-    replace
-    delete
+public abstract class SQL implements Storage {
 
 
-
-
-
-    key (String) value (Object)
-
-
-
-
-
-     */
-
+    public abstract Connection getConnection();
+    public abstract void loadDriver();
 }

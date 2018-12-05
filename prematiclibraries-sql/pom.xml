@@ -34,6 +34,19 @@
             <groupId>net.prematic.libraries.tasking</groupId>
             <artifactId>prematiclibraries-tasking</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.prematic.libraries</groupId>
+            <artifactId>prematiclibraries-multistorage</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>2.6.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

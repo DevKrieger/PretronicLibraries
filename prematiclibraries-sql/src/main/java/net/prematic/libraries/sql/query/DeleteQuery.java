@@ -6,9 +6,10 @@ import java.sql.SQLException;
 
 /*
  * Copyright (c) 2018 Dkrieger on 16.05.18 15:49
+ * Copyright (c) 2018 Philipp Elvin Friedhoff 05.12.18 14:56
  */
 
-public class DeleteQuery extends Query {
+public class DeleteQuery extends ExecuteQuery {
 
     public DeleteQuery(Connection connection, String query) {
         super(connection, query);
@@ -35,20 +36,5 @@ public class DeleteQuery extends Query {
         values.add(value);
         query += "?";
         return this;
-    }
-    public void execute() {
-        PreparedStatement pstatement;
-        try {
-            pstatement = connection.prepareStatement(query);
-            int i = 1;
-            for (Object object : values) {
-                pstatement.setString(i,object.toString());
-                i++;
-            }
-            pstatement.executeUpdate();
-            pstatement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }

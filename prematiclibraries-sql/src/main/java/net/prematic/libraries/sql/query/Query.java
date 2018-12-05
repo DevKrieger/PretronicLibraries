@@ -3,6 +3,9 @@ package net.prematic.libraries.sql.query;
 import net.prematic.libraries.sql.SQL;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,6 +16,8 @@ import java.util.List;
 public class Query {
 
     protected Connection connection;
+    protected PreparedStatement preparedStatement;
+    protected ResultSet resultSet;
     protected String query;
     protected boolean firstvalue;
     protected boolean and;
@@ -35,6 +40,7 @@ public class Query {
     public List<Object> getValues(){
         return this.values;
     }
+
     public String toString(){
         return this.query;
     }

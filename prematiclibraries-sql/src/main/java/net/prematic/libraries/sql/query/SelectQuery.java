@@ -4,20 +4,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /*
  * Copyright (c) 2018 Dkrieger on 16.05.18 15:49
+ * Copyright (c) 2018 Philipp Elvin Friedhoff 05.12.18 14:58
  */
 
 public class SelectQuery extends Query {
-
-    private PreparedStatement pstatement;
 
     public SelectQuery(Connection connection, String query) {
         super(connection, query);
     }
     public SelectQuery where(String key, Object value) {
-        if(!and){
+        if(!and) {
             query += " WHERE";
             and = true;
         }else query += " AND";
@@ -34,17 +35,26 @@ public class SelectQuery extends Query {
         values.add(value);
         return this;
     }
-    public ResultSet execute() throws SQLException{
-        pstatement = connection.prepareStatement(query);
-        int i = 1;
-        for (Object object : values) {
-            pstatement.setString(i, object.toString());
-            i++;
+
+    /*public ResultSet execute() {
+
+    }*/
+
+    public Map<String, Object> execute(String... fields) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        try(final PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            int i = 1;
+            for (Object object : values) {
+                preparedStatement.setObject(i, object);
+                i++;
+            }
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                for(String field : fields) result.put(field, resultSet.getObject(field));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        ResultSet result = pstatement.executeQuery();
         return result;
-    }
-    public void close() throws SQLException{
-        if(pstatement != null)  pstatement.close();
     }
 }
