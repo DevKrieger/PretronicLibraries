@@ -8,16 +8,15 @@ package net.prematic.libraries.utility.map;
 
 import java.util.LinkedHashMap;
 
-public class StringCaseIgnoreLinkedMap<Object> extends LinkedHashMap<String, Object> {
+public class StringCaseIgnoreLinkedMap<O> extends LinkedHashMap<String,O> {
 
     @Override
-    public Object get(java.lang.Object key) {
+    public O get(Object key) {
         if(!(key instanceof String)) throw new IllegalArgumentException("StringCaseIgnoreLinkedMap supports only String as key");
         return super.get(((String) key).toLowerCase());
     }
-
     @Override
-    public Object put(String key, Object value) {
+    public O put(String key, O value) {
         return super.put(key.toLowerCase(), value);
     }
 }

@@ -19,9 +19,19 @@ import java.util.*;
 public class GeneralUtil {
 
     public static final Random RANDOM = new Random();
-    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final GsonBuilder GSON_BUILDER = new GsonBuilder().setPrettyPrinting();
+    public static Gson GSON = GSON_BUILDER.create();
     public static final JsonParser PARSER = new JsonParser();
 
+    public static void createGSON(){
+        GSON = GSON_BUILDER.create();
+    }
+
+    /*
+
+    String utils
+
+     */
     public static String getRandomString(final int size){
         char data = ' ';
         String dat = "";
@@ -30,25 +40,6 @@ public class GeneralUtil {
             dat = data+dat;
         }
         return dat;
-    }
-    public static <U> U getHighestKey(final Map<U, Integer> map) {
-        return map.entrySet().stream().sorted(Map.Entry.<U,Integer>comparingByValue().reversed()).limit(1).map(Map.Entry::getKey).findFirst().orElse(null);
-    }
-    public static int getMaxPages(int pagesize, List<?> list) {
-        int max = pagesize;
-        int i = list.size();
-        if (i % max == 0) return i/max;
-        double j = i / pagesize;
-        int h = (int) Math.floor(j*100)/100;
-        return h+1;
-    }
-    public static boolean isNumber(String value){
-        try{
-            Long.parseLong(value);
-            return true;
-        }catch(NumberFormatException exception){
-            return false;
-        }
     }
     public static String rotateString(String string){
         String newstring = "";
@@ -64,26 +55,57 @@ public class GeneralUtil {
         for(String value : values) if(!value.equalsIgnoreCase(string)) return false;
         return true;
     }
-
-
-    public static String encode(String password){
-        return encode(password.getBytes());
+    public static boolean isNumber(String value){
+        try{
+            Long.parseLong(value);
+            return true;
+        }catch(NumberFormatException exception){
+            return false;
+        }
     }
-    public static String encode(byte[] bytes) {
+
+    /*
+
+    List and map Utils
+
+     */
+
+    public static int getMaxPages(int pagesize, List<?> list) {
+        int max = pagesize;
+        int i = list.size();
+        if (i % max == 0) return i/max;
+        double j = i / pagesize;
+        int h = (int) Math.floor(j*100)/100;
+        return h+1;
+    }
+
+    public static <U> U iterate(List<U> list, AcceptAble<U> acceptAble) {
+        Iterator<U> iterator = list.iterator();
+        U result = null;
+        while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) return result;
+        return null;
+    }
+
+
+    public static <U> U getHighestKey(final Map<U, Integer> map) {
+        return map.entrySet().stream().sorted(Map.Entry.<U,Integer>comparingByValue().reversed()).limit(1).map(Map.Entry::getKey).findFirst().orElse(null);
+    }
+
+    /*
+
+    encryption tools
+
+     */
+
+    public static String encodeMD5(String password){
+        return encodeMD5(password.getBytes());
+    }
+    public static String encodeMD5(byte[] bytes) {
         MessageDigest digest = getMessageDigest("MD5");
         byte[] hash = digest.digest(bytes);
         StringBuilder builder = new StringBuilder();
         for(int val : hash) builder.append(Integer.toHexString(val&0xff));
         return builder.toString();
-    }
-    public static String completEncode(String password){
-        return completEncode(password.getBytes());
-    }
-    public static String completEncode(byte[] bytes){
-        String d = encode(encode(bytes));
-        String complethash = "";
-        for(char c : d.toCharArray()) complethash+=encode(""+c);
-        return complethash;
     }
     public static MessageDigest getMessageDigest(String name) {
         try {
@@ -91,5 +113,21 @@ public class GeneralUtil {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /*
+
+    Simple sub classes
+
+     */
+
+
+    /*
+
+    An object accepter, useful for iterate methods.
+
+     */
+    public interface AcceptAble<T> {
+        boolean accept(T object);
     }
 }
