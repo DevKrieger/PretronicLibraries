@@ -14,6 +14,8 @@ public interface Storage {
 
     boolean isConnected();
 
+    boolean isIgnoreCase();
+
     default void reconnect() {
         disconnect();
         connect();
