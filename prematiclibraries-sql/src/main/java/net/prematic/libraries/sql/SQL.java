@@ -7,13 +7,51 @@ package net.prematic.libraries.sql;
  */
 
 import net.prematic.libraries.multistorage.Storage;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 public abstract class SQL implements Storage {
 
+    private boolean ignoreCase, supportNoCase, optionsOnEnd;
+
+    public SQL() {
+        this.ignoreCase = true;
+        this.supportNoCase = true;
+        this.optionsOnEnd = false;
+    }
+
+    public SQL(boolean ignoreCase, boolean supportNoCase, boolean optionsOnEnd) {
+        this.ignoreCase = ignoreCase;
+        this.supportNoCase = supportNoCase;
+        this.optionsOnEnd = optionsOnEnd;
+    }
+
+    @Override
+    public boolean isIgnoreCase() {
+        return this.ignoreCase;
+    }
+
+    public boolean isOptionsOnEnd() {
+        return optionsOnEnd;
+    }
+
+    public boolean supportNoCase() {
+        return supportNoCase;
+    }
+
+    public SQL setIgnoreCase(boolean ignoreCase) {
+        this.ignoreCase = ignoreCase;
+        return this;
+    }
+
+    public SQL setSupportNoCase(boolean supportNoCase) {
+        this.supportNoCase = supportNoCase;
+        return this;
+    }
+
+    public SQL setOptionsOnEnd(boolean optionsOnEnd) {
+        this.optionsOnEnd = optionsOnEnd;
+        return this;
+    }
 
     public abstract Connection getConnection();
     public abstract void loadDriver();

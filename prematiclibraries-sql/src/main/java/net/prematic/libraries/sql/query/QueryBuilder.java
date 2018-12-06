@@ -8,49 +8,51 @@ import java.util.List;
 
 /*
  * Copyright (c) 2018 Dkrieger on 16.05.18 15:49
+ * Copyright (c) 2018 Philipp Elvin Friedhoff 06.12.18 15:51
  */
 
 public class QueryBuilder {
 
-    private List<Query> querys;
+    private List<Query> queries;
     private String query;
 
-    public QueryBuilder(Query... querys){
-        this.querys = new LinkedList<>();
-        this.querys.addAll(Arrays.asList(querys));
+    public QueryBuilder(Query... queries){
+        this.queries = new LinkedList<>();
+        this.queries.addAll(Arrays.asList(queries));
     }
+
     public QueryBuilder append(Query query){
-        this.querys.add(query);
+        this.queries.add(query);
         return this;
     }
+
     public QueryBuilder remove(Query query){
-        this.querys.remove(query);
+        this.queries.remove(query);
         return this;
     }
+
     public QueryBuilder build(){
-        for(Query query : this.querys){
+        for(Query query : this.queries){
             if(this.query == null) this.query = query.toString();
             else this.query += ";"+query.toString();
         }
         return this;
     }
+
     public void execute(){
-        PreparedStatement pstatement;
-        try {
-            pstatement = querys.get(0).getConnection().prepareStatement(query);
+        try(PreparedStatement preparedStatement = queries.get(0).getConnection().prepareStatement(this.query)) {
             int i = 1;
-            for(Query query : this.querys){
+            for(Query query : this.queries){
                 for(Object object : query.getValues()) {
-                    pstatement.setString(i,object.toString());
+                    preparedStatement.setString(i,object.toString());
                     i++;
                 }
             }
-            pstatement.executeUpdate();
-            pstatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
+
     public void buildAndExecute(){
         build();
         execute();

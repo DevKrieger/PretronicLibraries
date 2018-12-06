@@ -1,8 +1,12 @@
 package net.prematic.libraries.sql.query;
 
+import net.prematic.libraries.sql.SQL;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 
 /*
  * Copyright (c) 2018 Dkrieger on 16.05.18 15:49
@@ -11,8 +15,12 @@ import java.sql.Statement;
 
 public class CreateQuery extends ExecuteQuery {
 
-    public CreateQuery(Connection connection, String query){
-        super(connection, query);
+
+
+
+
+    public CreateQuery(SQL sql, String query){
+        super(sql, query);
         firstvalue = true;
     }
 
@@ -24,8 +32,10 @@ public class CreateQuery extends ExecuteQuery {
         StringBuilder builder = new StringBuilder();
         builder.append("`").append(field).append("` ").append(type);
         if(size != 0) builder.append("(").append(size).append(")");
-        for(String option : options)
-            builder.append(" ").append(option);
+        for(String option : options) {
+            if(this.sql.isOptionsOnEnd() && DEFAULT_END_OPTIONS.contains(option.toUpperCase())) this.endOptions.put(field, option);
+            else builder.append(" ").append(option);
+        }
         return create(builder.toString());
     }
 

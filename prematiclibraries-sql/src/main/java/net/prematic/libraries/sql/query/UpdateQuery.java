@@ -1,5 +1,7 @@
 package net.prematic.libraries.sql.query;
 
+import net.prematic.libraries.sql.SQL;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,8 +13,8 @@ import java.sql.SQLException;
 
 public class UpdateQuery extends ExecuteQuery {
 
-    public UpdateQuery(Connection connection, String query) {
-        super(connection, query);
+    public UpdateQuery(SQL sql, String query) {
+        super(sql, query);
     }
     public UpdateQuery set(String field, Object value) {
         if (comma) query += ",";

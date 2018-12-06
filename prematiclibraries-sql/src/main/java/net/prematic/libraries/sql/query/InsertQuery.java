@@ -1,5 +1,7 @@
 package net.prematic.libraries.sql.query;
 
+import net.prematic.libraries.sql.SQL;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,8 +14,8 @@ import java.sql.SQLException;
 
 public class InsertQuery extends ExecuteQuery {
 
-    public InsertQuery(Connection connection, String query) {
-        super(connection, query);
+    public InsertQuery(SQL sql, String query) {
+        super(sql, query);
     }
 
     public InsertQuery insert(String insert) {
@@ -32,43 +34,9 @@ public class InsertQuery extends ExecuteQuery {
     }
 
     public Object executeAndGetKey() {
-        try {
-            preparedStatement = connection.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
-            int i = 1;
-            for(Object object : values) {
-                preparedStatement.setString(i, object.toString());
-                i++;
-            }
-            preparedStatement.executeUpdate();
-            ResultSet result = preparedStatement.getGeneratedKeys();
-            if(result != null){
-                if(result.next()) return result.getObject(1);
-            }
-            if(result != null) result.close();
-            preparedStatement.close();
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return execute(PreparedStatement.RETURN_GENERATED_KEYS);
     }
     public int executeAndGetKeyAsInt(){
-        try {
-            preparedStatement = connection.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
-            int i = 1;
-            for(Object object : values) {
-                preparedStatement.setString(i, object.toString());
-                i++;
-            }
-            preparedStatement.executeUpdate();
-            ResultSet result = preparedStatement.getGeneratedKeys();
-            if(result != null){
-                if(result.next()) return result.getInt(1);
-            }
-            if(result != null) result.close();
-            preparedStatement.close();
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
+        return (int) executeAndGetKey();
     }
 }

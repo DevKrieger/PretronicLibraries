@@ -14,15 +14,13 @@ import java.sql.SQLException;
 
 public class SQLite extends SQL {
 
-    private File location;
+    private File path;
+    private File file;
     private Connection connection;
 
-    public SQLite(File location) {
-        this.location = location;
-    }
-
     public SQLite(String path, String child) {
-        this.location = new File(path, child);
+        this.path = new File(path);
+        this.file = new File(path, child);
     }
 
     @Override
@@ -42,15 +40,15 @@ public class SQLite extends SQL {
     @Override
     public boolean connect() {
         try {
-            this.location.mkdirs();
-            this.location.createNewFile();
+            this.path.mkdirs();
+            this.file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
         try {
             loadDriver();
-            this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.location.getPath());
+            this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.file.getPath());
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

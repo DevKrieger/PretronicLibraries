@@ -28,15 +28,15 @@ public class Table {
     }
 
     public CreateQuery create(){
-        return new CreateQuery(sql.getConnection(),"CREATE TABLE IF NOT EXISTS `"+this.name+"` (");
+        return new CreateQuery(sql,"CREATE TABLE IF NOT EXISTS `"+this.name+"` (");
     }
 
     public InsertQuery insert(){
-        return new InsertQuery(sql.getConnection(),"INSERT INTO `"+this.name+"` (");
+        return new InsertQuery(sql,"INSERT INTO `"+this.name+"` (");
     }
 
     public UpdateQuery update(){
-        return new UpdateQuery(sql.getConnection(),"UPDATE `"+this.name+"` SET");
+        return new UpdateQuery(sql,"UPDATE `"+this.name+"` SET");
     }
 
     public SelectQuery selectAll(){
@@ -48,10 +48,10 @@ public class Table {
     }
 
     public SelectQuery select(String selection){
-        return new SelectQuery(sql.getConnection(), "SELECT "+selection+" FROM `"+this.name+"`");
+        return new SelectQuery(sql, "SELECT "+selection+" FROM `"+this.name+"`");
     }
 
     public DeleteQuery delete(){
-        return new DeleteQuery(sql.getConnection(), "DELETE FROM `"+this.name+"`");
+        return new DeleteQuery(sql, "DELETE FROM `"+this.name+"`");
     }
 }
