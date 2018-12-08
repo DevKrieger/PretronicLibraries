@@ -6,6 +6,8 @@ package net.prematic.libraries.multistorage;
  *
  */
 
+import net.prematic.libraries.tasking.TaskScheduler;
+
 public interface Storage {
 
     boolean connect();
@@ -15,6 +17,8 @@ public interface Storage {
     boolean isConnected();
 
     boolean isIgnoreCase();
+
+    TaskScheduler getScheduler();
 
     default void reconnect() {
         disconnect();
