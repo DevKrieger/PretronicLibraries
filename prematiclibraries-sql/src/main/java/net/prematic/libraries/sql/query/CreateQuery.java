@@ -15,17 +15,21 @@ import java.util.List;
 
 public class CreateQuery extends ExecuteQuery {
 
-
-
-
-
-    public CreateQuery(SQL sql, String query){
+    public CreateQuery(SQL sql, String query) {
         super(sql, query);
         firstvalue = true;
     }
 
+    public CreateQuery create(String field, String type, QueryOption... options) {
+        return create(field, type, QueryOption.getAsStringArray(options));
+    }
+
     public CreateQuery create(String field, String type, String... options) {
         return create(field, type, 0, options);
+    }
+
+    public CreateQuery create(String field, String type, int size, QueryOption... options) {
+        return create(field, type, size, QueryOption.getAsStringArray(options));
     }
 
     public CreateQuery create(String field, String type, int size, String... options) {

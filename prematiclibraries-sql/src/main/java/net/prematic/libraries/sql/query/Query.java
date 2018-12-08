@@ -19,7 +19,7 @@ public class Query {
 
     static {
         DEFAULT_END_OPTIONS = new LinkedList<>();
-        DEFAULT_END_OPTIONS.add(QueryOption.UNIQUE);
+        DEFAULT_END_OPTIONS.addAll(QueryOption.getPossibleEndOptions());
     }
 
     protected SQL sql;

@@ -6,8 +6,40 @@ package net.prematic.libraries.sql.query;
  *
  */
 
-public class QueryOption {
+import java.util.LinkedList;
+import java.util.List;
 
-    public static final String NOT_NULL = "NOT NULL";
-    public static final String UNIQUE = "UNIQUE";
+public enum QueryOption {
+
+    NOT_NULL("NOT NULL", false),
+    UNIQUE("UNIQUE", true),
+    PRIMARY_KEY("PRIMARY KEY", true);
+
+    private String code;
+    private boolean possibleEndOfQuery;
+
+    QueryOption(String code, boolean possibleEndOfQuery) {
+        this.code = code;
+        this.possibleEndOfQuery = possibleEndOfQuery;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public boolean isPossibleEndOfQuery() {
+        return possibleEndOfQuery;
+    }
+
+    public static String[] getAsStringArray(QueryOption... queryOptions) {
+        List<String> options = new LinkedList<>();
+        for(QueryOption option : queryOptions) options.add(option.getCode());
+        return options.toArray(new String[queryOptions.length]);
+    }
+
+    public static List<String> getPossibleEndOptions() {
+        List<String> options = new LinkedList<>();
+        for(QueryOption queryOption : QueryOption.values()) if(queryOption.isPossibleEndOfQuery()) options.add(queryOption.getCode());
+        return options;
+    }
 }

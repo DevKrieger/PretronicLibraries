@@ -1,11 +1,13 @@
 package net.prematic.libraries.sql.query;
 
 import net.prematic.libraries.sql.SQL;
+import net.prematic.libraries.tasking.intern.SystemTaskOwner;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 
 /*
  * Copyright (c) 2018 Dkrieger on 16.05.18 15:49
@@ -31,6 +33,14 @@ public class InsertQuery extends ExecuteQuery {
         }else query += ",?)";
         values.add(value);
         return this;
+    }
+
+    public void executeAndGetKeyAsync(Consumer<Object> consumer) {
+        sql.getScheduler().runTaskAsync(new SystemTaskOwner(), ()-> consumer.accept(executeAndGetKey()));
+    }
+
+    public void executeAndGetKeyAsIntAsync(Consumer<Integer> consumer) {
+        consumer.accept((Integer) executeAndGetKey());
     }
 
     public Object executeAndGetKey() {

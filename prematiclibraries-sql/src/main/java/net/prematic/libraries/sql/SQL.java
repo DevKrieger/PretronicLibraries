@@ -7,16 +7,21 @@ package net.prematic.libraries.sql;
  */
 
 import net.prematic.libraries.multistorage.Storage;
+import net.prematic.libraries.tasking.TaskScheduler;
+import net.prematic.libraries.tasking.intern.PrematicTaskScheduler;
+
 import java.sql.Connection;
 
 public abstract class SQL implements Storage {
 
+    private TaskScheduler scheduler;
     private boolean ignoreCase, supportNoCase, optionsOnEnd;
 
     public SQL() {
         this.ignoreCase = true;
         this.supportNoCase = true;
         this.optionsOnEnd = false;
+        this.scheduler = new PrematicTaskScheduler();
     }
 
     public SQL(boolean ignoreCase, boolean supportNoCase, boolean optionsOnEnd) {
@@ -36,6 +41,11 @@ public abstract class SQL implements Storage {
 
     public boolean supportNoCase() {
         return supportNoCase;
+    }
+
+    @Override
+    public TaskScheduler getScheduler() {
+        return scheduler;
     }
 
     public SQL setIgnoreCase(boolean ignoreCase) {

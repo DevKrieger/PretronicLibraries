@@ -31,12 +31,6 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>net.prematic.libraries.tasking</groupId>
-            <artifactId>prematiclibraries-tasking</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-multistorage</artifactId>
             <version>1.0.0</version>

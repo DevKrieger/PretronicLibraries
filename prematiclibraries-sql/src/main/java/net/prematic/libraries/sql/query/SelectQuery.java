@@ -1,6 +1,7 @@
 package net.prematic.libraries.sql.query;
 
 import net.prematic.libraries.sql.SQL;
+import net.prematic.libraries.tasking.intern.SystemTaskOwner;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /*
  * Copyright (c) 2018 Dkrieger on 16.05.18 15:49
@@ -45,8 +47,11 @@ public class SelectQuery extends Query {
 
     }*/
 
+    public void executeAsync(Consumer<Map<String, Object>> consumer, String... fields) {
+        sql.getScheduler().runTaskAsync(new SystemTaskOwner(), ()-> consumer.accept(execute(fields)));
+    }
+
     public Map<String, Object> execute(String... fields) {
-        System.out.println(query);
         Map<String, Object> result = new LinkedHashMap<>();
         if(this.sql.isIgnoreCase() && this.sql.supportNoCase() && !this.query.contains("COLLATE NOCASE")) noCase();
         try(final PreparedStatement preparedStatement = getConnection().prepareStatement(query)) {
