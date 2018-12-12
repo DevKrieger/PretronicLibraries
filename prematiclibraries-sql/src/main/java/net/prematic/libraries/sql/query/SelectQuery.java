@@ -1,11 +1,15 @@
 package net.prematic.libraries.sql.query;
 
+import net.prematic.libraries.sql.SQL;
+import net.prematic.libraries.tasking.intern.SystemTaskOwner;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /*
  * Copyright (c) 2018 Dkrieger on 16.05.18 15:49
@@ -14,9 +18,11 @@ import java.util.Map;
 
 public class SelectQuery extends Query {
 
-    public SelectQuery(Connection connection, String query) {
-        super(connection, query);
+
+    public SelectQuery(SQL sql, String query) {
+        super(sql, query);
     }
+
     public SelectQuery where(String key, Object value) {
         if(!and) {
             query += " WHERE";
@@ -26,6 +32,7 @@ public class SelectQuery extends Query {
         values.add(value);
         return this;
     }
+
     public SelectQuery whereWithOr(String key, Object value) {
         if(!and){
             query += " WHERE";
@@ -40,21 +47,31 @@ public class SelectQuery extends Query {
 
     }*/
 
+    public void executeAsync(Consumer<Map<String, Object>> consumer, String... fields) {
+        sql.getScheduler().runTaskAsync(new SystemTaskOwner(), ()-> consumer.accept(execute(fields)));
+    }
+
     public Map<String, Object> execute(String... fields) {
         Map<String, Object> result = new LinkedHashMap<>();
-        try(final PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        if(this.sql.isIgnoreCase() && this.sql.supportNoCase() && !this.query.contains("COLLATE NOCASE")) noCase();
+        try(final PreparedStatement preparedStatement = getConnection().prepareStatement(query)) {
             int i = 1;
             for (Object object : values) {
                 preparedStatement.setObject(i, object);
                 i++;
             }
-            resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 for(String field : fields) result.put(field, resultSet.getObject(field));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return result;
+    }
+
+    public SelectQuery noCase() {
+        this.query += " COLLATE NOCASE";
+        return this;
     }
 }

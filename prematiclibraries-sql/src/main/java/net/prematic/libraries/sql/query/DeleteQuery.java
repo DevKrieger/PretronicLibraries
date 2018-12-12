@@ -1,5 +1,7 @@
 package net.prematic.libraries.sql.query;
 
+import net.prematic.libraries.sql.SQL;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,8 +13,8 @@ import java.sql.SQLException;
 
 public class DeleteQuery extends ExecuteQuery {
 
-    public DeleteQuery(Connection connection, String query) {
-        super(connection, query);
+    public DeleteQuery(SQL sql, String query) {
+        super(sql, query);
         this.firstvalue = true;
     }
     public DeleteQuery where(String key, Object value) {

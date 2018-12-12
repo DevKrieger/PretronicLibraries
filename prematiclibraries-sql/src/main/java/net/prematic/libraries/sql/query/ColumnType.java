@@ -6,7 +6,7 @@ package net.prematic.libraries.sql.query;
  *
  */
 
-public class Type {
+public class ColumnType {
 
     public static final String VARCHAR = "varchar";
     public static final String CHAR = "char";
