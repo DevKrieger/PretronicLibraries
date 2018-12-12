@@ -43,8 +43,8 @@ public class GeneralUtil {
     }
     public static String rotateString(String string){
         String newstring = "";
-        char[] chararray = string.toCharArray();
-        for(int i = chararray.length-1;i > -1;i--) newstring += chararray[i];
+        char[] charArray = string.toCharArray();
+        for(int i = charArray.length-1;i > -1;i--) newstring += charArray[i];
         return newstring;
     }
     public static Boolean equalsOne(String string, String... values){
@@ -55,6 +55,12 @@ public class GeneralUtil {
         for(String value : values) if(!value.equalsIgnoreCase(string)) return false;
         return true;
     }
+
+    /**
+     *
+     * @param value A String which could be a number (int/long)
+     * @return true for a string which is a number
+     */
     public static boolean isNumber(String value){
         try{
             Long.parseLong(value);
@@ -63,6 +69,7 @@ public class GeneralUtil {
             return false;
         }
     }
+
 
     /*
 
@@ -138,7 +145,7 @@ public class GeneralUtil {
 
     /*
 
-    An object accepter, useful for iterate methods.
+    An object accepter and for object executor, useful an for iterate methods.
 
      */
     public interface AcceptAble<T> {
