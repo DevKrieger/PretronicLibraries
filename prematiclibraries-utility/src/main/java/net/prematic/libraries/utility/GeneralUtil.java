@@ -79,13 +79,27 @@ public class GeneralUtil {
         return h+1;
     }
 
-    public static <U> U iterate(List<U> list, AcceptAble<U> acceptAble) {
+    public static <U> U iterateOne(Iterable<U> list, AcceptAble<U> acceptAble) {
         Iterator<U> iterator = list.iterator();
         U result = null;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) return result;
         return null;
     }
-
+    public static <U> void iterateForEach(Iterable<U> list, ForEach<U> forEach){
+        Iterator<U> iterator = list.iterator();
+        U result = null;
+        while(iterator.hasNext() && (result=iterator.next()) != null) forEach.forEach(result);
+    }
+    public static <U> void iterateAcceptedForEach(Iterable<U> list, AcceptAble<U> acceptAble, ForEach<U> forEach) {
+        Iterator<U> iterator = list.iterator();
+        U result = null;
+        while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) forEach.forEach(result);
+    }
+    public static <U> List<U> iterateAcceptedReturn(Iterable<U> list, AcceptAble<U> acceptAble){
+        List<U> result = new ArrayList<>();
+        iterateAcceptedForEach(list,acceptAble,result::add);
+        return result;
+    }
 
     public static <U> U getHighestKey(final Map<U, Integer> map) {
         return map.entrySet().stream().sorted(Map.Entry.<U,Integer>comparingByValue().reversed()).limit(1).map(Map.Entry::getKey).findFirst().orElse(null);
@@ -129,5 +143,8 @@ public class GeneralUtil {
      */
     public interface AcceptAble<T> {
         boolean accept(T object);
+    }
+    public interface ForEach<T> {
+        void forEach(T object);
     }
 }
