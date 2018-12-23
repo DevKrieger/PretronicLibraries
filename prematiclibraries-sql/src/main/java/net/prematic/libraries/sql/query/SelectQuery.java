@@ -54,7 +54,8 @@ public class SelectQuery extends Query {
     public Map<String, Object> execute(String... fields) {
         Map<String, Object> result = new LinkedHashMap<>();
         if(this.sql.isIgnoreCase() && this.sql.supportNoCase() && !this.query.contains("COLLATE NOCASE")) noCase();
-        try(final PreparedStatement preparedStatement = getConnection().prepareStatement(query)) {
+        Connection connection = getConnection();
+        try(final PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             int i = 1;
             for (Object object : values) {
                 preparedStatement.setObject(i, object);
@@ -66,6 +67,12 @@ public class SelectQuery extends Query {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
