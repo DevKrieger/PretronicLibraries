@@ -43,8 +43,8 @@ public class GeneralUtil {
     }
     public static String rotateString(String string){
         String newstring = "";
-        char[] chararray = string.toCharArray();
-        for(int i = chararray.length-1;i > -1;i--) newstring += chararray[i];
+        char[] charArray = string.toCharArray();
+        for(int i = charArray.length-1;i > -1;i--) newstring += charArray[i];
         return newstring;
     }
     public static Boolean equalsOne(String string, String... values){
@@ -55,6 +55,12 @@ public class GeneralUtil {
         for(String value : values) if(!value.equalsIgnoreCase(string)) return false;
         return true;
     }
+
+    /**
+     *
+     * @param value A String which could be a number (int/long)
+     * @return true for a string which is a number
+     */
     public static boolean isNumber(String value){
         try{
             Long.parseLong(value);
@@ -63,6 +69,7 @@ public class GeneralUtil {
             return false;
         }
     }
+
 
     /*
 
@@ -79,13 +86,27 @@ public class GeneralUtil {
         return h+1;
     }
 
-    public static <U> U iterate(List<U> list, AcceptAble<U> acceptAble) {
+    public static <U> U iterateOne(Iterable<U> list, AcceptAble<U> acceptAble) {
         Iterator<U> iterator = list.iterator();
         U result = null;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) return result;
         return null;
     }
-
+    public static <U> void iterateForEach(Iterable<U> list, ForEach<U> forEach){
+        Iterator<U> iterator = list.iterator();
+        U result = null;
+        while(iterator.hasNext() && (result=iterator.next()) != null) forEach.forEach(result);
+    }
+    public static <U> void iterateAcceptedForEach(Iterable<U> list, AcceptAble<U> acceptAble, ForEach<U> forEach) {
+        Iterator<U> iterator = list.iterator();
+        U result = null;
+        while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) forEach.forEach(result);
+    }
+    public static <U> List<U> iterateAcceptedReturn(Iterable<U> list, AcceptAble<U> acceptAble){
+        List<U> result = new ArrayList<>();
+        iterateAcceptedForEach(list,acceptAble,result::add);
+        return result;
+    }
 
     public static <U> U getHighestKey(final Map<U, Integer> map) {
         return map.entrySet().stream().sorted(Map.Entry.<U,Integer>comparingByValue().reversed()).limit(1).map(Map.Entry::getKey).findFirst().orElse(null);
@@ -124,10 +145,13 @@ public class GeneralUtil {
 
     /*
 
-    An object accepter, useful for iterate methods.
+    An object accepter and for object executor, useful an for iterate methods.
 
      */
     public interface AcceptAble<T> {
         boolean accept(T object);
+    }
+    public interface ForEach<T> {
+        void forEach(T object);
     }
 }
