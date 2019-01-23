@@ -8,14 +8,14 @@ package net.prematic.libraries.event;
 
 public class EventPriority {
 
-    public final static int EXTREMHEIGHT = 100;
+    public final static byte EXTREMHEIGHT = 100;
 
-    public final static int HEIGHT = 75;
+    public final static byte HEIGHT = 75;
 
-    public final static int NORMAL = 50;
+    public final static byte NORMAL = 50;
 
-    public final static int LOW = 25;
+    public final static byte LOW = 25;
 
-    public final static int EXTREMLOW = 0;
+    public final static byte EXTREMLOW = 0;
 
 }

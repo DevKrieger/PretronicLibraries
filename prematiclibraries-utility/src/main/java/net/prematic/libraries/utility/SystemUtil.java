@@ -13,13 +13,16 @@ import java.util.concurrent.TimeUnit;
 
 public class SystemUtil {
 
-    public static void sleepUninterrupt(Long time, TimeUnit unit){
-       sleepUninterrupt(unit.toMillis(time));
+    public static void sleepUnInterrupt(long time, TimeUnit unit){
+       sleepUnInterrupt(unit.toMillis(time));
     }
-    public static void sleepUninterrupt(Long millis){
+    public static void sleepUnInterrupt(long millis){
         try{
             Thread.sleep(millis);
         }catch (Exception exception){}
+    }
+    public static void sleepUnInterrupt(int nanos){
+        try{ Thread.sleep(0,nanos); }catch (Exception exception){}
     }
     public static double getCpuUsage() {
         return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getSystemCpuLoad()*100;

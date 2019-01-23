@@ -8,6 +8,6 @@ package net.prematic.libraries.event;
 
 public interface ObjectOwner {
 
-    public String getName();
+    String getName();
 
 }

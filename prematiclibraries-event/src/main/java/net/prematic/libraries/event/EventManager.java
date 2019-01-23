@@ -33,7 +33,7 @@ public class EventManager {
                 if(handler != null){
                     if(method.getParameterTypes().length == 1){
                         if(!this.methodes.containsKey(method.getParameterTypes()[0]))
-                            this.methodes.put(method.getParameterTypes()[0],new LinkedList<MethodHolder>());
+                            this.methodes.put(method.getParameterTypes()[0],new LinkedList<>());
                         this.methodes.get(method.getParameterTypes()[0]).add(new MethodHolder(handler.priority(),owner,listener,method));
                     }
                 }
@@ -48,7 +48,7 @@ public class EventManager {
         for(Collection<MethodHolder> list : this.methodes.values())
             for(MethodHolder holder : new LinkedList<>(list)) if(holder.getOwner().equals(owner)) list.remove(holder);
     }
-    public void callEvent(Event event){
+    public void callEvent(Object event){
         this.executor.execute(()->{
             try{
                 Collection<MethodHolder> methodes = this.methodes.get(event.getClass());

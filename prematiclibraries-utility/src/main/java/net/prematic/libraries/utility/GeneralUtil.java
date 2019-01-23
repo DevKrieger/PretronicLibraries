@@ -59,7 +59,7 @@ public class GeneralUtil {
     /**
      *
      * @param value A String which could be a number (int/long)
-     * @return true for a string which is a number
+     * @return True for a string which is a number
      */
     public static boolean isNumber(String value){
         try{
@@ -69,7 +69,6 @@ public class GeneralUtil {
             return false;
         }
     }
-
 
     /*
 
@@ -106,6 +105,11 @@ public class GeneralUtil {
         List<U> result = new ArrayList<>();
         iterateAcceptedForEach(list,acceptAble,result::add);
         return result;
+    }
+    public static <U> void iterateAndRemove(Iterable<U> list, AcceptAble<U> acceptAble){
+        Iterator<U> iterator = list.iterator();
+        U result = null;
+        while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) iterator.remove();
     }
 
     public static <U> U getHighestKey(final Map<U, Integer> map) {
