@@ -1,8 +1,8 @@
 package net.prematic.libraries.tasking.intern;
 
 import net.prematic.libraries.tasking.Task;
-import net.prematic.libraries.tasking.TaskOwner;
 import net.prematic.libraries.tasking.TaskScheduler;
+import net.prematic.libraries.utility.owner.ObjectOwner;
 
 /*
  *
@@ -16,10 +16,10 @@ public class PrematicTask implements Task {
     private Long delay, period;
     private boolean async, running;
     private TaskScheduler scheduler;
-    private TaskOwner owner;
+    private ObjectOwner owner;
     private Runnable runnable;
 
-    public PrematicTask(int id,Long delay,Long period,TaskScheduler scheduler,TaskOwner owner, Runnable runnable, Boolean async) {
+    public PrematicTask(int id,Long delay,Long period,TaskScheduler scheduler,ObjectOwner owner, Runnable runnable, Boolean async) {
         this.id = id;
         this.delay = delay;
         this.period = period;
@@ -44,7 +44,7 @@ public class PrematicTask implements Task {
     public TaskScheduler getScheduler() {
         return this.scheduler;
     }
-    public TaskOwner getOwner() {
+    public ObjectOwner getOwner() {
         return this.owner;
     }
     public boolean isAsync() {

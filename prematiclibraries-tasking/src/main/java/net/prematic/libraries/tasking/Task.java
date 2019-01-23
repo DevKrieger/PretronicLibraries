@@ -6,23 +6,25 @@ package net.prematic.libraries.tasking;
  *
  */
 
+import net.prematic.libraries.utility.owner.ObjectOwner;
+
 public interface Task extends Runnable{
 
-    public int getID();
+    int getID();
 
-    public boolean isRunning();
+    boolean isRunning();
 
-    public TaskOwner getOwner();
+    ObjectOwner getOwner();
 
-    public TaskScheduler getScheduler();
+    TaskScheduler getScheduler();
 
-    public Runnable getRunnable();
+    Runnable getRunnable();
 
-    public boolean isAsync();
+    boolean isAsync();
 
-    public void setRunning(boolean running);
+    void setRunning(boolean running);
 
-    public void cancel();
+    void cancel();
 
 
 }

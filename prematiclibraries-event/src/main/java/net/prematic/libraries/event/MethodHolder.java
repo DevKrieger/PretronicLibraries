@@ -1,5 +1,7 @@
 package net.prematic.libraries.event;
 
+import net.prematic.libraries.utility.owner.ObjectOwner;
+
 import java.lang.reflect.Method;
 
 /*
