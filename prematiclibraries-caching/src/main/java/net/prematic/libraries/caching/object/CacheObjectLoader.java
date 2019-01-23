@@ -8,6 +8,6 @@ package net.prematic.libraries.caching.object;
 
 public interface CacheObjectLoader<O> {
 
-    public O load(Object identifier);
+    O load(Object identifier);
 
 }

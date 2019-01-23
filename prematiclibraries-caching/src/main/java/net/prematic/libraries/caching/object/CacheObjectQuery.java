@@ -8,6 +8,6 @@ package net.prematic.libraries.caching.object;
 
 public interface CacheObjectQuery<O> {
 
-    public abstract boolean is(Object identifier, O object);
+    boolean accept(Object identifier, O object);
 
 }

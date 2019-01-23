@@ -27,7 +27,17 @@
                     <target>8</target>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>net.prematic.libraries.utility</groupId>
+            <artifactId>prematiclibraries-utility</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
 </project>

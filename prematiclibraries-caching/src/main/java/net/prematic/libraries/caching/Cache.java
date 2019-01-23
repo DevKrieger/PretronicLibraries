@@ -7,33 +7,45 @@ package net.prematic.libraries.caching;
  */
 
 
-import net.prematic.libraries.caching.defaults.PrematicCache;
 import net.prematic.libraries.caching.object.CacheObjectLoader;
 import net.prematic.libraries.caching.object.CacheObjectQuery;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
-public interface Cache<O> {
+interface Cache<O> {
 
-    public List<O> getAll();
+    Collection<O> getObjects();
 
-    public O get(String identifierName, Object identifier);
+    O get(String queryName, Object identifier);
 
-    public int size();
+    int size();
 
-    public PrematicCache<O> setMaxSize(int maxSize);
+    O insert(O object);
 
-    public PrematicCache<O> setExpire(long expireTime, TimeUnit unit);
+    O remove(String queryName, Object identifier);
 
-    public void insert(O object);
+    O removeFirst();
 
-    public O remove(String identifierName, Object identifier);
+    void remove(O cachedObject);
 
-    public void registerQuery(String name, CacheObjectQuery<O> query);
+    Cache<O> setMaxSize(int maxSize);
 
-    public void registerLoader(String name, CacheObjectLoader<O> loader);
+    Cache<O> setExpire(long expireTime, TimeUnit unit);
 
-    public void shutdown();
+    Cache<O> setRemoveListener(Consumer<O> onRemove);
+
+    Cache<O> registerQuery(String name, CacheObjectQuery<O> query);
+
+    Cache<O> registerLoader(String name, CacheObjectLoader<O> loader);
+
+    Cache<O> unregisterQuery(String name);
+
+    Cache<O> unregisterLoader(String name);
+
+    void clear();
+
+    void shutdown();
 
 }
