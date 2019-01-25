@@ -14,9 +14,11 @@ public class SystemCommandOwner implements CommandOwner {
     public SystemCommandOwner(){
         this("System");
     }
+
     public SystemCommandOwner(String name) {
         this.name = name;
     }
+
     public String getName() {
         return this.name;
     }

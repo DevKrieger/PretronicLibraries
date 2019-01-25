@@ -10,7 +10,6 @@ import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -31,26 +30,36 @@ public class NetworkUtil {
             return "0.0.0.0";
         }
     }
+
     public static EventLoopGroup getNewEventLoopGroup() {
         if(EPOLL) return new EpollEventLoopGroup(); else return new NioEventLoopGroup();
     }
+
     public static EventLoopGroup getNewEventLoopGroup(int threads) {
         if(EPOLL) return new EpollEventLoopGroup(threads); else return new NioEventLoopGroup(threads);
     }
+
     public static Class<? extends SocketChannel> getNewSocketChannel() {
         if(EPOLL) return EpollSocketChannel.class; else return NioSocketChannel.class;
     }
+
     public static Class<? extends ServerSocketChannel> getNewServerSocketChannel() {
         if(EPOLL) return EpollServerSocketChannel.class; else return NioServerSocketChannel.class;
     }
-    public static String getExactIP(String address){
+
+    public static String getExactIP(String address) {
         String host = "";
-        for(char c : address.toCharArray()){
+        for(char c : address.toCharArray()) {
             if(c == ':') break;
             else host += c;
         }
         return host.substring(1);
     }
+
+    public static String getExactIp(String address) {
+        return address.split("[/:]")[1];
+    }
+
     public static Boolean isIP4Address(String ip){
         try {
             if(ip == null || ip.isEmpty()) return false;
@@ -66,7 +75,8 @@ public class NetworkUtil {
             return false;
         }
     }
-    public static Boolean isPortAvailable(String host, int port){
+
+    public static boolean isPortAvailable(String host, int port){
         Socket socket = null;
         try{
             socket = new Socket(host, port);

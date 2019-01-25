@@ -8,10 +8,10 @@ package net.prematic.libraries.command.sender;
 
 public interface CommandSender {
 
-    public String getName();
+    String getName();
 
-    public Boolean hasPermission(String permission);
+    boolean hasPermission(String permission);
 
-    public void sendMessage(String message);
+    void sendMessage(String message);
 
 }

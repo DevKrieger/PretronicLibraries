@@ -8,6 +8,6 @@ package net.prematic.libraries.command.owner;
 
 public interface CommandOwner {
 
-    public String getName();
+    String getName();
 
 }

@@ -11,9 +11,11 @@ public class ConsoleCommandSender implements CommandSender{
     public String getName() {
         return "Console";
     }
-    public Boolean hasPermission(String permission) {
+
+    public boolean hasPermission(String permission) {
         return true;
     }
+
     public void sendMessage(String message) {
         System.out.println(message);
     }
