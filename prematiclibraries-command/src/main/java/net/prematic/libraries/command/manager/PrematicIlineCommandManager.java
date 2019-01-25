@@ -1,5 +1,6 @@
 package net.prematic.libraries.command.manager;
 
+import jline.console.ConsoleReader;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.command.sender.ConsoleCommandSender;
 
@@ -11,10 +12,11 @@ import net.prematic.libraries.command.sender.ConsoleCommandSender;
 
 public class PrematicIlineCommandManager extends PrematicCommandManager{
 
-    public void startConsoleInputReader(final jline.console.ConsoleReader reader){
+    public void startConsoleInputReader(final ConsoleReader reader){
         startConsoleInputReader(reader,new ConsoleCommandSender());
     }
-    public void startConsoleInputReader(final jline.console.ConsoleReader reader, final CommandSender sender){
+
+    public void startConsoleInputReader(final ConsoleReader reader, final CommandSender sender){
         this.running = true;
         new Thread(()->{
             while(this.running){

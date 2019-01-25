@@ -14,19 +14,36 @@ import java.util.Collection;
 
 public interface CommandManager {
 
-    public Command getCommand(String name);
+    Command getCommand(String name);
 
-    public Collection<Command> getCommands();
+    Collection<Command> getCommands();
 
-    public void dispatchCommand(CommandSender sender, String command);
+    void dispatchCommand(CommandSender sender, String command);
 
-    public void registerCommand(CommandOwner owner, Command command);
+    void registerCommand(CommandOwner owner, Command command);
 
-    public void unregisterCommand(String command);
+    void unregisterCommand(String command);
 
-    public void unregisterCommand(Command command);
+    void unregisterCommand(Command command);
 
-    public void unregisterCommand(CommandOwner owner);
+    void unregisterCommand(CommandOwner owner);
 
-    public void unregisterAll();
+    void unregisterAll();
+
+    Messages messages = new Messages();
+
+    default Messages getMessages() {
+        return messages;
+    }
+
+    class Messages {
+
+        public String commandNotFound, commandHelpHeader, commandHelp;
+
+        public Messages() {
+            this.commandNotFound = "Command not found. Use the command \"help\" for more information!";
+            this.commandHelpHeader = "Page %currentPage%/%maxPages%";
+            this.commandHelp = "%command% %commandUsage% %commandDescription%";
+        }
+    }
 }

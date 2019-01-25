@@ -36,6 +36,8 @@
         <module>prematiclibraries-permission</module>
         <module>prematiclibraries-caching</module>
         <module>prematiclibraries-multistorage</module>
+        <module>prematiclibraries-mongodb</module>
+        <module>prematiclibraries-language</module>
     </modules>
 </project>
 

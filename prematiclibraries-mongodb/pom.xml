@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ /*
-  ~  * Copyright (c) 2018 Davide Wietlisbach on 10.08.18 19:48
+  ~  * Copyright (c) 2018 Philipp Elvin Friedhoff on 09.12.18 16:14
   ~  */
   -->
 
@@ -15,36 +15,30 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.prematic.libraries.command</groupId>
-    <artifactId>prematiclibraries-command</artifactId>
-
-    <developers>
-        <developer>
-            <name>Davide Wietlisbach</name>
-            <organization>Prematic</organization>
-        </developer>
-        <developer>
-            <name>Philipp Elvin Friedhoff</name>
-            <organization>Prematic</organization>
-        </developer>
-    </developers>
+    <artifactId>prematiclibraries-mongodb</artifactId>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>6</source>
+                    <target>6</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
     <dependencies>
         <dependency>
-            <groupId>jline</groupId>
-            <artifactId>jline</artifactId>
-            <version>2.12</version>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.8.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.prematic.libraries</groupId>
+            <artifactId>prematiclibraries-multistorage</artifactId>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

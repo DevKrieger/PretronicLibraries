@@ -1,7 +1,6 @@
 package net.prematic.libraries.command.command;
 
 import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.utility.GeneralUtil;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +40,11 @@ public class MainCommand extends Command {
     }
 
     protected int getMaxPages() {
-        return GeneralUtil.getMaxPages(8, subCommands);
+        int i = subCommands.size();
+        if (i % 8 == 0) return i/8;
+        double j = i / 8;
+        int h = (int) Math.floor(j*100)/100;
+        return h+1;
     }
 
     public void registerSubCommand(SubCommand subCommand) {
@@ -51,10 +54,9 @@ public class MainCommand extends Command {
     public void sendHelp(CommandSender sender, int page) {
         int maxPages = getMaxPages();
         if(page > maxPages) page = 1;
-        int nextPage = page+1;
-        if(nextPage > maxPages) nextPage = 1;
-        if(nextPage == page) sender.sendMessage("Seite " + page + "/" + maxPages);
-        else sender.sendMessage("Seite " + page + "/" + maxPages + " | Weitere Hilfeseiten mit " + getName() + " " + nextPage);
+        sender.sendMessage(getCommandManager().getMessages().commandHelpHeader
+                .replaceAll("%currentPage%", String.valueOf(page))
+                .replaceAll("%maxPages%", String.valueOf(maxPages)));
         int from = 1;
         if(page > 1) from = 8 * (page - 1) + 1;
         int to = 8 * page;
@@ -62,14 +64,22 @@ public class MainCommand extends Command {
             if(h > subCommands.size()) break;
             SubCommand subCommand = subCommands.get(h - 1);
             if(sender.hasPermission(subCommand.getPermission())) {
-                sender.sendMessage(getName()+(subCommand.getUsage() != null ? " " + subCommand.getUsage() : "") + (subCommand.getDescription() != null ? " " + subCommand.getDescription() : ""));
-                if(!subCommand.getSubCommands().isEmpty()){
+                sender.sendMessage(getCommandManager().getMessages().commandHelp
+                        .replaceAll("%command%", getName())
+                        .replaceAll("%commandUsage%", getUsage())
+                        .replaceAll("%commandDescription%", getDescription()));
+                sender.sendMessage(getCommandManager().getMessages().commandHelp
+                        .replaceAll("%command%", getName() + " " + subCommand.getUsage())
+                        .replaceAll("%commandUsage%", "")
+                        .replaceAll("%commandDescription%", subCommand.getDescription()));
+                //sender.sendMessage(getName()+(subCommand.getUsage() != null ? " " + subCommand.getUsage() : "") + (subCommand.getDescription() != null ? " " + subCommand.getDescription() : ""));
+                /*if(!subCommand.getSubCommands().isEmpty()){
                     String helpMessage = "";
                     for(SubCommand nextSubCommand : subCommand.getSubCommands()) {
                         helpMessage+=getName() +" "+ subCommand.getName()+(nextSubCommand.getUsage() != null ? " " + nextSubCommand.getUsage() : "")+(nextSubCommand.getDescription() != null ? " " + nextSubCommand.getDescription() : "")+"\n";
                     }
                     sender.sendMessage(helpMessage);
-                }
+                }*/
             }
         }
     }
@@ -88,10 +98,10 @@ public class MainCommand extends Command {
         }
         if(!(this instanceof SubCommand)) {
             if (args.length == 1) {
-                if (GeneralUtil.isNumber(args[0])) {
+                try{
                     sendHelp(sender, Integer.valueOf(args[0]));
                     return;
-                }
+                }catch(NumberFormatException exception){}
             }
             sendHelp(sender, 1);
         }
