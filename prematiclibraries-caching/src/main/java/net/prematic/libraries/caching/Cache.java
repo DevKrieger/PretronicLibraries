@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-interface Cache<O> {
+public interface Cache<O> {
 
     Collection<O> getObjects();
 

@@ -3,6 +3,7 @@ package net.prematic.libraries.command.manager;
 import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.owner.CommandOwner;
 import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.language.LanguageManager;
 
 import java.util.Collection;
 
@@ -29,6 +30,8 @@ public interface CommandManager {
     void unregisterCommand(CommandOwner owner);
 
     void unregisterAll();
+
+    LanguageManager getLanguageManager();
 
     Messages messages = new Messages();
 

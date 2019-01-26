@@ -47,5 +47,11 @@
             <version>2.12</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>net.prematic.libraries</groupId>
+            <artifactId>prematiclibraries-language</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

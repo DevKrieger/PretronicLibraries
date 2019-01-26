@@ -29,7 +29,7 @@ public class LanguageManager {
     }
 
     public String getMessage(Language language, String key) {
-        if(!language.containsMessage(key)) return getDefaultLanguage().getMessage(key);
+        if(language == null || !language.containsMessage(key)) return getDefaultLanguage().getMessage(key);
         return language.getMessage(key);
     }
 

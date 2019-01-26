@@ -6,6 +6,8 @@ import net.prematic.libraries.command.owner.CommandOwner;
 import net.prematic.libraries.command.owner.SystemCommandOwner;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.command.sender.ConsoleCommandSender;
+import net.prematic.libraries.language.LanguageManager;
+
 import java.io.Console;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +22,7 @@ import java.util.LinkedList;
 public class PrematicCommandManager implements CommandManager {
 
     private final Collection<Command> commands;
+    private LanguageManager languageManager;
     protected boolean running;
 
     public PrematicCommandManager(){
@@ -33,6 +36,15 @@ public class PrematicCommandManager implements CommandManager {
     public Command getCommand(String name) {
         for(Command commands : this.commands) if(commands.hasAliases(name)) return commands;
         return null;
+    }
+
+    @Override
+    public LanguageManager getLanguageManager() {
+        return languageManager;
+    }
+
+    public void setLanguageManager(LanguageManager languageManager) {
+        this.languageManager = languageManager;
     }
 
     public void registerCommand(CommandOwner owner, Command command) {
@@ -63,12 +75,19 @@ public class PrematicCommandManager implements CommandManager {
         this.commands.clear();
     }
 
+
+
+
+
     public void dispatchCommand(CommandSender sender, String message){
         final String[] args = message.trim().split(" ");
         String name = args[0];
         Command command = getCommand(name);
         if(command != null) command.execute(sender,Arrays.copyOfRange(args,1,args.length));
-        else sender.sendMessage(this.messages.commandNotFound.replace("[command]",name));
+        else
+            sender.sendMessage((getLanguageManager() == null ? getMessages().commandNotFound :
+                    getLanguageManager().getMessage(sender.getLanguage(), getMessages().commandNotFound))
+                    .replace("[command]",name));
     }
 
     public void shutdown(){
