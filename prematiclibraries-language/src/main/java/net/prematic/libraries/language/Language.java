@@ -74,12 +74,14 @@ public class Language {
         return getMessages().containsKey(key);
     }
 
-    public void addMessage(String key, String message) {
+    public Language addMessage(String key, String message) {
         getMessages().put(key, message);
+        return this;
     }
 
-    public void removeMessage(String key) {
+    public Language removeMessage(String key) {
         getMessages().remove(key);
+        return this;
     }
 
     public void setEnabled(boolean enabled) {
