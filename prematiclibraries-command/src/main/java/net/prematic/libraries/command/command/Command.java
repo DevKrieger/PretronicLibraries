@@ -3,9 +3,10 @@ package net.prematic.libraries.command.command;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.owner.CommandOwner;
 import net.prematic.libraries.command.sender.CommandSender;
+
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 
 /*
  *
@@ -18,25 +19,25 @@ public abstract class Command {
     private String name, description, permission, usage;
     private CommandOwner owner;
     private CommandManager commandManager;
-    private List<String> aliases;
+    private Collection<String> aliases;
 
     public Command(String name) {
         this.name = name;
         this.description = "none";
-        this.aliases = new LinkedList<>();
+        this.aliases = new HashSet<>();
     }
 
     public Command(String name, String description) {
         this.name = name;
         this.description = description;
-        this.aliases = new LinkedList<>();
+        this.aliases = new HashSet<>();
     }
 
     public Command(String name, String description, String permission) {
         this.name = name;
         this.description = description;
         this.permission = permission;
-        this.aliases = new LinkedList<>();
+        this.aliases = new HashSet<>();
     }
 
     public Command(String name, String description, String permission, String usage, String... aliases) {
@@ -44,7 +45,7 @@ public abstract class Command {
         this.description = description;
         this.permission = permission;
         this.usage = usage;
-        this.aliases = new LinkedList<>(Arrays.asList(aliases));
+        this.aliases = new HashSet<>(Arrays.asList(aliases));
     }
 
     public String getName() {
@@ -71,7 +72,7 @@ public abstract class Command {
         return this.owner;
     }
 
-    public List<String> getAliases() {
+    public Collection<String> getAliases() {
         return this.aliases;
     }
 

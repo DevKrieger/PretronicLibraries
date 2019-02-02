@@ -157,13 +157,13 @@ public class SimpleCache<O> implements Cache<O>{
 
     @Override
     public Cache<O> registerQuery(String name, CacheObjectQuery<O> query) {
-        this.queries.put(name,query);
+        this.queries.put(name.toLowerCase(),query);
         return this;
     }
 
     @Override
     public Cache<O> registerLoader(String name, CacheObjectLoader<O> loader) {
-        this.loaders.put(name,loader);
+        this.loaders.put(name.toLowerCase(),loader);
         return this;
     }
 
