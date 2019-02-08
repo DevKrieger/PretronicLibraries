@@ -54,7 +54,8 @@ public class MainCommand extends Command {
     public void sendHelp(CommandSender sender, int page) {
         int maxPages = getMaxPages();
         if(page > maxPages) page = 1;
-        sender.sendMessage(getCommandManager().getMessages().commandHelpHeader
+        sender.sendMessage((getCommandManager().getLanguageManager() == null ? getCommandManager().getMessages().commandHelpHeader :
+                getCommandManager().getLanguageManager().getMessage(sender.getLanguage(), getCommandManager().getMessages().commandHelpHeader))
                 .replaceAll("%currentPage%", String.valueOf(page))
                 .replaceAll("%maxPages%", String.valueOf(maxPages)));
         int from = 1;
@@ -64,11 +65,13 @@ public class MainCommand extends Command {
             if(h > subCommands.size()) break;
             SubCommand subCommand = subCommands.get(h - 1);
             if(sender.hasPermission(subCommand.getPermission())) {
-                sender.sendMessage(getCommandManager().getMessages().commandHelp
+                sender.sendMessage((getCommandManager().getLanguageManager() == null ? getCommandManager().getMessages().commandHelp :
+                        getCommandManager().getLanguageManager().getMessage(sender.getLanguage(), getCommandManager().getMessages().commandHelp))
                         .replaceAll("%command%", getName())
                         .replaceAll("%commandUsage%", getUsage())
                         .replaceAll("%commandDescription%", getDescription()));
-                sender.sendMessage(getCommandManager().getMessages().commandHelp
+                sender.sendMessage((getCommandManager().getLanguageManager() == null ? getCommandManager().getMessages().commandHelp :
+                        getCommandManager().getLanguageManager().getMessage(sender.getLanguage(), getCommandManager().getMessages().commandHelp))
                         .replaceAll("%command%", getName() + " " + subCommand.getUsage())
                         .replaceAll("%commandUsage%", "")
                         .replaceAll("%commandDescription%", subCommand.getDescription()));

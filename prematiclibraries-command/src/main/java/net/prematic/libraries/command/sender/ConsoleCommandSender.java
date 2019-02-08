@@ -6,6 +6,8 @@ package net.prematic.libraries.command.sender;
  *
  */
 
+import net.prematic.libraries.language.Language;
+
 public class ConsoleCommandSender implements CommandSender{
 
     public String getName() {
@@ -18,5 +20,10 @@ public class ConsoleCommandSender implements CommandSender{
 
     public void sendMessage(String message) {
         System.out.println(message);
+    }
+
+    @Override
+    public Language getLanguage() {
+        return null;
     }
 }

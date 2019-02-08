@@ -6,18 +6,36 @@ package net.prematic.libraries.language;
  *
  */
 
+import net.prematic.libraries.utility.Document;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Language {
 
-    private final String name, localName;
+    private boolean enabled, hidden;
+    private final String name, localName, tag;
     private final Map<String, String> messages;
+    private final Document properties;
 
-    public Language(String name, String localName) {
+    public Language(String name, String localName, String tag) {
         this.name = name;
         this.localName = localName;
+        this.tag = tag;
+        this.enabled = true;
+        this.hidden = false;
         this.messages = new ConcurrentHashMap<>();
+        this.properties = new Document();
+    }
+
+    public Language(boolean enabled, boolean hidden, String name, String localName, String tag) {
+        this.enabled = enabled;
+        this.hidden = hidden;
+        this.name = name;
+        this.localName = localName;
+        this.tag = tag;
+        this.messages = new ConcurrentHashMap<>();
+        this.properties = new Document();
     }
 
     public String getName() {
@@ -36,15 +54,41 @@ public class Language {
         return getMessages().get(key);
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public Document getProperties() {
+        return properties;
+    }
+
     public boolean containsMessage(String key) {
         return getMessages().containsKey(key);
     }
 
-    public void addMessage(String key, String message) {
+    public Language addMessage(String key, String message) {
         getMessages().put(key, message);
+        return this;
     }
 
-    public void removeMessage(String key) {
+    public Language removeMessage(String key) {
         getMessages().remove(key);
+        return this;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 }

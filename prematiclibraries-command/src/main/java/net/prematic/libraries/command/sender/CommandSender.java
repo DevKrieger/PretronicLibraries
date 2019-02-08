@@ -6,6 +6,8 @@ package net.prematic.libraries.command.sender;
  *
  */
 
+import net.prematic.libraries.language.Language;
+
 public interface CommandSender {
 
     String getName();
@@ -13,5 +15,7 @@ public interface CommandSender {
     boolean hasPermission(String permission);
 
     void sendMessage(String message);
+
+    Language getLanguage();
 
 }

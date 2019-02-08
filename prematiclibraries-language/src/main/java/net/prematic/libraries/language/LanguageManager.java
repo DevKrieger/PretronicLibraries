@@ -6,17 +6,16 @@ package net.prematic.libraries.language;
  *
  */
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LanguageManager {
 
     private final List<Language> languages;
-    private Language defaultLanguage;
+    private String defaultLanguage;
 
-    public LanguageManager(Language defaultLanguage) {
-        this.languages = new LinkedList<>();
+    public LanguageManager(String defaultLanguage) {
+        this.languages = new CopyOnWriteArrayList<>();
         this.defaultLanguage = defaultLanguage;
     }
 
@@ -25,22 +24,24 @@ public class LanguageManager {
     }
 
     public Language getDefaultLanguage() {
-        return defaultLanguage;
+        return getLanguage(defaultLanguage);
+    }
+
+    public Language getLanguage(String name) {
+        for(Language language : getLanguages()) if(language.getName().equalsIgnoreCase(name)) return language;
+        return null;
     }
 
     public String getMessage(Language language, String key) {
-        if(!language.containsMessage(key)) return getDefaultLanguage().getMessage(key);
+        if(language == null || !language.containsMessage(key)) return !getDefaultLanguage().containsMessage(key) ? key : getDefaultLanguage().getMessage(key);
         return language.getMessage(key);
     }
 
     public boolean containsLanguage(String name) {
-        Iterator<Language> iterator = getLanguages().iterator();
-        while (iterator.hasNext())
-            if(iterator.next().getName().equalsIgnoreCase(name)) return true;
-        return false;
+        return getLanguage(name) != null;
     }
 
-    public void setDefaultLanguage(Language defaultLanguage) {
+    public void setDefaultLanguage(String defaultLanguage) {
         this.defaultLanguage = defaultLanguage;
     }
 

@@ -11,14 +11,17 @@ import net.prematic.libraries.caching.object.CacheObjectLoader;
 import net.prematic.libraries.caching.object.CacheObjectQuery;
 
 import java.util.Collection;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-interface Cache<O> {
+public interface Cache<O> {
 
     Collection<O> getObjects();
 
     O get(String queryName, Object identifier);
+
+    Future<O> getAsync(String queryName, Object identifier);
 
     int size();
 

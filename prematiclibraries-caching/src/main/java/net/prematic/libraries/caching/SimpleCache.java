@@ -10,10 +10,7 @@ import net.prematic.libraries.caching.object.CacheObjectLoader;
 import net.prematic.libraries.caching.object.CacheObjectQuery;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class SimpleCache<O> implements Cache<O>{
@@ -75,6 +72,11 @@ public class SimpleCache<O> implements Cache<O>{
             return object;
         }
         return null;
+    }
+
+    @Override
+    public Future<O> getAsync(String queryName, Object identifier) {
+        return EXECUTOR.submit(()-> get(queryName, identifier));
     }
 
     @Override
@@ -157,13 +159,13 @@ public class SimpleCache<O> implements Cache<O>{
 
     @Override
     public Cache<O> registerQuery(String name, CacheObjectQuery<O> query) {
-        this.queries.put(name,query);
+        this.queries.put(name.toLowerCase(),query);
         return this;
     }
 
     @Override
     public Cache<O> registerLoader(String name, CacheObjectLoader<O> loader) {
-        this.loaders.put(name,loader);
+        this.loaders.put(name.toLowerCase(),loader);
         return this;
     }
 
