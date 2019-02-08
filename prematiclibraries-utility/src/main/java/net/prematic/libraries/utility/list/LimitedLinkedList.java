@@ -5,20 +5,35 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 /*
+ * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
- *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 02.09.18 12:52
- *  * Copyright (c) 2018 Davide Wietlisbach on 02.09.18 12:52
+ * @author Davide Wietlisbach
+ * @since 08.02.19 16:17
  *
+ * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
  */
 
-public class LimitedLinkedList extends LinkedList {
+public class LimitedLinkedList<T> extends LinkedList<T> {
+
+    //Todo finish extra methods
+
 
     private final int maxsize;
 
     public LimitedLinkedList(int maxsize) {
         this.maxsize = maxsize;
     }
-    public LimitedLinkedList(Collection collection, int maxsize) {
+    public LimitedLinkedList(Collection<T> collection, int maxsize) {
         super(collection);
         this.maxsize = maxsize;
     }
@@ -29,38 +44,38 @@ public class LimitedLinkedList extends LinkedList {
         return super.size() < this.maxsize;
     }
     @Override
-    public boolean add(Object object) {
+    public boolean add(T object) {
         if(canEnter()) return super.add(object);
         else throw new LimitedListReachedLimitException(this.maxsize);
     }
     @Override
-    public void addFirst(Object object) {
+    public void addFirst(T object) {
         if(canEnter()) super.addFirst(object);
         else throw new LimitedListReachedLimitException(this.maxsize);
     }
     @Override
-    public void addLast(Object object) {
+    public void addLast(T object) {
         if(canEnter()) super.addLast(object);
         else throw new LimitedListReachedLimitException(this.maxsize);
     }
     @Override
-    public boolean offer(Object o) {
+    public boolean offer(T o) {
         if(canEnter()) return super.offer(o);
         else throw new LimitedListReachedLimitException(this.maxsize);
     }
     @Override
-    public boolean offerFirst(Object object) {
+    public boolean offerFirst(T object) {
         if(canEnter()) return super.offerFirst(object);
         else throw new LimitedListReachedLimitException(this.maxsize);
     }
     @Override
-    public boolean offerLast(Object object) {
+    public boolean offerLast(T object) {
         if(canEnter()) return super.offerLast(object);
         else throw new LimitedListReachedLimitException(this.maxsize);
     }
     @Override
-    public boolean addAll(Collection collection) {
-        for(Object object : collection) if(!this.add(object)) return false;
+    public boolean addAll(Collection<? extends T> collection) {
+        for(T object : collection) if(!this.add(object)) return false;
         else throw new LimitedListReachedLimitException(this.maxsize);
         return true;
     }

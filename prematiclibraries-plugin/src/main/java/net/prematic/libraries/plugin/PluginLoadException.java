@@ -1,6 +1,4 @@
-package net.prematic.libraries.utility.map;
-
-import java.util.LinkedHashMap;
+package net.prematic.libraries.plugin;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -21,15 +19,21 @@ import java.util.LinkedHashMap;
  * under the License.
  */
 
-public class StringCaseIgnoreLinkedMap<O> extends LinkedHashMap<String,O> {
+public class PluginLoadException extends RuntimeException{
 
-    @Override
-    public O get(Object key) {
-        if(!(key instanceof String)) throw new IllegalArgumentException("StringCaseIgnoreLinkedMap supports only String as key");
-        return super.get(((String) key).toLowerCase());
+    public PluginLoadException(String message) {
+        super(message);
     }
-    @Override
-    public O put(String key, O value) {
-        return super.put(key.toLowerCase(), value);
+
+    public PluginLoadException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public PluginLoadException(Throwable cause) {
+        super(cause);
+    }
+
+    public PluginLoadException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

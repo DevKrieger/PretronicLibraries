@@ -1,11 +1,5 @@
 package net.prematic.libraries.utility;
 
-/*
- *
- *  * Copyright (c) 2018 Davide Wietlisbach on 02.09.18 16:44
- *  * Copyright (c) 2018 Philipp Elvin Friedhoff on 02.09.18 20:45
- */
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -16,6 +10,25 @@ import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.*;
 
+/*
+ * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ *
+ * @author Davide Wietlisbach
+ * @since 08.02.19 16:17
+ *
+ * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
 public class GeneralUtil {
 
     public static final Random RANDOM = new Random();
@@ -23,9 +36,15 @@ public class GeneralUtil {
     public static Gson GSON = GSON_BUILDER.create();
     public static final JsonParser PARSER = new JsonParser();
 
+    public static void main(String[] args){
+    }
+
+
     public static void createGSON(){
         GSON = GSON_BUILDER.create();
     }
+
+    private static final char [] subset = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
     /*
 
@@ -33,13 +52,14 @@ public class GeneralUtil {
 
      */
     public static String getRandomString(final int size){
-        char data = ' ';
-        String dat = "";
-        for(int i=0;i<=size;i++) {
-            data = (char)(RANDOM.nextInt(25)+97);
-            dat = data+dat;
-        }
-        return dat;
+        char chars[] = new char[size];
+        for(int i=0;i<chars.length;i++) chars[i] = subset[RANDOM.nextInt(subset.length)];
+        return new String(chars);
+        /*
+        StringBuilder generator = new StringBuilder();
+        for(int i=0;i<=size;i++) generator.append((char)(RANDOM.nextInt(25)+97));
+        return generator.toString();
+         */
     }
     public static String rotateString(String string){
         String newstring = "";
@@ -62,12 +82,8 @@ public class GeneralUtil {
      * @return True for a string which is a number
      */
     public static boolean isNumber(String value){
-        try{
-            Long.parseLong(value);
-            return true;
-        }catch(NumberFormatException exception){
-            return false;
-        }
+        for(char c : value.toCharArray()) if(!Character.isDigit(c) && c != '.') return false;
+        return true;
     }
 
     /*

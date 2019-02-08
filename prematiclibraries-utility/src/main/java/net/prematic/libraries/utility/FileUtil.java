@@ -1,11 +1,5 @@
 package net.prematic.libraries.utility;
 
-/*
- *
- *  * Copyright (c) 2018 Davide Wietlisbach on 02.09.18 16:43
- *
- */
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -21,6 +15,25 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+/*
+ * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ *
+ * @author Davide Wietlisbach
+ * @since 08.02.19 16:17
+ *
+ * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
 
 public class FileUtil {
 
@@ -39,9 +52,6 @@ public class FileUtil {
             }
         }
         file.delete();
-    }
-    public static void deleteFile(File file){
-        if(file.exists()) file.delete();
     }
     public static byte[] getFileContent(File file){
         if(!file.exists()) return null;
@@ -63,7 +73,7 @@ public class FileUtil {
             return content.toString();
         }catch (Exception exception){ throw new RuntimeException(exception); }
     }
-    public static Set<String> getResourceFiles (String folder) {
+    public static Set<String> getResourceFiles(String folder) {
         try{
             Set<String> result = new HashSet<>();
             URL url = instance.getClass().getClassLoader().getResource(folder);
@@ -72,7 +82,7 @@ public class FileUtil {
                 String me = instance.getClass().getName().replace(".", "/")+".class";
                 url = instance.getClass().getClassLoader().getResource(me);
             }
-            if(url.getProtocol().equals("jar")){
+            if(url != null && url.getProtocol() != null && url.getProtocol().equals("jar")){
                 String path = url.getPath().substring(5, url.getPath().indexOf("!"));
                 JarFile jar = new JarFile(URLDecoder.decode(path, "UTF-8"));
                 Enumeration<JarEntry> entries = jar.entries();
@@ -80,8 +90,8 @@ public class FileUtil {
                     String name = entries.nextElement().getName();
                     if(name.startsWith(folder)) {
                         String entry = name.substring(folder.length());
-                        int subdir = entry.indexOf("/");
-                        if(subdir >= 0) entry = entry.substring(0, subdir);
+                        int subDir = entry.indexOf("/");
+                        if(subDir >= 0) entry = entry.substring(0, subDir);
                         result.add(entry);
                     }
                 }
@@ -89,14 +99,16 @@ public class FileUtil {
             return result;
         }catch (Exception exception){throw new RuntimeException(exception.getMessage());}
     }
+
     public static String getResourceFileContent(String name) {
         return getResourceFileContent(name,true);
     }
+
     public static String getResourceFileContent(String name, Boolean separate) {
         StringBuilder result = new StringBuilder();
         InputStream stream =  Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
-        InputStreamReader streamreader = new InputStreamReader(stream,StandardCharsets.UTF_8);
-        BufferedReader reader = new BufferedReader(streamreader);
+        InputStreamReader streamReader = new InputStreamReader(stream,StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(streamReader);
         try {
             for(String line; (line = reader.readLine()) != null;){
                 result.append(line);
@@ -107,7 +119,7 @@ public class FileUtil {
         }finally {
             try{
                 stream.close();
-                streamreader.close();
+                streamReader.close();
                 reader.close();
             }catch (Exception exception){}
         }

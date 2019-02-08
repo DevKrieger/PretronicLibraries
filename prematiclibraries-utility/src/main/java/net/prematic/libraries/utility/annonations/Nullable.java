@@ -1,6 +1,9 @@
-package net.prematic.libraries.utility.map;
+package net.prematic.libraries.utility.annonations;
 
-import java.util.LinkedHashMap;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -21,15 +24,10 @@ import java.util.LinkedHashMap;
  * under the License.
  */
 
-public class StringCaseIgnoreLinkedMap<O> extends LinkedHashMap<String,O> {
+@Target({ElementType.METHOD,ElementType.FIELD,ElementType.PARAMETER,ElementType.LOCAL_VARIABLE})
+@Retention(RetentionPolicy.CLASS)
+public @interface Nullable {
 
-    @Override
-    public O get(Object key) {
-        if(!(key instanceof String)) throw new IllegalArgumentException("StringCaseIgnoreLinkedMap supports only String as key");
-        return super.get(((String) key).toLowerCase());
-    }
-    @Override
-    public O put(String key, O value) {
-        return super.put(key.toLowerCase(), value);
-    }
+    String message() default "Unknown";
+
 }
