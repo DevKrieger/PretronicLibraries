@@ -141,7 +141,7 @@ public class SimpleCache<O> implements Cache<O>{
         Iterator<CacheEntry> iterator = this.objects.iterator();
         CacheEntry entry;
         while(iterator.hasNext() && (entry = iterator.next()) != null){
-            if(entry.equals(cachedObject)){
+            if(entry.object.equals(cachedObject)){
                 iterator.remove();
                 if(this.removeListener != null) this.removeListener.accept(entry.object);
             }

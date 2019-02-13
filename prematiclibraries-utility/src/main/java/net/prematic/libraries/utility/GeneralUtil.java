@@ -132,7 +132,14 @@ public class GeneralUtil {
         return map.entrySet().stream().sorted(Map.Entry.<U,Integer>comparingByValue().reversed()).limit(1).map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
+    public static <U> U getRandomItem(Collection<U> collection){
+        int random = RANDOM.nextInt(collection.size());
+        for(U object : collection) if (--random < 0) return object;
+        return null;
+    }
+
     /*
+
 
     encryption tools
 
