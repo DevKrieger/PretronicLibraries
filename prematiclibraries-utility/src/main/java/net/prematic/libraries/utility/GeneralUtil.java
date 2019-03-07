@@ -9,11 +9,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
- * @author Davide Wietlisbach
+ * @author Davide Wietlisbach, Philipp Elvin Friedhoff
  * @since 08.02.19 16:17
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -36,10 +38,6 @@ public class GeneralUtil {
     public static Gson GSON = GSON_BUILDER.create();
     public static final JsonParser PARSER = new JsonParser();
 
-    public static void main(String[] args){
-    }
-
-
     public static void createGSON(){
         GSON = GSON_BUILDER.create();
     }
@@ -61,16 +59,19 @@ public class GeneralUtil {
         return generator.toString();
          */
     }
+
     public static String rotateString(String string){
         String newstring = "";
         char[] charArray = string.toCharArray();
         for(int i = charArray.length-1;i > -1;i--) newstring += charArray[i];
         return newstring;
     }
+
     public static Boolean equalsOne(String string, String... values){
         for(String value : values) if(value.equalsIgnoreCase(string)) return true;
         return false;
     }
+
     public static Boolean equalsALL(String string, String... values){
         for(String value : values) if(!value.equalsIgnoreCase(string)) return false;
         return true;
@@ -107,21 +108,25 @@ public class GeneralUtil {
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) return result;
         return null;
     }
+
     public static <U> void iterateForEach(Iterable<U> list, ForEach<U> forEach){
         Iterator<U> iterator = list.iterator();
         U result = null;
         while(iterator.hasNext() && (result=iterator.next()) != null) forEach.forEach(result);
     }
+
     public static <U> void iterateAcceptedForEach(Iterable<U> list, AcceptAble<U> acceptAble, ForEach<U> forEach) {
         Iterator<U> iterator = list.iterator();
         U result = null;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) forEach.forEach(result);
     }
+
     public static <U> List<U> iterateAcceptedReturn(Iterable<U> list, AcceptAble<U> acceptAble){
         List<U> result = new ArrayList<>();
         iterateAcceptedForEach(list,acceptAble,result::add);
         return result;
     }
+
     public static <U> void iterateAndRemove(Iterable<U> list, AcceptAble<U> acceptAble){
         Iterator<U> iterator = list.iterator();
         U result = null;
@@ -148,6 +153,7 @@ public class GeneralUtil {
     public static String encodeMD5(String password){
         return encodeMD5(password.getBytes());
     }
+
     public static String encodeMD5(byte[] bytes) {
         MessageDigest digest = getMessageDigest("MD5");
         byte[] hash = digest.digest(bytes);
@@ -155,6 +161,7 @@ public class GeneralUtil {
         for(int val : hash) builder.append(Integer.toHexString(val&0xff));
         return builder.toString();
     }
+
     public static MessageDigest getMessageDigest(String name) {
         try {
             return MessageDigest.getInstance(name);
@@ -163,12 +170,24 @@ public class GeneralUtil {
         }
     }
 
-    /*
+    public static String[] splitAndKeep(String input, String regex, int offset) {
+        List<String> result = new ArrayList<>();
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        int position = 0;
+        while (matcher.find()) {
+            System.out.println(matcher.end());
+            result.add(input.substring(position, matcher.end()-1-offset));
+            result.add(String.valueOf(input.charAt(matcher.end()-1-offset)));
+            position = matcher.end()-offset;
+        }
+        if(position < input.length()) result.add(input.substring(position));
+        return result.toArray(new String[0]);
+    }
 
-    Simple sub classes
-
-     */
-
+    public static String[] splitAndKeep(String input, String regex) {
+        return splitAndKeep(input, regex, 0);
+    }
 
     /*
 
