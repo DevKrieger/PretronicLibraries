@@ -29,18 +29,23 @@ public class OperatingSystemInfo {
         this.architecture = architecture;
         this.javaVersion = javaVersion;
     }
+
     public String getName() {
         return this.name;
     }
+
     public String getVersion() {
         return this.version;
     }
+
     public String getArchitecture() {
         return this.architecture;
     }
+
     public String getJavaVersion() {
         return this.javaVersion;
     }
+
     public static OperatingSystemInfo build(){
         return new OperatingSystemInfo(System.getProperty("os.name"),System.getProperty("os.version")
                 ,System.getProperty("os.arch"),System.getProperty("java.version"));

@@ -1,10 +1,8 @@
 package net.prematic.libraries.utility;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
+import java.net.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,9 +33,8 @@ import java.util.zip.ZipOutputStream;
  * under the License.
  */
 
-public class FileUtil {
-
-    private static FileUtil instance = new FileUtil();
+//Todo update file utils
+public final class FileUtil {
 
     public static void deleteDirectory(String path){
         deleteDirectory(new File(path));
@@ -59,10 +56,17 @@ public class FileUtil {
             return Files.readAllBytes(file.toPath());
         }catch (Exception exception){throw new RuntimeException(exception);}
     }
+
     public static String getStringFileContent(File file){
+        return getStringFileContent(file,StandardCharsets.UTF_8);
+    }
+
+    public static String getStringFileContent(File file, Charset charset){
         if(!file.exists()) return "";
         try{
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(file),charset)));
             StringBuilder content = new StringBuilder();
             String line = reader.readLine();
             while(line != null){
@@ -76,11 +80,11 @@ public class FileUtil {
     public static Set<String> getResourceFiles(String folder) {
         try{
             Set<String> result = new HashSet<>();
-            URL url = instance.getClass().getClassLoader().getResource(folder);
+            URL url = FileUtil.class.getClassLoader().getResource(folder);
             if(url != null && url.getProtocol().equals("file")) return new HashSet<>();
             if(url == null){
-                String me = instance.getClass().getName().replace(".", "/")+".class";
-                url = instance.getClass().getClassLoader().getResource(me);
+                String me = FileUtil.class.getName().replace(".", "/")+".class";
+                url = FileUtil.class.getClassLoader().getResource(me);
             }
             if(url != null && url.getProtocol() != null && url.getProtocol().equals("jar")){
                 String path = url.getPath().substring(5, url.getPath().indexOf("!"));
@@ -219,6 +223,14 @@ public class FileUtil {
             }
         }catch (Exception exception){
             throw new RuntimeException(exception);
+        }
+    }
+
+    public static URL toUrl(File file){
+        try {
+            return file.toURI().toURL();
+        } catch (MalformedURLException exception) {
+            throw new IllegalArgumentException(exception);
         }
     }
 }

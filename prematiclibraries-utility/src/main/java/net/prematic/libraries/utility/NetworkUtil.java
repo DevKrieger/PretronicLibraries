@@ -32,7 +32,16 @@ import java.net.Socket;
  * under the License.
  */
 
-public class NetworkUtil {
+
+/*
+
+Todo Update Network Util
+ - remove netty stuff
+
+
+ */
+
+public final class NetworkUtil {
 
     public static final boolean EPOLL = Epoll.isAvailable();
 
@@ -64,7 +73,7 @@ public class NetworkUtil {
         return address.split("[/:]")[1];
     }
 
-    public static Boolean isIP4Address(String ip){
+    public static boolean isIP4Address(String ip){
         try {
             if(ip == null || ip.isEmpty()) return false;
             String[] parts = ip.split("\\.");

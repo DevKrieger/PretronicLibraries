@@ -44,12 +44,12 @@ public class MultiLinkedHashMapMap<K,V> {
         if(map != null) map.get(key);
         return null;
     }
-    public Boolean containsKey(int mapId,K key){
+    public boolean containsKey(int mapId,K key){
         Map<K,V> map = this.maps.get(mapId);
         if(map != null) return map.containsKey(key);
         return false;
     }
-    public Boolean containsKey(K key){
+    public boolean containsKey(K key){
         for(Integer mapId : maps.keySet()) if(containsKey(mapId,key)) return true;
         return false;
     }

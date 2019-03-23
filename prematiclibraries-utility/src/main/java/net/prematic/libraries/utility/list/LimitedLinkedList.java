@@ -27,7 +27,6 @@ public class LimitedLinkedList<T> extends LinkedList<T> {
 
     //Todo finish extra methods
 
-
     private final int maxsize;
 
     public LimitedLinkedList(int maxsize) {

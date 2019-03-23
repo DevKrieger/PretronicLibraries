@@ -1,10 +1,12 @@
-package net.prematic.libraries.utility;
+package net.prematic.libraries.utility.map;
+
+import java.util.Objects;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 22.03.19 22:32
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +21,12 @@ package net.prematic.libraries.utility;
  * under the License.
  */
 
-public class MultiValue<K, V> {
+public class Pair<K, V> {
 
     private K key;
     private V value;
 
-    public MultiValue(K key, V value) {
+    public Pair(K key, V value) {
         this.key = key;
         this.value = value;
     }
@@ -58,10 +60,10 @@ public class MultiValue<K, V> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o instanceof MultiValue) {
-            MultiValue multiValue = (MultiValue) o;
-            if (key != null ? !key.equals(multiValue.key) : multiValue.key != null) return false;
-            return value != null ? value.equals(multiValue.value) : multiValue.value == null;
+        if (o instanceof Pair) {
+            Pair multiValue = (Pair) o;
+            if (!Objects.equals(key, multiValue.key)) return false;
+            return Objects.equals(value, multiValue.value);
         }
         return false;
     }

@@ -3,19 +3,16 @@ package net.prematic.libraries.utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+import sun.net.util.IPAddressUtil;
 
-import java.lang.reflect.Array;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.NumberFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
- * @author Davide Wietlisbach, Philipp Elvin Friedhoff
+ * @author Davide Wietlisbach
  * @since 08.02.19 16:17
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -33,49 +30,23 @@ import java.util.regex.Pattern;
 
 public class GeneralUtil {
 
+    public static final String NULL = "null";
+
     public static final Random RANDOM = new Random();
+
+
+
     public static final GsonBuilder GSON_BUILDER = new GsonBuilder().setPrettyPrinting();
     public static Gson GSON = GSON_BUILDER.create();
     public static final JsonParser PARSER = new JsonParser();
+
+
+
 
     public static void createGSON(){
         GSON = GSON_BUILDER.create();
     }
 
-    private static final char [] subset = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
-
-    /*
-
-    String utils
-
-     */
-    public static String getRandomString(final int size){
-        char chars[] = new char[size];
-        for(int i=0;i<chars.length;i++) chars[i] = subset[RANDOM.nextInt(subset.length)];
-        return new String(chars);
-        /*
-        StringBuilder generator = new StringBuilder();
-        for(int i=0;i<=size;i++) generator.append((char)(RANDOM.nextInt(25)+97));
-        return generator.toString();
-         */
-    }
-
-    public static String rotateString(String string){
-        String newstring = "";
-        char[] charArray = string.toCharArray();
-        for(int i = charArray.length-1;i > -1;i--) newstring += charArray[i];
-        return newstring;
-    }
-
-    public static Boolean equalsOne(String string, String... values){
-        for(String value : values) if(value.equalsIgnoreCase(string)) return true;
-        return false;
-    }
-
-    public static Boolean equalsALL(String string, String... values){
-        for(String value : values) if(!value.equalsIgnoreCase(string)) return false;
-        return true;
-    }
 
     /**
      *
@@ -93,111 +64,23 @@ public class GeneralUtil {
 
      */
 
-    public static int getMaxPages(int pagesize, List<?> list) {
-        int max = pagesize;
+    public static int getMaxPages(int pageSize, List<?> list) {
         int i = list.size();
-        if (i % max == 0) return i/max;
-        double j = i / pagesize;
+        if (i % pageSize == 0) return i/pageSize;
+        double j = i/pageSize;
         int h = (int) Math.floor(j*100)/100;
         return h+1;
     }
 
-    public static <U> U iterateOne(Iterable<U> list, AcceptAble<U> acceptAble) {
-        Iterator<U> iterator = list.iterator();
-        U result = null;
-        while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) return result;
+    public static <U> U getRandomItem(Collection<U> collection){
+        IPAddressUtil.textToNumericFormatV4("");
+        int random = RANDOM.nextInt(collection.size());
+        for(U object : collection) if (--random < 0) return object;
         return null;
-    }
-
-    public static <U> void iterateForEach(Iterable<U> list, ForEach<U> forEach){
-        Iterator<U> iterator = list.iterator();
-        U result = null;
-        while(iterator.hasNext() && (result=iterator.next()) != null) forEach.forEach(result);
-    }
-
-    public static <U> void iterateAcceptedForEach(Iterable<U> list, AcceptAble<U> acceptAble, ForEach<U> forEach) {
-        Iterator<U> iterator = list.iterator();
-        U result = null;
-        while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) forEach.forEach(result);
-    }
-
-    public static <U> List<U> iterateAcceptedReturn(Iterable<U> list, AcceptAble<U> acceptAble){
-        List<U> result = new ArrayList<>();
-        iterateAcceptedForEach(list,acceptAble,result::add);
-        return result;
-    }
-
-    public static <U> void iterateAndRemove(Iterable<U> list, AcceptAble<U> acceptAble){
-        Iterator<U> iterator = list.iterator();
-        U result = null;
-        while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptAble.accept(result)) iterator.remove();
     }
 
     public static <U> U getHighestKey(final Map<U, Integer> map) {
         return map.entrySet().stream().sorted(Map.Entry.<U,Integer>comparingByValue().reversed()).limit(1).map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
-    public static <U> U getRandomItem(Collection<U> collection){
-        int random = RANDOM.nextInt(collection.size());
-        for(U object : collection) if (--random < 0) return object;
-        return null;
-    }
-
-    /*
-
-
-    encryption tools
-
-     */
-
-    public static String encodeMD5(String password){
-        return encodeMD5(password.getBytes());
-    }
-
-    public static String encodeMD5(byte[] bytes) {
-        MessageDigest digest = getMessageDigest("MD5");
-        byte[] hash = digest.digest(bytes);
-        StringBuilder builder = new StringBuilder();
-        for(int val : hash) builder.append(Integer.toHexString(val&0xff));
-        return builder.toString();
-    }
-
-    public static MessageDigest getMessageDigest(String name) {
-        try {
-            return MessageDigest.getInstance(name);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static String[] splitAndKeep(String input, String regex, int offset) {
-        List<String> result = new ArrayList<>();
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-        int position = 0;
-        while (matcher.find()) {
-            System.out.println(matcher.end());
-            result.add(input.substring(position, matcher.end()-1-offset));
-            result.add(String.valueOf(input.charAt(matcher.end()-1-offset)));
-            position = matcher.end()-offset;
-        }
-        if(position < input.length()) result.add(input.substring(position));
-        return result.toArray(new String[0]);
-    }
-
-    public static String[] splitAndKeep(String input, String regex) {
-        return splitAndKeep(input, regex, 0);
-    }
-
-    /*
-
-    An object accepter and for object executor, useful an for iterate methods.
-
-     */
-    public interface AcceptAble<T> {
-        boolean accept(T object);
-    }
-    public interface ForEach<T> {
-        void forEach(T object);
-    }
 }

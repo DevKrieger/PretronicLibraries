@@ -44,12 +44,12 @@
         </plugins>
     </build>
 
-
     <dependencies>
         <dependency>
             <groupId>net.prematic.libraries.utility</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
