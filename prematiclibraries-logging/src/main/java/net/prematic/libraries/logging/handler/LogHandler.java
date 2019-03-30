@@ -1,8 +1,6 @@
 package net.prematic.libraries.logging.handler;
 
-import net.prematic.libraries.logging.SimplePrematicLogger;
-
-import java.util.logging.LogRecord;
+import net.prematic.libraries.logging.LogRecord;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -23,24 +21,31 @@ import java.util.logging.LogRecord;
  * under the License.
  */
 
-public abstract class LogHandler {
+/**
+ * This object is for additionally handling a log record.
+ *
+ * <p>A log record must be register by the logger and should only be used in one logger.</p>
+ */
+public interface LogHandler {
 
-    private String name;
-    private SimplePrematicLogger logger;
+    /**
+     * Get the name of this logging handler.
+     *
+     * @return The name of this handler
+     */
+    String getName();
 
-    public LogHandler(String name) {
-        this.name = name;
-    }
-    public String getName() {
-        return name;
-    }
-    public SimplePrematicLogger getLogger() {
-        return logger;
-    }
-    public void setLogger(SimplePrematicLogger logger) {
-        this.logger = logger;
-    }
-    public abstract void onInit(SimplePrematicLogger logger);
-    public abstract void log(LogRecord record, String formatedmessage);
-    public abstract void shutdown();
+    /**
+     * Handler a log record.
+     *
+     * @param record The log record which should be handled.
+     * @param formattedMessage The formatted message of this record.
+     */
+    void handleLog(LogRecord record, String formattedMessage);
+
+    /**
+     * Shut this log handler down.
+     */
+    void shutdown();
+
 }

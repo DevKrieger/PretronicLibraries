@@ -1,12 +1,10 @@
-package net.prematic.libraries.utility.map;
-
-import java.util.LinkedHashMap;
+package net.prematic.libraries.logging;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 24.02.19 13:54
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +19,16 @@ import java.util.LinkedHashMap;
  * under the License.
  */
 
-public class StringCaseIgnoreLinkedMap<O> extends LinkedHashMap<String,O> {
+/**
+ * This is for implementing in exceptions to add a info message to the error.
+ */
+public interface InfoAbleException {
 
-    @Override
-    public O get(Object key) {
-        if(!(key instanceof String)) throw new IllegalArgumentException("StringCaseIgnoreLinkedMap supports only String as key");
-        return super.get(((String) key).toLowerCase());
-    }
-    @Override
-    public O put(String key, O value) {
-        return super.put(key.toLowerCase(), value);
-    }
+    /**
+     * Get information about this exception.
+     *
+     * @return The info object of this exception.
+     */
+    MessageInfo getInfo();
+
 }

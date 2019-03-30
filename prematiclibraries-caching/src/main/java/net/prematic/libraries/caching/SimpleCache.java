@@ -100,7 +100,7 @@ public class SimpleCache<O> implements Cache<O>{
 
     @Override
     public O insert(O object) {
-        if(this.maxSize > 0 && size() >= this.maxSize) this.objects.remove(0);
+        if(this.maxSize > 0 && size() >= this.maxSize) removeFirst();
         remove(object);
         this.objects.add(new CacheEntry(System.currentTimeMillis(),object));
         return object;
@@ -229,6 +229,7 @@ public class SimpleCache<O> implements Cache<O>{
             this.object = object;
         }
     }
+
     private class CacheExpireTask implements Runnable{
 
         private boolean running;
@@ -236,12 +237,15 @@ public class SimpleCache<O> implements Cache<O>{
         public CacheExpireTask() {
             this.running = false;
         }
+
         public boolean isRunning() {
             return running;
         }
+
         public void shutdown(){
             this.running = false;
         }
+
         @Override
         public void run() {
             this.running = true;

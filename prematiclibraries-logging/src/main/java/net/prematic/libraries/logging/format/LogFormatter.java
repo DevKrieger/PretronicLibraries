@@ -1,10 +1,8 @@
-package net.prematic.libraries.logging;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 24.03.19 19:42
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,5 +17,23 @@ package net.prematic.libraries.logging;
  * under the License.
  */
 
-public class LogFormatter {
+package net.prematic.libraries.logging.format;
+
+import net.prematic.libraries.logging.LogRecord;
+import net.prematic.libraries.logging.PrematicLogger;
+
+/**
+ * The formatter class is for formatting log record.
+ */
+public interface LogFormatter {
+
+    /**
+     * Format a log record.
+     *
+     * @param logger The logger which executed the formation.
+     * @param record The log record which should be formatted.
+     * @return The formatted message.
+     */
+    String format(PrematicLogger logger, LogRecord record);
+
 }

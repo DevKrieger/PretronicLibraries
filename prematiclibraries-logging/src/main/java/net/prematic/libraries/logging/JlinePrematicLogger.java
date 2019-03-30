@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 27.03.19 12:37
+ * @since 27.03.19 12:42
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,53 +19,37 @@
 
 package net.prematic.libraries.logging;
 
+import jline.console.ConsoleReader;
 import net.prematic.libraries.logging.format.LogFormatter;
 import net.prematic.libraries.logging.format.SimpleLogFormatter;
 import net.prematic.libraries.logging.handler.LogHandler;
 import net.prematic.libraries.logging.level.DebugLevel;
 import net.prematic.libraries.logging.level.LogLevel;
 
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * This is a simple async implementation of the prematic logging framework.
+ * This logger writes all log message over the jline console reader.
  */
-public class SimplePrematicLogger extends AbstractPrematicLogger {
+public class JlinePrematicLogger extends AbstractPrematicLogger {
 
-    private final OutputStream outputStream, errorStream;
-    private final Charset charset;
+    private final ConsoleReader reader;
     private final BlockingQueue<Runnable> queue;
     private final AsyncQueuePrinter printer;
 
-    public SimplePrematicLogger(){
-        this("Unknown");
+    public JlinePrematicLogger(ConsoleReader reader) {
+        this(reader,"Unknown");
     }
 
-    public SimplePrematicLogger(String name){
-        this(name,new SimpleLogFormatter());
+    public JlinePrematicLogger(ConsoleReader reader, String name) {
+        this(reader,name,new SimpleLogFormatter());
     }
 
-    public SimplePrematicLogger(String name, LogFormatter formatter){
-        this(name,formatter,System.out,System.err);
-    }
-
-    public SimplePrematicLogger(String name, LogFormatter formatter, OutputStream outputStream){
-        this(name,formatter,outputStream, outputStream);
-    }
-
-    public SimplePrematicLogger(String name, LogFormatter formatter, OutputStream outputStream, OutputStream errorStream){
-        this(name,formatter,outputStream,errorStream, StandardCharsets.UTF_8);
-    }
-
-    public SimplePrematicLogger(String name, LogFormatter formatter, OutputStream outputStream, OutputStream errorStream, Charset charset) {
+    public JlinePrematicLogger(ConsoleReader reader,String name, LogFormatter formatter) {
         super(name, formatter);
-        this.outputStream = outputStream;
-        this.errorStream = errorStream;
-        this.charset = charset;
+
+        this.reader =  reader;
         this.queue = new LinkedBlockingQueue<>();
         this.printer = new AsyncQueuePrinter(this.queue);
         this.printer.start();
@@ -73,16 +57,16 @@ public class SimplePrematicLogger extends AbstractPrematicLogger {
 
     public void formatAndWrite(MessageInfo info, LogLevel logLevel, DebugLevel debugLevel, String message, Throwable throwable, Thread thread){
         if(!canLog(logLevel)) return;
-        this.queue.offer(()->{
+        long timeStamp = System.currentTimeMillis();
+        this.queue.add(() -> {
             try{
-                long timeStamp = System.currentTimeMillis();
                 LogRecord record = new LogRecord(timeStamp,info, logLevel, debugLevel, message, throwable, thread);
                 String result = formatter.format(this,record);
-                if(logLevel == LogLevel.ERROR) errorStream.write(result.getBytes(charset));
-                else outputStream.write(result.getBytes(charset));
-
+                reader.print(result);
+                reader.drawLine();
+                reader.flush();
                 for(LogHandler handler : handlers) handler.handleLog(record,result);
-            }catch (Exception ignored){}
+            }catch (Exception exception){}
         });
     }
 

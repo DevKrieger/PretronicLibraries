@@ -1,16 +1,8 @@
-package net.prematic.libraries.logging.handler;
-
-import net.prematic.libraries.logging.SimplePrematicLogger;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.logging.LogRecord;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 26.03.19 19:05
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,41 +17,100 @@ import java.util.logging.LogRecord;
  * under the License.
  */
 
-public class FileHandler extends LogHandler {
+package net.prematic.libraries.logging.handler;
 
-    private String startup;
-    private final File file, location;
-    private final FileOutputStream output;
+import net.prematic.libraries.logging.LogRecord;
+import net.prematic.libraries.logging.level.LogLevel;
 
-    public FileHandler(File loglocation){
-        super("PrematicFileLogger");
-        loglocation.mkdirs();
-        if(!loglocation.isDirectory()) throw new IllegalArgumentException("Path musst be a directory");
-        this.location = loglocation;
-        this.file = new File(loglocation.getPath(),"latest.log");
+import java.io.*;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+
+/**
+ * This is a simple handler for writing log files.
+ */
+public class FileHandler implements LogHandler {
+
+    public static SimpleDateFormat LOG_FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+
+    private final File location, latest;
+    private final LogLevel level;
+    private FileWriter fileWriter;
+    private BufferedWriter writer;
+    private boolean chanching;
+
+    public FileHandler(File location){
+        this(location,null);
+    }
+
+    public FileHandler(File location, LogLevel level) {
+        if(!location.isDirectory() && location.exists()) throw new IllegalArgumentException("Location is not a directory.");
+        location.mkdirs();
+        this.location = location;
+        this.latest = new File(location,"latest.log");
+        this.level = level;
+        changeFile();
+    }
+
+    @Override
+    public String getName() {
+        return "PrematicFileLogHandler";
+    }
+
+    @Override
+    public void handleLog(LogRecord record, String formattedMessage) {
+        if(level != null && !level.canLog(level)) return;
         try{
-            this.output = new FileOutputStream(this.file);
+            while(chanching) Thread.sleep(1);
+            writer.write(formattedMessage);
+            writer.flush();
         }catch (Exception exception){
-            throw new RuntimeException("Counl not setup logging filehandler ("+exception.getMessage()+")");
+            if(exception instanceof ArrayIndexOutOfBoundsException){
+                changeFile();
+                try {
+                    writer.write(formattedMessage);
+                    writer.flush();
+                } catch (IOException ignored) {}
+            }
         }
     }
-    @Override
-    public void onInit(SimplePrematicLogger logger) {
-        this.startup = getLogger().getDateFormat().format(System.currentTimeMillis());
+
+    private void changeFile(){
+        this.chanching = true;
+        try{
+            if(writer != null) writer.close();
+            if(fileWriter != null) fileWriter.close();
+            if(latest.exists()){
+                try{
+                    FileReader fileReader = new FileReader(latest);
+                    BufferedReader reader = new BufferedReader(fileReader);
+                    String info = reader.readLine();
+                    long start = Long.valueOf(info.substring(0,info.indexOf("/")));
+                    reader.close();
+                    fileReader.close();
+                    Files.move(latest.toPath(),new File(location,LOG_FILE_DATE_FORMAT.format(start)+".log").toPath());
+                }catch (Exception ignored){
+                    Files.move(latest.toPath(),new File(location,"unknown-"+LOG_FILE_DATE_FORMAT.format(System.currentTimeMillis())+".log").toPath());
+                }
+            }
+            if(!latest.exists()) latest.createNewFile();
+
+            this.fileWriter = new FileWriter(latest);
+            this.writer = new BufferedWriter(fileWriter,32768);
+            this.writer.write(System.currentTimeMillis()+"/"+LOG_FILE_DATE_FORMAT.format(System.currentTimeMillis()));
+            writer.newLine();
+        }catch (Exception exception){
+            throw new UnsupportedOperationException("Could not change file",exception);
+        }
+        chanching = false;
     }
+
     @Override
-    public void log(LogRecord record, String formatedmessage) {
+    public void shutdown(){
         try {
-            this.output.write(formatedmessage.getBytes());
-        }catch (Exception exception) {}
-    }
-    @Override
-    public void shutdown() {
-        try {
-            this.output.close();
-            File newfile = new File(this.location.getPath(),this.startup+" - "+getLogger().getDateFormat().format(System.currentTimeMillis())+".log");
-            newfile.createNewFile();
-            this.file.renameTo(newfile);
-        }catch (Exception exception){}
+            while(chanching) Thread.sleep(1);
+            this.writer.close();
+            this.fileWriter.close();
+        } catch (Exception ignored) {}
     }
 }
