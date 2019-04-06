@@ -1,6 +1,10 @@
 package net.prematic.libraries.tasking;
 
-import net.prematic.libraries.utility.owner.ObjectOwner;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
+
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -25,19 +29,45 @@ public interface Task extends Runnable{
 
     int getID();
 
-    boolean isRunning();
+    String getName();
+
+    TaskState getState();
+
+    long getDelay();
+
+    long getPeriod();
 
     ObjectOwner getOwner();
 
     TaskScheduler getScheduler();
 
-    Runnable getRunnable();
+    Collection<Runnable> getRunnables();
+
+    boolean isRunning();
 
     boolean isAsync();
 
-    void setRunning(boolean running);
+    Task append(Runnable runnable);
 
-    void cancel();
+    Task append(Runnable... runnable);
+
+    Task remove(Runnable runnable);
+
+    Task setDelay(long delay, TimeUnit unit);
+
+    Task setPeriod(long period, TimeUnit unit);
+
+    Task addListener(Consumer<TaskFuture> listener);
+
+    void clear();
+
+    void call();
+
+    void start();
+
+    void stop();
+
+    void destroy();
 
 
 }
