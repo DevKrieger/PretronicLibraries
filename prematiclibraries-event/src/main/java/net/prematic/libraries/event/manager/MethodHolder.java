@@ -1,14 +1,8 @@
-package net.prematic.libraries.event;
-
-import net.prematic.libraries.utility.owner.ObjectOwner;
-
-import java.lang.reflect.Method;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 06.04.19 21:01
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +17,13 @@ import java.lang.reflect.Method;
  * under the License.
  */
 
+package net.prematic.libraries.event.manager;
+
+import net.prematic.libraries.event.EventException;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
+
+import java.lang.reflect.Method;
+
 public class MethodHolder {
 
     private final int priority;
@@ -36,20 +37,28 @@ public class MethodHolder {
         this.listener = listener;
         this.method = methode;
     }
+
     public ObjectOwner getOwner() {
         return this.owner;
     }
+
     public int getPriority() {
         return this.priority;
     }
+
     public Object getListener() {
         return this.listener;
     }
+
     public Method getMethod() {
         return this.method;
     }
-    public void invoke(Object event) throws Exception{
-        try{this.method.invoke(this.listener,event);
-        }catch (Exception exception){exception.printStackTrace();}
+
+    public void invoke(Object event){
+        try{
+            this.method.invoke(this.listener,event);
+        }catch (Exception exception){
+            throw new EventException("Could not execute listener "+listener,exception);
+        }
     }
 }

@@ -1,10 +1,8 @@
-package net.prematic.libraries.event;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 06.04.19 20:57
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +17,26 @@ package net.prematic.libraries.event;
  * under the License.
  */
 
-public class EventPriority {
+package net.prematic.libraries.event;
 
-    public final static byte EXTREM_HEIGHT = 127;
+public class EventException extends RuntimeException{
 
-    public final static byte HEIGHT = 100;
+    public EventException() {
+    }
 
-    public final static byte NORMAL = 50;
+    public EventException(String message) {
+        super(message);
+    }
 
-    public final static byte LOW = 0;
+    public EventException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    public final static byte EXTREM_LOW = -127;
+    public EventException(Throwable cause) {
+        super(cause);
+    }
 
+    public EventException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }
