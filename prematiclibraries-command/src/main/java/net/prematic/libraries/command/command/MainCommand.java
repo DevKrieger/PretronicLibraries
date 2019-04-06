@@ -1,9 +1,13 @@
 package net.prematic.libraries.command.command;
 
+import net.prematic.libraries.command.CommandEntry;
+import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
+import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.owner.ObjectOwner;
+
+import java.util.*;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -24,106 +28,99 @@ import java.util.List;
  * under the License.
  */
 
-public class MainCommand extends Command {
+public class MainCommand extends Command implements CommandManager {
 
-    private List<SubCommand> subCommands;
+    public static String DEFAULT_NOT_FOUND_MESSAGE = "The object %object% was not found.";
+
+    private final List<CommandEntry> subCommands;
+    private CommandNotFoundHandler notFoundHandler;
 
     public MainCommand(String name) {
-        super(name);
-        this.subCommands = new LinkedList<>();
+        this(name,"none");
     }
 
     public MainCommand(String name, String description) {
-        super(name, description);
-        this.subCommands = new LinkedList<>();
+        this(name, description,null);
     }
 
     public MainCommand(String name, String description, String permission) {
-        super(name, description, permission);
-        this.subCommands = new LinkedList<>();
+        this(name, description, permission,new HashSet<>());
     }
 
-    public MainCommand(String name, String description, String permission, String usage, String... aliases) {
-        super(name, description, permission, usage, aliases);
-        this.subCommands = new LinkedList<>();
+    public MainCommand(String name, String description, String permission, String... aliases) {
+        this(name, description, permission,Arrays.asList(aliases));
     }
 
-    public List<SubCommand> getSubCommands() {
-        return subCommands;
+    public MainCommand(String name, String description, String permission, Collection<String> aliases) {
+        super(name, description, permission, aliases);
+        this.subCommands = new ArrayList<>();
     }
 
-    protected int getMaxPages() {
-        int i = subCommands.size();
-        if (i % 8 == 0) return i/8;
-        double j = i / 8;
-        int h = (int) Math.floor(j*100)/100;
-        return h+1;
+    @Override
+    public Command getCommand(String name) {
+        return Iterators.iterateAndWrapOne(this.subCommands, entry -> entry.getCommand().hasAlias(name),CommandEntry::getCommand);
     }
 
-    public void registerSubCommand(SubCommand subCommand) {
-        this.subCommands.add(subCommand);
+    @Override
+    public List<Command> getCommands() {
+        return Iterators.iterateAndWrap(this.subCommands,CommandEntry::getCommand);
     }
 
-    public void sendHelp(CommandSender sender, int page) {
-        int maxPages = getMaxPages();
-        if(page > maxPages) page = 1;
-        sender.sendMessage((getCommandManager().getLanguageManager() == null ? getCommandManager().getMessages().commandHelpHeader :
-                getCommandManager().getLanguageManager().getMessage(sender.getLanguage(), getCommandManager().getMessages().commandHelpHeader))
-                .replaceAll("%currentPage%", String.valueOf(page))
-                .replaceAll("%maxPages%", String.valueOf(maxPages)));
-        int from = 1;
-        if(page > 1) from = 8 * (page - 1) + 1;
-        int to = 8 * page;
-        for(int h = from; h <= to; h++) {
-            if(h > subCommands.size()) break;
-            SubCommand subCommand = subCommands.get(h - 1);
-            if(sender.hasPermission(subCommand.getPermission())) {
-                sender.sendMessage((getCommandManager().getLanguageManager() == null ? getCommandManager().getMessages().commandHelp :
-                        getCommandManager().getLanguageManager().getMessage(sender.getLanguage(), getCommandManager().getMessages().commandHelp))
-                        .replaceAll("%command%", getName())
-                        .replaceAll("%commandUsage%", getUsage())
-                        .replaceAll("%commandDescription%", getDescription()));
-                sender.sendMessage((getCommandManager().getLanguageManager() == null ? getCommandManager().getMessages().commandHelp :
-                        getCommandManager().getLanguageManager().getMessage(sender.getLanguage(), getCommandManager().getMessages().commandHelp))
-                        .replaceAll("%command%", getName() + " " + subCommand.getUsage())
-                        .replaceAll("%commandUsage%", "")
-                        .replaceAll("%commandDescription%", subCommand.getDescription()));
-                //sender.sendMessage(getName()+(subCommand.getUsage() != null ? " " + subCommand.getUsage() : "") + (subCommand.getDescription() != null ? " " + subCommand.getDescription() : ""));
-                /*if(!subCommand.getSubCommands().isEmpty()){
-                    String helpMessage = "";
-                    for(SubCommand nextSubCommand : subCommand.getSubCommands()) {
-                        helpMessage+=getName() +" "+ subCommand.getName()+(nextSubCommand.getUsage() != null ? " " + nextSubCommand.getUsage() : "")+(nextSubCommand.getDescription() != null ? " " + nextSubCommand.getDescription() : "")+"\n";
-                    }
-                    sender.sendMessage(helpMessage);
-                }*/
-            }
-        }
+    @Override
+    public void setNotFoundHandler(CommandNotFoundHandler notFoundHandler) {
+        this.notFoundHandler = notFoundHandler;
+    }
+
+    @Override
+    public void dispatchCommand(CommandSender sender, String command) {
+
+    }
+
+    @Override
+    public void registerCommand(ObjectOwner owner, Command command) {
+        if(getCommand(command.getName()) != null) throw new IllegalArgumentException("A command with the name "+command.getName()+" is already registered as sub command.");
+        this.subCommands.add(command.toEntry(owner));
+    }
+
+    @Override
+    public void unregisterCommand(String command) {
+        Command cmd = getCommand(command);
+        if(cmd != null) unregisterCommand(cmd);
+    }
+
+    @Override
+    public void unregisterCommand(Command command) {
+        Iterators.iterateAndRemove(this.subCommands, entry -> entry.getCommand().equals(command));
+    }
+
+    @Override
+    public void unregisterCommand(ObjectOwner owner) {
+        Iterators.iterateAndRemove(this.subCommands, entry -> entry.getOwner().equals(owner));
+    }
+
+    @Override
+    public void unregisterAll() {
+    this.subCommands.clear();
+    }
+
+    public void registerSubCommand(ObjectOwner owner, Command command) {
+        registerCommand(owner, command);
+    }
+
+    public void setNotFoundCommand(CommandNotFoundHandler handler){
+        this.notFoundHandler = handler;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        executeMainCommand(sender, args);
-        if(args.length >= 1) {
-            for (SubCommand subCommand : subCommands) {
-                if (subCommand.hasAliases(args[0])) {
-                    subCommand.executeSubCommand(sender, Arrays.copyOfRange(args, 1, args.length));
-                    subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
-                    return;
-                }
+        if(args.length > 0) {
+            Command command = getCommand(args[0]);
+            if(command != null){
+                command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
+                return;
             }
         }
-        if(!(this instanceof SubCommand)) {
-            if (args.length == 1) {
-                try{
-                    sendHelp(sender, Integer.valueOf(args[0]));
-                    return;
-                }catch(NumberFormatException exception){}
-            }
-            sendHelp(sender, 1);
-        }
-    }
-
-    public void executeMainCommand(CommandSender sender, String[] args) {
-
+        if(notFoundHandler != null) notFoundHandler.execute(sender,args.length>=1?args[0]:"Unknown",Arrays.copyOfRange(args, 1, args.length));
+        else sender.sendMessage(DEFAULT_NOT_FOUND_MESSAGE.replace("%command%",getName()).replace("%subCommand%",args.length>=1?args[0]:"Unknown"));
     }
 }

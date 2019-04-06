@@ -1,10 +1,8 @@
-package net.prematic.libraries.command.sender;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 31.03.19 18:28
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +17,26 @@ package net.prematic.libraries.command.sender;
  * under the License.
  */
 
-public class ConsoleCommandSender implements CommandSender{
+package net.prematic.libraries.command;
 
-    public String getName() {
-        return "Console";
+import net.prematic.libraries.command.command.Command;
+import net.prematic.libraries.utility.owner.ObjectOwner;
+
+public class CommandEntry<T extends Command> {
+
+    private final ObjectOwner owner;
+    private final T command;
+
+    public CommandEntry(ObjectOwner owner, T command) {
+        this.owner = owner;
+        this.command = command;
     }
 
-    public boolean hasPermission(String permission) {
-        return true;
+    public ObjectOwner getOwner() {
+        return owner;
     }
 
-    public void sendMessage(String message) {
-        System.out.println(message);
+    public T getCommand() {
+        return command;
     }
 }

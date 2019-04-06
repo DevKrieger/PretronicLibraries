@@ -1,8 +1,8 @@
 package net.prematic.libraries.command.command;
 
-import net.prematic.libraries.command.manager.CommandManager;
-import net.prematic.libraries.command.owner.CommandOwner;
+import net.prematic.libraries.command.CommandEntry;
 import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.utility.owner.ObjectOwner;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,36 +29,32 @@ import java.util.HashSet;
 
 public abstract class Command {
 
-    private String name, description, permission, usage;
-    private CommandOwner owner;
-    private CommandManager commandManager;
-    private Collection<String> aliases;
+    private final String name, description, permission;
+    private final Collection<String> aliases;
+    private String prefix;
 
     public Command(String name) {
-        this.name = name;
-        this.description = "none";
-        this.aliases = new HashSet<>();
+        this(name,"none");
     }
 
     public Command(String name, String description) {
-        this.name = name;
-        this.description = description;
-        this.aliases = new HashSet<>();
+        this(name,description,null);
     }
 
     public Command(String name, String description, String permission) {
-        this.name = name;
-        this.description = description;
-        this.permission = permission;
-        this.aliases = new HashSet<>();
+        this(name, description,permission,new HashSet<>());
     }
 
-    public Command(String name, String description, String permission, String usage, String... aliases) {
+    public Command(String name, String description, String permission,String... aliases) {
+        this(name, description,permission,Arrays.asList(aliases));
+    }
+
+    public Command(String name, String description, String permission, Collection<String> aliases) {
         this.name = name;
         this.description = description;
         this.permission = permission;
-        this.usage = usage;
-        this.aliases = new HashSet<>(Arrays.asList(aliases));
+        this.aliases = aliases;
+        this.prefix =  "[PrematicLibraries] ";
     }
 
     public String getName() {
@@ -73,55 +69,26 @@ public abstract class Command {
         return this.permission;
     }
 
-    public String getUsage() {
-        return usage;
-    }
-
-    public boolean hasUsage() {
-        return usage != null;
-    }
-
-    public CommandOwner getOwner() {
-        return this.owner;
+    public String getPrefix() {
+        return prefix;
     }
 
     public Collection<String> getAliases() {
         return this.aliases;
     }
 
-    public CommandManager getCommandManager() {
-        return commandManager;
+    public boolean hasAlias(String command) {
+        return name.equalsIgnoreCase(command) || aliases.contains(command);
     }
 
-    public boolean hasAliases(String command) {
-        if(this.name.equalsIgnoreCase(command)) return true;
-        return aliases.contains(command);
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
-    public Command setUsage(String usage) {
-        this.usage = usage;
-        return this;
-    }
-
-    public Command setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public Command setPermission(String permission) {
-        this.permission = permission;
-        return this;
-    }
-
-    public Command addAlias(String... aliases) {
-        this.aliases.addAll(Arrays.asList(aliases));
-        return this;
-    }
-
-    public void init(CommandOwner owner, CommandManager commandManager) {
-        this.owner = owner;
-        this.commandManager = commandManager;
+    public CommandEntry toEntry(ObjectOwner owner) {
+        return new CommandEntry<>(owner,this);
     }
 
     public abstract void execute(CommandSender sender, String[] args);
+
 }

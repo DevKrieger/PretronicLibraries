@@ -1,7 +1,5 @@
 package net.prematic.libraries.command.sender;
 
-import net.prematic.libraries.language.Language;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -28,7 +26,5 @@ public interface CommandSender {
     boolean hasPermission(String permission);
 
     void sendMessage(String message);
-
-    Language getLanguage();
 
 }

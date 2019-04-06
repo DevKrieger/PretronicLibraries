@@ -1,11 +1,11 @@
 package net.prematic.libraries.command.manager;
 
+import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.command.owner.CommandOwner;
 import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.language.LanguageManager;
+import net.prematic.libraries.utility.owner.ObjectOwner;
 
-import java.util.Collection;
+import java.util.List;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -28,38 +28,24 @@ import java.util.Collection;
 
 public interface CommandManager {
 
+    String getName();
+
     Command getCommand(String name);
 
-    Collection<Command> getCommands();
+    List<Command> getCommands();
+
+    void setNotFoundHandler(CommandNotFoundHandler notFoundHandler);
 
     void dispatchCommand(CommandSender sender, String command);
 
-    void registerCommand(CommandOwner owner, Command command);
+    void registerCommand(ObjectOwner owner, Command command);
 
     void unregisterCommand(String command);
 
     void unregisterCommand(Command command);
 
-    void unregisterCommand(CommandOwner owner);
+    void unregisterCommand(ObjectOwner owner);
 
     void unregisterAll();
 
-    LanguageManager getLanguageManager();
-
-    Messages messages = new Messages();
-
-    default Messages getMessages() {
-        return messages;
-    }
-
-    class Messages {
-
-        public String commandNotFound, commandHelpHeader, commandHelp;
-
-        public Messages() {
-            this.commandNotFound = "Command not found. Use the command \"help\" for more information!";
-            this.commandHelpHeader = "Page %currentPage%/%maxPages%";
-            this.commandHelp = "%command% %commandUsage% %commandDescription%";
-        }
-    }
 }
