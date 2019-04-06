@@ -21,7 +21,7 @@ package net.prematic.libraries.command.command;
 
 import net.prematic.libraries.command.CommandEntry;
 import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.utility.owner.ObjectOwner;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Collection;
 

@@ -1,5 +1,3 @@
-package net.prematic.libraries.command.sender;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -18,6 +16,8 @@ package net.prematic.libraries.command.sender;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
+package net.prematic.libraries.command.sender;
 
 public interface CommandSender {
 

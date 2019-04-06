@@ -43,10 +43,12 @@
         <module>prematiclibraries-plugin</module>
         <module>prematiclibraries-logging</module>
         <module>prematiclibraries-event</module>
-        <module>prematiclibraries-tasking</module>
+        <module>prematiclibraries-concurrent</module>
         <module>prematiclibraries-utility</module>
         <module>prematiclibraries-caching</module>
         <module>prematiclibraries-language</module>
+        <module>prematiclibraries-dependency</module>
+        <module>prematiclibraries-console</module>
     </modules>
 </project>
 

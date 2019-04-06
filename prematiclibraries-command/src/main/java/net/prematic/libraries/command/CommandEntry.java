@@ -20,7 +20,7 @@
 package net.prematic.libraries.command;
 
 import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.utility.owner.ObjectOwner;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 public class CommandEntry<T extends Command> {
 

@@ -24,7 +24,7 @@ import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
-import net.prematic.libraries.utility.owner.ObjectOwner;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.*;
 

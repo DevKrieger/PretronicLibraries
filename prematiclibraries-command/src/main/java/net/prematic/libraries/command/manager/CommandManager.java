@@ -1,12 +1,3 @@
-package net.prematic.libraries.command.manager;
-
-import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
-import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.utility.owner.ObjectOwner;
-
-import java.util.List;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -25,6 +16,15 @@ import java.util.List;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
+package net.prematic.libraries.command.manager;
+
+import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
+import net.prematic.libraries.command.command.Command;
+import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
+
+import java.util.List;
 
 public interface CommandManager {
 

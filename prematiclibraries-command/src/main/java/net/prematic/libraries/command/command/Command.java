@@ -1,13 +1,3 @@
-package net.prematic.libraries.command.command;
-
-import net.prematic.libraries.command.CommandEntry;
-import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.utility.owner.ObjectOwner;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -26,6 +16,16 @@ import java.util.HashSet;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
+package net.prematic.libraries.command.command;
+
+import net.prematic.libraries.command.CommandEntry;
+import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 
 public abstract class Command {
 
