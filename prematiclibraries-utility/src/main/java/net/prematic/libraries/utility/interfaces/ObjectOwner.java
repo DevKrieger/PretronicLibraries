@@ -1,12 +1,8 @@
-package net.prematic.libraries.utility.owner;
-
-import java.util.concurrent.ExecutorService;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 06.04.19 20:27
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +17,20 @@ import java.util.concurrent.ExecutorService;
  * under the License.
  */
 
+package net.prematic.libraries.utility.interfaces;
+
 public interface ObjectOwner {
+
+    System SYSTEM = new System();
 
     String getName();
 
-    ExecutorService getExecutor();
+    class System implements ObjectOwner {
+
+        @Override
+        public String getName() {
+            return "PrematicSystemOwner";
+        }
+    }
 
 }
