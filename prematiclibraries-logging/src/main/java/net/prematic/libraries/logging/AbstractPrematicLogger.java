@@ -21,7 +21,7 @@ package net.prematic.libraries.logging;
 
 import net.prematic.libraries.logging.format.FormatHelper;
 import net.prematic.libraries.logging.format.LogFormatter;
-import net.prematic.libraries.logging.format.ProcessFormatter;
+import net.prematic.libraries.logging.format.SimpleLogFormatter;
 import net.prematic.libraries.logging.handler.LogHandler;
 import net.prematic.libraries.logging.level.DebugLevel;
 import net.prematic.libraries.logging.level.LogLevel;
@@ -48,7 +48,7 @@ public abstract class AbstractPrematicLogger implements PrematicLogger {
     }
 
     public AbstractPrematicLogger(String name){
-        this(name,new ProcessFormatter());
+        this(name,new SimpleLogFormatter());
     }
 
     public AbstractPrematicLogger(String name, LogFormatter formatter) {

@@ -72,6 +72,10 @@ public final class FormatHelper {
      * @param prefix The prefix before the stack trace.
      */
     public static void buildStackTrace(StringBuilder builder,Thread thread, Throwable throwable, String prefix){
+        buildStackTrace(builder, thread, throwable, prefix,System.lineSeparator());
+    }
+
+    public static void buildStackTrace(StringBuilder builder,Thread thread, Throwable throwable, String prefix, String lineSeparator){
         builder.append(prefix).append("Exception ");
 
         if(throwable instanceof InfoAbleException && ((InfoAbleException) throwable).getInfo() != null
@@ -81,10 +85,10 @@ public final class FormatHelper {
         if(thread != null) builder.append("in ").append(thread.getName()).append('/').append(thread.getId()).append(' ');
         builder.append("-> ");
 
-        buildSubStackTrace(builder,throwable,null,DEFAULT_CAPTION,prefix, ConcurrentHashMap.newKeySet());
+        buildSubStackTrace(builder,throwable,null,DEFAULT_CAPTION,prefix,lineSeparator, ConcurrentHashMap.newKeySet());
     }
 
-    private static void buildSubStackTrace(StringBuilder builder,Throwable throwable, StackTraceElement[] previousTrace, String caption, String prefix, Set<Throwable> used) {
+    private static void buildSubStackTrace(StringBuilder builder,Throwable throwable, StackTraceElement[] previousTrace, String caption, String prefix, String lineSeparator, Set<Throwable> used) {
         if(!used.contains(throwable)){
             used.add(throwable);
             if(previousTrace != null) builder.append(prefix);
@@ -101,7 +105,7 @@ public final class FormatHelper {
                     builder.append(") ");
                 }else if(has) builder.append(") ");
             }
-            builder.append(throwable).append(System.lineSeparator());
+            builder.append(throwable).append(lineSeparator);
 
             StackTraceElement[] trace = throwable.getStackTrace();
             
@@ -112,17 +116,17 @@ public final class FormatHelper {
                 traceLength--; previousLength--;
             }
 
-            for(int i = 0;i<=traceLength;i++) builder.append(prefix).append("\tat ").append(trace[i]).append(System.lineSeparator());
+            for(int i = 0;i<=traceLength;i++) builder.append(prefix).append("\tat ").append(trace[i]).append(lineSeparator);
 
             if(previousTrace != null){
                 int more = trace.length-1 - traceLength;
-                if(more > 0)  builder.append(prefix).append("\t... ").append(more).append(" more").append(System.lineSeparator());
+                if(more > 0)  builder.append(prefix).append("\t... ").append(more).append(" more").append(lineSeparator);
             }
 
-            for(Throwable subThrowable : throwable.getSuppressed()) buildSubStackTrace(builder, subThrowable,throwable.getStackTrace(),SUPPRESSED_CAPTION, prefix, used);
+            for(Throwable subThrowable : throwable.getSuppressed()) buildSubStackTrace(builder, subThrowable,throwable.getStackTrace(),SUPPRESSED_CAPTION, prefix,lineSeparator, used);
 
             Throwable cause = throwable.getCause();
-            if(cause != null) buildSubStackTrace(builder, cause, throwable.getStackTrace(),CAUSE_CAPTION, prefix, used);
+            if(cause != null) buildSubStackTrace(builder, cause, throwable.getStackTrace(),CAUSE_CAPTION, prefix,lineSeparator, used);
         }
     }
 }
