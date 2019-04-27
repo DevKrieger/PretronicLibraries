@@ -1,5 +1,6 @@
 package net.prematic.libraries.utility.owner;
 
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

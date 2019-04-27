@@ -21,6 +21,9 @@ package net.prematic.libraries.utility.reflect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ReflectionUtil {
 
@@ -82,5 +85,33 @@ public class ReflectionUtil {
         Class<?>[] types = new Class<?>[array.length];
         for(int i = 0;i <array.length;i++) if(array[i] != null) types[i] = array[i].getClass();
         return types;
+    }
+
+    /**
+     * Check if class {@code from} or super interfaces of {@code from} implements {@code to}
+     * @param from class to check
+     * @param to interface to check, if class implements it
+     * @return boolean, if {@code from} implements {@code to}
+     */
+    public static boolean implementsInterface(Class<?> from, Class<?> to) {
+        if(!to.isInterface()) return false;
+        return getAllInterfaces(from).contains(to);
+    }
+
+    /**
+     * Get all implemented interfaces of {@code clazz} and implemented interfaces of all super classes
+     * @param clazz
+     * @return Collection<Class<?>> of all interfaces
+     */
+    public static Collection<Class<?>> getAllInterfaces(Class<?> clazz) {
+        Set<Class<?>> classes = new HashSet<>();
+        for (Class<?> interfaceClass : clazz.getInterfaces()) {
+            classes.add(interfaceClass);
+            for (Class<?> superInterfaceClass : interfaceClass.getInterfaces()) {
+                classes.add(superInterfaceClass);
+                classes.addAll(getAllInterfaces(superInterfaceClass));
+            }
+        }
+        return classes;
     }
 }

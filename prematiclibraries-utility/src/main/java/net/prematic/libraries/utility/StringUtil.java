@@ -26,12 +26,16 @@ import java.util.regex.Pattern;
 
 public final class StringUtil {
 
-    public static final char [] DEFAULT_SUBSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ".toCharArray();
+    public static final char[] DEFAULT_SUBSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ".toCharArray();
 
     public static String getRandomString(final int size,char[] subset){
         char[] chars = new char[size];
         for(int i=0;i<chars.length;i++) chars[i] = subset[GeneralUtil.RANDOM.nextInt(subset.length)];
         return new String(chars);
+    }
+
+    public static String getRandomString(int size) {
+        return getRandomString(size, DEFAULT_SUBSET);
     }
 
     public static String reverse(String string){
