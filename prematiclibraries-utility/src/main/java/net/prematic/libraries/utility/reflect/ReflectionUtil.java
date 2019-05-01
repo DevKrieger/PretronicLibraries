@@ -19,8 +19,12 @@
 
 package net.prematic.libraries.utility.reflect;
 
+import net.prematic.libraries.utility.map.Pair;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -95,13 +99,14 @@ public class ReflectionUtil {
      */
     public static boolean implementsInterface(Class<?> from, Class<?> to) {
         if(!to.isInterface()) return false;
+        if(from == to) return true;
         return getAllInterfaces(from).contains(to);
     }
 
     /**
      * Get all implemented interfaces of {@code clazz} and implemented interfaces of all super classes
-     * @param clazz
-     * @return Collection<Class<?>> of all interfaces
+     * @param clazz to get interfaces
+     * @return collection with classes
      */
     public static Collection<Class<?>> getAllInterfaces(Class<?> clazz) {
         Set<Class<?>> classes = new HashSet<>();
@@ -113,5 +118,26 @@ public class ReflectionUtil {
             }
         }
         return classes;
+    }
+
+    /**
+     * Get the generic type of field of a collection
+     * @param field of collection to get generic type
+     * @return generic type of collection as class
+     */
+    public static Class<?> getCollectionGenericType(Field field) {
+        ParameterizedType type = (ParameterizedType) field.getGenericType();
+        return (Class<?>) type.getActualTypeArguments()[0];
+    }
+
+    /**
+     * Get the generic type of key and value of a field of a map
+     * @param field of map to get generic types
+     * @return generic type of key and value as class
+     */
+    public static Pair<Class<?>, Class<?>> getMapGenericTypes(Field field) {
+        ParameterizedType type = (ParameterizedType) field.getGenericType();
+        Type[] genericTypes = type.getActualTypeArguments();
+        return new Pair<>((Class<?>) genericTypes[0], (Class<?>) genericTypes[1]);
     }
 }
