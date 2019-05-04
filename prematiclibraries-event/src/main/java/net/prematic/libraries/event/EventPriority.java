@@ -1,5 +1,3 @@
-package net.prematic.libraries.event;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -19,6 +17,13 @@ package net.prematic.libraries.event;
  * under the License.
  */
 
+package net.prematic.libraries.event;
+
+/**
+ * If more the one event is registered, the priority decides which event is executed first and last.
+ *
+ * <p>Execution order: Low -> Normal -> Height</p>
+ */
 public class EventPriority {
 
     public final static byte EXTREM_HEIGHT = 127;
@@ -26,6 +31,7 @@ public class EventPriority {
     public final static byte HEIGHT = 100;
 
     public final static byte NORMAL = 50;
+
 
     public final static byte LOW = 0;
 

@@ -28,7 +28,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.prematic.libraries.event</groupId>
     <artifactId>prematiclibraries-event</artifactId>
 
     <developers>

@@ -1,5 +1,3 @@
-package net.prematic.libraries.event;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -19,10 +17,25 @@ package net.prematic.libraries.event;
  * under the License.
  */
 
+package net.prematic.libraries.event;
+
+/**
+ * Every event which has this interface can be canceled.
+ */
 public interface Cancellable {
 
+    /**
+     * Check if this event is canceled.
+     *
+     * @return If the event is canceled.
+     */
     boolean isCancelled();
 
+    /**
+     * Cancel a event.
+     *
+     * @param cancelled If the event should be canceled or not.
+     */
     void setCancelled(boolean cancelled);
 
 }

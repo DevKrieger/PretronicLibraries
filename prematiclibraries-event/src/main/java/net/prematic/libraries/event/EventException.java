@@ -19,10 +19,10 @@
 
 package net.prematic.libraries.event;
 
+/**
+ * This exception is thrown when an error in the event occurs.
+ */
 public class EventException extends RuntimeException{
-
-    public EventException() {
-    }
 
     public EventException(String message) {
         super(message);

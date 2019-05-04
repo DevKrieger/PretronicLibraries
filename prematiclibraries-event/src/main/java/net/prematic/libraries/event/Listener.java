@@ -1,10 +1,3 @@
-package net.prematic.libraries.event;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -24,9 +17,21 @@ import java.lang.annotation.Target;
  * under the License.
  */
 
+package net.prematic.libraries.event;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Every method which can listen to an event requires this annotation.
+ *
+ * <p>Not every method in a listener object must contains this annotation.</p>
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EventHandler {
+public @interface Listener {
 
     int priority() default EventPriority.NORMAL;
 
