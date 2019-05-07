@@ -92,18 +92,6 @@ public class ReflectionUtil {
     }
 
     /**
-     * Check if class {@code from} or super interfaces of {@code from} implements {@code to}
-     * @param from class to check
-     * @param to interface to check, if class implements it
-     * @return boolean, if {@code from} implements {@code to}
-     */
-    public static boolean implementsInterface(Class<?> from, Class<?> to) {
-        if(!to.isInterface()) return false;
-        if(from == to) return true;
-        return getAllInterfaces(from).contains(to);
-    }
-
-    /**
      * Get all implemented interfaces of {@code clazz} and implemented interfaces of all super classes
      * @param clazz to get interfaces
      * @return collection with classes
