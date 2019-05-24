@@ -1,15 +1,8 @@
-package net.prematic.libraries.plugin;
-
-import net.prematic.libraries.utility.owner.ObjectOwner;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 30.03.19 17:34
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,52 +17,70 @@ import java.util.concurrent.Executors;
  * under the License.
  */
 
-public abstract class Plugin implements ObjectOwner {
+package net.prematic.libraries.plugin;
+
+
+/*
+
+- Drivers
+- Modules
+
+- Plugins
+
+CONSTRUCTION
+
+INITIALIZATION
+
+LOAD_COMPLETE
+
+Bootstrap
+Shutdown
+
+ */
+
+import net.prematic.libraries.plugin.description.PluginDescription;
+import net.prematic.libraries.plugin.loader.PluginLoader;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.prematic.libraries.utility.reflect.ReflectionUtil;
+
+import java.lang.reflect.ParameterizedType;
+import java.security.SecurityPermission;
+
+public abstract class Plugin<R> implements ObjectOwner {
+
+    private static final SecurityPermission INIT_PERMISSION = new SecurityPermission("PrematicPluginInitialize");
 
     private PluginDescription description;
-    private PluginManager pluginManager;
-    private PluginClassloader loader;
-    private ExecutorService executor;
-    private boolean enabled;
-
-    public Plugin(){
-        this.enabled = false;
-    }
-
-    public PluginManager getPluginManager() {
-        return this.pluginManager;
-    }
-
-    public PluginDescription getDescription() {
-        return this.description;
-    }
-
-    public PluginClassloader getLoader() {
-        return this.loader;
-    }
+    private PluginLoader<R> loader;
+    private R runtime;
 
     @Override
-    public String getName() {
+    public String getName(){
         return this.description.getName();
     }
 
-    public ExecutorService getExecutor() {
-        if(this.executor == null) this.executor = Executors.newCachedThreadPool();
-        return this.executor;
+    public PluginDescription getDescription(){
+        return this.description;
     }
 
-    public boolean isEnabled(){
-        return this.enabled;
+    public PluginLoader getLoader(){
+        return this.loader;
     }
 
-    protected void init(PluginDescription description, PluginManager pluginManager, PluginClassloader loader){
+    public R getRuntime(){
+        return this.runtime;
+    }
+
+    public void initialize(PluginDescription description, PluginLoader<R> loader,R runtime){
+        if(this.loader != null) throw new IllegalArgumentException("This plugin instance is already initialized.");
+
+        //Check runtime permission
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null) sm.checkPermission(INIT_PERMISSION);
+
         this.description = description;
-        this.pluginManager = pluginManager;
         this.loader = loader;
-        this.enabled = false;
+        this.runtime = runtime;
     }
 
-    protected abstract void bootstrap();
-
-    protected abstract void shutdown();
 }

@@ -28,7 +28,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.prematic.libraries.plugin</groupId>
     <artifactId>prematiclibraries-plugin</artifactId>
 
     <developers>
@@ -52,27 +51,35 @@
     </build>
 
     <dependencies>
+
+        <!-- Internal project dependencies -->
+
         <dependency>
-            <groupId>net.prematic.libraries.utility</groupId>
+            <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
-            <groupId>net.prematic.libraries.command</groupId>
+            <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-command</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.prematic.libraries.event</groupId>
+            <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-event</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.prematic.libraries.tasking</groupId>
-            <artifactId>prematiclibraries-tasking</artifactId>
+            <groupId>net.prematic.libraries</groupId>
+            <artifactId>prematiclibraries-concurrent</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
 </project>

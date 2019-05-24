@@ -1,10 +1,10 @@
-package net.prematic.libraries.plugin;
+package net.prematic.libraries.plugin.description;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 19.03.19 11:00
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@ package net.prematic.libraries.plugin;
  * under the License.
  */
 
-public class PluginLoadException extends RuntimeException{
+public class PluginVersion {
 
-    public PluginLoadException(String message) {
-        super(message);
+    private final String name;
+    private final int build;
+
+    public PluginVersion(String name, int build) {
+        this.name = name;
+        this.build = build;
     }
 
-    public PluginLoadException(String message, Throwable cause) {
-        super(message, cause);
+    public String getName() {
+        return name;
     }
 
-    public PluginLoadException(Throwable cause) {
-        super(cause);
-    }
-
-    public PluginLoadException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public int getBuild() {
+        return build;
     }
 }

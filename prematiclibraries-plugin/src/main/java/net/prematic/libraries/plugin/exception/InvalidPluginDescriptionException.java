@@ -1,10 +1,10 @@
-package net.prematic.libraries.command.owner;
+package net.prematic.libraries.plugin.exception;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 19.03.19 11:08
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,17 @@ package net.prematic.libraries.command.owner;
  * under the License.
  */
 
-public class SystemCommandOwner implements CommandOwner {
+public class InvalidPluginDescriptionException extends PluginLoadException{
 
-    public static final SystemCommandOwner DEFAULT = new SystemCommandOwner();
-    private String name;
-
-    public SystemCommandOwner(){
-        this("System");
+    public InvalidPluginDescriptionException(String message) {
+        super(message);
     }
 
-    public SystemCommandOwner(String name) {
-        this.name = name;
+    public InvalidPluginDescriptionException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public String getName() {
-        return this.name;
+    public InvalidPluginDescriptionException(Throwable cause) {
+        super(cause);
     }
 }
-

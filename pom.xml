@@ -38,6 +38,7 @@
             <organization>Prematic</organization>
         </developer>
     </developers>
+
     <modules>
         <module>prematiclibraries-command</module>
         <module>prematiclibraries-plugin</module>
@@ -50,6 +51,7 @@
         <module>prematiclibraries-dependency</module>
         <module>prematiclibraries-console</module>
     </modules>
+
 </project>
 
 

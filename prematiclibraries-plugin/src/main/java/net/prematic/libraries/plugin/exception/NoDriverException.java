@@ -1,10 +1,8 @@
-package net.prematic.libraries.utility.exceptions;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 11.04.19 08:14
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +17,7 @@ package net.prematic.libraries.utility.exceptions;
  * under the License.
  */
 
-public class LimitedListReachedLimitException extends RuntimeException{
+package net.prematic.libraries.plugin.exception;
 
-    public LimitedListReachedLimitException(int maxvalue) {
-        this("Reached limit of "+maxvalue);
-    }
-
-    public LimitedListReachedLimitException(String message) {
-        super(message);
-    }
+public class NoDriverException {
 }

@@ -1,0 +1,37 @@
+{
+  "name": "MyPlugin",
+  "id": "asdsadsad",
+  "description": "",
+  "author": "",
+  "website": "",
+  "version": {
+    "name": "Beta version",
+    "id": 234324
+  },
+  "mainClass": {
+    "master": "net.prematic.test.master",
+    "proxy": "net.prematic.test.proxy"
+  },
+  "requiredRestart": true,
+  "depends": [
+
+  ],
+  "loadBefore": [
+
+  ],
+  "drivers": [
+    "net.prematic.cloud.core.driver.DatabaseDriver.class",
+    "net.prematic.cloud.core.driver.AuthenticationDriver.class",
+    "net.prematic.cloud.core.driver.AuthenticationDriver.class"
+  ],
+  "libraries":[
+    {
+      "type": "MAVEN",
+      "repository": "",
+      "groupId": "",
+      "artifactId": "",
+      "version": 1.0
+    }
+  ]
+
+}
