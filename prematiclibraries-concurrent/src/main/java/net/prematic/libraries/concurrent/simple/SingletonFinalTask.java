@@ -17,22 +17,27 @@
  * under the License.
  */
 
-package net.prematic.libraries.tasking.simple;
+package net.prematic.libraries.concurrent.simple;
 
-import net.prematic.libraries.tasking.AbstractTask;
-import net.prematic.libraries.tasking.Task;
-import net.prematic.libraries.tasking.TaskScheduler;
-import net.prematic.libraries.tasking.TaskState;
+import net.prematic.libraries.concurrent.AbstractTask;
+import net.prematic.libraries.concurrent.Task;
+import net.prematic.libraries.concurrent.TaskScheduler;
+import net.prematic.libraries.concurrent.TaskState;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * A single task implementation of the task. A singleton task can only have one runnable and executed once.
+ *
+ * <p>This task type will automatically unregistered the task on stop.</p>
+ */
 public class SingletonFinalTask extends AbstractTask {
 
     private final Runnable runnable;
 
-    public SingletonFinalTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async, Runnable runnable) {
+    public SingletonFinalTask(TaskScheduler scheduler, ObjectOwner owner, long id, String name, long delay, long period, boolean async, Runnable runnable) {
         super(scheduler, owner, id, name, delay, period, async);
         this.runnable = runnable;
     }

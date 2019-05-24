@@ -17,11 +17,14 @@
  * under the License.
  */
 
-package net.prematic.libraries.tasking.simple;
+package net.prematic.libraries.concurrent.simple;
 
-import net.prematic.libraries.tasking.Task;
-import net.prematic.libraries.tasking.TaskState;
+import net.prematic.libraries.concurrent.Task;
+import net.prematic.libraries.concurrent.TaskState;
 
+/**
+ * This exception is thrown, when someone tyies to start an destroyed task (Destroyed tasks can not start anymore).
+ */
 public class TaskDestroyedException extends RuntimeException{
 
     public TaskDestroyedException() {

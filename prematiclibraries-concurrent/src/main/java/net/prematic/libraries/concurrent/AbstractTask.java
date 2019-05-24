@@ -17,9 +17,9 @@
  * under the License.
  */
 
-package net.prematic.libraries.tasking;
+package net.prematic.libraries.concurrent;
 
-import net.prematic.libraries.tasking.simple.TaskDestroyedException;
+import net.prematic.libraries.concurrent.simple.TaskDestroyedException;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Collection;
@@ -27,11 +27,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+/**
+ * This is an abstract implementation of the task interface.
+ */
 public abstract class AbstractTask implements Task{
 
     protected final TaskScheduler scheduler;
     protected final ObjectOwner owner;
-    protected final int id;
+    protected final long id;
     protected final String name;
     protected final boolean async;
 
@@ -41,7 +44,7 @@ public abstract class AbstractTask implements Task{
 
     protected Collection<Consumer<TaskFuture>> listeners;
 
-    public AbstractTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async) {
+    public AbstractTask(TaskScheduler scheduler, ObjectOwner owner, long id, String name, long delay, long period, boolean async) {
         if(owner == null || scheduler == null) throw new NullPointerException("Owner or scheduler null.");
         this.scheduler = scheduler;
         this.owner = owner;
@@ -55,7 +58,7 @@ public abstract class AbstractTask implements Task{
     }
 
     @Override
-    public int getID() {
+    public long getID() {
         return id;
     }
 
@@ -244,7 +247,7 @@ public abstract class AbstractTask implements Task{
         }
 
         @Override
-        public Throwable getThrown() {
+        public Throwable getThrowable() {
             return thrown;
         }
     }

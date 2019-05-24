@@ -17,21 +17,24 @@
  * under the License.
  */
 
-package net.prematic.libraries.tasking.simple;
+package net.prematic.libraries.concurrent.simple;
 
-import net.prematic.libraries.tasking.AbstractTask;
-import net.prematic.libraries.tasking.Task;
-import net.prematic.libraries.tasking.TaskScheduler;
+import net.prematic.libraries.concurrent.AbstractTask;
+import net.prematic.libraries.concurrent.Task;
+import net.prematic.libraries.concurrent.TaskScheduler;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A default task implementation for attaching more then one runnable.
+ */
 public class MultipleTask extends AbstractTask {
 
     private final Collection<Runnable> runnables;
 
-    public MultipleTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async) {
+    public MultipleTask(TaskScheduler scheduler, ObjectOwner owner, long id, String name, long delay, long period, boolean async) {
         super(scheduler, owner, id, name, delay, period, async);
         runnables = ConcurrentHashMap.newKeySet();
     }

@@ -28,8 +28,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.prematic.libraries.tasking</groupId>
-    <artifactId>prematiclibraries-tasking</artifactId>
+    <artifactId>prematiclibraries-concurrent</artifactId>
 
     <developers>
         <developer>
@@ -52,12 +51,15 @@
     </build>
 
     <dependencies>
+
+        <!-- Internal project dependencies -->
         <dependency>
-            <groupId>net.prematic.libraries.utility</groupId>
+            <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+
     </dependencies>
 
 </project>
