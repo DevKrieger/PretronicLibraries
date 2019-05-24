@@ -1,7 +1,6 @@
-package net.prematic.libraries.utility.map.caseIntensive;
+package net.prematic.libraries.utility.map.caseintensive;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;

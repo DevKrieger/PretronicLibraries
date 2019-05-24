@@ -30,7 +30,6 @@ public interface UnsafeInstanceCreator {
     <T> T createInstance(Class<T> clazz) throws Exception;
 
     static <T> T newInstance(Class<T> clazz) throws Exception{
-        System.out.println("create instance for "+clazz);
         return DEFAULT.createInstance(clazz);
     }
 

@@ -21,11 +21,11 @@ package net.prematic.libraries.utility.interfaces;
 
 public interface ObjectOwner {
 
-    System SYSTEM = new System();
+    SystemOwner SYSTEM = new SystemOwner();
 
     String getName();
 
-    class System implements ObjectOwner {
+    class SystemOwner implements ObjectOwner {
 
         @Override
         public String getName() {

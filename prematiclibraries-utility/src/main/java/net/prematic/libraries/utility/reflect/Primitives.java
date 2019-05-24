@@ -19,12 +19,13 @@
 
 package net.prematic.libraries.utility.reflect;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class Primitives {
 
-    public static final Set<Class<?>> PRIMITIVES = ConcurrentHashMap.newKeySet();
+    public static final Set<Class<?>> PRIMITIVES = new HashSet<>();
 
     static{
         PRIMITIVES.add(byte.class);

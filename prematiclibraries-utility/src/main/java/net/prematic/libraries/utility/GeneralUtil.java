@@ -6,8 +6,6 @@ import com.google.gson.JsonParser;
 import sun.net.util.IPAddressUtil;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -70,6 +68,19 @@ public class GeneralUtil {
         double j = i/pageSize;
         int h = (int) Math.floor(j*100)/100;
         return h+1;
+    }
+
+    public static <U> List<U> getItemsOnPage(List<U> list, int page, int perPage){
+        List<U> result = new ArrayList<>();
+
+        int from = (perPage*(page - 1))+1;
+        int to = page*perPage;
+
+        for(int i = from;i<=to;i++){
+            if(i > list.size()) break;
+            result.add(list.get(i));
+        }
+        return result;
     }
 
     public static <U> U getRandomItem(Collection<U> collection){

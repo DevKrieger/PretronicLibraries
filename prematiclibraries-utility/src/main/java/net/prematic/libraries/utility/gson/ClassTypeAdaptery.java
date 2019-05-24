@@ -1,6 +1,7 @@
 package net.prematic.libraries.utility.gson;
 
-import com.google.gson.*;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -43,6 +44,7 @@ public class ClassTypeAdaptery<T> extends TypeAdapter<T> {
         object.addProperty("adapterClassName",value.getClass().getName());
         Streams.write(GeneralUtil.GSON.toJsonTree(value),out);
     }
+
     @Override
     public T read(JsonReader in) throws IOException {
         in.beginObject();

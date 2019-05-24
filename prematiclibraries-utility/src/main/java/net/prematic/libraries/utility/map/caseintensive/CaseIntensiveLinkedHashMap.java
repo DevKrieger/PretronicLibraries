@@ -1,7 +1,7 @@
-package net.prematic.libraries.utility.map.caseIntensive;
+package net.prematic.libraries.utility.map.caseintensive;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -10,7 +10,7 @@ import java.util.function.Function;
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.03.19 22:26
+ * @since 22.03.19 22:25
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.function.Function;
  * under the License.
  */
 
-public class CaseIntensiveConcurrentHashMap<V> extends ConcurrentHashMap<String,V> implements CaseIntensiveMap<V> {
+public class CaseIntensiveLinkedHashMap<V> extends LinkedHashMap<String,V> implements CaseIntensiveMap<V> {
 
     @Override
     public V get(Object key) {
@@ -101,5 +101,6 @@ public class CaseIntensiveConcurrentHashMap<V> extends ConcurrentHashMap<String,
     public V merge(String key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         return super.merge(key.toLowerCase(), value, remappingFunction);
     }
+
 
 }

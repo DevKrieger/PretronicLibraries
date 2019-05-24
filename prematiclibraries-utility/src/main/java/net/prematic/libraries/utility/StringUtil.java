@@ -1,5 +1,3 @@
-package net.prematic.libraries.utility;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -18,6 +16,7 @@ package net.prematic.libraries.utility;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+package net.prematic.libraries.utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +27,14 @@ public final class StringUtil {
 
     public static final char[] DEFAULT_SUBSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ".toCharArray();
 
+    public static String getRandomString(int size) {
+        return getRandomString(size, DEFAULT_SUBSET);
+    }
+
     public static String getRandomString(final int size,char[] subset){
         char[] chars = new char[size];
         for(int i=0;i<chars.length;i++) chars[i] = subset[GeneralUtil.RANDOM.nextInt(subset.length)];
         return new String(chars);
-    }
-
-    public static String getRandomString(int size) {
-        return getRandomString(size, DEFAULT_SUBSET);
     }
 
     public static String reverse(String string){
@@ -70,6 +69,7 @@ public final class StringUtil {
             position = matcher.end()-offset;
         }
         if(position < input.length()) result.add(input.substring(position));
+
         return result.toArray(new String[0]);
     }
 }

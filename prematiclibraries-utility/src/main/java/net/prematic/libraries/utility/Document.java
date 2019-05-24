@@ -10,7 +10,7 @@ import java.nio.file.Files;
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 24.03.19 17:45
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.nio.file.Files;
  * under the License.
  */
 
+@Deprecated
 public class Document {
 
     private JsonObject data;

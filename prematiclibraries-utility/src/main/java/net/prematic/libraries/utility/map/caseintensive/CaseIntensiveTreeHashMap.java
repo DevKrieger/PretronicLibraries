@@ -1,7 +1,8 @@
-package net.prematic.libraries.utility.map.caseIntensive;
+package net.prematic.libraries.utility.map.caseintensive;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -25,7 +26,7 @@ import java.util.function.Function;
  * under the License.
  */
 
-public class CaseIntensiveLinkedHashMap<V> extends LinkedHashMap<String,V> implements CaseIntensiveMap<V> {
+public class CaseIntensiveTreeHashMap<V> extends TreeMap<String,V> implements CaseIntensiveMap<V> {
 
     @Override
     public V get(Object key) {
@@ -101,6 +102,4 @@ public class CaseIntensiveLinkedHashMap<V> extends LinkedHashMap<String,V> imple
     public V merge(String key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         return super.merge(key.toLowerCase(), value, remappingFunction);
     }
-
-
 }

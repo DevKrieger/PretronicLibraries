@@ -33,7 +33,19 @@ public class ReflectionUtil {
 
     public static Field getField(Class<?> clazz, String fieldName){
         try {
-            return clazz.getField(fieldName);
+            return clazz.getDeclaredField(fieldName);
+        } catch (Exception exception) {throw new ReflectException("Field "+fieldName+" in class "+clazz+" not found.",exception);}
+    }
+
+    public static Object getFieldValue(Class<?> clazz, String fieldName){
+        return getFieldValue(clazz,fieldName,Object.class);
+    }
+
+    public static <R> R getFieldValue(Class<?> clazz, String fieldName, Class<R> value){
+        try {
+            Field field = getField(clazz, fieldName);
+            field.setAccessible(true);
+            return value.cast(field.get(null));
         } catch (Exception exception) {throw new ReflectException(exception);}
     }
 

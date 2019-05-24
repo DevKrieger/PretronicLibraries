@@ -1,4 +1,4 @@
-package net.prematic.libraries.utility.map.caseIntensive;
+package net.prematic.libraries.utility.map.caseintensive;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)

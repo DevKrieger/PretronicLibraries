@@ -10,6 +10,7 @@ import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -45,6 +46,7 @@ public final class NetworkUtil {
 
     public static final boolean EPOLL = Epoll.isAvailable();
 
+    @Deprecated
     public static String getHostAddress() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
@@ -53,26 +55,32 @@ public final class NetworkUtil {
         }
     }
 
+    @Deprecated
     public static EventLoopGroup getNewEventLoopGroup() {
         if(EPOLL) return new EpollEventLoopGroup(); else return new NioEventLoopGroup();
     }
 
+    @Deprecated
     public static EventLoopGroup getNewEventLoopGroup(int threads) {
         if(EPOLL) return new EpollEventLoopGroup(threads); else return new NioEventLoopGroup(threads);
     }
 
+    @Deprecated
     public static Class<? extends SocketChannel> getNewSocketChannel() {
         if(EPOLL) return EpollSocketChannel.class; else return NioSocketChannel.class;
     }
 
+    @Deprecated
     public static Class<? extends ServerSocketChannel> getNewServerSocketChannel() {
         if(EPOLL) return EpollServerSocketChannel.class; else return NioServerSocketChannel.class;
     }
 
+    @Deprecated
     public static String getExactIp(String address) {
         return address.split("[/:]")[1];
     }
 
+    @Deprecated
     public static boolean isIP4Address(String ip){
         try {
             if(ip == null || ip.isEmpty()) return false;
@@ -89,6 +97,7 @@ public final class NetworkUtil {
         }
     }
 
+    @Deprecated
     public static boolean isPortAvailable(String host, int port){
         Socket socket = null;
         try{
