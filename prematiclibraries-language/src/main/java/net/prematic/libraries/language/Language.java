@@ -1,10 +1,3 @@
-package net.prematic.libraries.language;
-
-import net.prematic.libraries.utility.Document;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -24,10 +17,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * under the License.
  */
 
+package net.prematic.libraries.language;
+
+import net.prematic.libraries.utility.Document;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Language {
 
     private boolean enabled, hidden;
-    private final String name, localName, tag;
+    private final String name, localName, tag;//code
     private final Map<String, String> messages;
     private final Document properties;
 

@@ -28,7 +28,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.prematic.libraries.command</groupId>
     <artifactId>prematiclibraries-command</artifactId>
 
     <developers>
@@ -59,12 +58,12 @@
         <!-- Internal project dependencies -->
 
         <dependency>
-            <groupId>net.prematic.libraries.utility</groupId>
+            <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>net.prematic.libraries.language</groupId>
+            <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-language</artifactId>
             <version>1.0.0</version>
         </dependency>

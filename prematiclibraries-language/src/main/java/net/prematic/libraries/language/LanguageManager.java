@@ -1,8 +1,3 @@
-package net.prematic.libraries.language;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -21,6 +16,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
+package net.prematic.libraries.language;
+
+import net.prematic.libraries.utility.annonations.Nullable;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LanguageManager {
 
@@ -64,5 +66,10 @@ public class LanguageManager {
 
     public void removeLanguage(Language language) {
         getLanguages().remove(language);
+    }
+
+    public String getMessage(@Nullable LanguageAble owner, String key){
+        if(owner != null && owner.getLanguage() != null) return owner.getLanguage().getMessage(key);
+        else return getDefaultLanguage().getMessage(key);
     }
 }

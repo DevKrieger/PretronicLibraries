@@ -46,7 +46,7 @@ public class SimpleCommandManager implements CommandManager {
 
     @Override
     public Command getCommand(String name) {
-        return Iterators.iterateAndWrapOne(this.commands, entry -> entry.getCommand().hasAlias(name),CommandEntry::getCommand);
+        return Iterators.mapOne(this.commands, entry -> entry.getCommand().hasAlias(name),CommandEntry::getCommand);
     }
 
     @Override
