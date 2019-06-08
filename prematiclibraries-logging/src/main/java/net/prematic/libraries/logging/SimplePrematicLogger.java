@@ -69,6 +69,7 @@ public class SimplePrematicLogger extends AbstractPrematicLogger {
         this.queue = new LinkedBlockingQueue<>();
         this.printer = new AsyncQueuePrinter(this.queue);
         this.printer.start();
+        info("Staring Prematic logging service.");
     }
 
     public void formatAndWrite(MessageInfo info, LogLevel logLevel, DebugLevel debugLevel, String message, Throwable throwable, Thread thread){
