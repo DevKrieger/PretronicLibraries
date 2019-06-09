@@ -1,10 +1,8 @@
-package net.prematic.libraries.logging.bridge;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 24.03.19 19:01
+ * @since 08.06.19 16:56
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +17,8 @@ package net.prematic.libraries.logging.bridge;
  * under the License.
  */
 
+package net.prematic.libraries.logging.bridge.slf4j;
+
 import net.prematic.libraries.logging.PrematicLogger;
 import net.prematic.libraries.logging.SimplePrematicLogger;
 import net.prematic.libraries.logging.level.DebugLevel;
@@ -29,15 +29,15 @@ import org.slf4j.Marker;
 /**
  * This is a bridge for hooking prematic logging service in the self4j logger.
  */
-public class Slf4jBridge implements Logger {
+public class SLF4JBridge implements Logger {
 
     private final PrematicLogger logger;
 
-    public Slf4jBridge() {
+    public SLF4JBridge() {
         this(new SimplePrematicLogger());
     }
 
-    public Slf4jBridge(PrematicLogger logger) {
+    public SLF4JBridge(PrematicLogger logger) {
         this.logger = logger;
     }
 

@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 01.04.19 19:22
+ * @since 25.05.19 20:52
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,29 @@
  * under the License.
  */
 
-package net.prematic.libraries.tasking;
+package net.prematic.libraries.jarsignature;
 
-public interface TaskFuture {
+import net.prematic.libraries.jarsignature.certificate.Certificate;
 
-    TaskState getState();
+import java.io.File;
 
-    boolean isStarting();
+public class Test {
 
-    boolean isCompleted();
+    public static void mainf(String[] args){
+        JarSigner signer = new JarSigner(new File("plugins/dkbans.jar"));
+        signer.setCertificate(Certificate.builder().setOrganisation("Prematic").build());
 
-    boolean isFailed();
+        signer.sign();
 
-    boolean isInterrupted();
+    }
 
-    Throwable getThrown();
+    public static void main(String[] args){
+        JarVerifier verifier = new JarVerifier(new File("plugins/dkbans.jar"));
+
+        System.out.println(verifier.isSinged());
+
+        System.out.println(verifier.getCertificate().getOrganisation());
+
+    }
+
 }

@@ -50,6 +50,8 @@
         <module>prematiclibraries-language</module>
         <module>prematiclibraries-dependency</module>
         <module>prematiclibraries-console</module>
+        <module>prematiclibraries-plugin-test</module>
+        <module>prematiclibraries-jarsignature</module>
     </modules>
 
 </project>

@@ -1,10 +1,8 @@
-package net.prematic.libraries.logging;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.02.19 16:17
+ * @since 25.05.19 22:26
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +17,21 @@ package net.prematic.libraries.logging;
  * under the License.
  */
 
-public enum LogLevel {
+package net.prematic.libraries.jarsignature.certificate;
 
-    OFF(),
-    ERROR(),
-    WARNING(),
-    INFO(),
-    DEBUG(),
-    DEBUG_HEIGHT(),
-    ALL();
+public enum CertificateValidity {
 
+    INVALID((byte)1),
+    VALID((byte)2),
+    EXPIRED((byte)3);
+
+    public byte code;
+
+    CertificateValidity(byte code) {
+        this.code = code;
+    }
+
+    public byte getCode() {
+        return code;
+    }
 }
