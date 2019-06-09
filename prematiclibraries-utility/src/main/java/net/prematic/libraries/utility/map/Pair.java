@@ -58,12 +58,12 @@ public class Pair<K, V> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o instanceof Pair) {
-            Pair multiValue = (Pair) o;
-            if (!Objects.equals(key, multiValue.key)) return false;
-            return Objects.equals(value, multiValue.value);
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object instanceof Pair) {
+            Pair pair = (Pair) object;
+            if (!Objects.equals(key, pair.key)) return false;
+            return Objects.equals(value, pair.value);
         }
         return false;
     }
