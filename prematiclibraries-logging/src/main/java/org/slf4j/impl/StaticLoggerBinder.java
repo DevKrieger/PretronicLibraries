@@ -35,6 +35,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder, SLF4JStaticBridg
     public static final StaticLoggerBinder getSingleton() {
         return BINDER;
     }
+
     @Override
     public void setLogger(PrematicLogger logger){
         LOGGER = new SLF4JBridge(logger);

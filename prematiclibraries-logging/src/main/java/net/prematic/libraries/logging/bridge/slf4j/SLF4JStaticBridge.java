@@ -32,6 +32,12 @@ public class SLF4JStaticBridge {
         SETTER.setLogger(logger);
     }
 
+    public static void trySetLogger(PrematicLogger logger){
+       try{
+           setLogger(logger);
+       }catch (Exception ignored){}
+    }
+
     private static LoggerSetter detectSetter(){
         try {
             Class.forName("org.slf4j.spi.SLF4JServiceProvider");
