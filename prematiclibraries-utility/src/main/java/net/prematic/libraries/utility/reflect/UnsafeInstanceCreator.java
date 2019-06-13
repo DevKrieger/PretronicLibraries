@@ -29,8 +29,15 @@ public interface UnsafeInstanceCreator {
 
     <T> T createInstance(Class<T> clazz) throws Exception;
 
-    static <T> T newInstance(Class<T> clazz) throws Exception{
-        return DEFAULT.createInstance(clazz);
+    static <T> T newInstance(Class<T> clazz){
+        try{
+            if(clazz.isEnum())
+            if(clazz.isInterface() || clazz.isEnum() ||  Modifier.isAbstract(clazz.getModifiers()))
+                throw new IllegalArgumentException("It is not possible to create an instance of an interface, enum or abstract class.");
+            return DEFAULT.createInstance(clazz);
+        }catch (Exception exception){
+            throw new ReflectException(exception);
+        }
     }
 
     static UnsafeInstanceCreator findCreator(){
