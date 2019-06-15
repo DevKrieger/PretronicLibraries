@@ -1,10 +1,8 @@
-package net.prematic.libraries.utility.interfaces;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 16.02.19 14:48
+ * @since 15.06.19 22:58
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +17,10 @@ package net.prematic.libraries.utility.interfaces;
  * under the License.
  */
 
-public interface DestroyAble {
+package net.prematic.libraries.utility.interfaces;
 
-    void destroy();
+public interface DeepCopyable<T> extends Cloneable{
+
+    T copyDeep();
 
 }

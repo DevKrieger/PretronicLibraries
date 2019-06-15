@@ -53,6 +53,7 @@
         <module>prematiclibraries-plugin-test</module>
         <module>prematiclibraries-jarsignature</module>
         <module>prematiclibraries-document</module>
+        <module>prematiclibraries-copy</module>
     </modules>
 
 </project>

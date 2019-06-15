@@ -33,15 +33,6 @@ import java.util.*;
 
 public class HttpClient {
 
-    public static void main(String[] args){
-        HttpClient client = new HttpClient();
-        client.setUrl("https://google.ch");
-        client.connect();
-
-        client.setUrl("https://microsoft.ch");
-        client.connect();
-    }
-
     public static final String PROPERTY_USER_AGENT = "User-Agent";
     public static final String PROPERTY_COOKIE = "Cookie";
     public static final String PROPERTY_COOKIE_SET = "Set-Cookie";
