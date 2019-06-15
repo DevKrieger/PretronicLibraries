@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -135,15 +134,15 @@ public class SimpleTaskScheduler implements TaskScheduler {
         this.executor.shutdown();
     }
 
-    private class SimpleTaskBuilder implements TaskScheduler.Builder {
+    public class SimpleTaskBuilder implements TaskScheduler.Builder {
 
-        private final long id;
-        private final ObjectOwner owner;
-        private final TaskScheduler scheduler;
+        public final long id;
+        public final ObjectOwner owner;
+        public final TaskScheduler scheduler;
 
-        private String name;
-        private long interval, delay;
-        private boolean async;
+        public String name;
+        public long interval, delay;
+        public boolean async;
 
         public SimpleTaskBuilder(TaskScheduler scheduler,int id, ObjectOwner owner) {
             this.id = id;

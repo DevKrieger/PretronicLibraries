@@ -15,7 +15,7 @@ public class JarSigner {
     private final String name;
     private final String privateKey, publicKey;
 
-    private net.prematic.libraries.jarsignature.certificate.Certificate certificate;
+    private Certificate certificate;
 
     public JarSigner(File jarFile){
         this(jarFile,"prematic");

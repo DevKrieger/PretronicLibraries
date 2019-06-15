@@ -3,6 +3,7 @@ package net.prematic.libraries.utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+import net.prematic.libraries.utility.map.Pair;
 import sun.net.util.IPAddressUtil;
 
 import java.util.*;
@@ -29,22 +30,13 @@ import java.util.*;
 public class GeneralUtil {
 
     public static final String NULL = "null";
-
     public static final Random RANDOM = new Random();
 
 
-
-    public static final GsonBuilder GSON_BUILDER = new GsonBuilder().setPrettyPrinting();
-    public static Gson GSON = GSON_BUILDER.create();
-    public static final JsonParser PARSER = new JsonParser();
-
-
-
-
-    public static void createGSON(){
-        GSON = GSON_BUILDER.create();
+    public static boolean isNaturalNumber(String value){
+        for(char c : value.toCharArray()) if(!Character.isDigit(c)) return false;
+        return true;
     }
-
 
     /**
      *
@@ -52,9 +44,16 @@ public class GeneralUtil {
      * @return True for a string which is a number
      */
     public static boolean isNumber(String value){
-        for(char c : value.toCharArray()) if(!Character.isDigit(c) && c != '.') return false;
+        boolean dot = false;
+        for(char c : value.toCharArray()){
+            if(!Character.isDigit(c)){
+                if(c == '.' && !dot) dot = true;
+                else return false;
+            }
+        }
         return true;
     }
+
 
     /*
 

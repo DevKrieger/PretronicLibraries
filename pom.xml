@@ -52,6 +52,7 @@
         <module>prematiclibraries-console</module>
         <module>prematiclibraries-plugin-test</module>
         <module>prematiclibraries-jarsignature</module>
+        <module>prematiclibraries-document</module>
     </modules>
 
 </project>

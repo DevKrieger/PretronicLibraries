@@ -3,7 +3,7 @@
   ~ (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
   ~
   ~ @author Davide Wietlisbach
-  ~ @since 08.02.19 16:17
+  ~ @since 08.06.19 21:41
   ~
   ~ The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -28,19 +28,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>prematiclibraries-utility</artifactId>
-
-    <developers>
-        <developer>
-            <name>Davide Wietlisbach</name>
-            <organization>Prematic</organization>
-        </developer>
-        <developer>
-            <name>Philipp Elvin Friedhoff</name>
-            <organization>Prematic</organization>
-        </developer>
-    </developers>
-
+    <artifactId>prematiclibraries-document</artifactId>
+    <version>1.0.0</version>
     <build>
         <plugins>
             <plugin>
@@ -55,36 +44,16 @@
     </build>
 
     <dependencies>
+
         <!-- Internal project dependencies -->
+
         <dependency>
             <groupId>net.prematic.libraries</groupId>
-            <artifactId>prematiclibraries-document</artifactId>
+            <artifactId>prematiclibraries-utility</artifactId>
             <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- External project dependencies -->
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.2</version>
-            <scope>compile</scope><!-- Todo check compile or provided-->
-        </dependency>
-
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.26.Final</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-buffer</artifactId>
-            <version>4.1.26.Final</version>
             <scope>compile</scope>
         </dependency>
 
     </dependencies>
+
 </project>

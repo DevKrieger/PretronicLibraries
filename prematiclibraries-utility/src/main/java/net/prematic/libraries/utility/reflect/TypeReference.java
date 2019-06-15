@@ -19,8 +19,6 @@
 
 package net.prematic.libraries.utility.reflect;
 
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 

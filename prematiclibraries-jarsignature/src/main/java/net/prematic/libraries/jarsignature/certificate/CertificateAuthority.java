@@ -19,14 +19,14 @@
 
 package net.prematic.libraries.jarsignature.certificate;
 
-import net.prematic.libraries.utility.document.Document;
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.utility.http.HttpClient;
 import net.prematic.libraries.utility.http.HttpResult;
 
 public class CertificateAuthority {
 
-    public static final String HEADER_VERIFY_PUBLIC_KEY = "VERIFY_PUBLIC_KEY";
-    public static final String HEADER_VERIFY_CERTIFICATE = "VERIFY_CERTIFICATE";
+    private static final String HEADER_VERIFY_PUBLIC_KEY = "VERIFY_PUBLIC_KEY";
+    private static final String HEADER_VERIFY_CERTIFICATE = "VERIFY_CERTIFICATE";
 
     public static final CertificateAuthority PREMATIC = new CertificateAuthority("Prematic","https://verify.prematic.net/api/v1/verify/");
 
