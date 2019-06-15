@@ -55,13 +55,6 @@
     </build>
 
     <dependencies>
-        <!-- Internal project dependencies -->
-        <dependency>
-            <groupId>net.prematic.libraries</groupId>
-            <artifactId>prematiclibraries-document</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- External project dependencies -->
 

@@ -316,5 +316,11 @@ public final class FileUtil {
         }
     }
 
-
+    public static URL newUrl(String url){
+        try {
+            return new URL(url);
+        } catch (MalformedURLException exception) {
+            throw new IllegalArgumentException("Invalid url",exception);
+        }
+    }
 }

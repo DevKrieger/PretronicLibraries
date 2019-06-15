@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 09.06.19 21:39
+ * @since 15.06.19 21:43
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,34 +17,15 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.io;
+package net.prematic.libraries.utility.io;
 
-import net.prematic.libraries.document.Document;
-import net.prematic.libraries.utility.io.InputStreamReadable;
-import net.prematic.libraries.utility.parser.StringParser;
-
-import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 
-public interface DocumentReader extends InputStreamReadable<Document> {
+public interface InputStreamReadable<R> {
 
-    Document read(byte[] content);
+    R read(InputStream stream);
 
-    Document read(byte[] content, Charset charset);
-
-    Document read(String content);
-
-    Document read(File location);
-
-    Document read(File location, Charset charset);
-
-    Document read(InputStream input);
-
-    Document read(InputStream input, Charset charset);
-
-    Document read(StringParser parser);
+    R read(InputStream stream, Charset charset);
 
 }

@@ -60,8 +60,8 @@ public class  DocumentRegistry {
 
 
     static {
-        registerType(new DocumentFileType("JSON","json",new JsonDocumentWriter(),new JsonDocumentReader()));
-        registerType(new DocumentFileType("YAML","yml",new YamlDocumentWriter(),new YamlDocumentReader()));
+        registerType(DocumentFileType.JSON);
+        registerType(DocumentFileType.YAML);
 
         registerAdapter(UUID.class,new UUIDAdapter());
         registerAdapter(Calendar.class,new CalendarAdapter());
