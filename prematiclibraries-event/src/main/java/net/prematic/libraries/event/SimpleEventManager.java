@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.event;
 
+import net.prematic.libraries.utility.GeneralUtil;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
@@ -37,7 +38,7 @@ public class SimpleEventManager implements EventManager {
     private final Map<Class<?>,List<MethodEntry>> methods;
 
     public SimpleEventManager() {
-        this(Executors.newCachedThreadPool());
+        this(GeneralUtil.getDefaultExecutorService());
     }
 
     public SimpleEventManager(Executor asyncExecutor) {

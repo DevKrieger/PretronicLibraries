@@ -7,6 +7,8 @@ import net.prematic.libraries.utility.map.Pair;
 import sun.net.util.IPAddressUtil;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -29,8 +31,18 @@ import java.util.*;
 
 public class GeneralUtil {
 
-    public static final String NULL = "null";
+    private static ExecutorService DEFAULT_EXECUTOR_SERVICE;
+
     public static final Random RANDOM = new Random();
+
+    public static ExecutorService getDefaultExecutorService(){
+        if(DEFAULT_EXECUTOR_SERVICE == null) DEFAULT_EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+        return DEFAULT_EXECUTOR_SERVICE;
+    }
+
+    public void setDefaultExecutorService(ExecutorService executorService){
+        DEFAULT_EXECUTOR_SERVICE = executorService;
+    }
 
 
     public static boolean isNaturalNumber(String value){
