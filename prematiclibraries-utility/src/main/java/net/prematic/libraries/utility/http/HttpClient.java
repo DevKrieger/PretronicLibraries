@@ -19,7 +19,6 @@
 
 package net.prematic.libraries.utility.http;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import net.prematic.libraries.utility.io.FileUtil;
 import net.prematic.libraries.utility.io.IORuntimeException;
 
@@ -137,7 +136,7 @@ public class HttpClient {
     }
 
     public void setBasicAuthentication(String username, String password){
-        setProperty(PROPERTY_AUTHORIZATION,"Basic "+ Base64.encode((username+":"+password).getBytes(StandardCharsets.UTF_8)));
+        setProperty(PROPERTY_AUTHORIZATION,"Basic "+ Base64.getEncoder().encodeToString((username+":"+password).getBytes(StandardCharsets.UTF_8)));
     }
 
     public void setContent(String content){
