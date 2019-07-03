@@ -51,7 +51,7 @@
             <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
             <version>1.0.0</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

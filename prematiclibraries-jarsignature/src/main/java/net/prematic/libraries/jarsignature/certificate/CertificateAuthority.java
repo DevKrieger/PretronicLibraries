@@ -19,14 +19,15 @@
 
 package net.prematic.libraries.jarsignature.certificate;
 
-import net.prematic.libraries.utility.document.Document;
+import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.utility.http.HttpClient;
 import net.prematic.libraries.utility.http.HttpResult;
 
 public class CertificateAuthority {
 
-    public static final String HEADER_VERIFY_PUBLIC_KEY = "VERIFY_PUBLIC_KEY";
-    public static final String HEADER_VERIFY_CERTIFICATE = "VERIFY_CERTIFICATE";
+    private static final String HEADER_VERIFY_PUBLIC_KEY = "VERIFY_PUBLIC_KEY";
+    private static final String HEADER_VERIFY_CERTIFICATE = "VERIFY_CERTIFICATE";
 
     public static final CertificateAuthority PREMATIC = new CertificateAuthority("Prematic","https://verify.prematic.net/api/v1/verify/");
 
@@ -48,14 +49,14 @@ public class CertificateAuthority {
     public CertificateValidity verify(String publicKey, Certificate certificate){
         HttpClient client = new HttpClient();
         client.setUrl(apiUrl);
-        client.setHeader(HEADER_VERIFY_PUBLIC_KEY,publicKey);
-        client.setHeader(HEADER_VERIFY_CERTIFICATE,certificate.getBase64Encoded());
+        client.setProperty(HEADER_VERIFY_PUBLIC_KEY,publicKey);
+        client.setProperty(HEADER_VERIFY_CERTIFICATE,certificate.getBase64Encoded());
 
-        HttpResult result = client.readPage();
+        HttpResult result = client.connect();
 
         if(result.getCode() == 200){
-            Document json = result.getJsonContent();
-            return CertificateValidity.valueOf(json.getString("validity").toUpperCase());
+            Document document = result.getContent(DocumentFileType.JSON.getReader());
+            return CertificateValidity.valueOf(document.getString("validity").toUpperCase());
         }
         return CertificateValidity.INVALID;
     }

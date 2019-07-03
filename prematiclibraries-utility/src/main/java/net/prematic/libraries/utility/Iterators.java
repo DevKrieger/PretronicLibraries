@@ -126,10 +126,11 @@ public final class Iterators {
         remove(list,acceptor);
     }
 
-    public static <U> void remove(Iterable<U> list, Predicate<U> acceptor){
+    public static <U> U remove(Iterable<U> list, Predicate<U> acceptor){
         Iterator<U> iterator = list.iterator();
         U result = null;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptor.test(result)) iterator.remove();
+        return result;
     }
 
 }

@@ -38,13 +38,29 @@ public final class FileUtil {
 
     //Filesystem utils
 
+    public static OutputStream newFileOutputStream(File location){
+        try {
+            return new FileOutputStream(location);
+        } catch (FileNotFoundException exception) {
+            throw new IORuntimeException(exception);
+        }
+    }
+
+    public static InputStream newFileInputStream(File location){
+        try {
+            return new FileInputStream(location);
+        } catch (FileNotFoundException exception) {
+            throw new IORuntimeException(exception);
+        }
+    }
+
     /**
      *  Read the content from a file with the standard charset.
      *
      * @param file The source file
      * @return The file content
      */
-    public String readContent(File file){
+    public static String readContent(File file){
        return readContent(file,Charset.defaultCharset());
     }
 
@@ -55,7 +71,7 @@ public final class FileUtil {
      * @param charset The charset of the file
      * @return The file cotnent
      */
-    public String readContent(File file,Charset charset){
+    public static String readContent(File file,Charset charset){
         try {
             return readContent(Files.newInputStream(file.toPath()),charset);
         } catch (IOException exception) {
@@ -135,7 +151,7 @@ public final class FileUtil {
      * @param sourceFile The source file
      * @param destinationFile The destination file
      */
-    public void copyFile(File sourceFile,File destinationFile){
+    public static void copyFile(File sourceFile,File destinationFile){
         if(sourceFile == null || destinationFile == null) throw new NullPointerException("source file or destination file is null.");
 
         if(!sourceFile.exists()) throw new IORuntimeException("Source file does not exist.");
@@ -300,5 +316,11 @@ public final class FileUtil {
         }
     }
 
-
+    public static URL newUrl(String url){
+        try {
+            return new URL(url);
+        } catch (MalformedURLException exception) {
+            throw new IllegalArgumentException("Invalid url",exception);
+        }
+    }
 }
