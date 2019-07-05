@@ -29,7 +29,10 @@ import net.prematic.libraries.document.type.yaml.YamlDocumentWriter;
 public class DocumentFileType {
 
     public static final DocumentFileType JSON = new DocumentFileType("JSON","json",new JsonDocumentWriter(),new JsonDocumentReader());
+
     public static final DocumentFileType YAML = new DocumentFileType("YAML","yml",new YamlDocumentWriter(),new YamlDocumentReader());
+
+    public static final DocumentFileType BINARY = new DocumentFileType("BINARY","bin",null,null);
 
     private final String name, ending;
     private final DocumentWriter writer;
