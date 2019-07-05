@@ -24,9 +24,7 @@ import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.PrimitiveEntry;
 import net.prematic.libraries.document.io.DocumentWriter;
-import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.utility.io.IORuntimeException;
-import net.prematic.libraries.utility.map.Pair;
 
 import java.io.*;
 import java.nio.charset.Charset;
