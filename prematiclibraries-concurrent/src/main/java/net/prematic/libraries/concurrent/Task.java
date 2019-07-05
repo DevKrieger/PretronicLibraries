@@ -42,7 +42,7 @@ public interface Task extends Runnable{
      *
      * @return The task id
      */
-    long getID();
+    int getID();
 
     /**
      * Every task can have a name. The name is useful for identifying a task and using a task simple.

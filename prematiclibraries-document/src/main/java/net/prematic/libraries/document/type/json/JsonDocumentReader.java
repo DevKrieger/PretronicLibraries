@@ -19,11 +19,14 @@
 
 package net.prematic.libraries.document.type.json;
 
-import net.prematic.libraries.document.*;
+import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.DocumentEntry;
+import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.utility.parser.StringParser;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import static net.prematic.libraries.document.type.Characters.*;
@@ -168,7 +171,8 @@ public class JsonDocumentReader implements DocumentReader{
 
     public Number readNextNumber(StringParser parser) {
         parser.previousChar();
-        boolean negative = false, decimal = false;
+        boolean negative = false;
+        boolean decimal = false;
         double decimalPlace = 1.0;
         double value = 0D;
 

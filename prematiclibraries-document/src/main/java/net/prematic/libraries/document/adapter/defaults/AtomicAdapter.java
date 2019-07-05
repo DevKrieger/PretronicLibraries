@@ -24,8 +24,6 @@ import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;

@@ -24,15 +24,11 @@ import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.utility.reflect.ReflectException;
-import net.prematic.libraries.utility.reflect.ReflectionUtil;
 import net.prematic.libraries.utility.reflect.TypeReference;
-import net.prematic.libraries.utility.reflect.UnsafeInstanceCreator;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.function.Consumer;
 
 public class CollectionAdapter implements DocumentAdapter<Collection> {
 

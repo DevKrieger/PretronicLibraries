@@ -26,7 +26,8 @@ import net.prematic.libraries.document.PrimitiveEntry;
 import net.prematic.libraries.document.io.DocumentWriter;
 import net.prematic.libraries.utility.io.IORuntimeException;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.Charset;
 
 public class YamlDocumentWriter implements DocumentWriter {

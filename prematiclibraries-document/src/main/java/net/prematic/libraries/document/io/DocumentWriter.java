@@ -31,11 +31,14 @@ public interface DocumentWriter {
 
     byte[] write(Document document, Charset charset);
 
-
     default String write(Document document, boolean pretty){
         StringWriter writer = new StringWriter();
         write(writer,document,pretty);
         return writer.toString();
+    }
+
+    default void write(File location, Document document){
+        write(location, document,true);
     }
 
     default void write(File location, Document document, boolean pretty){
@@ -54,6 +57,9 @@ public interface DocumentWriter {
         }
     }
 
+    default void write(OutputStream output, Document document, Charset charset){
+        write(output, document,true);
+    }
 
     default void write(OutputStream output, Document document, boolean pretty){
         try {

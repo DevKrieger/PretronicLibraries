@@ -328,7 +328,7 @@ public class ArrayCache<O> implements Cache<O>{
         return future;
     }
 
-    static ExecutorService getDefaultExecutor(){
+    private static ExecutorService getDefaultExecutor(){
         try{
             return (ExecutorService) Class.forName("net.prematic.libraries.utility.GeneralUtil").getMethod("getDefaultExecutorService").invoke(null);
         }catch (Exception ignored){}

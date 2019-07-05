@@ -34,7 +34,7 @@ public class MultipleTask extends AbstractTask {
 
     private final Collection<Runnable> runnables;
 
-    public MultipleTask(TaskScheduler scheduler, ObjectOwner owner, long id, String name, long delay, long period, boolean async) {
+    public MultipleTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async) {
         super(scheduler, owner, id, name, delay, period, async);
         runnables = ConcurrentHashMap.newKeySet();
     }

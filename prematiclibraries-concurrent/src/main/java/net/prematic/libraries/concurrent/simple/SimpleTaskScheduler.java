@@ -31,18 +31,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The simple implementation of the prematic task scheduler.
  */
 public class SimpleTaskScheduler implements TaskScheduler {
 
-    private final static long ZERO = 0;
-    private final static TimeUnit DEFAULT_UNIT = TimeUnit.MILLISECONDS;
-
-    private final AtomicLong taskIdManager;
-    private final Map<Long,Task> tasks;
+    private final AtomicInteger taskIdManager;
+    private final Map<Integer,Task> tasks;
     private final ExecutorService executor;
 
     public SimpleTaskScheduler() {
@@ -51,7 +48,7 @@ public class SimpleTaskScheduler implements TaskScheduler {
 
     public SimpleTaskScheduler(ExecutorService executor) {
         this.executor = executor;
-        this.taskIdManager = new AtomicLong(1);
+        this.taskIdManager = new AtomicInteger(1);
         tasks = new ConcurrentHashMap<>();
     }
 
@@ -77,7 +74,7 @@ public class SimpleTaskScheduler implements TaskScheduler {
 
     @Override
     public Builder createTask(ObjectOwner owner) {
-        return new SimpleTaskBuilder(this,0,owner);
+        return new SimpleTaskBuilder(this,taskIdManager.getAndIncrement(),owner);
     }
 
     @Override
@@ -136,15 +133,15 @@ public class SimpleTaskScheduler implements TaskScheduler {
 
     public class SimpleTaskBuilder implements TaskScheduler.Builder {
 
-        public final long id;
-        public final ObjectOwner owner;
-        public final TaskScheduler scheduler;
+        private final int id;
+        private final ObjectOwner owner;
+        private final TaskScheduler scheduler;
 
-        public String name;
-        public long interval, delay;
-        public boolean async;
+        private String name;
+        private long interval, delay;
+        private boolean async;
 
-        public SimpleTaskBuilder(TaskScheduler scheduler,int id, ObjectOwner owner) {
+        SimpleTaskBuilder(TaskScheduler scheduler,int id, ObjectOwner owner) {
             this.id = id;
             this.owner = owner;
             this.scheduler = scheduler;

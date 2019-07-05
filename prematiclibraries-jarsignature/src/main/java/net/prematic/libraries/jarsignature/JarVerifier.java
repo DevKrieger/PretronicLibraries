@@ -9,10 +9,11 @@ import java.io.File;
 import java.security.KeyFactory;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import static net.prematic.libraries.jarsignature.JarSignatureUtil.*;
+import static net.prematic.libraries.jarsignature.JarSignatureUtil.calculateSignatureCheckSum;
 
 public class JarVerifier {
 
@@ -49,14 +50,14 @@ public class JarVerifier {
 
             jar.close();
 
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(DECODER.decodeBuffer(this.publicKey));
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(this.publicKey));
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
             Signature signatureTool = Signature.getInstance("SHA1WithRSA");
             signatureTool.initVerify(keyFactory.generatePublic(keySpec));
             signatureTool.update(calculateSignatureCheckSum(jarFile));
 
-            this.signatureCorrect = signatureTool.verify(DECODER.decodeBuffer(this.signature));
+            this.signatureCorrect = signatureTool.verify(Base64.getDecoder().decode(this.signature));
 
             if(this.signatureCorrect){
                 if(certificate != null) this.certificate = Certificate.load(FileUtil.readContent(jar.getInputStream(certificate)));

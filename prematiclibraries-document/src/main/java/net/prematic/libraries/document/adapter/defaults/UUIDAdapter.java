@@ -22,7 +22,6 @@ package net.prematic.libraries.document.adapter.defaults;
 import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
-import net.prematic.libraries.document.simple.SimplePrimitiveEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.util.UUID;

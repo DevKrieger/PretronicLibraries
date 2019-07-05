@@ -22,7 +22,10 @@ package net.prematic.libraries.document;
 import net.prematic.libraries.utility.parser.StringParser;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;

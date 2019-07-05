@@ -1,7 +1,5 @@
 package net.prematic.libraries.utility;
 
-import sun.net.util.IPAddressUtil;
-
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -91,7 +89,6 @@ public class GeneralUtil {
     }
 
     public static <U> U getRandomItem(Collection<U> collection){
-        IPAddressUtil.textToNumericFormatV4("");
         int random = RANDOM.nextInt(collection.size());
         for(U object : collection) if (--random < 0) return object;
         return null;

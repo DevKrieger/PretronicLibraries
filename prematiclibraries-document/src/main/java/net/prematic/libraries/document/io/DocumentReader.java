@@ -25,8 +25,6 @@ import net.prematic.libraries.utility.parser.StringParser;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 
 public interface DocumentReader extends InputStreamReadable<Document> {
