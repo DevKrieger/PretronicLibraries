@@ -28,7 +28,9 @@ import net.prematic.libraries.utility.reflect.ReflectException;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class MapAdapter implements DocumentAdapter<Map> {
 
@@ -60,7 +62,6 @@ public class MapAdapter implements DocumentAdapter<Map> {
     @Override
     public DocumentEntry write(String key, Map object) {
         Document document = DocumentRegistry.getFactory().newDocument(key);
-        int i = 0;
         Set<Map.Entry> entrySet = object.entrySet();
         for(Map.Entry entry : entrySet){
             String itemKey;

@@ -20,13 +20,14 @@
 package net.prematic.libraries.command.manager;
 
 import net.prematic.libraries.command.CommandEntry;
-import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.command.Command;
+import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleCommandManager implements CommandManager {
 

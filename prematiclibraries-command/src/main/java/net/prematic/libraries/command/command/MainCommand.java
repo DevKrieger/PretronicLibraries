@@ -20,8 +20,8 @@
 package net.prematic.libraries.command.command;
 
 import net.prematic.libraries.command.CommandEntry;
-import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.manager.CommandManager;
+import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
@@ -73,7 +73,7 @@ public class MainCommand extends Command implements CommandManager {
 
     @Override
     public void dispatchCommand(CommandSender sender, String command) {
-
+        execute(sender,new String[]{command});
     }
 
     @Override

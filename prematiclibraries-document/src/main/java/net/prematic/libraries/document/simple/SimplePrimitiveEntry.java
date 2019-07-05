@@ -24,7 +24,6 @@ import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.PrimitiveEntry;
 import net.prematic.libraries.utility.GeneralUtil;
-import net.prematic.libraries.utility.reflect.Primitives;
 
 public class SimplePrimitiveEntry implements PrimitiveEntry {
 

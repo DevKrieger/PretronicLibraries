@@ -223,7 +223,7 @@ public final class FileUtil {
                     try{
                         File destinationFile = new File(destinationDirectory,children.getName());
                         Files.copy(children.toPath(),destinationFile.toPath(),StandardCopyOption.REPLACE_EXISTING);
-                    }catch (Exception exception){throw new RuntimeException(exception);}
+                    }catch (IOException exception) {throw new IORuntimeException(exception);}
                 }
             }
         }
@@ -257,7 +257,7 @@ public final class FileUtil {
                 }
             }
             return result;
-        }catch (Exception exception){throw new RuntimeException(exception.getMessage());}
+        }catch (IOException exception) {throw new IORuntimeException(exception);}
     }
 
     @Deprecated
@@ -295,7 +295,7 @@ public final class FileUtil {
 
         try {
             Files.copy(input, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }catch (Exception exception) {throw new RuntimeException(exception);}
+        }catch (IOException exception) {throw new IORuntimeException(exception);}
     }
 
 

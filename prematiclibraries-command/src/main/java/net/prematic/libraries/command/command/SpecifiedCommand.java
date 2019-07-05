@@ -20,8 +20,8 @@
 package net.prematic.libraries.command.command;
 
 import net.prematic.libraries.command.CommandEntry;
-import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.manager.CommandManager;
+import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
@@ -72,7 +72,9 @@ public abstract class SpecifiedCommand<T> extends SpecifiedSubCommand implements
     }
 
     @Override
-    public void dispatchCommand(CommandSender sender, String command) {}
+    public void dispatchCommand(CommandSender sender, String command) {
+        throw new UnsupportedOperationException("It is not supported to dispatch a command in a specified command.");
+    }
 
     @Override
     public void registerCommand(ObjectOwner owner, Command command) {

@@ -19,11 +19,15 @@
 
 package net.prematic.libraries.document.type.json;
 
-import net.prematic.libraries.document.*;
+import net.prematic.libraries.document.ArrayEntry;
+import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.DocumentEntry;
+import net.prematic.libraries.document.PrimitiveEntry;
 import net.prematic.libraries.document.io.DocumentWriter;
 import net.prematic.libraries.utility.io.IORuntimeException;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.Charset;
 
 public class JsonDocumentWriter implements DocumentWriter {
@@ -47,7 +51,7 @@ public class JsonDocumentWriter implements DocumentWriter {
         }
     }
 
-    public int writeObjectValue(Writer output, Document document, int indent) throws IOException{
+    private int writeObjectValue(Writer output, Document document, int indent) throws IOException{
         if(document.isEmpty()) output.write("{}");
         else{
             output.write('{');
@@ -61,7 +65,7 @@ public class JsonDocumentWriter implements DocumentWriter {
         return indent;
     }
 
-    public int writeArrayValue(Writer output, ArrayEntry array, int indent) throws IOException {
+    private int writeArrayValue(Writer output, ArrayEntry array, int indent) throws IOException {
         if(array.isEmpty()) output.write("[]");
         else{
             boolean multiLine = indent>=0 && !array.isPrimitiveArray();
@@ -80,7 +84,7 @@ public class JsonDocumentWriter implements DocumentWriter {
         return indent;
     }
 
-    public void writePrimitiveValue(Writer output, PrimitiveEntry entry) throws IOException {
+    private void writePrimitiveValue(Writer output, PrimitiveEntry entry) throws IOException {
         if(entry.getAsObject() instanceof String){
             output.write('"');
             output.write(entry.getAsString());
@@ -92,7 +96,7 @@ public class JsonDocumentWriter implements DocumentWriter {
         }else output.write(entry.getAsString());
     }
 
-    public int writeObjectEntries(Writer output, Document document, int indent, boolean key,boolean multiLine) throws IOException{
+    private int writeObjectEntries(Writer output, Document document, int indent, boolean key,boolean multiLine) throws IOException{
         boolean first = true;
         for(DocumentEntry entry : document){
             if(first) first = false;
@@ -108,7 +112,7 @@ public class JsonDocumentWriter implements DocumentWriter {
         return indent;
     }
 
-    public void writeKey(Writer output, String key) throws IOException {
+    private void writeKey(Writer output, String key) throws IOException {
         if(key != null){
             output.write('"');
             output.write(key);
@@ -116,7 +120,7 @@ public class JsonDocumentWriter implements DocumentWriter {
         }
     }
 
-    public void writeNewLine(Writer output, int indent)  throws IOException{
+    private void writeNewLine(Writer output, int indent)  throws IOException{
         if(indent >= 0){
             output.write("\n");
             for(int i = 0;i<indent;i++) output.write("  ");

@@ -34,7 +34,7 @@ public abstract class AbstractTask implements Task{
 
     protected final TaskScheduler scheduler;
     protected final ObjectOwner owner;
-    protected final long id;
+    protected final int id;
     protected final String name;
     protected final boolean async;
 
@@ -44,7 +44,7 @@ public abstract class AbstractTask implements Task{
 
     protected Collection<Consumer<TaskFuture>> listeners;
 
-    public AbstractTask(TaskScheduler scheduler, ObjectOwner owner, long id, String name, long delay, long period, boolean async) {
+    public AbstractTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async) {
         if(owner == null || scheduler == null) throw new NullPointerException("Owner or scheduler null.");
         this.scheduler = scheduler;
         this.owner = owner;
@@ -58,7 +58,7 @@ public abstract class AbstractTask implements Task{
     }
 
     @Override
-    public long getID() {
+    public int getID() {
         return id;
     }
 

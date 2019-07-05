@@ -75,15 +75,13 @@ public class FileHandler implements LogHandler {
             while(changing) Thread.sleep(1);
             writer.write(content);
             writer.flush();
-        }catch (Exception exception){
-            if(exception instanceof ArrayIndexOutOfBoundsException){
-                changeFile();
-                try {
-                    writer.write(content);
-                    writer.flush();
-                } catch (IOException ignored) {}
-            }
-        }
+        }catch (ArrayIndexOutOfBoundsException exception){
+            changeFile();
+            try {
+                writer.write(content);
+                writer.flush();
+            } catch (IOException ignored) {}
+        }catch (IOException | InterruptedException ignored){}
     }
 
     private void changeFile(){

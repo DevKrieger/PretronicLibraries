@@ -24,10 +24,12 @@ import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * The simple implementation of the event api.
@@ -53,13 +55,11 @@ public class SimpleEventManager implements EventManager {
         for(Method method : listener.getClass().getDeclaredMethods()){
             try{
                 Listener info = method.getAnnotation(Listener.class);
-                if(info != null){
-                    if(method.getParameterTypes().length == 1){
-                        List<MethodEntry> methods = this.methods.computeIfAbsent(method.getParameterTypes()[0], k -> new ArrayList<>());
-                        methods.add(new MethodEntry(info.priority(),owner,listener,method));
-                        //Sort all listeners by the priority.
-                        methods.sort((o1, o2) -> o1.getPriority() >= o2.getPriority()?0:-1);
-                    }
+                if(info != null && method.getParameterTypes().length == 1){
+                    List<MethodEntry> methods = this.methods.computeIfAbsent(method.getParameterTypes()[0], k -> new ArrayList<>());
+                    methods.add(new MethodEntry(info.priority(),owner,listener,method));
+                    //Sort all listeners by the priority.
+                    methods.sort((o1, o2) -> o1.getPriority() >= o2.getPriority()?0:-1);
                 }
             }catch (Exception exception){
                 throw new IllegalArgumentException("Could not register listener "+listener,exception);

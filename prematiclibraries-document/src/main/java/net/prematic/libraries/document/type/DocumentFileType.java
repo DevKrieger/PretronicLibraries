@@ -21,6 +21,8 @@ package net.prematic.libraries.document.type;
 
 import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.document.io.DocumentWriter;
+import net.prematic.libraries.document.type.binary.BinaryDocumentReader;
+import net.prematic.libraries.document.type.binary.BinaryDocumentWriter;
 import net.prematic.libraries.document.type.json.JsonDocumentReader;
 import net.prematic.libraries.document.type.json.JsonDocumentWriter;
 import net.prematic.libraries.document.type.yaml.YamlDocumentReader;
@@ -32,7 +34,7 @@ public class DocumentFileType {
 
     public static final DocumentFileType YAML = new DocumentFileType("YAML","yml",new YamlDocumentWriter(),new YamlDocumentReader());
 
-    public static final DocumentFileType BINARY = new DocumentFileType("BINARY","bin",null,null);
+    public static final DocumentFileType BINARY = new DocumentFileType("BINARY","bin",new BinaryDocumentWriter(),new BinaryDocumentReader());
 
     private final String name, ending;
     private final DocumentWriter writer;

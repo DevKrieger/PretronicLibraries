@@ -25,12 +25,9 @@ import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
-import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CalendarAdapter implements DocumentAdapter<Calendar> {
 

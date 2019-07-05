@@ -25,7 +25,6 @@ import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.io.File;
-import java.sql.Date;
 
 public class FileAdapter implements DocumentAdapter<File> {
 

@@ -90,8 +90,7 @@ public final class NetworkUtil {
                 int i = Integer.parseInt(s);
                 if((i < 0) || (i > 255)) return false;
             }
-            if(ip.endsWith(".")) return false;
-            return true;
+            return !ip.endsWith(".");
         }catch (NumberFormatException exception){
             return false;
         }

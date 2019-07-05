@@ -23,9 +23,7 @@ import net.prematic.libraries.command.SimpleHelpCommand;
 import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.utility.GeneralUtil;
 
-import java.util.List;
 import java.util.function.Function;
 
 public class SimpleListCommandsNotFoundHandler extends ListCommandsNotFoundHandler {
