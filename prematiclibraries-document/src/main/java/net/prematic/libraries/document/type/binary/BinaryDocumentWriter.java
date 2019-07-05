@@ -31,21 +31,21 @@ import java.nio.charset.Charset;
 
 public class BinaryDocumentWriter implements DocumentWriter {
 
-    static final byte TYPE_BOOLEAN = 20;
-    static final byte TYPE_BYTE = 22;
-    static final byte TYPE_INTEGER = 23;
-    static final byte TYPE_LONG = 24;
-    static final byte TYPE_DOUBLE = 25;
-    static final byte TYPE_FLOAT = 26;
-    static final byte TYPE_SHORT = 27;
-    static final byte TYPE_CHARACTER = 28;
-    static final byte TYPE_STRING = 29;
+    public static final byte TYPE_BOOLEAN = 20;
+    public static final byte TYPE_BYTE = 22;
+    public static final byte TYPE_INTEGER = 23;
+    public static final byte TYPE_LONG = 24;
+    public static final byte TYPE_DOUBLE = 25;
+    public static final byte TYPE_FLOAT = 26;
+    public static final byte TYPE_SHORT = 27;
+    public static final byte TYPE_CHARACTER = 28;
+    public static final byte TYPE_STRING = 29;
 
-    static final byte TYPE_OBJECT_IN = 30;
-    static final byte TYPE_OBJECT_OUT = 31;
+    public static final byte TYPE_OBJECT_IN = 30;
+    public static final byte TYPE_OBJECT_OUT = 31;
 
-    static final byte TYPE_ARRAY_IN = 32;
-    static final byte TYPE_ARRAY_OUT = 33;
+    public static final byte TYPE_ARRAY_IN = 32;
+    public static final byte TYPE_ARRAY_OUT = 33;
 
 
     @Override

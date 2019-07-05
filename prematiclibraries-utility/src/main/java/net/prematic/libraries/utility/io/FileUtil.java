@@ -277,7 +277,7 @@ public final class FileUtil {
                 if(separate) result.append(System.lineSeparator());
             }
         }catch (IOException exception){
-            throw new RuntimeException(exception);
+            throw new IORuntimeException(exception);
         }finally {
             try{
                 stream.close();

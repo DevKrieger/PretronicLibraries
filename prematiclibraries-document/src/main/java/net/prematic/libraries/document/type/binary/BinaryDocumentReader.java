@@ -103,8 +103,8 @@ public class BinaryDocumentReader implements DocumentReader {
             case TYPE_STRING: return nextPrimitive(stream,charset,readString(stream,charset),key);
             case TYPE_OBJECT_IN: return readObject(stream,charset,key?readString(stream,charset):null);
             case TYPE_ARRAY_IN: return readArray(stream,charset,key?readString(stream,charset):null);
+            default: return null;
         }
-        return null;
     }
 
     private PrimitiveEntry nextPrimitive(DataInputStream stream, Charset charset,Object object, boolean key) throws IOException{
