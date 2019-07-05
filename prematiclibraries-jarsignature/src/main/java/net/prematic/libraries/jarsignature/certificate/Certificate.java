@@ -25,10 +25,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
-import static net.prematic.libraries.jarsignature.JarSignatureUtil.*;
 
 public class Certificate{
 
@@ -86,7 +85,7 @@ public class Certificate{
         try{
             StringWriter writer = new StringWriter();
             properties.store(writer,null);
-            return ENCODER.encode(writer.toString().getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(writer.toString().getBytes(StandardCharsets.UTF_8));
         }catch (IOException exception){
             throw new IORuntimeException(exception);
         }
@@ -95,7 +94,7 @@ public class Certificate{
     public static Certificate load(String base64Content){
         try{
             Properties properties = new Properties();
-            properties.load(new StringReader(new String(DECODER.decodeBuffer(base64Content),StandardCharsets.UTF_8)));
+            properties.load(new StringReader(new String(Base64.getDecoder().decode(base64Content),StandardCharsets.UTF_8)));
             return new Certificate(properties);
         }catch (IOException exception){
             throw new IORuntimeException(exception);

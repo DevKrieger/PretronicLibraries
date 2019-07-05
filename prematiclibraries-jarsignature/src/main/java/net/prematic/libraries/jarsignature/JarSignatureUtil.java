@@ -22,8 +22,6 @@ package net.prematic.libraries.jarsignature;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.prematic.libraries.utility.io.IORuntimeException;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,10 +32,7 @@ import java.util.jar.JarFile;
 
 public class JarSignatureUtil {
 
-    public final static BASE64Encoder ENCODER = new BASE64Encoder();
-    public final static BASE64Decoder DECODER = new BASE64Decoder();
-
-    public static byte[] calculateSignatureCheckSum(File jarFile){
+    static byte[] calculateSignatureCheckSum(File jarFile){
         try{
             JarFile jar = new JarFile(jarFile);
             Enumeration<JarEntry> entries = jar.entries();

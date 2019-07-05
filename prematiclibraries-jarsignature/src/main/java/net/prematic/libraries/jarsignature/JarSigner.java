@@ -6,6 +6,7 @@ import net.prematic.libraries.utility.io.archive.ZipArchive;
 import java.io.File;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 
 import static net.prematic.libraries.jarsignature.JarSignatureUtil.*;
 
@@ -29,8 +30,8 @@ public class JarSigner {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
             kpg.initialize(2048);
             KeyPair pair = kpg.genKeyPair();
-            this.privateKey = ENCODER.encode(pair.getPrivate().getEncoded());
-            this.publicKey = ENCODER.encode(pair.getPublic().getEncoded());
+            this.privateKey = Base64.getEncoder().encodeToString(pair.getPrivate().getEncoded());
+            this.publicKey = Base64.getEncoder().encodeToString(pair.getPublic().getEncoded());
         }catch (Exception exception){
             throw new IllegalArgumentException("Could not generate key pair.",exception);
         }
@@ -57,7 +58,7 @@ public class JarSigner {
     public String sign(){
         writeCertificate();
         try{
-            PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(DECODER.decodeBuffer(this.privateKey));
+            PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(this.privateKey));
             KeyFactory kf = KeyFactory.getInstance("RSA");
             PrivateKey pvt = kf.generatePrivate(ks);
 
@@ -65,7 +66,7 @@ public class JarSigner {
             signatureTool.initSign(pvt);
             signatureTool.update(calculateSignatureCheckSum(this.jarFile));
 
-            String signature = ENCODER.encode(signatureTool.sign());
+            String signature = Base64.getEncoder().encodeToString(signatureTool.sign());
 
             ZipArchive archive = new ZipArchive(this.jarFile);
 
