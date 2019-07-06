@@ -54,9 +54,26 @@ public class TypeReference<T> {
         return (Class<?>) this.rawType;
     }
 
-    public Type getArgument(int index){
+    public boolean hasArgument(int index) {
+        return ((ParameterizedType)type).getActualTypeArguments().length > index;
+    }
+
+    public Type getArgument(int index) {
         if(this.type instanceof ParameterizedType){
             return ((ParameterizedType)type).getActualTypeArguments()[index];
+        }
+        return null;
+    }
+
+    public Type[] getGenericInterfaceArgument(int interfaceIndex, int... indices) {
+        Type genericInterface = this.getRawClass().getGenericInterfaces()[interfaceIndex];
+        if (genericInterface instanceof ParameterizedType) {
+            Type[] genericTypes = ((ParameterizedType) genericInterface).getActualTypeArguments();
+            Type[] returnGenericTypes = new Type[indices.length];
+            for (int i = 0; i < indices.length; i++) {
+                returnGenericTypes[i] = genericTypes[indices[i]];
+            }
+            return returnGenericTypes;
         }
         return null;
     }

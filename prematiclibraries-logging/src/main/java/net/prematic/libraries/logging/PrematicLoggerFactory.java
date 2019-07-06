@@ -22,7 +22,7 @@ package net.prematic.libraries.logging;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PrematicLogggerFactory {
+public class PrematicLoggerFactory {
 
     private static LoggerCreator CREATOR;
 
