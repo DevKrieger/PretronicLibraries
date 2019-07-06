@@ -104,6 +104,10 @@ public class  DocumentRegistry {
         ADAPTERS.put(TypeReference.getRawType(type),adapter);
     }
 
+    public static <T> void registerMappingAdapter(Class<T> type,Class<? extends T> mappedClass){
+        ADAPTERS.put(type,new ClassMappingAdapter<T>(mappedClass));
+    }
+
     public static <T> void registerHierarchyAdapter(Class<T> type, DocumentAdapter<T> adapter){
         ADAPTER_FACTORIES.add(HierarchyAdapterFactory.newFactory(adapter,type));
     }
@@ -130,11 +134,15 @@ public class  DocumentRegistry {
     }
 
     public static DocumentEntry serializeObject(String key, Object value){
-        DocumentAdapter adapter = findAdapter(new TypeReference<>(value.getClass()));
+        return serializeObject(key,value.getClass(),value);
+    }
+
+    public static DocumentEntry serializeObject(String key,Class<?> objectClass, Object value){
+        DocumentAdapter adapter = findAdapter(new TypeReference<>(objectClass));
         if(adapter != null) return adapter.write(key, value);
 
         Document document = getFactory().newDocument(key);
-        for(Field field : value.getClass().getDeclaredFields()){
+        for(Field field : objectClass.getDeclaredFields()){
             if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())){
                try{
                    field.setAccessible(true);
@@ -212,7 +220,12 @@ public class  DocumentRegistry {
                             String endName = name!=null?name.value():field.getName();
 
                             if(document.contains(endName)) field.set(instance,deserialize(document.getEntry(endName),field.getGenericType()));
-                            else field.set(instance,null);
+                            else{
+                                if(Primitives.isPrimitive(field.getType())){
+                                    if(field.getType().equals(boolean.class)) field.set(instance,false);
+                                    else field.set(instance,0);
+                                }else field.set(instance,null);
+                            }
                         }
                     }catch (Exception ignored){
                         ignored.printStackTrace();
