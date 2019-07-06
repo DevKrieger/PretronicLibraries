@@ -32,7 +32,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder, SLF4JStaticBridg
     private static final Factory FACTORY = new Factory();
     private static SLF4JBridge LOGGER;
 
-    public static final StaticLoggerBinder getSingleton() {
+    public static StaticLoggerBinder getSingleton() {
         return BINDER;
     }
 
