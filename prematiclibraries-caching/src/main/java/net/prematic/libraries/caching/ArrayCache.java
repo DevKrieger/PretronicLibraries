@@ -350,7 +350,7 @@ public class ArrayCache<O> implements Cache<O>{
 
         private boolean running;
 
-        public CacheTask() {
+        CacheTask() {
             this.running = false;
         }
 

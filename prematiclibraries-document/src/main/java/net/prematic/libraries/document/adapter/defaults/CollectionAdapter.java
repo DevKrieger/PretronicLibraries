@@ -54,7 +54,8 @@ public class CollectionAdapter implements DocumentAdapter<Collection> {
         }
 
         Type itemType = type.getArgument(0);
-        entry.toDocument().forEach(entry1 -> instance.add(DocumentRegistry.deserialize(entry1,itemType)));
+
+        entry.toDocument().forEach(entry1 -> instance.add(DocumentRegistry.deserialize(entry1,(Type)itemType)));
         return instance;
     }
 

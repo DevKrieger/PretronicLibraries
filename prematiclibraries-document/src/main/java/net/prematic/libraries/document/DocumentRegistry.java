@@ -161,26 +161,33 @@ public class  DocumentRegistry {
     }
 
     public static Object deserializeRaw(DocumentEntry entry,TypeReference type){
-        if(Primitives.isPrimitive(type.getRawClass()) || entry.isPrimitive()){
-            if(type.getRawClass() == String.class){
-                return entry.toPrimitive().getAsString();
-            }else if(type.getRawClass() == int.class || type.getRawClass() == Integer.class){
-                return entry.toPrimitive().getAsInt();
-            }else if(type.getRawClass() == long.class || type.getRawClass() == Long.class){
-                return entry.toPrimitive().getAsLong();
-            }else if(type.getRawClass() == double.class || type.getRawClass() == Double.class){
-                return entry.toPrimitive().getAsDouble();
-            }else if(type.getRawClass() == short.class || type.getRawClass() == Short.class){
-                return entry.toPrimitive().getAsShort();
-            }else if(type.getRawClass() == float.class || type.getRawClass() == Float.class){
-                return entry.toPrimitive().getAsFloat();
-            }else if(type.getRawClass() == byte.class || type.getRawClass() == Byte.class){
-                return entry.toPrimitive().getAsByte();
-            }else if(type.getRawClass() == boolean.class || type.getRawClass() == Boolean.class){
-                return entry.toPrimitive().getAsBoolean();
-            }else if(type.getRawClass() == char.class || type.getRawClass() == Character.class){
-                return entry.toPrimitive().getAsCharacter();
-            }else throw new IllegalArgumentException("Invalid Primitive type");
+        if(entry.isPrimitive()){
+            if(Primitives.isPrimitive(type.getRawClass())){
+                if(type.getRawClass() == String.class){
+                    return entry.toPrimitive().getAsString();
+                }else if(type.getRawClass() == int.class || type.getRawClass() == Integer.class){
+                    return entry.toPrimitive().getAsInt();
+                }else if(type.getRawClass() == long.class || type.getRawClass() == Long.class){
+                    return entry.toPrimitive().getAsLong();
+                }else if(type.getRawClass() == double.class || type.getRawClass() == Double.class){
+                    return entry.toPrimitive().getAsDouble();
+                }else if(type.getRawClass() == short.class || type.getRawClass() == Short.class){
+                    return entry.toPrimitive().getAsShort();
+                }else if(type.getRawClass() == float.class || type.getRawClass() == Float.class){
+                    return entry.toPrimitive().getAsFloat();
+                }else if(type.getRawClass() == byte.class || type.getRawClass() == Byte.class){
+                    return entry.toPrimitive().getAsByte();
+                }else if(type.getRawClass() == boolean.class || type.getRawClass() == Boolean.class){
+                    return entry.toPrimitive().getAsBoolean();
+                }else if(type.getRawClass() == char.class || type.getRawClass() == Character.class){
+                    return entry.toPrimitive().getAsCharacter();
+                }else throw new IllegalArgumentException("Invalid Primitive type");
+            }else if(type.getRawClass().isEnum()) return Enum.valueOf(type.getRawClass(),entry.toPrimitive().getAsString());
+            else{
+                DocumentAdapter adapter = findAdapter(type);
+                if(adapter != null) return adapter.read(entry, type);
+                else throw new IllegalArgumentException("Invalid Primitive type");
+            }
         }else if(type.isArray() && entry.isObject()){
             ArrayList<?> instance = new ArrayList();
             entry.toDocument().forEach(entry1 -> instance.add(DocumentRegistry.deserialize(entry1,type.getRawType())));
@@ -203,7 +210,8 @@ public class  DocumentRegistry {
                         if(field.getAnnotation(DocumentIgnored.class) == null){
                             DocumentName name = field.getAnnotation(DocumentName.class);
                             String endName = name!=null?name.value():field.getName();
-                            if(document.contains(endName)) field.set(instance,deserialize(document.getEntry(endName),field.getType()));
+
+                            if(document.contains(endName)) field.set(instance,deserialize(document.getEntry(endName),field.getGenericType()));
                             else field.set(instance,null);
                         }
                     }catch (Exception ignored){
