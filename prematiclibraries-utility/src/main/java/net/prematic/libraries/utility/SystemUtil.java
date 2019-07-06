@@ -4,6 +4,7 @@ import com.sun.management.OperatingSystemMXBean;
 
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -26,19 +27,60 @@ import java.util.concurrent.TimeUnit;
 
 public final class SystemUtil {
 
+    @Deprecated
     public static void sleepUnInterrupt(long time, TimeUnit unit){
        sleepUnInterrupt(unit.toNanos(time));
     }
 
+    @Deprecated
     public static void sleepUnInterrupt(long millis){
         try{
             Thread.sleep(millis);
         }catch (Exception exception){}
     }
 
+    @Deprecated
     public static void sleepUnInterrupt(int nanos){
         try{ Thread.sleep(0,nanos); }catch (Exception exception){}
     }
+
+
+
+    public static void sleepUninterruptibly(long time, TimeUnit unit){
+        sleepUninterruptibly(unit.toMillis(time));
+    }
+
+
+    public static void sleepUninterruptibly(long millis){
+        try{
+            Thread.sleep(millis);
+        }catch (Exception ignored){}
+    }
+
+    public static void sleepUnitl(Supplier<Boolean> finished){
+        while(!finished.get()){
+            try {
+                Thread.sleep(0,250000);
+            } catch (InterruptedException ignored) {}
+        }
+    }
+
+    public static void sleepAsLong(Supplier<Boolean> finished){
+        while(finished.get()){
+            try {
+                Thread.sleep(0,250000);
+            } catch (InterruptedException ignored) {}
+        }
+    }
+
+
+
+
+
+
+
+
+
 
     public static double getCpuUsage() {
         return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getSystemCpuLoad()*100;
