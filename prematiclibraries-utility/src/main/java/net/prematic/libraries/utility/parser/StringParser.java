@@ -32,40 +32,39 @@ import java.util.function.Function;
 
 public class StringParser {
 
+    private static final char[] EMPTY_LINE = new char[]{' ',' '};
+
     private final char[][] lines;
     private int lineIndex, charIndex;
 
     //Constructor
 
     public StringParser(File location) {
-        this(FileUtil.newFileInputStream(location));
+        this(location,null);
     }
 
     public StringParser(File location, Charset charset) {
-        this(FileUtil.newFileInputStream(location),charset);
+        InputStream inputStream = FileUtil.newFileInputStream(location);
+        this.lines = readLinesFromStream(inputStream, charset);
+        resetIndex();
+        try {
+            inputStream.close();
+        } catch (IOException ignored) {}
+
     }
 
     public StringParser(InputStream stream){
-        this(new BufferedReader(new InputStreamReader(stream)));
+        this(stream,null);
     }
 
     public StringParser(InputStream stream, Charset charset) {
-        this(new BufferedReader(new InputStreamReader(stream,charset)));
+        this.lines = readLinesFromStream(stream, charset);
+        resetIndex();
     }
 
     public StringParser(BufferedReader reader)  {
-        try{
-            ArrayList<char[]> lines = new ArrayList<>();
-
-            //Read lines from reader
-            String line;
-            while((line = reader.readLine())!= null) lines.add(line.toCharArray());
-
-            this.lines = lines.toArray(new char[0][]);
-            resetIndex();
-        }catch (IOException exception){
-            throw new IORuntimeException(exception);
-        }
+        this.lines = readLinesFromBuffer(reader);
+        resetIndex();
     }
 
     public StringParser(String content){
@@ -230,6 +229,8 @@ public class StringParser {
 
     public char nextChar(){
         char result = this.lines[this.lineIndex][this.charIndex];
+
+
         if(this.lines[this.lineIndex].length > charIndex+1) charIndex++;
         else{
             lineIndex++;
@@ -266,10 +267,11 @@ public class StringParser {
         int newLineIndex = this.lineIndex;
         int newCharIndex = this.charIndex-amount;
 
-        while(newCharIndex < -1 && newLineIndex > 0){
+        while(newCharIndex < 0 && newLineIndex > 0){
             newLineIndex--;
             newCharIndex = lines[newLineIndex].length+newCharIndex;
         }
+
         setIndex(newLineIndex,newCharIndex);
     }
 
@@ -497,5 +499,32 @@ public class StringParser {
         for(int i = 0;i<lines.length;i++) builder.append(lines[i]).append('\n');
         builder.setLength(builder.length()-1);
         return builder.toString();
+    }
+
+
+    private static char[][] readLinesFromStream(InputStream stream, Charset charset){
+        BufferedReader reader = charset!=null?new BufferedReader(new InputStreamReader(stream,charset)):new BufferedReader(new InputStreamReader(stream));
+        char[][] lines = readLinesFromBuffer(reader);
+        try {
+            reader.close();
+        } catch (IOException ignored) {}
+        return lines;
+    }
+
+    private static char[][] readLinesFromBuffer(BufferedReader reader){
+        try{
+            ArrayList<char[]> lines = new ArrayList<>();
+
+            //Read lines from reader
+            String line;
+            while((line = reader.readLine())!= null){
+                char[] lineData = line.toCharArray();
+                lines.add(lineData.length>0?lineData:EMPTY_LINE);
+            }
+
+            return lines.toArray(new char[0][]);
+        }catch (IOException exception){
+            throw new IORuntimeException(exception);
+        }
     }
 }

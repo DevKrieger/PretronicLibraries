@@ -32,7 +32,7 @@ import java.util.jar.JarFile;
 
 public class JarSignatureUtil {
 
-    static byte[] calculateSignatureCheckSum(File jarFile){
+    public static byte[] calculateSignatureCheckSum(File jarFile){
         try{
             JarFile jar = new JarFile(jarFile);
             Enumeration<JarEntry> entries = jar.entries();

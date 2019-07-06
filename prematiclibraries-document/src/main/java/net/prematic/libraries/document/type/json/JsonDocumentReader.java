@@ -71,13 +71,15 @@ public class JsonDocumentReader implements DocumentReader{
     @Override
     public Document read(StringParser parser) {
         DocumentEntry entry = next(parser,null);
-        if(entry.isObject()) parser.throwException("Invalid json document (No object)");
-        return entry.toDocument();
+        if(entry != null && entry.isObject()) return entry.toDocument();
+        parser.throwException("Invalid json document (No object)");
+        return null;
     }
 
-    public DocumentEntry next(StringParser parser, String key) {
+    private DocumentEntry next(StringParser parser, String key) {
         while(parser.hasNext()){
             char input = parser.nextChar();
+
             if(!isIgnoredChar(input)){
                 if(input == BRACE_OPEN) return readJsonObject(parser, key);
                 else if(input == SQUARE_BRACKET_OPEN) return readArray(parser, key);
@@ -96,7 +98,7 @@ public class JsonDocumentReader implements DocumentReader{
         return null;
     }
 
-    public Document readJsonObject(StringParser parser, String key) {
+    private Document readJsonObject(StringParser parser, String key) {
         Document document = DocumentRegistry.getFactory().newDocument(key);
         char input;
         while(parser.hasNext() && (input = parser.nextChar()) != BRACE_CLOSE){
@@ -110,7 +112,7 @@ public class JsonDocumentReader implements DocumentReader{
         return document;
     }
 
-    public Document readArray(StringParser parser, String key) {
+    private Document readArray(StringParser parser, String key) {
         Document document = DocumentRegistry.getFactory().newArrayEntry(key);
         char input;
         int index = 0;
@@ -123,7 +125,7 @@ public class JsonDocumentReader implements DocumentReader{
         return document;
     }
 
-    public String readNextString(StringParser parser, char endChar) {
+    private String readNextString(StringParser parser, char endChar) {
         try{
             return parser.nextUntil(endChar, BACK_SLASH);
         }finally {
@@ -131,12 +133,16 @@ public class JsonDocumentReader implements DocumentReader{
         }
     }
 
-    public boolean readNextBoolean(StringParser parser, boolean check) {
+    private boolean readNextBoolean(StringParser parser, boolean check) {
         char[] checkSum = check?BOOLEAN_TRUE:BOOLEAN_FALSE;
         int i = 1;//
         while(parser.hasNext()){
             char input = Character.toLowerCase(parser.nextChar());
-            if(checkSum.length <= i){
+
+            if(checkSum.length > i){
+                if(input != checkSum[i]) parser.throwException(ERROR_INVALID_CHARACTER);
+                i++;
+            }else{
                 if(!isIgnoredChar(input)){
                     if(input == COMMA) return check;
                     else if(input == BRACE_CLOSE  || input == SQUARE_BRACKET_CLOSE){
@@ -144,14 +150,13 @@ public class JsonDocumentReader implements DocumentReader{
                         return check;
                     }else parser.throwException(ERROR_INVALID_CHARACTER);
                 }
-            }else if(input != checkSum[i]) return false;
-            else i++;
+            }
         }
         parser.throwException(ERROR_INVALID_CHARACTER);
         return false;
     }
 
-    public void checkNextNull(StringParser parser) {
+    private void checkNextNull(StringParser parser) {
         int i = 1;
         while(parser.hasNext()){
             char input = Character.toLowerCase(parser.nextChar());
@@ -169,7 +174,7 @@ public class JsonDocumentReader implements DocumentReader{
         parser.throwException(ERROR_INVALID_CHARACTER);
     }
 
-    public Number readNextNumber(StringParser parser) {
+    private Number readNextNumber(StringParser parser) {
         parser.previousChar();
         boolean negative = false;
         boolean decimal = false;
@@ -205,7 +210,7 @@ public class JsonDocumentReader implements DocumentReader{
         }
     }
 
-    public static boolean isIgnoredChar(char c){
+    private static boolean isIgnoredChar(char c){
         return c == SPACE || c == BREAK || c == BACK || c == TAB || c == COLON ;
     }
 
