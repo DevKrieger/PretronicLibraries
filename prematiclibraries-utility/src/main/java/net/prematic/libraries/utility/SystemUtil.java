@@ -57,7 +57,7 @@ public final class SystemUtil {
         }catch (Exception ignored){}
     }
 
-    public static void sleepUnitl(Supplier<Boolean> finished){
+    public static void sleepUntil(Supplier<Boolean> finished){
         while(!finished.get()){
             try {
                 Thread.sleep(0,250000);

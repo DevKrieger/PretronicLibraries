@@ -159,7 +159,7 @@ public interface PrematicLogger {
     }
 
     default void info(MessageInfo info,String message, Object... objects){
-        log(info,LogLevel.WARN,message,objects);
+        log(info,LogLevel.INFO,message,objects);
     }
 
     //WARN
