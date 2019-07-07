@@ -58,6 +58,8 @@ public class  DocumentRegistry {
     static {
         registerType(DocumentFileType.JSON);
         registerType(DocumentFileType.YAML);
+        registerType(DocumentFileType.BINARY);
+        registerType(DocumentFileType.XML);
 
         registerAdapter(UUID.class,new UUIDAdapter());
         registerAdapter(Calendar.class,new CalendarAdapter());
