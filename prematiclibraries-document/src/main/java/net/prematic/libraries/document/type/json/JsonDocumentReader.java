@@ -168,7 +168,7 @@ public class JsonDocumentReader implements DocumentReader{
                         return;
                     }else parser.throwException(ERROR_INVALID_CHARACTER);
                 }
-            }else if(input != NULL[i]); //throw exception
+            }else if(input != NULL[i]) parser.throwException(ERROR_INVALID_CHARACTER);
             else i++;
         }
         parser.throwException(ERROR_INVALID_CHARACTER);
