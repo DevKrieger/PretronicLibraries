@@ -42,7 +42,9 @@ public interface CacheQuery<O> {
      *
      * @param identifiers The search identifier
      */
-    default void validate(Object[] identifiers){}
+    default void validate(Object[] identifiers){
+        //Default it is not necessary to validate identifiers, but recommended.
+    }
 
     /**
      * Load a object from a external datasource.
