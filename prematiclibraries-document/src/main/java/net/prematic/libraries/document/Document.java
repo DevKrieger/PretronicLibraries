@@ -248,16 +248,20 @@ public interface Document extends  Iterable<DocumentEntry>,DocumentEntry {
         return DocumentRegistry.getFactory().newDocument();
     }
 
+    static Document newDocument(String key) {
+        return factory().newDocument(key);
+    }
+
     static Document newDocument(Object object){
         return DocumentRegistry.serialize(object).toDocument();
     }
 
     static Document read(File location){
-        return DocumentRegistry.getTypeByEnding(location.getName().substring(0,location.getName().lastIndexOf("."))).getReader().read(location);
+        return DocumentRegistry.getTypeByEnding(location.getName().substring(location.getName().lastIndexOf(".")+1)).getReader().read(location);
     }
 
     static Document read(File location, Charset charset){
-        return DocumentRegistry.getTypeByEnding(location.getName().substring(0,location.getName().lastIndexOf("."))).getReader().read(location, charset);
+        return DocumentRegistry.getTypeByEnding(location.getName().substring(location.getName().lastIndexOf(".")+1)).getReader().read(location, charset);
     }
 
     static Document read(String type, String content){
