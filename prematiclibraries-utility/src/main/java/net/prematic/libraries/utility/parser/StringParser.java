@@ -255,8 +255,16 @@ public class StringParser {
         skipChars(c,null);
     }
 
+
+
     public void skipChars(char c, Character comment){
         nextCharIndex(c, comment);
+    }
+
+    public void skipUntil(char c){
+        Pair<Integer,Integer> index = findNextCharIndex(c);
+        if(index == null) end();
+        else setIndex(index.getKey(),index.getValue());
     }
 
     public void previousChar(){
@@ -400,7 +408,7 @@ public class StringParser {
     }
 
     public String nextUntil(char c, Consumer<Character> validator, Character comment, boolean nullByEnd){
-        return nextUntil(findNextCharIndex(c,validator, comment));
+        return nextUntil(findNextCharIndex(c,validator, comment),nullByEnd);
     }
 
     public String nextUntil(Function<Character,Boolean> acceptor){

@@ -45,7 +45,7 @@ public class YamlDocumentWriter implements DocumentWriter {
     @Override
     public void write(Writer output, Document document, boolean pretty) {
         try {
-            writeObjectValue(output,document,0);
+            writeObjectValue(output,document,-1);
         } catch (IOException exception) {
             throw new IORuntimeException(exception);
         }
@@ -56,7 +56,7 @@ public class YamlDocumentWriter implements DocumentWriter {
 
         if(document.getKey() != null){
             indent++;
-            writeNewLine(output, indent);
+            if(indent != 0) writeNewLine(output, indent);
         }
 
         for(DocumentEntry entry : document){

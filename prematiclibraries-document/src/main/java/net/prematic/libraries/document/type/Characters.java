@@ -34,11 +34,16 @@ public class Characters {
     public static final char BACK = '\r';
     public static final char TAB = '\t';
     public static final char BREAK = '\n';
+    public static final char SLASH = '/';
     public static final char BACK_SLASH = '\\';
     public static final char BRACE_OPEN = '{';
     public static final char BRACE_CLOSE = '}';
     public static final char SQUARE_BRACKET_OPEN = '[';
     public static final char SQUARE_BRACKET_CLOSE = ']';
+    public static final char QUESTION_MARK = '?';
+
+    public static final char LESSER_THAN = '<';
+    public static final char GREATER_THAN = '>';
 
     public static final char[] BOOLEAN_TRUE = {'t','r','u','e'};
     public static final char[] BOOLEAN_FALSE = {'f','a','l','s','e'};

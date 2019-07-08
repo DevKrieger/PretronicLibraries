@@ -70,13 +70,13 @@ public class JsonDocumentReader implements DocumentReader{
 
     @Override
     public Document read(StringParser parser) {
-        DocumentEntry entry = next(parser,null);
+        DocumentEntry entry = readNext(parser,null);
         if(entry != null && entry.isObject()) return entry.toDocument();
         parser.throwException("Invalid json document (No object)");
         return null;
     }
 
-    private DocumentEntry next(StringParser parser, String key) {
+    private DocumentEntry readNext(StringParser parser, String key) {
         while(parser.hasNext()){
             char input = parser.nextChar();
 
@@ -105,7 +105,7 @@ public class JsonDocumentReader implements DocumentReader{
             if(!isIgnoredChar(input) && input != ','){
                 if(input == QUOT_1 || input == QUOT_2){
                     String key3 = readNextString(parser,input);
-                    document.entries().add(next(parser,key3));
+                    document.entries().add(readNext(parser,key3));
                 }else parser.throwException(ERROR_INVALID_CHARACTER);
             }
         }
@@ -119,7 +119,7 @@ public class JsonDocumentReader implements DocumentReader{
         while(parser.hasNext() && (input = parser.nextChar()) != SQUARE_BRACKET_CLOSE){
             if(!isIgnoredChar(input) && input != ','){
                 parser.previousChar();
-                document.entries().add(next(parser,"array-item-"+index));
+                document.entries().add(readNext(parser,"array-item-"+index));
             }
         }
         return document;
