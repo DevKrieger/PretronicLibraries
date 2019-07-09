@@ -76,7 +76,9 @@ public class SLF4JBridgeServiceProvider implements SLF4JServiceProvider, SLF4JSt
     }
 
     @Override
-    public void initialize() {}//Unused
+    public void initialize() {
+        //This updater requires no initialization.
+    }
 
     private static class Factory implements ILoggerFactory {
 

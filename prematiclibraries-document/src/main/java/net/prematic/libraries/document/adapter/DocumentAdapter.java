@@ -24,10 +24,6 @@ import net.prematic.libraries.utility.reflect.TypeReference;
 
 public interface DocumentAdapter<T> {
 
-    default boolean check(TypeReference type) {
-        return true;
-    }
-
     T read(DocumentEntry entry, TypeReference<T> type);
 
     DocumentEntry write(String key, T object);

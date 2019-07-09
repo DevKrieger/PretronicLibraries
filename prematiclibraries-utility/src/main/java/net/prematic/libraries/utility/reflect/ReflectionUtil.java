@@ -117,7 +117,7 @@ public class ReflectionUtil {
      */
     public static Collection<Class<?>> getAllInterfaces(Class<?> clazz) {
         Set<Class<?>> classes = new HashSet<>();
-        for (Class<?> interfaceClass : clazz.getInterfaces()) {
+        for(Class<?> interfaceClass : clazz.getInterfaces()) {
             classes.add(interfaceClass);
             for (Class<?> superInterfaceClass : interfaceClass.getInterfaces()) {
                 classes.add(superInterfaceClass);

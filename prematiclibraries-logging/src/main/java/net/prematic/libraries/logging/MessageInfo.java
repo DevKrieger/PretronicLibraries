@@ -29,7 +29,7 @@ public class MessageInfo {
     private final LoggableService service;
 
     public MessageInfo(int id) {
-        this(id,null);
+        this(id,(LoggableService)null);
     }
 
     public MessageInfo(int id, String description) {
@@ -39,6 +39,11 @@ public class MessageInfo {
     public MessageInfo(LoggableService service) {
         this(-1,null,null,service);
     }
+
+    public MessageInfo(int id, LoggableService service) {
+        this(id,null,null,service);
+    }
+
 
     public MessageInfo(int id, String description, String helpUrl, LoggableService service) {
         this.id = id;

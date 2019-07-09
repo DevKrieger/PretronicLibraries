@@ -25,8 +25,8 @@ import net.prematic.libraries.utility.reflect.TypeReference;
 
 public class HierarchyAdapterFactory implements DocumentAdapterFactory {
 
-    public final DocumentAdapter adapter;
-    public final Class<?> rawClass;
+    private final DocumentAdapter adapter;
+    private final Class<?> rawClass;
 
     public HierarchyAdapterFactory(DocumentAdapter adapter, Class<?> rawClass) {
         this.adapter = adapter;

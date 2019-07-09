@@ -19,12 +19,12 @@
 
 package net.prematic.libraries.utility.reflect;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public final class Primitives {
 
-    public static final Set<Class<?>> PRIMITIVES = new HashSet<>();
+    private static final Collection<Class<?>> PRIMITIVES = new ArrayList<>();
 
     static{
         PRIMITIVES.add(byte.class);

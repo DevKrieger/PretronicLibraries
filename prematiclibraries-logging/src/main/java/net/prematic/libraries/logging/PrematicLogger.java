@@ -260,22 +260,22 @@ public interface PrematicLogger {
     }
 
     default void debug(MessageInfo info, String message){
-        debug(info,DebugLevel.NORMAL,message);
+        debug(DebugLevel.NORMAL,info,message);
     }
 
     default void debug(MessageInfo info, Object object){
-        debug(info,DebugLevel.NORMAL,object);
+        debug(DebugLevel.NORMAL,info,object);
     }
 
     default void debug(MessageInfo info, String message,Object... objects){
-        debug(info,DebugLevel.NORMAL,message,objects);
+        debug(DebugLevel.NORMAL,info,message,objects);
     }
 
-    void debug(MessageInfo info, DebugLevel level, String message);
+    void debug(DebugLevel level,MessageInfo info, String message);
 
-    void debug(MessageInfo info, DebugLevel level, Object object);
+    void debug(DebugLevel level,MessageInfo info, Object object);
 
-    void debug(MessageInfo info, DebugLevel level, String message, Object... objects);
+    void debug(DebugLevel level,MessageInfo info, String message, Object... objects);
 
 
     //Final logging

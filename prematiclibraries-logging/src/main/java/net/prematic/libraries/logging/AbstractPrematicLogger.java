@@ -126,17 +126,17 @@ public abstract class AbstractPrematicLogger implements PrematicLogger {
     }
 
     @Override
-    public void debug(MessageInfo info, DebugLevel level, String message) {
+    public void debug(DebugLevel level,MessageInfo info,  String message) {
         formatAndWrite(info,LogLevel.DEBUG,level,message,null);
     }
 
     @Override
-    public void debug(MessageInfo info, DebugLevel level, Object object) {
+    public void debug(DebugLevel level,MessageInfo info,  Object object) {
         formatAndWrite(info,LogLevel.DEBUG,level,object.toString(),null);
     }
 
     @Override
-    public void debug(MessageInfo info, DebugLevel level, String message, Object... objects) {
+    public void debug(DebugLevel level,MessageInfo info, String message, Object... objects) {
         formatAndWrite(info,LogLevel.DEBUG,level,FormatHelper.format(message,objects),null);
     }
 
