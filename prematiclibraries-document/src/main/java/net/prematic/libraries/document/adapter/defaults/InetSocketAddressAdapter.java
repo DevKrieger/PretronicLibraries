@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 10.06.19 16:47
+ * @since 10.07.19 22:35
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,32 +19,33 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-public class InetAddressAdapter implements DocumentAdapter<InetAddress> {
-
-    public static InetAddressAdapter INSTANCE = new InetAddressAdapter();
+public class InetSocketAddressAdapter implements DocumentAdapter<InetSocketAddress> {
 
     @Override
-    public InetAddress read(DocumentEntry entry, TypeReference<InetAddress> type) {
-        if(entry.isPrimitive()) {
-            try {
-                return InetAddress.getByName(entry.toPrimitive().getAsString());
-            } catch (UnknownHostException exception) {
-                throw new IllegalArgumentException("Invalid ip address format.");
-            }
+    public InetSocketAddress read(DocumentEntry entry, TypeReference<InetSocketAddress> type) {
+        if(entry.isObject()) {
+            return new InetSocketAddress(InetAddressAdapter.INSTANCE.read(
+                    entry.toDocument().getEntry("address"),new TypeReference<>()),
+                    entry.toDocument().getEntry("port").toPrimitive().getAsInt());
         }
-        throw new IllegalArgumentException("Can't convert a object to a inet address.");
+        throw new IllegalArgumentException("Can't convert a primitive to a inet socket address.");
     }
 
     @Override
-    public DocumentEntry write(String key, InetAddress object) {
-        return DocumentRegistry.getFactory().newPrimitiveEntry(key, object.getHostAddress());
+    public DocumentEntry write(String key, InetSocketAddress object) {
+        Document document = DocumentRegistry.getFactory().newDocument(key);
+        document.entries().add(InetAddressAdapter.INSTANCE.write("address",object.getAddress()));
+        document.entries().add(DocumentRegistry.getFactory().newPrimitiveEntry("port",object.getPort()));
+        return document;
     }
 }

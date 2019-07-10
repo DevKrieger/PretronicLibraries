@@ -40,6 +40,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.sql.Time;
 import java.util.*;
@@ -68,6 +69,7 @@ public class  DocumentRegistry {
         registerAdapter(Date.class,new DateAdapter());
         registerAdapter(File.class,new FileAdapter());
         registerAdapter(InetAddress.class,new InetAddressAdapter());
+        registerAdapter(InetSocketAddress.class,new InetSocketAddressAdapter());
         registerAdapter(java.sql.Date.class,new SqlDateAdapter());
         registerAdapter(Time.class,new SqlTimeAdapter());
         registerAdapter(TimeZone.class,new TimeZoneAdapter());
@@ -114,7 +116,7 @@ public class  DocumentRegistry {
         ADAPTER_FACTORIES.add(HierarchyAdapterFactory.newFactory(adapter,type));
     }
 
-    public static <T> void registerAdapterFactory(DocumentAdapterFactory factory){
+    public static void registerAdapterFactory(DocumentAdapterFactory factory){
         ADAPTER_FACTORIES.add(factory);
     }
 
