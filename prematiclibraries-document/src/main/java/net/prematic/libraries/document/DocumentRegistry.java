@@ -213,20 +213,20 @@ public class  DocumentRegistry {
             Object instance = UnsafeInstanceCreator.newInstance(type.getRawClass());
 
             Document document = entry.toDocument();
-            for(Field field : ReflectionUtil.getAllFields(type.getRawClass())){
-                if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())){
+            for(Class clazz = type.getRawClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
+                for(Field field : clazz.getDeclaredFields()) {
                     try{
                         field.setAccessible(true);
                         if(field.getAnnotation(DocumentIgnored.class) == null){
                             DocumentName name = field.getAnnotation(DocumentName.class);
                             String endName = name!=null?name.value():field.getName();
 
-                            if(document.contains(endName)) field.set(instance,deserialize(document.getEntry(endName),field.getGenericType()));
+                            if(document.contains(endName)) field.set(clazz.cast(instance),deserialize(document.getEntry(endName),field.getGenericType()));
                             else{
                                 if(Primitives.isPrimitive(field.getType())){
-                                    if(field.getType().equals(boolean.class)) field.set(instance,false);
-                                    else field.set(instance,0);
-                                }else field.set(instance,null);
+                                    if(field.getType().equals(boolean.class)) field.set(clazz.cast(instance),false);
+                                    else field.set(clazz.cast(instance),0);
+                                }else field.set(clazz.cast(instance),null);
                             }
                         }
                     }catch (Exception ignored){
