@@ -19,89 +19,61 @@
 
 package net.prematic.libraries.language;
 
-import net.prematic.libraries.utility.Document;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import net.prematic.libraries.utility.annonations.Nullable;
 
 public class Language {
 
-    private boolean enabled, hidden;
-    private final String name, localName, tag;//code
-    private final Map<String, String> messages;
-    private final Document properties;
+    public static final Language ENGLISH = new Language("English","English","en");
 
-    public Language(String name, String localName, String tag) {
-        this.name = name;
-        this.localName = localName;
-        this.tag = tag;
-        this.enabled = true;
-        this.hidden = false;
-        this.messages = new ConcurrentHashMap<>();
-        this.properties = new Document();
+    public static final Language GERMAN = new Language("German","Deutsch","de");
+
+    public static final Language FRENCH = new Language("French","Français","fr");
+
+    public static final Language SPANISH = new Language("Spanish","Español","es");
+
+    public static final Language ITALIAN = new Language("Italian","Italiano","it");
+
+
+    private final String name, localizedName, code, country;
+
+    public Language(String name, String localizedName, String code) {
+        this(name,localizedName,code,null);
     }
 
-    public Language(boolean enabled, boolean hidden, String name, String localName, String tag) {
-        this.enabled = enabled;
-        this.hidden = hidden;
+    public Language(String name, String localizedName, String code, String country) {
         this.name = name;
-        this.localName = localName;
-        this.tag = tag;
-        this.messages = new ConcurrentHashMap<>();
-        this.properties = new Document();
+        this.localizedName = localizedName;
+        this.code = code;
+        this.country = country;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getLocalName() {
-        return localName;
+    public String getLocalizedName() {
+        return localizedName;
     }
 
-    public Map<String, String> getMessages() {
-        return messages;
+    public String getCode() {
+        return code;
     }
 
-    public String getMessage(String key) {
-        return getMessages().get(key);
+    @Nullable
+    public String getCountry() {
+        return country;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public static Language getLanguage(String code){
+
     }
 
-    public boolean isHidden() {
-        return hidden;
+    public static Language getLanguage(String name, String localizedName, String code){
+
     }
 
-    public String getTag() {
-        return tag;
+    public static Language getLanguage(String name, String localizedName, String code, String region){
+
     }
 
-    public Document getProperties() {
-        return properties;
-    }
-
-    public boolean containsMessage(String key) {
-        return getMessages().containsKey(key);
-    }
-
-    public Language addMessage(String key, String message) {
-        getMessages().put(key, message);
-        return this;
-    }
-
-    public Language removeMessage(String key) {
-        getMessages().remove(key);
-        return this;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
-    }
 }
