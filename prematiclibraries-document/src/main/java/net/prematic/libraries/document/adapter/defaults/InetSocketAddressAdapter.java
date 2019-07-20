@@ -25,9 +25,7 @@ import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 
 public class InetSocketAddressAdapter implements DocumentAdapter<InetSocketAddress> {
 

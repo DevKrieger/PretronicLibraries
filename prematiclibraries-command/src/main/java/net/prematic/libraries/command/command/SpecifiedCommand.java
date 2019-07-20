@@ -63,12 +63,12 @@ public abstract class SpecifiedCommand<T> extends SpecifiedSubCommand implements
 
     @Override
     public SpecifiedSubCommand<T> getCommand(String name) {
-        return Iterators.iterateAndWrapOne(this.subCommands, entry -> entry.getCommand().hasAlias(name),CommandEntry::getCommand);
+        return Iterators.mapOne(this.subCommands, entry -> entry.getCommand().hasAlias(name),CommandEntry::getCommand);
     }
 
     @Override
     public List<Command> getCommands() {
-        return Iterators.iterateAndWrap(this.subCommands,CommandEntry::getCommand);
+        return Iterators.map(this.subCommands,CommandEntry::getCommand);
     }
 
     @Override
@@ -90,12 +90,12 @@ public abstract class SpecifiedCommand<T> extends SpecifiedSubCommand implements
 
     @Override
     public void unregisterCommand(Command command) {
-        Iterators.iterateAndRemove(this.subCommands, entry -> entry.getCommand().equals(command));
+        Iterators.remove(this.subCommands, entry -> entry.getCommand().equals(command));
     }
 
     @Override
     public void unregisterCommand(ObjectOwner owner) {
-        Iterators.iterateAndRemove(this.subCommands, entry -> entry.getOwner().equals(owner));
+        Iterators.remove(this.subCommands, entry -> entry.getOwner().equals(owner));
     }
 
     @Override

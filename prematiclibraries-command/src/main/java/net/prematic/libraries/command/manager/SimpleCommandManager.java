@@ -52,7 +52,7 @@ public class SimpleCommandManager implements CommandManager {
 
     @Override
     public List<Command> getCommands() {
-        return Iterators.iterateAndWrap(this.commands,CommandEntry::getCommand);
+        return Iterators.map(this.commands,CommandEntry::getCommand);
     }
 
     @Override
@@ -88,12 +88,12 @@ public class SimpleCommandManager implements CommandManager {
 
     @Override
     public void unregisterCommand(Command command) {
-        Iterators.iterateAndRemove(this.commands, entry -> entry.getCommand().equals(command));
+        Iterators.remove(this.commands, entry -> entry.getCommand().equals(command));
     }
 
     @Override
     public void unregisterCommand(ObjectOwner owner) {
-        Iterators.iterateAndRemove(this.commands, entry -> entry.getOwner().equals(owner));
+        Iterators.remove(this.commands, entry -> entry.getOwner().equals(owner));
     }
 
     @Override

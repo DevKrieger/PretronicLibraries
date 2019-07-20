@@ -104,13 +104,19 @@ public final class Iterators {
 
     public static <U,R> List<R> map(Iterable<U> list, Function<U,R> mapper){
         List<R> result = new ArrayList<>();
-        forEach(list, value -> result.add(mapper.apply(value)));
+        forEach(list, value -> {
+            R object = mapper.apply(value);
+            if(object != null) result.add(object);
+        });
         return result;
     }
 
     public static <U,R> List<R> map(Iterable<U> list, Function<U,R> mapper,Predicate<U> acceptor){
         List<R> result = new ArrayList<>();
-        forEach(list, value -> result.add(mapper.apply(value)),acceptor);
+        forEach(list, value ->{
+            R object = mapper.apply(value);
+            if(object != null) result.add(object);
+        },acceptor);
         return result;
     }
 

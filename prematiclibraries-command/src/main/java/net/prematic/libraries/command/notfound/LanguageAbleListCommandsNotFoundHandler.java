@@ -23,14 +23,14 @@ import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.language.LanguageAble;
-import net.prematic.libraries.language.LanguageManager;
+import net.prematic.libraries.language.MessageManager;
 
 public class LanguageAbleListCommandsNotFoundHandler extends ListCommandsNotFoundHandler{
 
-    private LanguageManager languageManager;
+    private MessageManager languageManager;
     private String commandHelpKey, startMessageKey, pageNotFoundKey;
 
-    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, LanguageManager languageManager) {
+    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, MessageManager languageManager) {
         super(manager, perPage);
         this.languageManager = languageManager;
     }
