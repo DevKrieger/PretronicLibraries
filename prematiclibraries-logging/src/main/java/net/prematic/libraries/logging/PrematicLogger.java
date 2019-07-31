@@ -256,7 +256,7 @@ public interface PrematicLogger {
     }
 
     default void debug(DebugLevel level, String message, Object... objects){
-        debug(null,level,message,objects);
+        debug(level,null,message,objects);
     }
 
     default void debug(MessageInfo info, String message){
