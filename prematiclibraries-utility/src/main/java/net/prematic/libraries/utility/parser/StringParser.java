@@ -188,6 +188,13 @@ public class StringParser {
         return result;
     }
 
+    public String currentUntilNextLine() {
+        String result = get(lineIndex,charIndex,lines[lineIndex].length);
+        this.lineIndex++;
+        this.charIndex = 0;
+        return result;
+    }
+
     public void skipLine(){
         skipLines(1);
     }

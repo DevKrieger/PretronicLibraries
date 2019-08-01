@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public final class Iterators {
 
@@ -57,6 +58,13 @@ public final class Iterators {
         U result = null;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptor.test(result)) return result;
         return null;
+    }
+
+    public static <U> U findOneOrWhenNull(Iterable<U> list, Predicate<U> acceptor, Supplier<U> whenNull) {
+        Iterator<U> iterator = list.iterator();
+        U result;
+        while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptor.test(result)) return result;
+        return whenNull.get();
     }
 
     public static <U> void forEach(Iterable<U> list, Consumer<U> forEach){

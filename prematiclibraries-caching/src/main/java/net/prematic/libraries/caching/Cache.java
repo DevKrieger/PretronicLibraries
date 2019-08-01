@@ -52,6 +52,15 @@ public interface Cache<O> {
     int size();
 
     /**
+     * Returns, if the cache is empty.
+     *
+     * @return if cache is empty
+     */
+    default boolean isEmpty() {
+        return size() == 0;
+    }
+
+    /**
      * Get a object with a registered query.
      *
      * @param queryName The name of the query
