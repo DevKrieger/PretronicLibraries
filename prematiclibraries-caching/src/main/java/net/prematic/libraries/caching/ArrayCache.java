@@ -44,7 +44,7 @@ public class ArrayCache<O> implements Cache<O>{
     private CacheEntry[] entries;
     private Consumer<O> removeListener;
     private CacheTask task;
-    private long refreshTime, expireTime;
+    private long refreshTime, expireTime, expireTimeAfterAccess;
     private int maxSize, size, buffer;
 
     public ArrayCache() {
@@ -260,6 +260,13 @@ public class ArrayCache<O> implements Cache<O>{
     }
 
     @Override
+    public Cache<O> setExpireAfterAccess(long expireTime, TimeUnit unit) {
+        this.expireTimeAfterAccess = unit.toMillis(expireTime);
+        createTask();
+        return this;
+    }
+
+    @Override
     public Cache<O> setRemoveListener(Consumer<O> removeListener) {
         this.removeListener = removeListener;
         return this;
@@ -370,7 +377,8 @@ public class ArrayCache<O> implements Cache<O>{
                     Thread.sleep(TASK_SLEEP_TIME);
                     for(int i = 0; i < size; i++) {
                         CacheEntry entry = entries[i];
-                        if((expireTime > 0 && entry.lastUsed+expireTime <= System.currentTimeMillis())
+                        if((expireTimeAfterAccess > 0 && entry.lastUsed+expireTime <= System.currentTimeMillis())
+                                || (expireTime > 0 && entry.entered+expireTime <= System.currentTimeMillis())
                                 || (refreshTime > 0 && entry.entered+refreshTime <= System.currentTimeMillis())){
                             move(i);
                             size--;

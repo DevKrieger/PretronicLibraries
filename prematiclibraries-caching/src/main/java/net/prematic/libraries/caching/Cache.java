@@ -165,6 +165,17 @@ public interface Cache<O> {
     Cache<O> setExpire(long expireTime, TimeUnit unit);
 
     /**
+     * Set the expire time after an access.
+     *
+     * <p>If an object is longer then the expire time is not used, it will be removed</p>
+     *
+     * @param expireTime The time
+     * @param unit The unit of the time
+     * @return The current cache
+     */
+    Cache<O> setExpireAfterAccess(long expireTime, TimeUnit unit);
+
+    /**
      * Set a remove listener.
      *
      * <p>This listener is on every remove called.</p>
