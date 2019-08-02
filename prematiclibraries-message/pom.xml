@@ -28,7 +28,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>prematiclibraries-language</artifactId>
+    <artifactId>prematiclibraries-message</artifactId>
 
     <build>
         <plugins>
@@ -50,6 +50,12 @@
         <dependency>
             <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.prematic.libraries</groupId>
+            <artifactId>prematiclibraries-document</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

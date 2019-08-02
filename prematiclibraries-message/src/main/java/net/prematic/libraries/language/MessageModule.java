@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 15.07.19 14:22
+ * @since 12.07.19 11:37
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,28 @@
  * under the License.
  */
 
-package net.prematic.libraries.language.syntax;
+package net.prematic.libraries.language;
 
-public class PMDParser {
+public class MessageModule {
 
+    private final int id;
+    private final String name, key;
 
+    public MessageModule(int id, String name, String key) {
+        this.id = id;
+        this.name = name;
+        this.key = key;
+    }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getKey() {
+        return key;
+    }
 }

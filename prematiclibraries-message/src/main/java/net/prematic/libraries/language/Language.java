@@ -19,9 +19,14 @@
 
 package net.prematic.libraries.language;
 
-import net.prematic.libraries.utility.annonations.Nullable;
+import net.prematic.libraries.utility.Iterators;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Language {
+
+    public static final Collection<Language> REGISTRY = new ArrayList<>();
 
     public static final Language ENGLISH = new Language("English","English","en");
 
@@ -33,18 +38,20 @@ public class Language {
 
     public static final Language ITALIAN = new Language("Italian","Italiano","it");
 
-
-    private final String name, localizedName, code, country;
-
-    public Language(String name, String localizedName, String code) {
-        this(name,localizedName,code,null);
+    static {
+        REGISTRY.add(ENGLISH);
+        REGISTRY.add(GERMAN);
+        REGISTRY.add(FRENCH);
+        REGISTRY.add(SPANISH);
+        REGISTRY.add(ITALIAN);
     }
 
-    public Language(String name, String localizedName, String code, String country) {
+    private final String code, name, localizedName;
+
+    public Language(String code, String name, String localizedName) {
+        this.code = code;
         this.name = name;
         this.localizedName = localizedName;
-        this.code = code;
-        this.country = country;
     }
 
     public String getName() {
@@ -59,21 +66,19 @@ public class Language {
         return code;
     }
 
-    @Nullable
-    public String getCountry() {
-        return country;
-    }
-
     public static Language getLanguage(String code){
-
+        return getLanguage(code,"Unknown-"+code);
     }
 
-    public static Language getLanguage(String name, String localizedName, String code){
-
+    public static Language getLanguage(String code, String name){
+        return getLanguage(code, name,name);
     }
 
-    public static Language getLanguage(String name, String localizedName, String code, String region){
-
+    public static Language getLanguage(String code, String name, String localizedName){
+        return Iterators.findOneOrWhenNull(REGISTRY, language -> language.getCode().equalsIgnoreCase(code), ()->{
+            Language language = new Language(code.toLowerCase(), name, localizedName);
+            REGISTRY.add(language);
+            return language;
+        });
     }
-
 }

@@ -47,7 +47,7 @@
         <module>prematiclibraries-concurrent</module>
         <module>prematiclibraries-utility</module>
         <module>prematiclibraries-caching</module>
-        <module>prematiclibraries-language</module>
+        <module>prematiclibraries-message</module>
         <module>prematiclibraries-dependency</module>
         <module>prematiclibraries-console</module>
         <module>prematiclibraries-plugin-test</module>
