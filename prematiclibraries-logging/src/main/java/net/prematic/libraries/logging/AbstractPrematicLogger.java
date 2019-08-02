@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This class is a abstract implementation of the prematic logger interface.
  *
- *  <p>It contains an normal and error output stream.</p>
+ *  <p>It contains an normal and error output io.</p>
  */
 public abstract class AbstractPrematicLogger implements PrematicLogger {
 
