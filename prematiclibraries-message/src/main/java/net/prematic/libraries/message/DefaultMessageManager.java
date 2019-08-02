@@ -1,8 +1,8 @@
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
- * @author Philipp Elvin Friedhoff
- * @since 08.02.19 16:17
+ * @author Davide Wietlisbach
+ * @since 02.08.19 17:47
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,83 +17,107 @@
  * under the License.
  */
 
-package net.prematic.libraries.language;
+package net.prematic.libraries.message;
 
 import net.prematic.libraries.utility.Iterators;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
-public class MessageManager {
+public class DefaultMessageManager implements MessageManager{
 
-    private final Collection<MessagePack> packs;
     private Language defaultLanguage;
+    private final Collection<MessagePack> packs;
     private Collection<MessageCacheEntry> cache;
 
-    public MessageManager(Language defaultLanguage) {
+    public DefaultMessageManager(Language defaultLanguage) {
         this.packs = new HashSet<>();
+        this.cache = new ArrayList<>();
         this.defaultLanguage = defaultLanguage;
     }
 
+    @Override
     public Collection<MessagePack> getPacks() {
         return packs;
     }
 
+    @Override
     public Collection<MessagePack> getPacksByLanguage(Language language) {
         return Iterators.filter(this.packs, messagePack -> messagePack.getLanguage().equals(language));
     }
 
+    @Override
+    public Collection<String> getMessages(Language language) {
+        return null;
+    }
+
+    @Override
     public String getMessage(String key) {
         return getMessage(this.defaultLanguage, key);
     }
 
+    @Override
     public String getMessage(LanguageAble object, String key) {
         Language language = object!=null?object.getLanguage():defaultLanguage;
         if(language == null) language = defaultLanguage;
         return getMessage(language,key);
     }
 
+    @Override
     public String getMessage(Language language, String key) {
-        MessageCacheEntry cacheEntry = Iterators.findOne(this.cache, entry -> entry.key.toLowerCase().equals(key));
-        if(cacheEntry != null && cacheEntry.messages.containsKey(language)) {
-            return cacheEntry.messages.get(language);
+        MessageCacheEntry cacheEntry = getFromCache(key);
+        if(cacheEntry != null) {
+            String message = cacheEntry.messages.get(language);
+            if(message != null) return message;
+            else{
+                message = cacheEntry.messages.get(defaultLanguage);
+                if(message != null) return message;
+            }
         }
 
-        MessagePack messagePack = Iterators.findOne(this.packs, pack -> pack.getLanguage().equals(language));
-        if(messagePack != null && messagePack.getMessages().containsKey(key)) {
-            return getPackMessageAndCache(language, key, messagePack);
-        }
-
-        MessagePack defaultPack = Iterators.findOne(this.packs, pack -> pack.getLanguage().equals(this.defaultLanguage));
-        if(defaultPack != null && defaultPack.getMessages().containsKey(key)) {
-            getPackMessageAndCache(language, key, defaultPack);
-        }
-        return "Unknown message:" + key;
+        String unknownMessage = getMessage(language,"unknown.message");
+        if(unknownMessage != null) return unknownMessage;
+        return "Unknown message for key " + key+" in language "+language.getName();
     }
 
-    private String getPackMessageAndCache(Language language, String key, MessagePack defaultPack) {
-        String message = defaultPack.getMessage(key);
-        Map<Language, String> messages = new HashMap<>();
-        messages.put(language, message);
-        this.cache.add(new MessageCacheEntry(key, messages));return message;
-
-    }
-
-
+    @Override
     public void addPack(MessagePack pack) {
         this.packs.add(pack);
     }
 
+    @Override
     public void importPack(File source) {
         addPack(MessagePack.load(source));
     }
 
+    @Override
     public void importPack(String type, InputStream inputStream) {
         addPack(MessagePack.load(type, inputStream));
+    }
+
+    @Override
+    public void loadMessages(){
+        this.cache.clear();
+        packs.forEach(pack -> {
+            String moduleKey = pack.getModule().getKey();
+
+            pack.getMessages().forEach((key, message) -> {
+                String finalKey = moduleKey+"."+key;
+
+                MessageCacheEntry entry = getFromCache(finalKey);
+                if(entry == null){
+                    entry = new MessageCacheEntry(finalKey);
+                    cache.add(entry);
+                }
+
+                entry.messages.put(pack.getLanguage(),message);
+            });
+        });
+    }
+
+    private MessageCacheEntry getFromCache(String key){
+        return Iterators.findOne(this.cache, entry -> entry.key.toLowerCase().equals(key));
     }
 
     private class MessageCacheEntry {
@@ -101,26 +125,10 @@ public class MessageManager {
         private final String key;
         private final Map<Language,String> messages;
 
-        public MessageCacheEntry(String key, Map<Language, String> messages) {
+        public MessageCacheEntry(String key) {
             this.key = key;
-            this.messages = messages;
+            this.messages = new HashMap<>();
         }
     }
 
-    private class MessageCacheLanguageEntry {
-
-        private Language language;
-        private String message;
-
-    }
-
-    /*
-
-    @for
-    @if
-    @else
-    @else-if
-
-
-     */
 }

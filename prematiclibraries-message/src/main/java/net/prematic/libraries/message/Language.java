@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.prematic.libraries.language;
+package net.prematic.libraries.message;
 
 import net.prematic.libraries.utility.Iterators;
 

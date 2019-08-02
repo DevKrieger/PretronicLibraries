@@ -22,8 +22,8 @@ package net.prematic.libraries.command.notfound;
 import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.language.LanguageAble;
-import net.prematic.libraries.language.MessageManager;
+import net.prematic.libraries.message.LanguageAble;
+import net.prematic.libraries.message.MessageManager;
 
 public class LanguageAbleListCommandsNotFoundHandler extends ListCommandsNotFoundHandler{
 

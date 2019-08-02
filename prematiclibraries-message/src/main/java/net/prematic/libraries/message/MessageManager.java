@@ -1,8 +1,8 @@
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
- * @author Davide Wietlisbach
- * @since 12.07.19 11:37
+ * @author Philipp Elvin Friedhoff
+ * @since 08.02.19 16:17
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,32 @@
  * under the License.
  */
 
-package net.prematic.libraries.language;
+package net.prematic.libraries.message;
 
-public class MessageModule {
+import java.io.File;
+import java.io.InputStream;
+import java.util.*;
 
-    private final int id;
-    private final String name, key;
+public interface MessageManager {
 
-    public MessageModule(int id, String name, String key) {
-        this.id = id;
-        this.name = name;
-        this.key = key;
-    }
+    Collection<MessagePack> getPacks();
 
-    public int getId() {
-        return id;
-    }
+    Collection<MessagePack> getPacksByLanguage(Language language);
 
-    public String getName() {
-        return name;
-    }
+    Collection<String> getMessages(Language language);
 
-    public String getKey() {
-        return key;
-    }
+    String getMessage(String key);
+
+    String getMessage(LanguageAble object, String key);
+
+    String getMessage(Language language, String key);
+
+    void addPack(MessagePack pack);
+
+    void importPack(File source);
+
+    void importPack(String type, InputStream inputStream);
+
+    void loadMessages();
+
 }
