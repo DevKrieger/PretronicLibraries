@@ -61,11 +61,13 @@
             <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.prematic.libraries</groupId>
-            <artifactId>prematiclibraries-language</artifactId>
+            <artifactId>prematiclibraries-message</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

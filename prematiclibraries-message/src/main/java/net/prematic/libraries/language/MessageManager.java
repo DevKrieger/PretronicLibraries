@@ -57,15 +57,6 @@ public class MessageManager {
         return getMessage(language,key);
     }
 
-    /*
-    DKBANS
-        english
-        german
-    dkcoins
-        english
-        german
-     */
-
     public String getMessage(Language language, String key) {
         MessageCacheEntry cacheEntry = Iterators.findOne(this.cache, entry -> entry.key.toLowerCase().equals(key));
         if(cacheEntry != null && cacheEntry.messages.containsKey(language)) {
@@ -104,15 +95,6 @@ public class MessageManager {
     public void importPack(String type, InputStream inputStream) {
         addPack(MessagePack.load(type, inputStream));
     }
-    /*
-
-    @for
-    @if
-    @else
-    @else-if
-
-
-     */
 
     private class MessageCacheEntry {
 
@@ -131,4 +113,14 @@ public class MessageManager {
         private String message;
 
     }
+
+    /*
+
+    @for
+    @if
+    @else
+    @else-if
+
+
+     */
 }

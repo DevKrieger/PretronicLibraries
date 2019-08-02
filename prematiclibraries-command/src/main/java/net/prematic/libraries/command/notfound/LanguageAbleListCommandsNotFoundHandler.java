@@ -27,12 +27,19 @@ import net.prematic.libraries.language.MessageManager;
 
 public class LanguageAbleListCommandsNotFoundHandler extends ListCommandsNotFoundHandler{
 
-    private MessageManager languageManager;
+    private MessageManager messageManager;
     private String commandHelpKey, startMessageKey, pageNotFoundKey;
 
-    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, MessageManager languageManager) {
+    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, MessageManager messageManager){
+        this(manager,perPage,messageManager,"command.help","command.help.header","command.help.page.notfound");
+    }
+
+    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, MessageManager messageManager, String commandHelpKey, String startMessageKey, String pageNotFoundKey) {
         super(manager, perPage);
-        this.languageManager = languageManager;
+        this.messageManager = messageManager;
+        this.commandHelpKey = commandHelpKey;
+        this.startMessageKey = startMessageKey;
+        this.pageNotFoundKey = pageNotFoundKey;
     }
 
     @Override
@@ -53,7 +60,7 @@ public class LanguageAbleListCommandsNotFoundHandler extends ListCommandsNotFoun
     }
 
     private String getMessage(CommandSender sender, String key){
-        if(sender instanceof LanguageAble && ((LanguageAble) sender).getLanguage() != null) ((LanguageAble) sender).getLanguage().getMessage(key);
-        return languageManager.getDefaultLanguage().getMessage(key);
+        if(sender instanceof LanguageAble && ((LanguageAble) sender).getLanguage() != null) messageManager.getMessage((LanguageAble) sender,key);
+        return messageManager.getMessage(key);
     }
 }
