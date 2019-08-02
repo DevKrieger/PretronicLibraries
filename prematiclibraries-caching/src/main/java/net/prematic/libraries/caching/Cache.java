@@ -52,6 +52,15 @@ public interface Cache<O> {
     int size();
 
     /**
+     * Returns, if the cache is empty.
+     *
+     * @return if cache is empty
+     */
+    default boolean isEmpty() {
+        return size() == 0;
+    }
+
+    /**
      * Get a object with a registered query.
      *
      * @param queryName The name of the query
@@ -163,6 +172,17 @@ public interface Cache<O> {
      * @return The current cache
      */
     Cache<O> setExpire(long expireTime, TimeUnit unit);
+
+    /**
+     * Set the expire time after an access.
+     *
+     * <p>If an object is longer then the expire time is not used, it will be removed</p>
+     *
+     * @param expireTime The time
+     * @param unit The unit of the time
+     * @return The current cache
+     */
+    Cache<O> setExpireAfterAccess(long expireTime, TimeUnit unit);
 
     /**
      * Set a remove listener.
