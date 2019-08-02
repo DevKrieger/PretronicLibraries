@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 25.03.19 19:22
+ * @since 02.08.19 15:08
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,67 +17,88 @@
  * under the License.
  */
 
-package net.prematic.libraries.logging.stream;
+package net.prematic.libraries.logging.io;
 
 import net.prematic.libraries.logging.MessageInfo;
 import net.prematic.libraries.logging.PrematicLogger;
 import net.prematic.libraries.logging.level.LogLevel;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
-/**
- * The logging output stream is for hooking the default java output stream in to the logger.
- */
-public class LoggingPrintStream extends PrintStream {
+public class LoggingPrintWriter extends PrintWriter {
 
     private final PrematicLogger logger;
     private final LogLevel level;
     private final MessageInfo info;
 
-    public LoggingPrintStream(PrematicLogger logger){
+    public LoggingPrintWriter(PrematicLogger logger){
         this(logger,LogLevel.INFO);
     }
 
-    public LoggingPrintStream(PrematicLogger logger,LogLevel level){
-        this(logger,level,(MessageInfo) null);
+    public LoggingPrintWriter(PrematicLogger logger,LogLevel level){
+        this(logger,level,null);
     }
 
-    public LoggingPrintStream(PrematicLogger logger,LogLevel level, MessageInfo info){
+    public LoggingPrintWriter(PrematicLogger logger,LogLevel level,MessageInfo info){
         this(logger,level,info,System.out);
     }
 
-    public LoggingPrintStream(PrematicLogger logger,LogLevel level,OutputStream out) {
-        super(out);
-        this.logger = logger;
-        this.level = level;
-        this.info = null;
-    }
 
-    public LoggingPrintStream(PrematicLogger logger,LogLevel level, MessageInfo info,OutputStream out) {
-        super(out);
+    public LoggingPrintWriter(PrematicLogger logger,LogLevel level,MessageInfo info, OutputStream outputStream){
+        super(outputStream);
+        this.logger = logger;
         this.level = level;
         this.info = info;
-        this.logger = logger;
     }
 
-    public LoggingPrintStream(PrematicLogger logger,LogLevel level, MessageInfo info,OutputStream out, boolean autoFlush) {
-        super(out, autoFlush);
-        this.level = level;
-        this.info = info;
-        this.logger = logger;
+    @Override
+    public void flush() {
+        super.flush();
     }
 
-    public LoggingPrintStream(PrematicLogger logger,LogLevel level, MessageInfo info,OutputStream out, boolean autoFlush, String encoding) throws UnsupportedEncodingException {
-        super(out, autoFlush, encoding);
-        this.level = level;
-        this.info = info;
-        this.logger = logger;
+    @Override
+    public void close() {
+        super.close();
     }
 
-    public PrematicLogger getLogger(){
-        return this.logger;
+    @Override
+    public boolean checkError() {
+        return super.checkError();
+    }
+
+    @Override
+    protected void setError() {
+        super.setError();
+    }
+
+    @Override
+    protected void clearError() {
+        super.clearError();
+    }
+
+    @Override
+    public void write(int c) {
+        super.write(c);
+    }
+
+    @Override
+    public void write(char[] buf, int off, int len) {
+        super.write(buf, off, len);
+    }
+
+    @Override
+    public void write(char[] buf) {
+        super.write(buf);
+    }
+
+    @Override
+    public void write(String s, int off, int len) {
+        super.write(s, off, len);
+    }
+
+    @Override
+    public void write(String s) {
+        super.write(s);
     }
 
     @Override
@@ -173,25 +194,5 @@ public class LoggingPrintStream extends PrintStream {
     @Override
     public void println(Object x) {
         this.logger.log(info,level,x);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        return object instanceof LoggingPrintStream && getLogger().equals(this.logger);
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new LoggingPrintStream(this.logger);
-    }
-
-    @Override
-    public String toString() {
-        return "Logging stream for "+this.logger.toString();
-    }
-
-    public static void hook(PrematicLogger logger){
-        System.setOut(new LoggingPrintStream(logger,LogLevel.INFO));
-        System.setErr(new LoggingPrintStream(logger,LogLevel.ERROR));
     }
 }
