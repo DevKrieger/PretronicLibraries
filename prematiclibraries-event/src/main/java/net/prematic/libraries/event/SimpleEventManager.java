@@ -84,46 +84,4 @@ public class SimpleEventManager implements EventManager {
         Collection<MethodEntry> methods = this.methods.get(event.getClass());
         if(methods != null) methods.forEach(method -> method.invoke(event));
     }
-
-    /**
-     * Contains information about a listener and when this method should be executed.
-     */
-    public class MethodEntry {
-
-        private final int priority;
-        private final ObjectOwner owner;
-        private final Object listener;
-        private final Method method;
-
-        public MethodEntry(int priority, ObjectOwner owner, Object listener, Method methode) {
-            this.priority = priority;
-            this.owner = owner;
-            this.listener = listener;
-            this.method = methode;
-        }
-
-        public ObjectOwner getOwner() {
-            return this.owner;
-        }
-
-        public int getPriority() {
-            return this.priority;
-        }
-
-        public Object getListener() {
-            return this.listener;
-        }
-
-        public Method getMethod() {
-            return this.method;
-        }
-
-        public void invoke(Object event){
-            try{
-                this.method.invoke(this.listener,event);
-            }catch (Exception exception){
-                throw new EventException("Could not execute listener "+listener,exception);
-            }
-        }
-    }
 }
