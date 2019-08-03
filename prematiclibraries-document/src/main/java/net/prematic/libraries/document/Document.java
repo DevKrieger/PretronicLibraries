@@ -127,6 +127,15 @@ public interface Document extends  Iterable<DocumentEntry>,DocumentEntry {
 
     Document set(String key, Object value);
 
+    default Document rename(String source,String destination){
+        DocumentEntry entry = getEntry(source);
+        if(entry != null){
+            set(destination,entry);
+            remove(source);
+        }
+        return this;
+    }
+
     Document remove(String key);
 
     Document clear();

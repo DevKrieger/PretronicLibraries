@@ -35,6 +35,10 @@ public interface DocumentEntry {
 
     boolean isObject();
 
+    default DocumentEntry copy(){
+        return copy(getKey());
+    }
+
     DocumentEntry copy(String key);
 
 }
