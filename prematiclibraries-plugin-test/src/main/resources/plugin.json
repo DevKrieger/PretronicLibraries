@@ -1,0 +1,11 @@
+{
+  "name": "TestPlugin",
+  "description": "A cool test plugin",
+  "author": "Davide Wietlisbach",
+  "website": "",
+  "version": {
+    "name": "Beta version",
+    "id": 1.0
+  },
+  "mainClass": "net.prematic.libraries.plugin.test.TestPlugin"
+}

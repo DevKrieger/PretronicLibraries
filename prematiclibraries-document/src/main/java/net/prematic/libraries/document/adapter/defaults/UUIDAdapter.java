@@ -28,18 +28,15 @@ import java.util.UUID;
 
 public class UUIDAdapter implements DocumentAdapter<UUID> {
 
-
-    /*
-    @Override
-    public TypeReference<UUID> getTypeReference() {
-        return new TypeReference<UUID>(){};
-    }
-     */
-
-
     @Override
     public UUID read(DocumentEntry entry, TypeReference<UUID> reference) {
-        if(entry.isPrimitive()) return UUID.fromString(entry.toPrimitive().getAsString());
+        if(entry.isPrimitive()){
+            String content = entry.toPrimitive().getAsString();
+            if(content.indexOf('-') == -1)
+                content = content.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
+
+            return UUID.fromString(content);
+        }
         throw new IllegalArgumentException("It is not possible to convert this entry into a uuid.");
     }
 
