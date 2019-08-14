@@ -213,19 +213,19 @@ public class SimpleDocument implements Document {
     @Override
     public <T> T getObject(String key, Class<T> classOf) {
         DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isObject()?entry.toDocument().getAsObject(classOf):null;
+        return entry!=null?DocumentRegistry.deserialize(entry,classOf):null;
     }
 
     @Override
     public <T> T getObject(String key, Type type) {
         DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isObject()?entry.toDocument().getAsObject(type):null;
+        return entry!=null?DocumentRegistry.deserialize(entry,type):null;
     }
 
     @Override
     public <T> T getObject(String key, TypeReference<T> reference) {
         DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isObject()?entry.toDocument().getAsObject(reference):null;
+        return entry!=null?DocumentRegistry.deserialize(entry,reference):null;
     }
 
     @Override

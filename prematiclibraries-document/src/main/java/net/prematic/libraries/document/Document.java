@@ -296,4 +296,14 @@ public interface Document extends  Iterable<DocumentEntry>,DocumentEntry {
     static Document read(String type, StringParser parser){
         return DocumentRegistry.getType(type).getReader().read(parser);
     }
+
+
+    //Load a class with document injection
+    static void load(Class<?> clazz){
+        DocumentRegistry.loadClass(clazz);
+    }
+
+    static void load(Class<?> clazz, Document document){
+        DocumentRegistry.loadClass(clazz, document);
+    }
 }

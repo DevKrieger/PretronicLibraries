@@ -22,16 +22,21 @@ package net.prematic.libraries.document;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.adapter.DocumentAdapterFactory;
 import net.prematic.libraries.document.adapter.defaults.*;
+import net.prematic.libraries.document.annotations.DocumentFile;
 import net.prematic.libraries.document.annotations.DocumentIgnored;
+import net.prematic.libraries.document.annotations.DocumentKey;
 import net.prematic.libraries.document.annotations.DocumentName;
 import net.prematic.libraries.document.simple.SimpleDocumentFactory;
 import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.io.IORuntimeException;
 import net.prematic.libraries.utility.reflect.Primitives;
+import net.prematic.libraries.utility.reflect.ReflectException;
 import net.prematic.libraries.utility.reflect.TypeReference;
 import net.prematic.libraries.utility.reflect.UnsafeInstanceCreator;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -41,6 +46,7 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.nio.file.attribute.FileTime;
 import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -250,5 +256,100 @@ public class  DocumentRegistry {
             }
         }
         return null;
+    }
+
+
+    public static void loadClass(Class<?> clazz){
+        DocumentFile info = clazz.getAnnotation(DocumentFile.class);
+        if(info == null) throw new IllegalArgumentException("Class requires @DocumentFile annotation.");
+
+        String path = info.source();
+        if(path.endsWith(".")){
+            int directoryIndex = path.lastIndexOf('/');
+
+            File directory;
+            if(directoryIndex == -1) directory = new File(System.getProperty("user.dir"));
+            else{
+                directory = new File(path.substring(0,directoryIndex+1));
+                path = path.substring(directoryIndex+1);
+            }
+
+            File[] files = directory.listFiles();
+
+            File source = null;
+            DocumentFileType type = null;
+            if(files != null){
+                for(File entry : files) {
+                    String name = entry.getName();
+                    if(name.startsWith(path)){
+                        type = getType(name.substring(name.indexOf('.')+1));
+                        source = entry;
+                        if(type != null) break;
+                    }
+                }
+            }
+
+            if(source == null){
+                if(!info.type().equals("Unknown")){
+                    source = new File(path+info.type());
+                    type = getType(info.type());
+                }else throw new IllegalArgumentException("No file with valid file type found.");
+            }
+
+            if(type == null) throw new IllegalArgumentException(info.type()+" is not a supported document format.");
+            loadClass(clazz,type.getReader().read(source),source,type);
+        }else{
+            DocumentFileType type = getType(info.type());
+            if(type == null) throw new IllegalArgumentException(info.type()+" is not a supported document format.");
+            File source = new File(path);
+            loadClass(clazz,type.getReader().read(source),source,type);
+        }
+    }
+
+    public static void loadClass(Class<?> clazz, Document data){
+        loadClass(clazz, data,null,null);
+    }
+
+    public static void loadClass(Class<?> clazz, Document data, File source, DocumentFileType type){
+        DocumentFile info = clazz.getAnnotation(DocumentFile.class);
+        if(info == null) throw new IllegalArgumentException("Class requires @DocumentFile annotation.");
+
+        try{
+            boolean update = false;
+            for(Field field : clazz.getDeclaredFields()){
+                if(Modifier.isStatic(field.getModifiers())){
+                    field.setAccessible(true);
+
+                    DocumentKey key = field.getAnnotation(DocumentKey.class);
+                    if(key == null && !info.loadAll()) continue;
+
+                    String name;
+                    if(key != null) name = key.value();
+                    else name = field.getName().toLowerCase().replace('-','.');
+
+
+                    Object result = data.getObject(name,field.getType());
+                    if(result != null){
+                        field.set(null,result);
+                    }
+                    else if(info.appendMissing()){
+                        Object defaultValue = field.get(null);
+                        if(defaultValue != null){
+                            data.set(name,defaultValue);
+                            update = true;
+                        }
+                    }
+                }
+            }
+            if(update && source != null){
+                source.createNewFile();
+                type.getWriter().write(source,data);
+            }
+        }catch (IllegalAccessException exception){
+            throw new ReflectException(exception);
+        }
+        catch (IOException exception){
+            throw new IORuntimeException(exception);
+        }
     }
 }

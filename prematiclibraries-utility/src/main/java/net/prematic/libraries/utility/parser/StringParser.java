@@ -148,6 +148,9 @@ public class StringParser {
         return lines.length>lineIndex;
     }
 
+    public boolean isEmpty(){
+        return this.lines.length == 0;
+    }
 
 
     //Line operation

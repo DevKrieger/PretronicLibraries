@@ -70,6 +70,7 @@ public class JsonDocumentReader implements DocumentReader{
 
     @Override
     public Document read(StringParser parser) {
+        if(parser.isEmpty()) return DocumentRegistry.getFactory().newDocument();
         DocumentEntry entry = readNext(parser,null);
         if(entry != null && entry.isObject()) return entry.toDocument();
         parser.throwException("Invalid json document (No object)");
