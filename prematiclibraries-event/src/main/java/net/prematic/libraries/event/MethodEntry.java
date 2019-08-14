@@ -28,12 +28,12 @@ import java.lang.reflect.Method;
  */
 public class MethodEntry {
 
-    private final int priority;
+    private final byte priority;
     private final ObjectOwner owner;
     private final Object listener;
     private final Method method;
 
-    public MethodEntry(int priority, ObjectOwner owner, Object listener, Method methode) {
+    public MethodEntry(byte priority, ObjectOwner owner, Object listener, Method methode) {
         this.priority = priority;
         this.owner = owner;
         this.listener = listener;
