@@ -28,10 +28,8 @@ import net.prematic.libraries.utility.interfaces.ShutdownAble;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public interface PluginManager<R> extends ShutdownAble {
 
@@ -39,9 +37,11 @@ public interface PluginManager<R> extends ShutdownAble {
 
     Plugin getPlugin(UUID id);
 
-    Collection<Plugin<R>> getPlugins();
-
     <D extends Driver> D getDriver(Class<D> driverClass);
+
+    Collection<PluginLoader<R>> getLoaders();
+
+    Collection<Plugin<R>> getPlugins();
 
     PluginDescription detectPluginDescription(File file);
 
@@ -51,11 +51,12 @@ public interface PluginManager<R> extends ShutdownAble {
 
     void registerLifecycleStateListener(LifecycleState state, Consumer<Plugin> listener);
 
-    void executeLifecycleSStateListener(LifecycleState state, Plugin plugin);
+    void executeLifecycleStateListener(LifecycleState state, Plugin plugin);
 
-    int loadPlugins(File folder);
+    Plugin<R> loadPlugin(File location);
 
-    int loadPlugins(PluginContext context);
+    Collection<Plugin<R>> loadPlugins(File folder);
+
 
     void shutdownPlugins();
 

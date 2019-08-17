@@ -21,8 +21,8 @@ package net.prematic.libraries.plugin.driver;
 
 import net.prematic.libraries.plugin.Plugin;
 
-public abstract class DriverPlugin<R> extends Plugin<R> {
+public abstract class DriverPlugin<R,D extends Driver> extends Plugin<R> {
 
-    public abstract Driver buildDriver();
+    public abstract D buildDriver();
 
 }

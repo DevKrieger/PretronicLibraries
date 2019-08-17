@@ -1,10 +1,8 @@
-package net.prematic.libraries.plugin.description;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 19.03.19 11:00
+ * @since 20.06.19 11:50
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,35 +17,16 @@ package net.prematic.libraries.plugin.description;
  * under the License.
  */
 
-public class PluginVersion {
+package net.prematic.libraries.plugin.service;
 
-    private final String name;
-    private final int number, build;
+public interface ServiceRegistry {
 
-    public PluginVersion(String name, int number, int build) {
-        this.name = name;
-        this.number = number;
-        this.build = build;
+    <T> T getService(Class<T> serviceClass);
+
+    default <T> void registerService(Class<T> serviceClass, T service){
+        registerService(serviceClass,service,ServicePriority.NORMAL);
     }
 
-    public String getName() {
-        return name;
-    }
+    <T> void registerService(Class<T> serviceClass, T service, byte priority);
 
-    public int getNumber() {
-        return number;
-    }
-
-    public int getBuild() {
-        return build;
-    }
-
-    public AutoUpdater getAutoUpdater(){
-        return null;
-    }
-
-
-    public class AutoUpdater {
-
-    }
 }

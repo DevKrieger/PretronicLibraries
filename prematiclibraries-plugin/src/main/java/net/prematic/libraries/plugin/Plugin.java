@@ -19,31 +19,10 @@
 
 package net.prematic.libraries.plugin;
 
-
-/*
-
-- Drivers
-- Modules
-
-- Plugins
-
-CONSTRUCTION
-
-INITIALIZATION
-
-LOAD_COMPLETE
-
-Bootstrap
-Shutdown
-
- */
-
 import net.prematic.libraries.plugin.description.PluginDescription;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
-import net.prematic.libraries.utility.reflect.ReflectionUtil;
 
-import java.lang.reflect.ParameterizedType;
 import java.security.SecurityPermission;
 
 public abstract class Plugin<R> implements ObjectOwner {
@@ -70,6 +49,12 @@ public abstract class Plugin<R> implements ObjectOwner {
     public R getRuntime(){
         return this.runtime;
     }
+
+    /*
+    public File getLocalStorageFolder(){
+
+    }
+     */
 
     public void initialize(PluginDescription description, PluginLoader<R> loader,R runtime){
         if(this.loader != null) throw new IllegalArgumentException("This plugin instance is already initialized.");

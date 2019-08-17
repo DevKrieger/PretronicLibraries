@@ -18,7 +18,8 @@
  */
 
 package net.prematic.libraries.plugin.description;
-import net.prematic.libraries.utility.document.DocumentEntry;
+
+import net.prematic.libraries.document.DocumentEntry;
 
 import java.util.Map;
 
@@ -26,9 +27,11 @@ public interface PluginMainClass {
 
     String getMainClass(String instanceName);
 
+
+
     static PluginMainClass readFromDocumentEntry(DocumentEntry entry){
         if(entry == null) return null;
-        return entry.isNode()?new MultiMainClass(entry.getAsMap(String.class,String.class)):new SimpleMainClass(entry.getAsString());
+        return entry.isPrimitive()?new SimpleMainClass(entry.toPrimitive().getAsString()):new MultiMainClass(entry.toDocument().getAsMap(String.class,String.class));
     }
 
     class MultiMainClass implements PluginMainClass {

@@ -20,15 +20,20 @@ package net.prematic.libraries.plugin.loader;
  */
 
 import net.prematic.libraries.plugin.Plugin;
+import net.prematic.libraries.plugin.description.PluginDescription;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
 import net.prematic.libraries.plugin.manager.PluginManager;
 
+import java.io.File;
 import java.util.Collection;
-import java.util.function.Consumer;
 
 public interface PluginLoader<R> {
 
+    File getLocation();
+
     PluginManager getPluginManager();
+
+    PluginDescription getDescription();
 
     Collection<Class<?>> getLoadedClasses();
 
@@ -52,16 +57,13 @@ public interface PluginLoader<R> {
 
     void initialize();
 
-    void install();
-
     void load();
 
     void bootstrap();
 
     void shutdown();
 
-    void uninstall();
-
     void unload();
+
 
 }

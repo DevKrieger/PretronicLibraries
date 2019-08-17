@@ -1,12 +1,31 @@
 {
+  "driver": "net.prematic.cloud.core.driver.DatabaseDriver.class",
   "name": "MyPlugin",
-  "id": "asdsadsad",
+  "uniqueId": "asdsadsad",
   "description": "",
   "author": "",
   "website": "",
   "version": {
     "name": "Beta version",
-    "id": 234324
+    "id": 234324,
+    "autoUpdate": {
+      "productId": "MyProductId",
+
+
+
+      "request": {
+        "headers": {
+
+        },
+        "jsonBody": {
+
+        }
+      },
+      "extraCheckId": "testCheck",
+      "check": "https://yourSStore.com/api/v1/product/BanSystem/version/latest",
+      "download": "https://yourStore.com/product/BanSystem/download/latest/",
+      "sendPrematicAccountVerifyCode": true
+    }
   },
   "mainClass": {
     "master": "net.prematic.test.master",
@@ -14,16 +33,17 @@
   },
   "requiredRestart": true,
   "depends": [
-
-  ],
-  "loadBefore": [
-
+    {
+      "name": "MyOtherPlugin",
+      "scope": "REQUIRED"
+    }
   ],
   "drivers": [
     "net.prematic.cloud.core.driver.DatabaseDriver.class",
     "net.prematic.cloud.core.driver.AuthenticationDriver.class",
     "net.prematic.cloud.core.driver.AuthenticationDriver.class"
   ],
+
   "libraries":[
     {
       "type": "MAVEN",

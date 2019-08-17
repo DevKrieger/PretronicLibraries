@@ -19,36 +19,45 @@
 
 package net.prematic.libraries.plugin.manager;
 
+import net.prematic.libraries.jarsignature.JarVerifier;
 import net.prematic.libraries.plugin.Plugin;
+import net.prematic.libraries.plugin.RuntimeEnvironment;
 import net.prematic.libraries.plugin.description.PluginDescription;
 import net.prematic.libraries.plugin.driver.Driver;
+import net.prematic.libraries.plugin.exception.InvalidPluginDescriptionException;
+import net.prematic.libraries.plugin.exception.NoDriverException;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
+import net.prematic.libraries.plugin.loader.DefaultPluginLoader;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.io.FileUtil;
+import net.prematic.libraries.utility.io.IORuntimeException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class DefaultPluginManager<R> implements PluginManager<R> {
 
-    private final Collection<Plugin> plugins;
+    private File pluginInstallationFolder;
+    private final RuntimeEnvironment<R> environment;
+    private final Collection<PluginLoader<R>> loaders;
 
     private final Map<Class<?>,Driver> drivers;
 
-    public DefaultPluginManager() {
-        this.plugins = ConcurrentHashMap.newKeySet();
+    public DefaultPluginManager(RuntimeEnvironment<R> environment) {
+        this.environment = environment;
+        this.loaders = new LinkedHashSet<>();
+        this.drivers = new LinkedHashMap<>();
     }
 
     @Override
     public Plugin getPlugin(String name) {
-        return Iterators.findOne(this.plugins, plugin -> plugin.getName().equalsIgnoreCase(name));
+        return null;
+        //return Iterators.findOne(this.loaders, plugin -> plugin.getName().equalsIgnoreCase(name));
     }
 
     @Override
@@ -58,8 +67,21 @@ public class DefaultPluginManager<R> implements PluginManager<R> {
 
     @Override
     public <D extends Driver> D getDriver(Class<D> driverClass) {
-        return (D) this.drivers.get(driverClass);
+        Driver driver =  this.drivers.get(driverClass);
+        if(driver == null) throw new NoDriverException("No driver for class "+driverClass+" found.");
+        return (D) driver;
     }
+
+    @Override
+    public Collection<PluginLoader<R>> getLoaders() {
+        return this.loaders;
+    }
+
+    @Override
+    public Collection<Plugin<R>> getPlugins() {
+        return null;
+    }
+
 
     @Override
     public PluginDescription detectPluginDescription(File file) {
@@ -72,7 +94,7 @@ public class DefaultPluginManager<R> implements PluginManager<R> {
 
     @Override
     public Collection<PluginDescription> detectPluginDescriptions(File directory) {
-        Collection<PluginDescription> descriptions = new HashSet();
+        Collection<PluginDescription> descriptions = new HashSet<>();
         if(directory.exists()){
             File[] files = directory.listFiles();
             if(files != null){
@@ -92,12 +114,11 @@ public class DefaultPluginManager<R> implements PluginManager<R> {
 
     @Override
     public PluginLoader<R> createPluginLoader(File file) {
-        return null;
-    }
-
-    @Override
-    public Collection<Plugin<R>> getPlugins() {
-        return null;
+        PluginLoader<R> loader = Iterators.findOne(this.loaders, loader1 -> loader1.getLocation().equals(file));
+        if(loader != null) return loader;
+        loader = new DefaultPluginLoader<>(this,this.environment,file);
+        this.loaders.add(loader);
+        return loader;
     }
 
     @Override
@@ -106,19 +127,23 @@ public class DefaultPluginManager<R> implements PluginManager<R> {
     }
 
     @Override
-    public void executeLifecycleSStateListener(LifecycleState state, Plugin plugin) {
+    public void executeLifecycleStateListener(LifecycleState state, Plugin plugin) {
 
     }
 
-    @Override
-    public int loadPlugins(File folder) {
-        return 0;
-    }
+
 
     @Override
-    public int loadPlugins(PluginContext context) {
-        return 0;
+    public Plugin<R> loadPlugin(File location) {
+        return null;
     }
+
+
+    @Override
+    public Collection<Plugin<R>> loadPlugins(File folder) {
+        return null;
+    }
+
 
     @Override
     public void shutdownPlugins() {
@@ -130,7 +155,17 @@ public class DefaultPluginManager<R> implements PluginManager<R> {
 
     }
 
-    private PluginDescription loadPluginDescription(JarFile jarFile){
+    public PluginDescription loadPluginDescription(File file){
+        try {
+            return loadPluginDescription(new JarFile(file));
+        } catch (IOException exception) {
+            throw new IORuntimeException(exception);
+        }
+    }
+
+    public PluginDescription loadPluginDescription(JarFile jarFile){
+        JarEntry entry = jarFile.getJarEntry("plugin.yml");
+        if(entry == null) throw new InvalidPluginDescriptionException("No plugin.json found.");
         return null;
     }
 }

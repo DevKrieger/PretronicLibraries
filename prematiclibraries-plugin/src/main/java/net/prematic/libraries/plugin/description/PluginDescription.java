@@ -18,17 +18,18 @@ package net.prematic.libraries.plugin.description;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+import net.prematic.libraries.document.Document;
+import net.prematic.libraries.plugin.description.dependency.PluginDependency;
+import net.prematic.libraries.plugin.description.dependency.PluginLibrary;
 
-import net.prematic.libraries.utility.document.Document;
-
-import java.io.File;
+import java.util.Collection;
 import java.util.UUID;
 
 public interface PluginDescription extends Document {
 
-    File getPluginLocation();
-
     String getName();
+
+    String getCategory();
 
     String getDescription();
 
@@ -41,4 +42,10 @@ public interface PluginDescription extends Document {
     PluginVersion getVersion();
 
     PluginMainClass getMainClass();
+
+    Collection<PluginDependency> getDependencies();
+
+    Collection<String> getRequiredDrivers();
+
+    Collection<PluginLibrary> getLibraries();//Beta
 }

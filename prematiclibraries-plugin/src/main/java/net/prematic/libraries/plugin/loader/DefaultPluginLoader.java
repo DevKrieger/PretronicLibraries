@@ -28,38 +28,59 @@ import net.prematic.libraries.plugin.exception.PluginLoadException;
 import net.prematic.libraries.plugin.lifecycle.Lifecycle;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
 import net.prematic.libraries.plugin.manager.PluginManager;
-import net.prematic.libraries.utility.FileUtil;
 import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.io.FileUtil;
 
+import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultPluginLoader<R> extends URLClassLoader implements PluginLoader<R>{
 
-    private final static Set<DefaultPluginLoader> LOADERS = ConcurrentHashMap.newKeySet();
+    static {
+       // PluginLoader.registerBuilder("JSON",new JsonPluginDescriptionBuilder());
+    }
 
+    private final File location;
+    private final PluginManager<R> pluginManager;
     private final RuntimeEnvironment<R> environment;
     private final PluginDescription description;
     private final Collection<Class<?>> loadedClasses;
     private final LifecycleState<R> state;
 
-    private Plugin instance;
+    public Plugin instance;
 
-    public DefaultPluginLoader(RuntimeEnvironment<R> environment, PluginDescription description) {
-        super(new URL[] {FileUtil.toUrl(description.getPluginLocation())});
+    public DefaultPluginLoader(PluginManager<R> pluginManager, RuntimeEnvironment<R> environment, File location) {
+        this(pluginManager,environment, location, null);
+    }
+
+    public DefaultPluginLoader(PluginManager<R> pluginManager,RuntimeEnvironment<R> environment, File location, PluginDescription description) {
+        super(new URL[] {FileUtil.fileToUrl(location)});
+        this.location = location;
+        this.pluginManager = pluginManager;
         this.environment = environment;
-        this.description = description;
+        this.description = description!=null?description:loadDescription();
         this.loadedClasses = ConcurrentHashMap.newKeySet();
         this.state = new LifecycleState<>(this.description,this,this.environment);
     }
 
     @Override
+    public File getLocation() {
+        return this.location;
+    }
+
+    @Override
+    public PluginDescription getDescription() {
+        return this.description;
+    }
+
+    @Override
     public PluginManager getPluginManager() {
-        return null;
+        return this.pluginManager;
     }
 
     public Collection<Class<?>> getLoadedClasses() {
@@ -91,16 +112,17 @@ public class DefaultPluginLoader<R> extends URLClassLoader implements PluginLoad
         if(!isInstanceAvailable()) throw new PluginLoadException("Plugin is not constructed.");
         for(Method method : instance.getClass().getDeclaredMethods()){
             Lifecycle cycle = method.getAnnotation(Lifecycle.class);
-            if(cycle!= null && !Modifier.isStatic(method.getModifiers()) && method.getParameterCount() == 1 && cycle.state().equals(state)
-                    && (cycle.environment().equals("null") || cycle.environment().equalsIgnoreCase(environment.getName()))){
-                if(stateEvent.getClass().isAssignableFrom(method.getParameterTypes()[0])){
-                    try{method.invoke(instance,(method.getParameterTypes()[0]).cast(stateEvent));
-                    }catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception)
-                    {
-                        exception.printStackTrace();
-                    }
+            if(cycle!= null
+                    && !Modifier.isStatic(method.getModifiers())
+                    && method.getParameterCount() == 1
+                    && cycle.state().equals(state)
+                    && (cycle.environment().equals("null") || cycle.environment().equalsIgnoreCase(environment.getName()))
+                    && stateEvent.getClass().isAssignableFrom(method.getParameterTypes()[0])){
+                try{
+                    method.invoke(instance,(method.getParameterTypes()[0]).cast(stateEvent));
+                }catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception) {
+                    exception.printStackTrace();
                 }
-
             }
         }
     }
@@ -128,7 +150,6 @@ public class DefaultPluginLoader<R> extends URLClassLoader implements PluginLoad
     @Override
     public Plugin construct() {
         if(isInstanceAvailable()) throw new PluginLoadException("Plugin is already constructed.");
-        LOADERS.add(this);
         try{
             Class<? extends Plugin> mainClass = loadMainClass();
             if(mainClass == null) throw new PluginLoadException("No main class for plugin "+description.getName()+" v"+description.getVersion().getName()+" found.");
@@ -160,10 +181,6 @@ public class DefaultPluginLoader<R> extends URLClassLoader implements PluginLoad
         executeLifeCycleState(LifecycleState.LOAD);
     }
 
-    @Override
-    public void install() {
-        executeLifeCycleState(LifecycleState.INSTALLATION);
-    }
 
     @Override
     public void bootstrap() {
@@ -176,19 +193,15 @@ public class DefaultPluginLoader<R> extends URLClassLoader implements PluginLoad
     }
 
     @Override
-    public void uninstall() {
-        executeLifeCycleState(LifecycleState.UNINSTALLATION);
-    }
-
-    @Override
     public void unload() {
         executeLifeCycleState(LifecycleState.UNLOAD);
-        LOADERS.remove(this);
     }
 
     private Class<? extends Plugin> loadMainClass() throws Exception{
-        Class<?> clazz = loadClass(description.getMainClass().getMainClass(this.environment.getName()));
-        if(clazz.isAssignableFrom(Plugin.class)) return (Class<Plugin>) clazz;
+        String className = description.getMainClass().getMainClass(this.environment.getName());
+
+        Class<?> clazz = loadClass(className);
+        if(Plugin.class.isAssignableFrom(clazz)) return (Class<Plugin>) clazz;
         throw new InvalidPluginDescriptionException("No main class found.");
     }
 
@@ -196,9 +209,11 @@ public class DefaultPluginLoader<R> extends URLClassLoader implements PluginLoad
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         Class result = getLoadedClass(name);
         if(result == null){
-            for(DefaultPluginLoader loader : LOADERS){
-                result = loader.getLoadedClass(name);
-                if(result != null) break;
+            if(this.pluginManager != null){
+                for(PluginLoader loader : this.pluginManager.getLoaders()){
+                    result = loader.getLoadedClass(name);
+                    if(result != null) break;
+                }
             }
             if(result == null){
                 result = super.loadClass(name,resolve);
@@ -208,4 +223,13 @@ public class DefaultPluginLoader<R> extends URLClassLoader implements PluginLoad
         if(result == null) throw new ClassNotFoundException(name);
         return result;
     }
+
+    public PluginDescription loadDescription(){//Todo implement other loader
+        InputStream resourceStream = getResourceAsStream("plugin.json");
+        if(resourceStream == null) throw new InvalidPluginDescriptionException("No plugin description found.");
+        return null;//PluginLoader.DESCRIPTION_BUILDERS.get("JSON").build(resourceStream);
+    }
+
+
+
 }

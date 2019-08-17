@@ -1,10 +1,8 @@
-package net.prematic.libraries.plugin.description;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 19.03.19 11:00
+ * @since 20.06.19 11:52
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,35 +17,18 @@ package net.prematic.libraries.plugin.description;
  * under the License.
  */
 
-public class PluginVersion {
+package net.prematic.libraries.plugin.service;
 
-    private final String name;
-    private final int number, build;
+public class ServicePriority {
 
-    public PluginVersion(String name, int number, int build) {
-        this.name = name;
-        this.number = number;
-        this.build = build;
-    }
+    public static final byte HIGHEST = (byte) 127;
 
-    public String getName() {
-        return name;
-    }
+    public static final byte HIGH = (byte) 60;
 
-    public int getNumber() {
-        return number;
-    }
+    public static final byte NORMAL = (byte) 0;
 
-    public int getBuild() {
-        return build;
-    }
+    public static final byte LOW = (byte) 60;
 
-    public AutoUpdater getAutoUpdater(){
-        return null;
-    }
+    public static final byte LOWEST = (byte) -128;
 
-
-    public class AutoUpdater {
-
-    }
 }

@@ -1,10 +1,8 @@
-package net.prematic.libraries.plugin.description;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 19.03.19 11:00
+ * @since 19.06.19 22:16
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,35 +17,18 @@ package net.prematic.libraries.plugin.description;
  * under the License.
  */
 
-public class PluginVersion {
+package net.prematic.libraries.plugin.description.dependency;
 
-    private final String name;
-    private final int number, build;
+import java.util.UUID;
 
-    public PluginVersion(String name, int number, int build) {
-        this.name = name;
-        this.number = number;
-        this.build = build;
-    }
+public interface PluginDependency {
 
-    public String getName() {
-        return name;
-    }
+    String getName();
 
-    public int getNumber() {
-        return number;
-    }
+    UUID getUniqueId();
 
-    public int getBuild() {
-        return build;
-    }
-
-    public AutoUpdater getAutoUpdater(){
-        return null;
-    }
+    int minVersionNumber();
 
 
-    public class AutoUpdater {
 
-    }
 }

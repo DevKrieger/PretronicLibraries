@@ -19,5 +19,12 @@
 
 package net.prematic.libraries.plugin.exception;
 
-public class NoDriverException {
+public class NoDriverException extends RuntimeException{
+
+    public NoDriverException() {
+    }
+
+    public NoDriverException(String message) {
+        super(message);
+    }
 }
