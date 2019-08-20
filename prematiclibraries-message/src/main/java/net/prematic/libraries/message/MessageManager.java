@@ -21,7 +21,7 @@ package net.prematic.libraries.message;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
 
 public interface MessageManager {
 

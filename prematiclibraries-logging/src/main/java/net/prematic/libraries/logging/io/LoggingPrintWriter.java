@@ -23,7 +23,8 @@ import net.prematic.libraries.logging.MessageInfo;
 import net.prematic.libraries.logging.PrematicLogger;
 import net.prematic.libraries.logging.level.LogLevel;
 
-import java.io.*;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 public class LoggingPrintWriter extends PrintWriter {
 
