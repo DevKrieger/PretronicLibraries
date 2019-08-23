@@ -90,12 +90,12 @@ public abstract class SpecifiedCommand<T> extends SpecifiedSubCommand implements
 
     @Override
     public void unregisterCommand(Command command) {
-        Iterators.remove(this.subCommands, entry -> entry.getCommand().equals(command));
+        Iterators.removeSilent(this.subCommands, entry -> entry.getCommand().equals(command));
     }
 
     @Override
     public void unregisterCommand(ObjectOwner owner) {
-        Iterators.remove(this.subCommands, entry -> entry.getOwner().equals(owner));
+        Iterators.removeSilent(this.subCommands, entry -> entry.getOwner().equals(owner));
     }
 
     @Override

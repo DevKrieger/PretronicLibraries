@@ -1,8 +1,8 @@
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
- * @author Philipp Elvin Friedhoff
- * @since 08.02.19 16:17
+ * @author Davide Wietlisbach
+ * @since 20.08.19, 19:12
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,16 @@
  * under the License.
  */
 
-package net.prematic.libraries.message;
+package net.prematic.libraries.event.executor;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.Collection;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-public interface MessageManager {
+public interface EventExecutor {
 
-    Collection<MessagePack> getPacks();
+    byte getPriority();
 
-    Collection<MessagePack> getPacksByLanguage(Language language);
+    ObjectOwner getOwner();
 
-    Collection<String> getMessages(Language language);
-
-    String getMessage(String key);
-
-    String getMessage(LanguageAble object, String key);
-
-    String getMessage(Language language, String key);
-
-    void addPack(MessagePack pack);
-
-    void importPack(File source);
-
-    void importPack(String type, InputStream inputStream);
-
-    void loadMessages();
+    void execute(Object event);
 
 }

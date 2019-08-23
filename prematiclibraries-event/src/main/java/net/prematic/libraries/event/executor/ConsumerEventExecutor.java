@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 06.04.19 21:01
+ * @since 20.08.19, 19:12
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,34 +17,40 @@
  * under the License.
  */
 
-package net.prematic.libraries.event;
+package net.prematic.libraries.event.executor;
 
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public interface EventManager {
+public class ConsumerEventExecutor<E> implements EventExecutor{
 
-    void subscribe(ObjectOwner owner, Object listener);
+    private final ObjectOwner owner;
+    private final byte priority;
+    private final Consumer<E> consumer;
 
-    default <T> void subscribe(ObjectOwner owner, Class<T> eventClass, Consumer<T> handler){
-        subscribe(owner, eventClass, handler,EventPriority.NORMAL);
+    public ConsumerEventExecutor(ObjectOwner owner, byte priority,  Consumer<E> consumer) {
+        this.owner = owner;
+        this.priority = priority;
+        this.consumer = consumer;
     }
 
-    <T> void subscribe(ObjectOwner owner, Class<T> eventClass, Consumer<T> handler, byte priority);
+    @Override
+    public byte getPriority() {
+        return priority;
+    }
 
-    void unsubscribe(Object listener);
+    @Override
+    public ObjectOwner getOwner() {
+        return owner;
+    }
 
-    void unsubscribe(Consumer<?> handler);
+    public Consumer<E> getConsumer() {
+        return consumer;
+    }
 
-    void unsubscribe(ObjectOwner owner);
-
-    void unsubscribeAll(Class<?> eventClass);
-
-    <T> T callEvent(T event);
-
-    <T> void callEventAsync(T event, Consumer<T> callback);
-
-    <T> CompletableFuture<T> callEventAsync(T event);
+    @Override
+    public void execute(Object event) {
+        consumer.accept((E) event);
+    }
 }
