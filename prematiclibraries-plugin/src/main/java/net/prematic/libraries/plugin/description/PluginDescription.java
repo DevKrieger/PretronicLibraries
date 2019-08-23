@@ -18,14 +18,18 @@ package net.prematic.libraries.plugin.description;
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-import net.prematic.libraries.document.Document;
-import net.prematic.libraries.plugin.description.dependency.PluginDependency;
-import net.prematic.libraries.plugin.description.dependency.PluginLibrary;
 
+import net.prematic.libraries.document.Document;
+
+import java.io.File;
 import java.util.Collection;
 import java.util.UUID;
 
 public interface PluginDescription extends Document {
+
+    Registry REGISTRY = new Registry();
+
+    File getLocation();
 
     String getName();
 
@@ -43,9 +47,26 @@ public interface PluginDescription extends Document {
 
     PluginMainClass getMainClass();
 
-    Collection<PluginDependency> getDependencies();
+    Collection<String> getDependencies();
 
-    Collection<String> getRequiredDrivers();
+    Collection<String> getSoftDependencies();
 
-    Collection<PluginLibrary> getLibraries();//Beta
+    Collection<String> getRequiredServices();
+
+    Collection<String> getProvidedServices();
+
+
+    static String getBasePath(){
+        return REGISTRY.basePath;
+    }
+
+    static void setBasePath(String path){
+        REGISTRY.basePath = path;
+    }
+
+    class Registry {
+
+        private String basePath = "plugin";
+
+    }
 }

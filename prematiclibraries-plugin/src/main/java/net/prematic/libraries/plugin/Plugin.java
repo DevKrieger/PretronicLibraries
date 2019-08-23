@@ -23,6 +23,7 @@ import net.prematic.libraries.plugin.description.PluginDescription;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
+import java.io.File;
 import java.security.SecurityPermission;
 
 public abstract class Plugin<R> implements ObjectOwner {
@@ -30,7 +31,7 @@ public abstract class Plugin<R> implements ObjectOwner {
     private static final SecurityPermission INIT_PERMISSION = new SecurityPermission("PrematicPluginInitialize");
 
     private PluginDescription description;
-    private PluginLoader<R> loader;
+    private PluginLoader loader;
     private R runtime;
 
     @Override
@@ -50,13 +51,11 @@ public abstract class Plugin<R> implements ObjectOwner {
         return this.runtime;
     }
 
-    /*
-    public File getLocalStorageFolder(){
-
+    public File getWorkingDirectory(){
+        return new File(loader.getLocation().getParentFile(),getName().toLowerCase()+"/");
     }
-     */
 
-    public void initialize(PluginDescription description, PluginLoader<R> loader,R runtime){
+    public void initialize(PluginDescription description, PluginLoader loader,R runtime){
         if(this.loader != null) throw new IllegalArgumentException("This plugin instance is already initialized.");
 
         //Check runtime permission

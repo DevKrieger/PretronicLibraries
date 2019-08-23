@@ -1,5 +1,5 @@
 {
-  "name": "TestPlugin",
+  "name": "TestPluginX",
   "description": "A cool test plugin",
   "author": "Davide Wietlisbach",
   "website": "",
@@ -7,5 +7,6 @@
     "name": "Beta version",
     "id": 1.0
   },
-  "mainClass": "net.prematic.libraries.plugin.test.TestPlugin"
+  "mainClass": "net.prematic.libraries.plugin.test.TestPlugin",
+  "dependencies":["TestPlugin"]
 }

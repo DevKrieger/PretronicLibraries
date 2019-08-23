@@ -19,9 +19,9 @@ package net.prematic.libraries.plugin.manager;
  * under the License.
  */
 
+import net.prematic.libraries.logging.PrematicLogger;
 import net.prematic.libraries.plugin.Plugin;
 import net.prematic.libraries.plugin.description.PluginDescription;
-import net.prematic.libraries.plugin.driver.Driver;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.utility.interfaces.ShutdownAble;
@@ -29,35 +29,50 @@ import net.prematic.libraries.utility.interfaces.ShutdownAble;
 import java.io.File;
 import java.util.Collection;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
-public interface PluginManager<R> extends ShutdownAble {
+public interface PluginManager extends ShutdownAble {
+
+    PrematicLogger getLogger();
+
+    Collection<Plugin> getPlugins();
 
     Plugin getPlugin(String name);
 
     Plugin getPlugin(UUID id);
 
-    <D extends Driver> D getDriver(Class<D> driverClass);
-
-    Collection<PluginLoader<R>> getLoaders();
-
-    Collection<Plugin<R>> getPlugins();
-
-    PluginDescription detectPluginDescription(File file);
-
-    Collection<PluginDescription> detectPluginDescriptions(File folder);
-
-    PluginLoader<R> createPluginLoader(File file);
-
-    void registerLifecycleStateListener(LifecycleState state, Consumer<Plugin> listener);
-
-    void executeLifecycleStateListener(LifecycleState state, Plugin plugin);
-
-    Plugin<R> loadPlugin(File location);
-
-    Collection<Plugin<R>> loadPlugins(File folder);
+    boolean isPluginEnabled(String name);
 
 
-    void shutdownPlugins();
+    <T> T getService(Class<T> serviceClass);
+
+    <T> void registerService(Class<T> serviceClass, T service);
+
+    <T> boolean isServiceAvailable(Class<T> serviceClass);
+
+
+    Collection<PluginLoader> getLoaders();
+
+    PluginLoader createPluginLoader(File location);
+
+    PluginLoader createPluginLoader(PluginDescription description);
+
+
+    PluginDescription detectPluginDescription(File location);
+
+    Collection<PluginDescription> detectPluginDescriptions(File directory);
+
+
+    void setLifecycleStateListener(String state, BiConsumer<Plugin,LifecycleState> listener);
+
+    void executeLifecycleStateListener(String state,LifecycleState stateEvent, Plugin plugin);
+
+    void executeLifecycleStateListener(String state,LifecycleState stateEvent, Collection<Plugin> plugins);
+
+
+    Collection<Plugin> enablePlugins(File directory);
+
+
+    void disablePlugins();
 
 }

@@ -63,7 +63,7 @@ public class Certificate{
 
     public long getExpire(){
         try{
-            return Long.valueOf(properties.getProperty("expire"));
+            return Long.parseLong(properties.getProperty("expire"));
         }catch (Exception ignored){
             return 0;
         }
@@ -71,7 +71,7 @@ public class Certificate{
 
     public long getRegistration(){
         try{
-            return Long.valueOf(properties.getProperty("registration"));
+            return Long.parseLong(properties.getProperty("registration"));
         }catch (Exception ignored){
             return 0;
         }

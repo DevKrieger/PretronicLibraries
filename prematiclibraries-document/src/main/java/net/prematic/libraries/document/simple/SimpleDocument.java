@@ -69,7 +69,7 @@ public class SimpleDocument implements Document {
 
     @Override
     public <V> Collection<V> getAsCollection(Class<V> valueClass) {
-        return DocumentRegistry.deserialize(this,new TypeReference<Collection<V>>(){});
+        return DocumentRegistry.deserialize(this,new TypeReference<Collection<V>>());
     }
 
     @Override

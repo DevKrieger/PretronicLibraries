@@ -55,6 +55,23 @@ public class ZipArchive {
         this.content = new LinkedHashMap<>();
     }
 
+    public InputStream getStream(String path){
+        checkExists();
+        try {
+            InputStream fileInput = Files.newInputStream(this.file.toPath());
+            ZipInputStream input = new ZipInputStream(fileInput);
+
+            ZipEntry entry = input.getNextEntry();
+            while(entry != null){
+                if(entry.getName().equals(path)) return input;
+                entry = input.getNextEntry();
+            }
+            return null;
+        } catch (IOException exception) {
+            throw new IORuntimeException(exception);
+        }
+    }
+
     /**
      * Get byte content by a zip entry path.
      *
@@ -71,7 +88,7 @@ public class ZipArchive {
             byte[] buffer = new byte[1024];
 
             ZipEntry entry = input.getNextEntry();
-            while(entry != null){//Todo update
+            while(entry != null){
                 if(entry.getName().equals(path)) {
                     ByteBuf buf = Unpooled.buffer();
                     int length;

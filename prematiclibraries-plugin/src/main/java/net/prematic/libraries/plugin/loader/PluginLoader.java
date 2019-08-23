@@ -27,7 +27,7 @@ import net.prematic.libraries.plugin.manager.PluginManager;
 import java.io.File;
 import java.util.Collection;
 
-public interface PluginLoader<R> {
+public interface PluginLoader {
 
     File getLocation();
 
@@ -35,23 +35,27 @@ public interface PluginLoader<R> {
 
     PluginDescription getDescription();
 
+
     Collection<Class<?>> getLoadedClasses();
 
     Class<?> getLoadedClass(String name);
 
+
     boolean isInstanceAvailable();
 
-    boolean isDriver();
-
-    //void addStateHook(String state, Consumer<LifecycleState> stateEvent);
+    boolean isEnabled();
 
     void executeLifeCycleState(String state);
 
     void executeLifeCycleState(String state, LifecycleState stateEvent);
 
+
+    Plugin getInstance();
+
     Plugin enable();//Complete loading process
 
     void disable();
+
 
     Plugin construct();
 

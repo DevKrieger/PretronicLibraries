@@ -30,6 +30,6 @@ public @interface Lifecycle {
 
     String state();
 
-    String environment() default "null";
+    String environment() default "ANY";
 
 }
