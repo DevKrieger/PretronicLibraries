@@ -21,7 +21,6 @@ public class LifecycleState<R> {
 
     public static final String UNLOAD = "UNLOAD";
 
-
     private final PluginDescription description;
     private final PluginLoader loader;
     private final RuntimeEnvironment<R> environment;

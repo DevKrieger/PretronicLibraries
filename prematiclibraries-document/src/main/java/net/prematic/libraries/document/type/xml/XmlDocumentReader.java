@@ -119,9 +119,9 @@ public class XmlDocumentReader implements DocumentReader {
         parser.skipChar();
         parser.skipUntil(LESSER_THAN);
         parser.skipChar();
-        if(primitive.equalsIgnoreCase("true")) {
+        if("true".equalsIgnoreCase(primitive)) {
             return DocumentRegistry.getFactory().newPrimitiveEntry(key, true);
-        } else if(primitive.equals("false")) {
+        } else if("false".equals(primitive)) {
             return DocumentRegistry.getFactory().newPrimitiveEntry(key, false);
         } else if(GeneralUtil.isNaturalNumber(primitive)) {
             return DocumentRegistry.getFactory().newPrimitiveEntry(key, Long.valueOf(primitive));
