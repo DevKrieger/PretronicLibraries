@@ -25,48 +25,9 @@ import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.utility.parser.StringParser;
 
-import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-
 import static net.prematic.libraries.document.type.Characters.*;
 
 public class JsonDocumentReader implements DocumentReader{
-
-    @Override
-    public Document read(byte[] content) {
-        return read(new String(content));
-    }
-
-    @Override
-    public Document read(byte[] content, Charset charset) {
-        return read(new String(content,charset));
-    }
-
-    @Override
-    public Document read(String content) {
-        return read(new StringParser(content));
-    }
-
-    @Override
-    public Document read(File location) {
-        return read(new StringParser(location));
-    }
-
-    @Override
-    public Document read(File location, Charset charset) {
-        return read(new StringParser(location,charset));
-    }
-
-    @Override
-    public Document read(InputStream input) {
-        return read(new StringParser(input));
-    }
-
-    @Override
-    public Document read(InputStream input, Charset charset) {
-        return read(new StringParser(input,charset));
-    }
 
     @Override
     public Document read(StringParser parser) {

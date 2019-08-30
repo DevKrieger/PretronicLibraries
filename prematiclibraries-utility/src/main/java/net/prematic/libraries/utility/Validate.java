@@ -19,6 +19,8 @@
 
 package net.prematic.libraries.utility;
 
+import java.util.regex.Pattern;
+
 public final class Validate {
 
     public static void isTrue(boolean expression, String message, Object... objects) {
@@ -27,5 +29,13 @@ public final class Validate {
 
     public static void isTrue(boolean expression, String message) {
         if(!expression) throw new IllegalArgumentException(message);
+    }
+
+    public static void checkMatches(CharSequence value, Pattern pattern, String message, Object... objects) {
+        if(value == null || pattern == null || !pattern.matcher(value).matches()) throw new IllegalArgumentException(String.format(message, objects));
+    }
+
+    public static void checkMatches(CharSequence value, Pattern pattern, String message) {
+        if(value == null || pattern == null || !pattern.matcher(value).matches()) throw new IllegalArgumentException(message);
     }
 }

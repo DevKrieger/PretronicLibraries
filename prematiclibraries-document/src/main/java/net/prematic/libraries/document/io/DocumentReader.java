@@ -29,19 +29,33 @@ import java.nio.charset.Charset;
 
 public interface DocumentReader extends InputStreamReadable<Document> {
 
-    Document read(byte[] content);
+    default Document read(byte[] content) {
+        return read(new String(content));
+    }
 
-    Document read(byte[] content, Charset charset);
+    default Document read(byte[] content, Charset charset) {
+        return read(new String(content,charset));
+    }
 
-    Document read(String content);
+    default Document read(String content) {
+        return read(new StringParser(content));
+    }
 
-    Document read(File location);
+    default Document read(File location) {
+        return read(new StringParser(location));
+    }
 
-    Document read(File location, Charset charset);
+    default Document read(File location, Charset charset) {
+        return read(new StringParser(location,charset));
+    }
 
-    Document read(InputStream input);
+    default Document read(InputStream input) {
+        return read(new StringParser(input));
+    }
 
-    Document read(InputStream input, Charset charset);
+    default Document read(InputStream input, Charset charset) {
+        return read(new StringParser(input,charset));
+    }
 
     Document read(StringParser parser);
 
