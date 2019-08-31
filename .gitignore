@@ -36,7 +36,6 @@ manifest.mf
 */src/main/lombok
 
 target/
-test/
 logs/
 .svn/
 *.zip

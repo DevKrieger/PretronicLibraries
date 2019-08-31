@@ -22,9 +22,7 @@ package net.prematic.libraries.caching;
 /**
  * With a cache query, you are able to search an object in a cache.
  *
- * <p>With the loader</p>
- *
- * @param <O>
+ * @param <O> The cached object type
  */
 public interface CacheQuery<O> {
 

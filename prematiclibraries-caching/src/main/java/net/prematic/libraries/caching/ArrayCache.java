@@ -68,7 +68,7 @@ public class ArrayCache<O> implements Cache<O>{
     }
 
     public ArrayCache(ExecutorService executor, int maxSize, int buffer) {
-        if(executor == null) throw new NullPointerException("Executor service is null.");
+        Objects.requireNonNull(executor,"Executor service is null.");
         this.executor = executor;
         this.buffer = buffer;
         this.maxSize = maxSize;
@@ -90,7 +90,9 @@ public class ArrayCache<O> implements Cache<O>{
     public void clear() {
         CacheEntry[] entries = this.entries;
         this.entries = new CacheEntry[buffer];
-        for (int i = 0; i < entries.length; i++) entries[i] = null;//Reset for GC
+        this.size = 0;
+        //Reset for GC
+        Arrays.fill(entries, null);
     }
 
     @Override
@@ -290,13 +292,8 @@ public class ArrayCache<O> implements Cache<O>{
         clear();
     }
 
-    /**
-     * Set the array buffer.
-     *
-     * @param buffer The buffer
-     */
     public void setBuffer(int buffer){
-        if(buffer > maxSize) throw new IllegalArgumentException("Buffer is higher then the maximum size");
+        if(buffer > maxSize) throw new IllegalArgumentException("Buffer is higher then the maximum size.");
         this.buffer = buffer;
     }
 

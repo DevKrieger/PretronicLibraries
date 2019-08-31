@@ -33,6 +33,8 @@ import java.util.function.Supplier;
  * <p>You are able to register a CacheQuery. With this query you are able to search a object. If the object
  * is not cached, the integrated loader will load the object from your storage.</p>
  *
+ * Todo: Create search may option
+ *
  * @param <O> The object to cache.
  */
 public interface Cache<O> {
@@ -144,7 +146,7 @@ public interface Cache<O> {
     /**
      * Set the maximum size of a Cache
      *
-     * <p>If the maximum size is reached, the oldest object will be automatically removed</p>
+     * <p>If the maximum size is reached, the oldest object will be automatically removed.</p>
      *
      * @param maxSize The size
      * @return The current cache
@@ -165,7 +167,7 @@ public interface Cache<O> {
     /**
      * Set the expire time.
      *
-     * <p>If an object is longer then the expire time is not used, it will be removed</p>
+     * <p>If an object is longer then the expire time in the cache, it will be removed</p>
      *
      * @param expireTime The time
      * @param unit The unit of the time
@@ -176,7 +178,7 @@ public interface Cache<O> {
     /**
      * Set the expire time after an access.
      *
-     * <p>If an object is longer then the expire time is not used, it will be removed</p>
+     * <p>If an object is longer then the expire time is not used, it will be removed.</p>
      *
      * @param expireTime The time
      * @param unit The unit of the time
@@ -217,7 +219,7 @@ public interface Cache<O> {
     void clear();
 
     /**
-     * Shut this cache down (Clear and stop all tasks).
+     * Shut this cache down (Clears and stop all tasks).
      */
     void shutdown();
 
