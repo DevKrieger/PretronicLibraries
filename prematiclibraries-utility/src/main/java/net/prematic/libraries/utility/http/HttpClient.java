@@ -39,7 +39,7 @@ public class HttpClient {
     public static final String PROPERTY_CONTENT_LENGTH = "Content-Length";
     public static final String PROPERTY_ACCEPTED_ENCODING = "Accept-Encoding";
     public static final String PROPERTY_ACCEPTED_LANGUAGE = "Accept-Language";
-    public static final String PROPERTY_ACCEPTED_CHARSET = "Accept-Charsete";
+    public static final String PROPERTY_ACCEPTED_CHARSET = "Accept-Charset";
     public static final String PROPERTY_AUTHORIZATION = "Authorization";
 
     private static final int DEFAULT_TIMEOUT = 3000;
@@ -60,7 +60,8 @@ public class HttpClient {
         this.requestMethod = HttpMethod.GET;
         this.parameters = new LinkedHashMap<>();
         this.properties = new LinkedHashMap<>();
-        this.properties.put(DEFAULT_USER_AGENT,Arrays.asList(DEFAULT_USER_AGENT));
+        this.properties.put(PROPERTY_USER_AGENT, Collections.singletonList(DEFAULT_USER_AGENT));
+        this.saveCookies = false;
     }
 
     public void setUrl(URL url){
@@ -176,7 +177,7 @@ public class HttpClient {
                 entry.getValue().forEach(value -> connection.setRequestProperty(entry.getKey(),value));
             }
 
-            if(content != null || (!this.parameters.isEmpty())){
+            if(content != null && (!this.parameters.isEmpty())){
                 connection.setDoOutput(true);
                 DataOutputStream output = new DataOutputStream(connection.getOutputStream());
                 if(content != null) output.writeBytes(content);
@@ -185,7 +186,7 @@ public class HttpClient {
                 output.close();
             }
 
-            if(saveCookies) this.properties.put("Cookie",connection.getHeaderFields().get(PROPERTY_COOKIE_SET));
+            //if(saveCookies) this.properties.put("Cookie",connection.getHeaderFields().get(PROPERTY_COOKIE_SET));
 
             connection.disconnect();
             return new HttpResult(connection.getResponseCode(),connection.getHeaderFields()

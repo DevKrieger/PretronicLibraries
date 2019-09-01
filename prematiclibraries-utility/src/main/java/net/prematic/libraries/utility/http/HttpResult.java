@@ -68,14 +68,15 @@ public class HttpResult {
         String raw = getProperty(HttpClient.PROPERTY_CONTENT_TYPE);
         if(raw != null){
             int index = raw.lastIndexOf('=');
-            if(index != -1) return raw.substring(index,raw.length()-1);
+            if(index != -1) return raw.substring(index+1,raw.length()-1);
         }
         return null;
     }
 
     public Charset getCharset(){
         try{
-            return Charset.forName(getRawCharset());
+            String raw = getRawCharset();
+            return raw != null?Charset.forName(getRawCharset()):null;
         }catch (UnsupportedCharsetException ignored){
             return null;
         }

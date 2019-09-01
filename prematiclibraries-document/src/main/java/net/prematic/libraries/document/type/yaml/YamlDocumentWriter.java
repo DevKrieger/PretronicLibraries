@@ -45,7 +45,7 @@ public class YamlDocumentWriter implements DocumentWriter {
     @Override
     public void write(Writer output, Document document, boolean pretty) {
         try {
-            writeObjectValue(output,document,-1);
+            writeObjectValue(output,document,0);
         } catch (IOException exception) {
             throw new IORuntimeException(exception);
         }
