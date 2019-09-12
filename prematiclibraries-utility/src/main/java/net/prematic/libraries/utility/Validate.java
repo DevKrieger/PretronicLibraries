@@ -38,4 +38,12 @@ public final class Validate {
     public static void checkMatches(CharSequence value, Pattern pattern, String message) {
         if(value == null || pattern == null || !pattern.matcher(value).matches()) throw new IllegalArgumentException(message);
     }
+
+    public static void notNull(Object value, String message, Object... objects) {
+        if(value == null) throw new IllegalArgumentException(String.format(message, objects));
+    }
+
+    public static void notNull(Object value, String message) {
+        if(value == null) throw new IllegalArgumentException(message);
+    }
 }
