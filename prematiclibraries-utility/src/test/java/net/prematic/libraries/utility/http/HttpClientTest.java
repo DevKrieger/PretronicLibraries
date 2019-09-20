@@ -26,7 +26,7 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HttpClientTest {
-    
+
     @Test
     void connect() throws Exception{
         int expected = 200;

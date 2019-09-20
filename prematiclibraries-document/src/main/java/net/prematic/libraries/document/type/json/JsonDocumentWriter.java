@@ -85,11 +85,7 @@ public class JsonDocumentWriter implements DocumentWriter {
     }
 
     private void writePrimitiveValue(Writer output, PrimitiveEntry entry) throws IOException {
-        if(entry.getAsObject() instanceof String){
-            output.write('"');
-            output.write(entry.getAsString());
-            output.write('"');
-        }else if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character){
+        if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character){
             output.write('"');
             output.write(entry.getAsString());
             output.write('"');
@@ -99,6 +95,7 @@ public class JsonDocumentWriter implements DocumentWriter {
     private int writeObjectEntries(Writer output, Document document, int indent, boolean key,boolean multiLine) throws IOException{
         boolean first = true;
         for(DocumentEntry entry : document){
+            if(entry.isPrimitive() && entry.toPrimitive().getAsObject() == null) continue;
             if(first) first = false;
             else{
                 output.write(',');
