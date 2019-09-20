@@ -60,6 +60,7 @@ public class YamlDocumentWriter implements DocumentWriter {
         }
 
         for(DocumentEntry entry : document){
+            if(entry.isPrimitive() && entry.toPrimitive().getAsObject() == null) continue;
             if(first) first = false;
             else writeNewLine(output, indent);
             writeKey(output,entry.getKey());
@@ -105,11 +106,7 @@ public class YamlDocumentWriter implements DocumentWriter {
     }
 
     public void writePrimitiveValue(Writer output, PrimitiveEntry entry) throws IOException {
-        if(entry.getAsObject() instanceof String){
-            output.write('\'');
-            output.write(entry.getAsString());
-            output.write('\'');
-        }else if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character){
+        if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character){
             output.write('\'');
             output.write(entry.getAsString());
             output.write('\'');
