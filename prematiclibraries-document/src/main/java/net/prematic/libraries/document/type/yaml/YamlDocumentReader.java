@@ -20,117 +20,87 @@
 package net.prematic.libraries.document.type.yaml;
 
 import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.DocumentEntry;
+import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.io.DocumentReader;
+import net.prematic.libraries.utility.GeneralUtil;
 import net.prematic.libraries.utility.parser.StringParser;
 
-import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import static net.prematic.libraries.document.type.Characters.BACK;
+import static net.prematic.libraries.document.type.Characters.SPACE;
 
 public class YamlDocumentReader implements DocumentReader {
 
     @Override
-    public Document read(byte[] content) {
-        return null;
-    }
-
-    @Override
-    public Document read(byte[] content, Charset charset) {
-        return null;
-    }
-
-    @Override
-    public Document read(String content) {
-        return null;
-    }
-
-    @Override
-    public Document read(File location) {
-        return null;
-    }
-
-    @Override
-    public Document read(File location, Charset charset) {
-        return null;
-    }
-
-    @Override
-    public Document read(InputStream input) {
-        return null;
-    }
-
-    @Override
-    public Document read(InputStream input, Charset charset) {
-        return null;
-    }
-
-    @Override
     public Document read(StringParser parser) {
-        return null;
+
+        return nextObject(parser, null);
     }
 
-    /*
-    public static void main(String[] args){
-        StringParser parser = new StringParser(new File("test.yml"));
-
-        System.out.println(parser);
-    }
-
-    public DocumentEntry next(StringParser parser,String key, int objectIndex){
+    private DocumentEntry next(StringParser parser, String key) {
         while(parser.hasNext()) {
             char input = parser.nextChar();
-            if(input == BREAK) return readYamlObject(parser, key);
-            else if(input == SQUARE_BRACKET_OPEN);//array
-            else if(input == QUOT_1 || input == QUOT_2) return DocumentRegistry.getFactory().newPrimitiveEntry(key,readNextString(parser,input));
-            else if(input == 't' || input == 'T');//boolean true
-            else if(input == 'f' || input == 'F');//boolean true
-            else if(input == 'n' || input == 'N'){
-                //checkNextNull(parser);
-                return DocumentRegistry.getFactory().newPrimitiveEntry(key,null);
+            if(!isIgnoredChar(input)) {
+                System.out.println(parser.lineIndex()+" | "+parser.charIndex());
+                if(!parser.hasChar(parser.lineIndex(),parser.charIndex()+1)){
+                    return nextObject(parser,key);
+                }else{
+                    parser.previousChar();
+                    return nextPrimitive(parser,key);
+                }
             }
-            else if(Character.isDigit(input));//number return DocumentRegistry.getFactory().newPrimitiveEntry(key,readNextNumber(parser));
-            else if(Character.isDigit(input));
-            else if(!isIgnoredChar(input)) parser.throwException(ERROR_INVALID_CHARACTER);
         }
         return null;
     }
 
-    public Document readYamlObject(StringParser parser,String key){
+    private Document nextObject(StringParser parser, String key) {
+        System.out.println(key+" -> Object");
         Document document = DocumentRegistry.getFactory().newDocument(key);
-        int objectIndex = -1, currentIndex = 0;
-        while(parser.hasNext()){
+        int spaceCount = 0;
+        int finalCount = -1;
+        while(parser.hasNext()) {
             char input = parser.nextChar();
-            if(input == ' '){
-                currentIndex++;
-            }else{
-                if(objectIndex == -1){
-                    objectIndex = currentIndex;
-                }
-                else if(objectIndex != currentIndex){
-                    parser.previousChars(currentIndex);
-                    break;
-                }
-                String entryKey = readNextKey(parser);
-                document.entries().add(next(parser,entryKey));
-            }
-            if(!isIgnoredChar(input)){
-                String entryKey = readNextKey(parser);
+            if(input == SPACE) spaceCount++;
+            else{
+                if(finalCount == -1) {
+                    finalCount = spaceCount;
+                    System.out.println("Final "+finalCount+" | "+parser.currentChar());
+                    parser.previousChar();
+                }else if(finalCount != spaceCount) return document;
+                else parser.previousChars(2);
+                String entryKey = readKey(parser);
                 document.entries().add(next(parser,entryKey));
             }
         }
         return document;
     }
 
-    public String readNextKey(StringParser parser){
-        return parser.nextUntil(':');
+    private DocumentEntry nextPrimitive(StringParser parser, String key) {
+        System.out.println(key+" -> Primitive");
+        String primitive = parser.currentUntilNextLine();
+        System.out.println(primitive);
+        if(parser.hasNext()) parser.skipChar();
+        if(primitive.equalsIgnoreCase("true")) {
+            return DocumentRegistry.getFactory().newPrimitiveEntry(key, true);
+        } else if(primitive.equals("false")) {
+            return DocumentRegistry.getFactory().newPrimitiveEntry(key, false);
+        } else if(GeneralUtil.isNaturalNumber(primitive)) {
+            return DocumentRegistry.getFactory().newPrimitiveEntry(key, Long.valueOf(primitive));
+        } else if(GeneralUtil.isNumber(primitive)) {
+            return DocumentRegistry.getFactory().newPrimitiveEntry(key, Double.valueOf(primitive));
+        } else {
+
+            return DocumentRegistry.getFactory().newPrimitiveEntry(key, primitive);
+        }
     }
 
-    public String readNextString(StringParser parser, char endChar){
-        return parser.nextUntil(endChar);
+    private String readKey(StringParser parser) {
+        String key = parser.nextUntil(':');
+        parser.skipChar();
+        return key;
     }
 
-    public static boolean isIgnoredChar(char c){
-        return c == SPACE || c == BREAK || c == BACK || c == TAB;
+    private boolean isIgnoredChar(char c) {
+        return c == SPACE || c == BACK;
     }
-     */
 }
