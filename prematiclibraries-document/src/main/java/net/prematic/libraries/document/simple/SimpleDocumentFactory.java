@@ -19,12 +19,14 @@
 
 package net.prematic.libraries.document.simple;
 
-import net.prematic.libraries.document.ArrayEntry;
-import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentFactory;
-import net.prematic.libraries.document.PrimitiveEntry;
+import net.prematic.libraries.document.*;
 
 public class SimpleDocumentFactory implements DocumentFactory {
+
+    @Override
+    public DocumentContext newContext() {
+        return new SimpleDocumentContext();
+    }
 
     @Override
     public Document newDocument() {

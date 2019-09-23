@@ -20,9 +20,11 @@
 package net.prematic.libraries.document.adapter.defaults;
 
 import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
 import net.prematic.libraries.utility.reflect.ReflectException;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
@@ -30,7 +32,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class CollectionAdapter implements DocumentAdapter<Collection> {
+public class CollectionAdapter implements DocumentAdapter<Collection>, DocumentAdapterInitializeAble {
 
     public static Map<Class<? extends Collection>,Class<? extends Collection>> MAPPED_CLASS = new LinkedHashMap<>();
 
@@ -40,6 +42,8 @@ public class CollectionAdapter implements DocumentAdapter<Collection> {
         MAPPED_CLASS.put(List.class, ArrayList.class);
         MAPPED_CLASS.put(Queue.class, ArrayBlockingQueue.class);
     }
+
+    private DocumentContext context;
 
     @Override
     public Collection read(DocumentEntry entry, TypeReference<Collection> type) {
@@ -54,7 +58,7 @@ public class CollectionAdapter implements DocumentAdapter<Collection> {
         }
 
         Type itemType = type.getArgument(0);
-        entry.toDocument().forEach(entry1 -> instance.add(DocumentRegistry.deserialize(entry1,(Type)itemType)));
+        entry.toDocument().forEach(entry1 -> instance.add(context.deserialize(entry1,(Type)itemType)));
         return instance;
     }
 
@@ -63,9 +67,14 @@ public class CollectionAdapter implements DocumentAdapter<Collection> {
         Document document = DocumentRegistry.getFactory().newArrayEntry(key);
         int i = 0;
         for(Object item : object){
-            document.entries().add(DocumentRegistry.serialize("list-item-"+i,item));
+            document.entries().add(context.serialize("list-item-"+i,item));
             i++;
         }
         return document;
+    }
+
+    @Override
+    public void initialize(DocumentContext context) {
+        this.context = context;
     }
 }

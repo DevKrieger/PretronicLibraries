@@ -19,14 +19,17 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
+import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.DocumentEntry;
-import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
+import net.prematic.libraries.document.utils.SerialisationUtil;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
-public class ClassMappingAdapter<T> implements DocumentAdapter<T> {
+public class ClassMappingAdapter<T> implements DocumentAdapter<T>, DocumentAdapterInitializeAble {
 
     private final Class<? extends T> mappedClass;
+    private DocumentContext context;
 
     public ClassMappingAdapter(Class<? extends T> mappedClass) {
         this.mappedClass = mappedClass;
@@ -34,11 +37,16 @@ public class ClassMappingAdapter<T> implements DocumentAdapter<T> {
 
     @Override
     public T read(DocumentEntry entry, TypeReference<T> type) {
-        return DocumentRegistry.deserialize(entry,mappedClass);
+        return context.deserialize(entry,mappedClass);
     }
 
     @Override
     public DocumentEntry write(String key, T object) {
-        return DocumentRegistry.serializeObject(key,mappedClass,object);
+        return SerialisationUtil.serializeObject(context,key,object);
+    }
+
+    @Override
+    public void initialize(DocumentContext context) {
+        this.context = context;
     }
 }

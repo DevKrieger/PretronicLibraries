@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 09.06.19 21:56
+ * @since 14.08.19, 18:37
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@
  * under the License.
  */
 
-package net.prematic.libraries.document;
+package net.prematic.libraries.document.annotationss;
 
-public interface DocumentFactory {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    DocumentContext newContext();
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DocumentKey {
 
-    Document newDocument();
+    String value();
 
-    Document newDocument(String key);
-
-    PrimitiveEntry newPrimitiveEntry(String key, Object object);
-
-    ArrayEntry newArrayEntry(String key);
 }

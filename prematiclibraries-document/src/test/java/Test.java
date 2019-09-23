@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 09.06.19 21:56
+ * @since 22.09.19, 16:51
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,15 @@
  * under the License.
  */
 
-package net.prematic.libraries.document;
+import net.prematic.libraries.document.Document;
 
-public interface DocumentFactory {
+import java.io.File;
 
-    DocumentContext newContext();
+public class Test {
 
-    Document newDocument();
+    public static void main(String[] args) {
+        Document test = Document.read(new File("test.yml"));
 
-    Document newDocument(String key);
-
-    PrimitiveEntry newPrimitiveEntry(String key, Object object);
-
-    ArrayEntry newArrayEntry(String key);
+        System.out.println(test);
+    }
 }

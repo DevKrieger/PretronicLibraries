@@ -32,7 +32,11 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Stream;
 
-public interface Document extends  Iterable<DocumentEntry>,DocumentEntry {
+public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
+
+    DocumentContext getContext();
+
+    void setContext(DocumentContext context);
 
     //Current entry
 
@@ -262,7 +266,7 @@ public interface Document extends  Iterable<DocumentEntry>,DocumentEntry {
     }
 
     static Document newDocument(Object object){
-        return DocumentRegistry.serialize(object).toDocument();
+        return DocumentRegistry.getDefaultContext().serialize(object).toDocument();
     }
 
     static Document read(File location){
@@ -299,11 +303,11 @@ public interface Document extends  Iterable<DocumentEntry>,DocumentEntry {
 
 
     //Load a class with document injection
-    static void load(Class<?> clazz){
-        DocumentRegistry.loadClass(clazz);
+    static void loadConfigurationClass(Class<?> clazz){
+        DocumentRegistry.getDefaultContext().loadConfigurationClass(clazz);
     }
 
-    static void load(Class<?> clazz, Document document){
-        DocumentRegistry.loadClass(clazz, document);
+    static void loadConfigurationClass(Class<?> clazz, Document document){
+        DocumentRegistry.getDefaultContext().loadConfigurationClass(clazz, document);
     }
 }

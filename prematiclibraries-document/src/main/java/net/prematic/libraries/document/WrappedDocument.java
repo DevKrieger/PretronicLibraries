@@ -37,6 +37,16 @@ public class WrappedDocument implements Document{
         this.original = original;
     }
 
+    @Override
+    public DocumentContext getContext() {
+        return original.getContext();
+    }
+
+    @Override
+    public void setContext(DocumentContext context) {
+        original.setContext(context);
+    }
+
     public Document getOriginal() {
         return original;
     }

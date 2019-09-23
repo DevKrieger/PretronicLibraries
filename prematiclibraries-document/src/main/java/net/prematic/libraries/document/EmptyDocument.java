@@ -36,6 +36,16 @@ public class EmptyDocument implements Document{
     private static final Document EMPTY = new EmptyDocument();
 
     @Override
+    public DocumentContext getContext() {
+        return null;
+    }
+
+    @Override
+    public void setContext(DocumentContext context) {
+        //Unused
+    }
+
+    @Override
     public <T> T getAsObject(Class<T> classOf) {
         return null;
     }

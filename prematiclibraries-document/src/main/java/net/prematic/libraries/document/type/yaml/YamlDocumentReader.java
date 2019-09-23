@@ -33,21 +33,15 @@ public class YamlDocumentReader implements DocumentReader {
 
     @Override
     public Document read(StringParser parser) {
-
         return nextObject(parser, null);
     }
 
     private DocumentEntry next(StringParser parser, String key) {
         while(parser.hasNext()) {
-            char input = parser.nextChar();
-            if(!isIgnoredChar(input)) {
-                System.out.println(parser.lineIndex()+" | "+parser.charIndex());
-                if(!parser.hasChar(parser.lineIndex(),parser.charIndex()+1)){
-                    return nextObject(parser,key);
-                }else{
-                    parser.previousChar();
-                    return nextPrimitive(parser,key);
-                }
+            if(parser.charIndex() == 0){
+                return nextObject(parser,key);
+            }else{
+                return nextPrimitive(parser,key);
             }
         }
         return null;
@@ -59,17 +53,20 @@ public class YamlDocumentReader implements DocumentReader {
         int spaceCount = 0;
         int finalCount = -1;
         while(parser.hasNext()) {
+            System.out.println("Index: "+parser.lineIndex()+" | "+parser.charIndex());
             char input = parser.nextChar();
             if(input == SPACE) spaceCount++;
             else{
+                System.out.println("Place: "+finalCount+" | "+spaceCount);
                 if(finalCount == -1) {
                     finalCount = spaceCount;
-                    System.out.println("Final "+finalCount+" | "+parser.currentChar());
                     parser.previousChar();
                 }else if(finalCount != spaceCount) return document;
                 else parser.previousChars(2);
                 String entryKey = readKey(parser);
+                System.out.println(parser.lineIndex()+" | "+parser.charIndex());
                 document.entries().add(next(parser,entryKey));
+                spaceCount = 0;
             }
         }
         return document;
@@ -78,8 +75,9 @@ public class YamlDocumentReader implements DocumentReader {
     private DocumentEntry nextPrimitive(StringParser parser, String key) {
         System.out.println(key+" -> Primitive");
         String primitive = parser.currentUntilNextLine();
-        System.out.println(primitive);
-        if(parser.hasNext()) parser.skipChar();
+        System.out.println(parser.lineIndex()+" | "+parser.charIndex());
+        parser.skipChar();
+        parser.skipSpaces();
         if(primitive.equalsIgnoreCase("true")) {
             return DocumentRegistry.getFactory().newPrimitiveEntry(key, true);
         } else if(primitive.equals("false")) {
@@ -89,7 +87,6 @@ public class YamlDocumentReader implements DocumentReader {
         } else if(GeneralUtil.isNumber(primitive)) {
             return DocumentRegistry.getFactory().newPrimitiveEntry(key, Double.valueOf(primitive));
         } else {
-
             return DocumentRegistry.getFactory().newPrimitiveEntry(key, primitive);
         }
     }

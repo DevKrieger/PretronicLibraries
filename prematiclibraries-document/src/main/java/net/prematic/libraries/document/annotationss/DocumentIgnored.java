@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 14.08.19, 18:37
+ * @since 09.06.19 21:11
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,14 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.annotations;
+package net.prematic.libraries.document.annotationss;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DocumentFile {
-
-    String source() default "Unknown";
-
-    String type() default "Unknown";
-
-    boolean appendMissing() default false;
-
-    boolean loadAll() default false;
+@Target(ElementType.FIELD)
+public @interface DocumentIgnored {
 }

@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 09.06.19 15:48
+ * @since 21.09.19, 22:20
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,12 @@
 
 package net.prematic.libraries.document;
 
-import net.prematic.libraries.document.adapter.DocumentAdapter;
-import net.prematic.libraries.document.adapter.DocumentAdapterFactory;
 import net.prematic.libraries.document.adapter.defaults.*;
-import net.prematic.libraries.document.annotations.DocumentFile;
-import net.prematic.libraries.document.annotations.DocumentIgnored;
-import net.prematic.libraries.document.annotations.DocumentKey;
-import net.prematic.libraries.document.annotations.DocumentName;
 import net.prematic.libraries.document.simple.SimpleDocumentFactory;
 import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.utility.Iterators;
-import net.prematic.libraries.utility.io.IORuntimeException;
-import net.prematic.libraries.utility.reflect.Primitives;
-import net.prematic.libraries.utility.reflect.ReflectException;
-import net.prematic.libraries.utility.reflect.TypeReference;
-import net.prematic.libraries.utility.reflect.UnsafeInstanceCreator;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -52,13 +36,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class  DocumentRegistry {
+public class DocumentRegistry {
 
-    private static DocumentFactory FACTORY = new SimpleDocumentFactory();
     private static Collection<DocumentFileType> TYPES = new HashSet<>();
-    private static Map<Type, DocumentAdapter> ADAPTERS = new LinkedHashMap<>();
-    private static Collection<DocumentAdapterFactory> ADAPTER_FACTORIES = new HashSet<>();
-
+    private static DocumentFactory FACTORY = new SimpleDocumentFactory();
+    private static DocumentContext DEFAULT_CONTEXT = FACTORY.newContext();
 
     static {
         registerType(DocumentFileType.JSON);
@@ -66,30 +48,30 @@ public class  DocumentRegistry {
         registerType(DocumentFileType.BINARY);
         registerType(DocumentFileType.XML);
 
-        registerAdapter(UUID.class,new UUIDAdapter());
-        registerAdapter(Calendar.class,new CalendarAdapter());
-        registerAdapter(Class.class,new ClassAdapter());
-        registerAdapter(Currency.class,new CurrencyAdapter());
-        registerAdapter(Date.class,new DateAdapter());
-        registerAdapter(File.class,new FileAdapter());
-        registerAdapter(InetAddress.class,new InetAddressAdapter());
-        registerAdapter(InetSocketAddress.class,new InetSocketAddressAdapter());
-        registerAdapter(java.sql.Date.class,new SqlDateAdapter());
-        registerAdapter(Time.class,new SqlTimeAdapter());
-        registerAdapter(TimeZone.class,new TimeZoneAdapter());
-        registerAdapter(URL.class,new URLAdapter());
-        registerAdapter(BigInteger.class,new BigNumberAdapter.Integer());
-        registerAdapter(BigDecimal.class,new BigNumberAdapter.Decimal());
-        registerAdapter(AtomicInteger.class,new AtomicAdapter.Integer());
-        registerAdapter(AtomicLong.class,new AtomicAdapter.Long());
-        registerAdapter(AtomicBoolean.class,new AtomicAdapter.Boolean());
+        getDefaultContext().registerAdapter(UUID.class,new UUIDAdapter());
+        getDefaultContext().registerAdapter(Calendar.class,new CalendarAdapter());
+        getDefaultContext().registerAdapter(Class.class,new ClassAdapter());
+        getDefaultContext().registerAdapter(Currency.class,new CurrencyAdapter());
+        getDefaultContext().registerAdapter(Date.class,new DateAdapter());
+        getDefaultContext().registerAdapter(File.class,new FileAdapter());
+        getDefaultContext().registerAdapter(InetAddress.class,new InetAddressAdapter());
+        getDefaultContext().registerAdapter(InetSocketAddress.class,new InetSocketAddressAdapter());
+        getDefaultContext().registerAdapter(java.sql.Date.class,new SqlDateAdapter());
+        getDefaultContext().registerAdapter(Time.class,new SqlTimeAdapter());
+        getDefaultContext().registerAdapter(TimeZone.class,new TimeZoneAdapter());
+        getDefaultContext().registerAdapter(URL.class,new URLAdapter());
+        getDefaultContext().registerAdapter(BigInteger.class,new BigNumberAdapter.Integer());
+        getDefaultContext().registerAdapter(BigDecimal.class,new BigNumberAdapter.Decimal());
+        getDefaultContext().registerAdapter(AtomicInteger.class,new AtomicAdapter.Integer());
+        getDefaultContext().registerAdapter(AtomicLong.class,new AtomicAdapter.Long());
+        getDefaultContext().registerAdapter(AtomicBoolean.class,new AtomicAdapter.Boolean());
 
-        registerHierarchyAdapter(Collection.class,new CollectionAdapter());
-        registerHierarchyAdapter(Map.class,new MapAdapter());
+        getDefaultContext().registerHierarchyAdapter(Collection.class,new CollectionAdapter());
+        getDefaultContext().registerHierarchyAdapter(Map.class,new MapAdapter());
     }
 
-    public static DocumentFactory getFactory(){
-        return FACTORY;
+    public static Collection<DocumentFileType> getTypes() {
+        return TYPES;
     }
 
     public static DocumentFileType getType(String name){
@@ -100,255 +82,25 @@ public class  DocumentRegistry {
         return Iterators.findOne(TYPES, type -> type.getEnding().equalsIgnoreCase(ending));
     }
 
-    public static Collection<DocumentFileType> getTypes(){
-        return TYPES;
-    }
-
     public static void registerType(DocumentFileType type){
         TYPES.add(type);
     }
 
-    public static <T> void registerAdapter(Class<T> type, DocumentAdapter<T> adapter){
-        ADAPTERS.put(TypeReference.getRawType(type),adapter);
+
+    public static DocumentContext getDefaultContext() {
+        return DEFAULT_CONTEXT;
     }
 
-    public static <T> void registerMappingAdapter(Class<T> type,Class<? extends T> mappedClass){
-        ADAPTERS.put(type,new ClassMappingAdapter<T>(mappedClass));
-    }
-
-    public static <T> void registerHierarchyAdapter(Class<T> type, DocumentAdapter<T> adapter){
-        ADAPTER_FACTORIES.add(HierarchyAdapterFactory.newFactory(adapter,type));
-    }
-
-    public static void registerAdapterFactory(DocumentAdapterFactory factory){
-        ADAPTER_FACTORIES.add(factory);
-    }
-
-    public static DocumentEntry serialize(Object value){
-        return serialize(null,value);
-    }
-
-    public static DocumentEntry serialize(String key, Object value){
-        if(value == null || Primitives.isPrimitive(value)) return getFactory().newPrimitiveEntry(key,value);
-        else if(value.getClass().isArray()) return serializeArray(key, value);
-        return serializeObject(key, value);
-    }
-
-    public static DocumentEntry serializeArray(String key, Object object){
-        ArrayEntry array = getFactory().newArrayEntry(key);
-
-        for(int i = 0;i<Array.getLength(object);i++) array.entries().add(serialize("array-index-"+i,Array.get(object,i)));
-        return array;
-    }
-
-    public static DocumentEntry serializeObject(String key, Object value){
-        return serializeObject(key,value.getClass(),value);
-    }
-
-    public static DocumentEntry serializeObject(String key,Class<?> objectClass, Object value){
-        DocumentAdapter adapter = findAdapter(new TypeReference<>(objectClass));
-        if(adapter != null) return adapter.write(key, value);
-
-        Document document = getFactory().newDocument(key);
-        for(Field field : objectClass.getDeclaredFields()){
-            if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())){
-               try{
-                   field.setAccessible(true);
-                   if(field.getAnnotation(DocumentIgnored.class) == null){
-                       DocumentName name = field.getAnnotation(DocumentName.class);
-                       document.entries().add(serialize(name!=null?name.value():field.getName(),field.get(value)));
-                   }
-               }catch (Exception ignored){}
-            }
-        }
-        return document;
-    }
-
-    public static <T> T deserialize(DocumentEntry entry, Class<T> clazz){
-        return deserialize(entry,new TypeReference<>(clazz));
-    }
-
-    public static <T> T deserialize(DocumentEntry entry, Type type){
-        return deserialize(entry,new TypeReference<>(type));
-    }
-
-    public static <T> T deserialize(DocumentEntry entry,TypeReference type){
-        return (T) deserializeRaw(entry, type);
-    }
-
-    public static Object deserializeRaw(DocumentEntry entry,TypeReference type){
-        if(entry.isPrimitive()){
-            if(Primitives.isPrimitive(type.getRawClass())){
-                if(type.getRawClass() == String.class){
-                    return entry.toPrimitive().getAsString();
-                }else if(type.getRawClass() == int.class || type.getRawClass() == Integer.class){
-                    return entry.toPrimitive().getAsInt();
-                }else if(type.getRawClass() == long.class || type.getRawClass() == Long.class){
-                    return entry.toPrimitive().getAsLong();
-                }else if(type.getRawClass() == double.class || type.getRawClass() == Double.class){
-                    return entry.toPrimitive().getAsDouble();
-                }else if(type.getRawClass() == short.class || type.getRawClass() == Short.class){
-                    return entry.toPrimitive().getAsShort();
-                }else if(type.getRawClass() == float.class || type.getRawClass() == Float.class){
-                    return entry.toPrimitive().getAsFloat();
-                }else if(type.getRawClass() == byte.class || type.getRawClass() == Byte.class){
-                    return entry.toPrimitive().getAsByte();
-                }else if(type.getRawClass() == boolean.class || type.getRawClass() == Boolean.class){
-                    return entry.toPrimitive().getAsBoolean();
-                }else if(type.getRawClass() == char.class || type.getRawClass() == Character.class){
-                    return entry.toPrimitive().getAsCharacter();
-                }else throw new IllegalArgumentException("Invalid Primitive type");
-            }else if(type.getRawClass().isEnum()) return Enum.valueOf(type.getRawClass(),entry.toPrimitive().getAsString());
-            else{
-                DocumentAdapter adapter = findAdapter(type);
-                if(adapter != null) return adapter.read(entry, type);
-                else throw new IllegalArgumentException("Invalid Primitive type");
-            }
-        }else if(type.isArray() && entry.isObject()){
-            ArrayList<?> instance = new ArrayList();
-            entry.toDocument().forEach(entry1 -> instance.add(DocumentRegistry.deserialize(entry1,type.getRawType())));
-
-            Object array = Array.newInstance((Class<?>) type.getRawType(), instance.size());
-            for (int i = 0; i < instance.size(); i++) Array.set(array, i, instance.get(i));
-
-            return array;
-        }else if(entry.isObject()){
-            DocumentAdapter adapter = findAdapter(type);
-            if(adapter != null) return adapter.read(entry, type);
-
-            Object instance = UnsafeInstanceCreator.newInstance(type.getRawClass());
-
-            Document document = entry.toDocument();
-            for(Class clazz = type.getRawClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
-                for(Field field : clazz.getDeclaredFields()) {
-                    try{
-                        field.setAccessible(true);
-                        if(field.getAnnotation(DocumentIgnored.class) == null){
-                            DocumentName name = field.getAnnotation(DocumentName.class);
-                            String endName = name!=null?name.value():field.getName();
-
-                            if(document.contains(endName)) field.set(clazz.cast(instance),deserialize(document.getEntry(endName),field.getGenericType()));
-                            else{
-                                if(Primitives.isPrimitive(field.getType())){
-                                    if(field.getType().equals(boolean.class)) field.set(clazz.cast(instance),false);
-                                    else field.set(clazz.cast(instance),0);
-                                }else field.set(clazz.cast(instance),null);
-                            }
-                        }
-                    }catch (Exception ignored){
-                        ignored.printStackTrace();
-                    }
-                }
-            }
-            return instance;
-        }else throw new IllegalArgumentException("Invalid object type");
-    }
-
-    public static <T> DocumentAdapter<T> findAdapter(TypeReference<T> reference){
-        DocumentAdapter<T>  adapter = ADAPTERS.get(reference.getRawType());
-        if(adapter != null) return adapter;
-        for(DocumentAdapterFactory factory : ADAPTER_FACTORIES){
-            adapter = factory.create(reference);
-            if(adapter != null){
-                ADAPTERS.put(reference.getRawType(),adapter);
-                return adapter;
-            }
-        }
-        return null;
+    public static void setDefaultContext(DocumentContext defaultContext) {
+        DEFAULT_CONTEXT = defaultContext;
     }
 
 
-    public static void loadClass(Class<?> clazz){
-        DocumentFile info = clazz.getAnnotation(DocumentFile.class);
-        if(info == null) throw new IllegalArgumentException("Class requires @DocumentFile annotation.");
-
-        String path = info.source();
-        if(path.endsWith(".")){
-            int directoryIndex = path.lastIndexOf('/');
-
-            File directory;
-            if(directoryIndex == -1) directory = new File(System.getProperty("user.dir"));
-            else{
-                directory = new File(path.substring(0,directoryIndex+1));
-                path = path.substring(directoryIndex+1);
-            }
-
-            File[] files = directory.listFiles();
-
-            File source = null;
-            DocumentFileType type = null;
-            if(files != null){
-                for(File entry : files) {
-                    String name = entry.getName();
-                    if(name.startsWith(path)){
-                        type = getType(name.substring(name.indexOf('.')+1));
-                        source = entry;
-                        if(type != null) break;
-                    }
-                }
-            }
-
-            if(source == null){
-                if(!info.type().equals("Unknown")){
-                    source = new File(path+info.type());
-                    type = getType(info.type());
-                }else throw new IllegalArgumentException("No file with valid file type found.");
-            }
-
-            if(type == null) throw new IllegalArgumentException(info.type()+" is not a supported document format.");
-            loadClass(clazz,type.getReader().read(source),source,type);
-        }else{
-            DocumentFileType type = getType(info.type());
-            if(type == null) throw new IllegalArgumentException(info.type()+" is not a supported document format.");
-            File source = new File(path);
-            loadClass(clazz,type.getReader().read(source),source,type);
-        }
+    public static DocumentFactory getFactory() {
+        return FACTORY;
     }
 
-    public static void loadClass(Class<?> clazz, Document data){
-        loadClass(clazz, data,null,null);
-    }
-
-    public static void loadClass(Class<?> clazz, Document data, File source, DocumentFileType type){
-        DocumentFile info = clazz.getAnnotation(DocumentFile.class);
-        if(info == null) throw new IllegalArgumentException("Class requires @DocumentFile annotation.");
-
-        try{
-            boolean update = false;
-            for(Field field : clazz.getDeclaredFields()){
-                if(Modifier.isStatic(field.getModifiers())){
-                    field.setAccessible(true);
-
-                    DocumentKey key = field.getAnnotation(DocumentKey.class);
-                    if(key == null && !info.loadAll()) continue;
-
-                    String name;
-                    if(key != null) name = key.value();
-                    else name = field.getName().toLowerCase().replace('-','.');
-
-
-                    Object result = data.getObject(name,field.getType());
-                    if(result != null){
-                        field.set(null,result);
-                    }
-                    else if(info.appendMissing()){
-                        Object defaultValue = field.get(null);
-                        if(defaultValue != null){
-                            data.set(name,defaultValue);
-                            update = true;
-                        }
-                    }
-                }
-            }
-            if(update && source != null){
-                source.createNewFile();
-                type.getWriter().write(source,data);
-            }
-        }catch (IllegalAccessException exception){
-            throw new ReflectException(exception);
-        }
-        catch (IOException exception){
-            throw new IORuntimeException(exception);
-        }
+    public static void setFactory(DocumentFactory factory) {
+        FACTORY = factory;
     }
 }

@@ -20,39 +20,49 @@
 package net.prematic.libraries.document.adapter.defaults;
 
 import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
-public class ClassTypeAdaptery<T> implements DocumentAdapter<T> {
+public class ClassTypeAdapter<T> implements DocumentAdapter<T>, DocumentAdapterInitializeAble {
 
     public static final String ADAPTER_NAME = "adapterSerialisationClass";
 
     public Class<? extends T> classNotFoundAdapter;
 
-    public ClassTypeAdaptery() {}
+    private DocumentContext context;
 
-    public ClassTypeAdaptery(Class<? extends T> classNotFoundAdapter) {
+    public ClassTypeAdapter() {}
+
+    public ClassTypeAdapter(Class<? extends T> classNotFoundAdapter) {
         this.classNotFoundAdapter = classNotFoundAdapter;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T read(DocumentEntry entry, TypeReference<T> type) {
         if(entry.isPrimitive()) throw new IllegalArgumentException("Entry is not a object.");
         String clazz = entry.toDocument().getString(ADAPTER_NAME);
         if(clazz != null){
             try {
-                return (T) DocumentRegistry.deserialize(entry,Class.forName(clazz));
+                return (T) context.deserialize(entry,Class.forName(clazz));
             } catch (ClassNotFoundException ignored) {}
         }
-        return DocumentRegistry.deserialize(entry,classNotFoundAdapter);
+        return context.deserialize(entry,classNotFoundAdapter);
     }
 
     @Override
     public DocumentEntry write(String key, T object) {
-        Document document = DocumentRegistry.serialize(object).toDocument();
+        Document document = context.serialize(object).toDocument();
         document.entries().add(DocumentRegistry.getFactory().newPrimitiveEntry(ADAPTER_NAME,object.getClass().getName()));
         return document;
+    }
+
+    @Override
+    public void initialize(DocumentContext context) {
+        this.context = context;
     }
 }

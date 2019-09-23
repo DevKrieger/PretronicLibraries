@@ -36,6 +36,7 @@ public class SimpleDocument implements Document {
 
     private final String key;
     private List<DocumentEntry> entries;
+    private DocumentContext context;
 
     public SimpleDocument(String key) {
         this.key = key;
@@ -43,50 +44,61 @@ public class SimpleDocument implements Document {
     }
 
     @Override
+    public DocumentContext getContext() {
+        if(context == null) return DocumentContext.getDefaultContext();
+        return context;
+    }
+
+    @Override
+    public void setContext(DocumentContext context) {
+        this.context = context;
+    }
+
+    @Override
     public <T> T getAsObject(Class<T> classOf) {
-        return DocumentRegistry.deserialize(this,classOf);
+        return context.deserialize(this,classOf);
     }
 
     @Override
     public <T> T getAsObject(Type typeOf) {
-        return DocumentRegistry.deserialize(this,typeOf);
+        return context.deserialize(this,typeOf);
     }
 
     @Override
     public <T> T getAsObject(TypeReference<T> reference) {
-        return DocumentRegistry.deserialize(this,reference);
+        return context.deserialize(this,reference);
     }
 
     @Override
     public Array getAsArray() {
-        return DocumentRegistry.deserialize(this,new TypeReference<Object[]>());
+        return context.deserialize(this,new TypeReference<Object[]>());
     }
 
     @Override
     public <A> A getAsArray(A type) {
-        return DocumentRegistry.deserialize(this, (Type) type.getClass());
+        return context.deserialize(this, (Type) type.getClass());
     }
 
     @Override
     public <V> Collection<V> getAsCollection(Class<V> valueClass) {
-        return DocumentRegistry.deserialize(this,new TypeReference<Collection<V>>());
+        return getContext().deserialize(this,new TypeReference<Collection<V>>());
     }
 
     @Override
     public <V> List<V> getAsList(Class<V> valueClass) {
-        return DocumentRegistry.deserialize(this,new TypeReference<List<V>>(){});
+        return getContext().deserialize(this,new TypeReference<List<V>>(){});
     }
 
     @Override
     public <K, V> Map<K, V> getAsMap(Class<K> keyClass, Class<V> valueClass) {
-        return DocumentRegistry.deserialize(this,new TypeReference<Map<K,V>>(){});
+        return getContext().deserialize(this,new TypeReference<Map<K,V>>(){});
     }
 
     @Override
     public DocumentEntry getEntry(String key) {
         String[] sequences = key.split("\\.");
         DocumentEntry last;
-        if(GeneralUtil.isNaturalNumber(sequences[0])) last = getEntry(Integer.valueOf(sequences[0]));
+        if(GeneralUtil.isNaturalNumber(sequences[0])) last = getEntry(Integer.parseInt(sequences[0]));
         else last = findLocalEntry(sequences[0]);
         for(int i = 1;i<sequences.length;i++){
             if(last != null && last.isObject()) last = last.toDocument().getEntry(sequences[0]);
@@ -213,19 +225,19 @@ public class SimpleDocument implements Document {
     @Override
     public <T> T getObject(String key, Class<T> classOf) {
         DocumentEntry entry = getEntry(key);
-        return entry!=null?DocumentRegistry.deserialize(entry,classOf):null;
+        return entry!=null?getContext().deserialize(entry,classOf):null;
     }
 
     @Override
     public <T> T getObject(String key, Type type) {
         DocumentEntry entry = getEntry(key);
-        return entry!=null?DocumentRegistry.deserialize(entry,type):null;
+        return entry!=null?getContext().deserialize(entry,type):null;
     }
 
     @Override
     public <T> T getObject(String key, TypeReference<T> reference) {
         DocumentEntry entry = getEntry(key);
-        return entry!=null?DocumentRegistry.deserialize(entry,reference):null;
+        return entry!=null?getContext().deserialize(entry,reference):null;
     }
 
     @Override
@@ -290,7 +302,7 @@ public class SimpleDocument implements Document {
             if(value instanceof DocumentEntry){
                 if(key.equals(((DocumentEntry) value).getKey())) this.entries.add((DocumentEntry) value);
                 else this.entries.add(((DocumentEntry) value).copy(key));
-            }else this.entries.add(DocumentRegistry.serialize(key,value));
+            }else this.entries.add(getContext().serialize(key,value));
         }else{
             String localKey = key.substring(0,index);
             DocumentEntry entry = findLocalEntry(localKey);
@@ -366,7 +378,7 @@ public class SimpleDocument implements Document {
 
     @Override
     public void write(File location, boolean pretty) {
-        DocumentRegistry.getTypeByEnding(location.getName().substring(0,location.getName().lastIndexOf("."))).getWriter().write(location,this,pretty);
+        DocumentRegistry.getTypeByEnding(location.getName().substring(location.getName().lastIndexOf(".")+1)).getWriter().write(location,this,pretty);
     }
 
     @Override

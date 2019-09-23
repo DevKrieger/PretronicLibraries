@@ -20,9 +20,11 @@
 package net.prematic.libraries.document.adapter.defaults;
 
 import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
 import net.prematic.libraries.utility.reflect.Primitives;
 import net.prematic.libraries.utility.reflect.ReflectException;
 import net.prematic.libraries.utility.reflect.TypeReference;
@@ -32,8 +34,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class MapAdapter implements DocumentAdapter<Map> {
+public class MapAdapter implements DocumentAdapter<Map>, DocumentAdapterInitializeAble {
 
+    private DocumentContext context;
+
+    @SuppressWarnings("unchecked")
     @Override
     public Map read(DocumentEntry entry, TypeReference<Map> type) {
         if(entry.isPrimitive()) throw new IllegalArgumentException("Object is a primitive type.");
@@ -50,15 +55,16 @@ public class MapAdapter implements DocumentAdapter<Map> {
             throw new ReflectException(exception);
         }
         if(keyType == String.class){
-            entry.toDocument().forEach(entry1 -> instance.put(entry1.getKey(),DocumentRegistry.deserialize(entry1,valueType)));
+            entry.toDocument().forEach(entry1 -> instance.put(entry1.getKey(),context.deserialize(entry1,valueType)));
         }else{
-            entry.toDocument().forEach(entry12 -> instance.put(DocumentRegistry.deserialize(DocumentRegistry.getFactory().newPrimitiveEntry(null, entry12.getKey()),keyType)
-                    ,DocumentRegistry.deserialize(entry12,valueType)));
+            entry.toDocument().forEach(entry12 -> instance.put(context.deserialize(DocumentRegistry.getFactory().newPrimitiveEntry(null, entry12.getKey()),keyType)
+                    ,context.deserialize(entry12,valueType)));
         }
 
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public DocumentEntry write(String key, Map object) {
         Document document = DocumentRegistry.getFactory().newDocument(key);
@@ -67,8 +73,13 @@ public class MapAdapter implements DocumentAdapter<Map> {
             String itemKey;
             if(Primitives.isPrimitive(entry.getKey())) itemKey = entry.getKey().toString();
             else itemKey = entry.getKey().toString();
-            document.entries().add(DocumentRegistry.serialize(itemKey,entry.getValue()));
+            document.entries().add(context.serialize(itemKey,entry.getValue()));
         }
         return document;
+    }
+
+    @Override
+    public void initialize(DocumentContext context) {
+        this.context = context;
     }
 }

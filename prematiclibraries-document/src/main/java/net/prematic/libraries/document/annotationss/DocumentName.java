@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.annotations;
+package net.prematic.libraries.document.annotationss;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
