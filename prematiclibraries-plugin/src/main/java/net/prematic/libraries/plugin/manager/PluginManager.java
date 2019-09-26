@@ -43,7 +43,7 @@ public interface PluginManager extends ShutdownAble {
 
     boolean isPluginEnabled(String name);
 
-
+    //@Todo update service
     <T> T getService(Class<T> serviceClass);
 
     <T> void registerService(Class<T> serviceClass, T service);

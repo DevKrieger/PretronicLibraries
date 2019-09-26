@@ -105,9 +105,7 @@ public class ConfigurationUtil {
 
 
                     Object result = data.getObject(name,field.getType());
-                    if(result != null){
-                        field.set(null,result);
-                    }
+                    if(result != null) field.set(null,result);
                     else if(info.appendMissing()){
                         Object defaultValue = field.get(null);
                         if(defaultValue != null){
@@ -127,5 +125,4 @@ public class ConfigurationUtil {
             throw new IORuntimeException(exception);
         }
     }
-
 }

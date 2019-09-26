@@ -22,7 +22,6 @@ package net.prematic.libraries.copy;
 public class CopyException extends RuntimeException{
 
     public CopyException() {
-
     }
 
     public CopyException(String message) {

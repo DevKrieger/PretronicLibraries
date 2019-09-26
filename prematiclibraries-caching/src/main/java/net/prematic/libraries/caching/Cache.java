@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  *
  * @param <O> The object to cache.
  */
-public interface Cache<O> {
+public interface Cache<O> extends CacheQuery {
 
     /**
      * Get all local cached objects.

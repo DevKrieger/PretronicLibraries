@@ -37,7 +37,7 @@ public class EmptyDocument implements Document{
 
     @Override
     public DocumentContext getContext() {
-        return null;
+        return DocumentContext.getDefaultContext();
     }
 
     @Override
@@ -247,7 +247,7 @@ public class EmptyDocument implements Document{
 
     @Override
     public Document set(String key, Object value) {
-        throw new IllegalArgumentException("It is not possible to add an entry to a EMPTY_ENTRIES document.");
+        throw new IllegalArgumentException("It is not possible to add an entry to a empty document.");
     }
 
     @Override

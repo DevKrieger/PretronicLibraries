@@ -217,6 +217,17 @@ public class StringParser {
         else this.charIndex = 0;
     }
 
+    public boolean isLineFinished(){
+        int tempIndex = this.charIndex;
+        while(this.lines[lineIndex].length > tempIndex){
+            char current = this.lines[lineIndex][tempIndex];
+            System.out.println(current);
+            if(!(current == ' ' || current == '\t' || current == '\r')) return false;
+            tempIndex++;
+        }
+        return true;
+    }
+
 
 
     //Char operation
@@ -275,6 +286,11 @@ public class StringParser {
         Pair<Integer,Integer> index = findNextCharIndex(c);
         if(index == null) end();
         else setIndex(index.getKey(),index.getValue());
+    }
+
+    public void skipSpaces(){
+        while(hasNext() && nextChar() == ' ');
+        previousChar();
     }
 
     public void previousChar(){

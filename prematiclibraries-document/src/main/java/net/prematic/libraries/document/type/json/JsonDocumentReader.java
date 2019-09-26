@@ -97,7 +97,7 @@ public class JsonDocumentReader implements DocumentReader{
 
     private boolean readNextBoolean(StringParser parser, boolean check) {
         char[] checkSum = check?BOOLEAN_TRUE:BOOLEAN_FALSE;
-        int i = 1;//
+        int i = 1;
         while(parser.hasNext()){
             char input = Character.toLowerCase(parser.nextChar());
 

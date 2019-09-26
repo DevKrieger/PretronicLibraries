@@ -57,8 +57,7 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
         if(value == null) return false;
         else if(value instanceof Boolean) return (boolean) value;
         else if(value instanceof String && ((String) value).equalsIgnoreCase("true")) return true;
-        else if(value instanceof Number && ((Number) value).doubleValue() == 1) return true;
-        return false;
+        else return value instanceof Number && ((Number) value).doubleValue() == 1;
     }
 
     @Override
@@ -74,7 +73,7 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
         else if(value instanceof Byte) return (byte) value;
         else if(value instanceof Number) return ((Number) value).byteValue();
         else if(value instanceof String && GeneralUtil.isNumber((String) value)){
-            return Byte.valueOf((String)value);
+            return Byte.parseByte((String)value);
         }
         return 0;
     }
@@ -85,7 +84,7 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
         else if(value instanceof Integer) return (int) value;
         else if(value instanceof Number) return ((Number) value).intValue();
         else if(value instanceof String && GeneralUtil.isNumber((String) value)){
-            return Integer.valueOf((String)value);
+            return Integer.parseInt((String)value);
         }
         return 0;
     }
@@ -96,7 +95,7 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
         else if(value instanceof Long) return (long) value;
         else if(value instanceof Number) return ((Number) value).longValue();
         else if(value instanceof String && GeneralUtil.isNumber((String) value)){
-            return Long.valueOf((String)value);
+            return Long.parseLong((String)value);
         }
         return 0;
     }
@@ -107,7 +106,7 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
         else if(value instanceof Float) return (float) value;
         else if(value instanceof Number) return ((Number) value).floatValue();
         else if(value instanceof String && GeneralUtil.isNumber((String) value)){
-            return Float.valueOf((String)value);
+            return Float.parseFloat((String)value);
         }
         return 0;
     }
@@ -118,7 +117,7 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
         else if(value instanceof Short) return (short) value;
         else if(value instanceof Number) return ((Number) value).shortValue();
         else if(value instanceof String && GeneralUtil.isNumber((String) value)){
-            return Short.valueOf((String)value);
+            return Short.parseShort((String)value);
         }
         return 0;
     }
@@ -129,7 +128,7 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
         else if(value instanceof Double) return (double) value;
         else if(value instanceof Number) return ((Number) value).doubleValue();
         else if(value instanceof String && GeneralUtil.isNumber((String) value)){
-            return Double.valueOf((String)value);
+            return Double.parseDouble((String)value);
         }
         return 0;
     }
@@ -168,15 +167,6 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
     public boolean isObject() {
         return false;
     }
-
-    /*
-    @Override
-    public boolean canConvert(Class<?> clazz) {
-        if(clazz.isAssignableFrom(value.getClass())) return true;
-        else if(clazz.equals(String.class) || clazz.equals(boolean.class)) return true;
-        else return value instanceof String && Number.class.isAssignableFrom(clazz) && GeneralUtil.isNumber((String) value);
-    }
-     */
 
     @Override
     public boolean isNull() {
