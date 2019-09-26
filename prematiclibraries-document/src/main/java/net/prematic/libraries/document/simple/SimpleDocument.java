@@ -56,27 +56,27 @@ public class SimpleDocument implements Document {
 
     @Override
     public <T> T getAsObject(Class<T> classOf) {
-        return context.deserialize(this,classOf);
+        return getContext().deserialize(this,classOf);
     }
 
     @Override
     public <T> T getAsObject(Type typeOf) {
-        return context.deserialize(this,typeOf);
+        return getContext().deserialize(this,typeOf);
     }
 
     @Override
     public <T> T getAsObject(TypeReference<T> reference) {
-        return context.deserialize(this,reference);
+        return getContext().deserialize(this,reference);
     }
 
     @Override
     public Array getAsArray() {
-        return context.deserialize(this,new TypeReference<Object[]>());
+        return getContext().deserialize(this,new TypeReference<Object[]>());
     }
 
     @Override
     public <A> A getAsArray(A type) {
-        return context.deserialize(this, (Type) type.getClass());
+        return getContext().deserialize(this, (Type) type.getClass());
     }
 
     @Override
