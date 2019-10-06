@@ -49,10 +49,18 @@ public class ReflectionUtil {
     }
 
     public static <R> R getFieldValue(Class<?> clazz, String fieldName, Class<R> value){
+       return getFieldValue(null,clazz,fieldName,value);
+    }
+
+    public static Object getFieldValue(Object object, Class<?> clazz, String fieldName){
+        return getFieldValue(object,clazz,fieldName,Object.class);
+    }
+
+    public static <R> R getFieldValue(Object object, Class<?> clazz, String fieldName, Class<R> value){
         try {
             Field field = getField(clazz, fieldName);
             field.setAccessible(true);
-            return value.cast(field.get(null));
+            return value.cast(field.get(object));
         } catch (Exception exception) {throw new ReflectException(exception);}
     }
 
