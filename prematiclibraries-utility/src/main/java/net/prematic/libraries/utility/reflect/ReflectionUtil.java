@@ -52,11 +52,19 @@ public class ReflectionUtil {
        return getFieldValue(null,clazz,fieldName,value);
     }
 
-    public static Object getFieldValue(Object object, Class<?> clazz, String fieldName){
-        return getFieldValue(object,clazz,fieldName,Object.class);
+    public static Object getFieldValue(Object object, String fieldName){
+        return getFieldValue(object,fieldName,Object.class);
     }
 
-    public static <R> R getFieldValue(Object object, Class<?> clazz, String fieldName, Class<R> value){
+    public static <R> R getFieldValue(Object object, String fieldName, Class<R> value){
+        return getFieldValue(object.getClass(),object,fieldName,value);
+    }
+
+    public static Object getFieldValue(Class<?> clazz, Object object, String fieldName){
+        return getFieldValue(clazz,object,fieldName,Object.class);
+    }
+
+    public static <R> R getFieldValue(Class<?> clazz,Object object, String fieldName, Class<R> value){
         try {
             Field field = getField(clazz, fieldName);
             field.setAccessible(true);
@@ -99,8 +107,12 @@ public class ReflectionUtil {
     }
 
     public static Object invokeMethod(Class<?> clazz, Object object, String methodName, Object[] parameters){
+        return invokeMethod(clazz, object, methodName,buildTyeArray(parameters), parameters);
+    }
+
+    public static Object invokeMethod(Class<?> clazz, Object object, String methodName,Class[] classes, Object[] parameters){
         try {
-            Method method = getMethod(clazz,methodName,buildTyeArray(parameters));
+            Method method = getMethod(clazz,methodName,classes);
             method.setAccessible(true);
             return method.invoke(object,parameters);
         }  catch (Exception exception) {throw new ReflectException("Could not invoke method  "+methodName+" from class "+object.getClass(),exception);}
