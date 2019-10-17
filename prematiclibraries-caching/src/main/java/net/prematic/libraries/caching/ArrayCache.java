@@ -24,7 +24,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -42,7 +41,7 @@ public class ArrayCache<O> implements Cache<O>{
     private final Map<String,CacheQuery<O>> queries;
     private final ExecutorService executor;
     private CacheEntry[] entries;
-    private Consumer<O> removeListener;
+    private Predicate<O> removeListener;
     private CacheTask task;
     private long refreshTime, expireTime, expireTimeAfterAccess;
     private int maxSize, size, buffer;
@@ -84,6 +83,11 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public int size() {
         return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.size == 0;
     }
 
     @Override
@@ -269,7 +273,7 @@ public class ArrayCache<O> implements Cache<O>{
     }
 
     @Override
-    public Cache<O> setRemoveListener(Consumer<O> removeListener) {
+    public Cache<O> setRemoveListener(Predicate<O> removeListener) {
         this.removeListener = removeListener;
         return this;
     }
@@ -377,11 +381,16 @@ public class ArrayCache<O> implements Cache<O>{
                         if((expireTimeAfterAccess > 0 && entry.lastUsed+expireTime <= System.currentTimeMillis())
                                 || (expireTime > 0 && entry.entered+expireTime <= System.currentTimeMillis())
                                 || (refreshTime > 0 && entry.entered+refreshTime <= System.currentTimeMillis())){
-                            move(i);
-                            size--;
-                            entries[size] = null;
-                            i--;
-                            if(removeListener != null) removeListener.accept((O) entry.value);
+                            boolean canceled = false;
+                            if(removeListener != null) {
+                                canceled = removeListener.test((O) entry.value);
+                            }
+                            if(!canceled) {
+                                move(i);
+                                size--;
+                                entries[size] = null;
+                                i--;
+                            }
                         }
                     }
                     shrink();

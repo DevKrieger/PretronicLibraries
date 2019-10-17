@@ -22,7 +22,6 @@ package net.prematic.libraries.caching;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -37,7 +36,7 @@ import java.util.function.Supplier;
  *
  * @param <O> The object to cache.
  */
-public interface Cache<O> extends CacheQuery {
+public interface Cache<O> {
 
     /**
      * Get all local cached objects.
@@ -190,11 +189,11 @@ public interface Cache<O> extends CacheQuery {
      * Set a remove listener.
      *
      * <p>This listener is on every remove called.</p>
-     *
+     * <p>Return in the predicate true to cancel remove.</p>
      * @param onRemove The remove listener.
      * @return The current cache
      */
-    Cache<O> setRemoveListener(Consumer<O> onRemove);
+    Cache<O> setRemoveListener(Predicate<O> onRemove);
 
     /**
      * Register a static search query and object loader.
