@@ -24,6 +24,7 @@ import net.prematic.libraries.plugin.Plugin;
 import net.prematic.libraries.plugin.description.PluginDescription;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
 import net.prematic.libraries.plugin.loader.PluginLoader;
+import net.prematic.libraries.plugin.service.ServiceRegistry;
 import net.prematic.libraries.utility.interfaces.ShutdownAble;
 
 import java.io.File;
@@ -31,7 +32,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-public interface PluginManager extends ShutdownAble {
+public interface PluginManager extends ServiceRegistry,ShutdownAble {
 
     PrematicLogger getLogger();
 
@@ -42,13 +43,6 @@ public interface PluginManager extends ShutdownAble {
     Plugin getPlugin(UUID id);
 
     boolean isPluginEnabled(String name);
-
-    //@Todo update service
-    <T> T getService(Class<T> serviceClass);
-
-    <T> void registerService(Class<T> serviceClass, T service);
-
-    <T> boolean isServiceAvailable(Class<T> serviceClass);
 
 
     Collection<PluginLoader> getLoaders();

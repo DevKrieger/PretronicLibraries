@@ -31,6 +31,7 @@ import net.prematic.libraries.plugin.lifecycle.LifecycleState;
 import net.prematic.libraries.plugin.loader.DefaultPluginLoader;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
 import net.prematic.libraries.utility.io.archive.ZipArchive;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class DefaultPluginManager implements PluginManager{
 
     private final Collection<PluginLoader> loaders;
     private final Collection<Plugin> plugins;
-    private final Map<Class<?>,Object> services;
+    private final Collection<ServiceEntry> services;
 
     public DefaultPluginManager(RuntimeEnvironment environment) {
         this(PrematicLoggerFactory.getLogger(PluginManager.class),environment);
@@ -61,7 +62,7 @@ public class DefaultPluginManager implements PluginManager{
         this.stateListeners = new LinkedHashMap<>();
         this.loaders = new ArrayList<>();
         this.plugins = new ArrayList<>();
-        this.services = new LinkedHashMap<>();
+        this.services = new ArrayList<>();
     }
 
     @Override
@@ -92,20 +93,57 @@ public class DefaultPluginManager implements PluginManager{
 
 
     @Override
+    public Collection<Class<?>> getAvailableServices() {
+        Collection<Class<?>> classes = new HashSet<>();
+        services.forEach(serviceEntry -> classes.add(serviceEntry.serviceClass));
+        return classes;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> getServices(Class<T> serviceClass) {
+        List<T> services =  Iterators.map(this.services, entry -> (T) entry.service, entry -> entry.serviceClass.equals(serviceClass));
+        if(services.isEmpty()) throw new UnsupportedOperationException("Service is not available.");
+        return services;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public <T> T getService(Class<T> serviceClass) {
-        return (T) this.services.get(serviceClass);
+        List<ServiceEntry> services = Iterators.filter(this.services, entry -> entry.serviceClass.equals(serviceClass));
+        services.sort((o1, o2) -> {
+            if(o1.priority < o2.priority) return -1;
+            else if(o1.priority > o2.priority) return 1;
+            return 0;
+        });
+        return (T) services.get(0).service;
     }
 
     @Override
-    public <T> void registerService(Class<T> serviceClass, T service) {
-        this.services.put(serviceClass,service);
+    public <T> void registerService(ObjectOwner owner, Class<T> serviceClass, T service, byte priority) {
+        this.services.add(new ServiceEntry(owner,serviceClass,service,priority));
     }
 
     @Override
     public <T> boolean isServiceAvailable(Class<T> serviceClass) {
-        return getService(serviceClass) != null;
+        for (ServiceEntry entry : this.services) if(entry.serviceClass.equals(serviceClass)) return true;
+        return false;
     }
 
+    @Override
+    public void unregisterService(Object service) {
+        Iterators.removeOne(this.services, entry -> entry.service.equals(service));
+    }
+
+    @Override
+    public void unregisterServices(Class<?> serviceClass) {
+        Iterators.removeOne(this.services, entry -> entry.serviceClass.equals(serviceClass));
+    }
+
+    @Override
+    public void unregisterServices(ObjectOwner owner) {
+        Iterators.removeOne(this.services, entry -> entry.owner.equals(owner));
+    }
 
     @Override
     public Collection<PluginLoader> getLoaders() {
@@ -248,6 +286,21 @@ public class DefaultPluginManager implements PluginManager{
                 try {input.close();
                 } catch (IOException ignored) {}
             }
+        }
+    }
+
+    private class ServiceEntry {
+
+        private final ObjectOwner owner;
+        private final Class<?> serviceClass;
+        private final Object service;
+        private final byte priority;
+
+        public ServiceEntry(ObjectOwner owner, Class<?> serviceClass, Object service,byte priority) {
+            this.owner = owner;
+            this.serviceClass = serviceClass;
+            this.service = service;
+            this.priority = priority;
         }
     }
 }
