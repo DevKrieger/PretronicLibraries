@@ -85,7 +85,7 @@ public class Convert {
         else if(input instanceof Boolean) return ((Boolean)input?1:0);
         else{
             try{
-                return Integer.valueOf(input.toString());
+                return Integer.parseInt(input.toString());
             }catch (NumberFormatException ignored){
                 return 0;
             }
@@ -106,7 +106,7 @@ public class Convert {
         else if(input instanceof Boolean) return ((Boolean)input?1:0);
         else{
             try{
-                return Long.valueOf(input.toString());
+                return Long.parseLong(input.toString());
             }catch (NumberFormatException ignored){
                 return 0;
             }
@@ -127,7 +127,7 @@ public class Convert {
         else if(input instanceof Boolean) return ((Boolean)input?1:0);
         else{
             try{
-                return Double.valueOf(input.toString());
+                return Double.parseDouble(input.toString());
             }catch (NumberFormatException ignored){
                 return 0;
             }
@@ -148,7 +148,7 @@ public class Convert {
         else if(input instanceof Boolean) return ((Boolean)input?1:0);
         else{
             try{
-                return Float.valueOf(input.toString());
+                return Float.parseFloat(input.toString());
             }catch (NumberFormatException ignored){
                 return 0;
             }
@@ -169,7 +169,7 @@ public class Convert {
         else if(input instanceof Boolean) return (short) ((Boolean)input?1:0);
         else{
             try{
-                return Short.valueOf(input.toString());
+                return Short.parseShort(input.toString());
             }catch (NumberFormatException ignored){
                 return 0;
             }
@@ -190,7 +190,7 @@ public class Convert {
         else if(input instanceof Boolean) return (byte) ((Boolean)input?1:0);
         else{
             try{
-                return Byte.valueOf(input.toString());
+                return Byte.parseByte(input.toString());
             }catch (NumberFormatException ignored){
                 return 0;
             }

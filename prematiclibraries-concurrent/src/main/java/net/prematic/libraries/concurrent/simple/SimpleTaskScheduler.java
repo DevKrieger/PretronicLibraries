@@ -26,7 +26,6 @@ import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimpleTaskScheduler implements TaskScheduler {
 
     private final AtomicInteger taskIdManager;
-    private final Map<Integer,Task> tasks;
+    private final Collection<Task> tasks;
     private final ExecutorService executor;
 
     public SimpleTaskScheduler() {
@@ -49,32 +48,32 @@ public class SimpleTaskScheduler implements TaskScheduler {
     public SimpleTaskScheduler(ExecutorService executor) {
         this.executor = executor;
         this.taskIdManager = new AtomicInteger(1);
-        tasks = new ConcurrentHashMap<>();
+        tasks = ConcurrentHashMap.newKeySet();
     }
 
     @Override
     public Collection<Task> getTasks() {
-        return this.tasks.values();
+        return this.tasks;
     }
 
     @Override
     public Collection<Task> getTasks(String name) {
-        return Iterators.filter(this.tasks.values(), task -> task.getName().equalsIgnoreCase(name));
+        return Iterators.filter(this.tasks, task -> task.getName().equalsIgnoreCase(name));
     }
 
     @Override
     public Collection<Task> getTasks(TaskState state) {
-        return Iterators.filter(tasks.values(), task -> task.getState() == state);
+        return Iterators.filter(tasks, task -> task.getState() == state);
     }
 
     @Override
     public Task getTask(int id) {
-        return this.tasks.get(id);
+        return Iterators.findOne(tasks, task -> task.getID() == id);
     }
 
     @Override
     public Builder createTask(ObjectOwner owner) {
-        return new SimpleTaskBuilder(this,taskIdManager.getAndIncrement(),owner);
+        return new SimpleTaskBuilder(taskIdManager.getAndIncrement(),owner);
     }
 
     @Override
@@ -95,12 +94,12 @@ public class SimpleTaskScheduler implements TaskScheduler {
 
     @Override
     public void stop(ObjectOwner owner) {
-        Iterators.forEach(tasks.values(),Task::stop, task -> task.getOwner().equals(owner));
+        Iterators.forEach(tasks,Task::stop, task -> task.getOwner().equals(owner));
     }
 
     @Override
     public void stopAll() {
-        tasks.values().forEach(Task::stop);
+        tasks.forEach(Task::stop);
     }
 
     @Override
@@ -111,18 +110,18 @@ public class SimpleTaskScheduler implements TaskScheduler {
 
     @Override
     public void unregister(Task task) {
-        if(task.getState() == TaskState.DESTROYED) this.tasks.remove(task.getID());
+        if(task.getState() == TaskState.DESTROYED) this.tasks.remove(task);
         else task.destroy();
     }
 
     @Override
     public void unregister(ObjectOwner owner) {
-        Iterators.forEach(tasks.values(), Task::destroy, task -> task.getOwner().equals(owner));
+        Iterators.forEach(tasks, Task::destroy, task -> task.getOwner().equals(owner));
     }
 
     @Override
     public void unregisterAll() {
-        tasks.values().forEach(Task::destroy);
+        tasks.forEach(Task::destroy);
     }
 
     @Override
@@ -131,20 +130,18 @@ public class SimpleTaskScheduler implements TaskScheduler {
         this.executor.shutdown();
     }
 
-    public class SimpleTaskBuilder implements TaskScheduler.Builder {
+    private class SimpleTaskBuilder implements TaskScheduler.Builder {
 
         private final int id;
         private final ObjectOwner owner;
-        private final TaskScheduler scheduler;
 
         private String name;
         private long interval, delay;
         private boolean async;
 
-        SimpleTaskBuilder(TaskScheduler scheduler,int id, ObjectOwner owner) {
+        SimpleTaskBuilder(int id, ObjectOwner owner) {
             this.id = id;
             this.owner = owner;
-            this.scheduler = scheduler;
         }
 
         @Override
@@ -179,12 +176,15 @@ public class SimpleTaskScheduler implements TaskScheduler {
 
         @Override
         public Task create() {
-            return new MultipleTask(this.scheduler,this.owner,this.id,this.name,this.delay,this.interval,this.async);
+            MultipleTask task =  new MultipleTask(SimpleTaskScheduler.this,this.owner,this.id,this.name,this.delay,this.interval,this.async);
+            tasks.add(task);
+            return task;
         }
 
         @Override
         public Task execute(Runnable runnable) {
-            Task task = new SingletonFinalTask(this.scheduler,this.owner,this.id,this.name,this.delay,this.interval,this.async,runnable);
+            Task task = new SingletonFinalTask(SimpleTaskScheduler.this,this.owner,this.id,this.name,this.delay,this.interval,this.async,runnable);
+            tasks.add(task);
             task.start();
             return task;
         }

@@ -110,6 +110,10 @@ public class ReflectionUtil {
         return invokeMethod(clazz, object, methodName,buildTyeArray(parameters), parameters);
     }
 
+    public static Object invokeMethod(Object object, String methodName,Class[] classes, Object[] parameters){
+        return invokeMethod(object.getClass(),object,methodName,classes,parameters);
+    }
+
     public static Object invokeMethod(Class<?> clazz, Object object, String methodName,Class[] classes, Object[] parameters){
         try {
             Method method = getMethod(clazz,methodName,classes);
