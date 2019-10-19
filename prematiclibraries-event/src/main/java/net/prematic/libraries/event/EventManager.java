@@ -42,9 +42,23 @@ public interface EventManager {
 
     void unsubscribeAll(Class<?> eventClass);
 
-    <T> T callEvent(T event);
 
-    <T> void callEventAsync(T event, Consumer<T> callback);
+    default <T> T callEvent(T event){
+        return callEvent((Class<T>) event.getClass(),event);
+    }
 
-    <T> CompletableFuture<T> callEventAsync(T event);
+    default <T> void callEventAsync(T event, Consumer<T> callback){
+        callEventAsync((Class<T>) event.getClass(),event,callback);
+    }
+
+    default <T> CompletableFuture<T> callEventAsync(T event){
+        return callEventAsync((Class<T>) event.getClass(),event);
+    }
+
+
+    <T,E extends T> E callEvent(Class<T> executionClass,E event);
+
+    <T,E extends T> void callEventAsync(Class<T> executionClass,E event, Consumer<T> callback);
+
+    <T,E extends T>  CompletableFuture<T> callEventAsync(Class<T> executionClass,E event);
 }

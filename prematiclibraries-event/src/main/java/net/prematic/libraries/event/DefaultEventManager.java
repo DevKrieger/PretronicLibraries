@@ -103,24 +103,24 @@ public class DefaultEventManager implements EventManager{
     }
 
     @Override
-    public <T> T callEvent(T event) {
-        List<EventExecutor> executors = this.executors.get(event.getClass());
-        executors.forEach(executor -> executor.execute(event));
+    public <T, E extends T> E callEvent(Class<T> executionClass, E event) {
+        List<EventExecutor> executors = this.executors.get(executionClass);
+        if(executors != null) executors.forEach(executor -> executor.execute(event));
         return event;
     }
 
     @Override
-    public <T> void callEventAsync(T event, Consumer<T> callback) {
-        if(callback != null) executor.execute(()-> callback.accept(callEvent(event)));
+    public <T, E extends T> void callEventAsync(Class<T> executionClass, E event, Consumer<T> callback) {
+        if(callback != null) executor.execute(()-> callback.accept(callEvent(executionClass,event)));
         else executor.execute(()-> callEvent(event));
     }
 
     @Override
-    public <T> CompletableFuture<T> callEventAsync(T event) {
+    public <T, E extends T> CompletableFuture<T> callEventAsync(Class<T> executionClass, E event) {
         CompletableFuture<T> future = new CompletableFuture<>();
         executor.execute(()->{
             try{
-                future.complete(callEvent(event));
+                future.complete(callEvent(executionClass,event));
             }catch (Exception exception){
                 future.completeExceptionally(exception);
             }
