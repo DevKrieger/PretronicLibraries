@@ -47,6 +47,8 @@ public class DocumentRegistry {
         registerType(DocumentFileType.YAML);
         registerType(DocumentFileType.BINARY);
         registerType(DocumentFileType.XML);
+        registerType(DocumentFileType.PROPERTIES);
+        registerType(DocumentFileType.INI);
 
         getDefaultContext().registerAdapter(UUID.class,new UUIDAdapter());
         getDefaultContext().registerAdapter(Calendar.class,new CalendarAdapter());

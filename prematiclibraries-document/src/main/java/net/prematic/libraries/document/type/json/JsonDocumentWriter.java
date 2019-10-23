@@ -39,7 +39,7 @@ public class JsonDocumentWriter implements DocumentWriter {
 
     @Override
     public byte[] write(Document document, Charset charset) {
-        return write(document,false).getBytes();
+        return write(document,false).getBytes(charset);
     }
 
     @Override

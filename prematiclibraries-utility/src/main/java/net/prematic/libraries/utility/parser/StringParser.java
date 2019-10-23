@@ -221,7 +221,6 @@ public class StringParser {
         int tempIndex = this.charIndex;
         while(this.lines[lineIndex].length > tempIndex){
             char current = this.lines[lineIndex][tempIndex];
-            System.out.println(current);
             if(!(current == ' ' || current == '\t' || current == '\r')) return false;
             tempIndex++;
         }
