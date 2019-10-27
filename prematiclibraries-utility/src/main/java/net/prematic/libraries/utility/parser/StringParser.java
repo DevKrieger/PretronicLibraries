@@ -315,7 +315,7 @@ public class StringParser {
 
     public void end(){
         this.lineIndex = this.lines.length-1;
-        this.charIndex = this.lines[this.lineIndex].length;
+        this.charIndex = this.lines[this.lineIndex].length-2;
     }
 
     //Search options

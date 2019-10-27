@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -123,15 +122,19 @@ public final class FileUtil {
         return files;
     }
 
-    public static void processFilesHierarchically(File source, Consumer<File> processor){
-        File[] files = source.listFiles();
-        if(files != null){
-            for(File file : files) {
-                if(file.exists()){
-                    if(file.isDirectory()) processFilesHierarchically(file,processor);
-                    else processor.accept(file);
+    public static void processFilesHierarchically(File source, IOConsumer<File> processor){
+        try{
+            File[] files = source.listFiles();
+            if(files != null){
+                for(File file : files) {
+                    if(file.exists()){
+                        if(file.isDirectory()) processFilesHierarchically(file,processor);
+                        else processor.accept(file);
+                    }
                 }
             }
+        }catch (IOException exception){
+            throw new RuntimeException(exception);
         }
     }
 
