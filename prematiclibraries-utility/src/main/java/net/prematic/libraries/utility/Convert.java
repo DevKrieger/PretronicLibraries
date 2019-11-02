@@ -19,6 +19,10 @@
 
 package net.prematic.libraries.utility;
 
+import java.nio.ByteBuffer;
+import java.util.Date;
+import java.util.UUID;
+
 /**
  * This small convert library helps you to convert any object in a specified primitive type.
  */
@@ -197,4 +201,22 @@ public class Convert {
         }
     }
 
+    public static UUID toUUID(Object input) {
+        if(input instanceof UUID) return (UUID) input;
+        else if(input instanceof byte[]) {
+            ByteBuffer byteBuffer = ByteBuffer.wrap((byte[]) input);
+            return new UUID(byteBuffer.getLong(), byteBuffer.getLong());
+        }
+        try {
+            return UUID.fromString(input instanceof String ? (String) input : String.valueOf(input));
+        } catch (IllegalArgumentException exception) {
+            return null;
+        }
+    }
+
+    public static Date toDate(Object input) {
+        if(input instanceof Date) return (Date) input;
+        else if(input instanceof Long) return new Date((long) input);
+        return null;
+    }
 }

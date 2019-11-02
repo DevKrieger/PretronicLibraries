@@ -20,6 +20,7 @@ package net.prematic.libraries.utility;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -87,6 +88,15 @@ public final class Iterators {
         U result = findOne(list,acceptor);
         if(result != null) return wrapper.apply(result);
         return null;
+    }
+
+    public static <U, R> void map(Iterable<U> list, Collection<R> source, Function<U, R> mapper) {
+        forEach(list, (value) -> {
+            R object = mapper.apply(value);
+            if (object != null) {
+                source.add(object);
+            }
+        });
     }
 
     //Remove
