@@ -49,10 +49,22 @@ public final class Iterators {
         while(iterator.hasNext() && (result=iterator.next()) != null) forEach.accept(result);
     }
 
+    public static <U> void forEach(U[] array, Consumer<U> forEach){
+        for (U u : array) {
+            forEach.accept(u);
+        }
+    }
+
     public static <U> void forEach(Iterable<U> list, Consumer<U> forEach, Predicate<U> acceptor) {
         Iterator<U> iterator = list.iterator();
         U result;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptor.test(result)) forEach.accept(result);
+    }
+
+    public static <U> void forEach(U[] array, Consumer<U> forEach, Predicate<U> acceptor) {
+        for (U u : array) {
+            if(acceptor.test(u)) forEach.accept(u);
+        }
     }
 
     public static <U> void forEachIndexed(Iterable<U> list, BiConsumer<U, Integer> forEach) {
@@ -62,6 +74,12 @@ public final class Iterators {
         while(iterator.hasNext() && (result=iterator.next()) != null) {
             forEach.accept(result, index);
             index++;
+        }
+    }
+
+    public static <U> void forEachIndexed(U[] array, BiConsumer<U, Integer> forEach) {
+        for (int i = 0; i < array.length; i++) {
+            forEach.accept(array[i], i);
         }
     }
 
@@ -106,8 +124,8 @@ public final class Iterators {
         });
     }
 
-    public static <U, R> void map(Iterable<U> list, R[] source, Function<U, R> mapper) {
-        forEachIndexed(list, (value, index) -> {
+    public static <U, R> void map(U[] array, R[] source, Function<U, R> mapper) {
+        forEachIndexed(array, (value, index) -> {
             R object = mapper.apply(value);
             if (object != null) {
                 source[index] = object;
