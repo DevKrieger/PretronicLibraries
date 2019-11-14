@@ -19,6 +19,7 @@ package net.prematic.libraries.utility;
  * under the License.
  */
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -122,6 +123,18 @@ public final class Iterators {
                 source.add(object);
             }
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <U, R> R[] map(U[] array, Function<U, R> mapper) {
+        R[] result = (R[]) new Object[array.length];
+        forEachIndexed(array, (value, index) -> {
+            R object = mapper.apply(value);
+            if(object != null) {
+                result[index] = object;
+            }
+        });
+        return result;
     }
 
     public static <U, R> void map(U[] array, R[] source, Function<U, R> mapper) {
