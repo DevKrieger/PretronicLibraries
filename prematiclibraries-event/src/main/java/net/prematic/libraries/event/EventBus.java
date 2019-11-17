@@ -19,12 +19,13 @@
 
 package net.prematic.libraries.event;
 
+import net.prematic.libraries.event.executor.EventExecutor;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public interface EventManager {
+public interface EventBus {
 
     void subscribe(ObjectOwner owner, Object listener);
 
@@ -42,23 +43,59 @@ public interface EventManager {
 
     void unsubscribeAll(Class<?> eventClass);
 
+    void addExecutor(Class<?> eventClass, EventExecutor executor);
 
+    @SuppressWarnings("unchecked")
     default <T> T callEvent(T event){
         return callEvent((Class<T>) event.getClass(),event);
     }
 
+    @SuppressWarnings("unchecked")
     default <T> void callEventAsync(T event, Consumer<T> callback){
         callEventAsync((Class<T>) event.getClass(),event,callback);
     }
 
+    @SuppressWarnings("unchecked")
     default <T> CompletableFuture<T> callEventAsync(T event){
         return callEventAsync((Class<T>) event.getClass(),event);
     }
 
+    default <T,E extends T> E callEvent(Class<T> executionClass,E event){
+        callEvents(executionClass, event);
+        return event;
+    }
 
-    <T,E extends T> E callEvent(Class<T> executionClass,E event);
+    default <T,E extends T> void callEventAsync(Class<T> executionClass,E event, Consumer<T> callback){
+        callEventsAsync(executionClass,()-> callback.accept(event),event);
+    }
 
-    <T,E extends T> void callEventAsync(Class<T> executionClass,E event, Consumer<T> callback);
+    default <T,E extends T> CompletableFuture<T> callEventAsync(Class<T> executionClass,E event){
+        CompletableFuture<T> future = new CompletableFuture<>();
+        callEventsAsync(executionClass,()->{
+            try{
+                future.complete(event);
+            }catch (Exception exception){
+                future.completeExceptionally(exception);
+            }
+        },event);
+        return future;
+    }
 
-    <T,E extends T>  CompletableFuture<T> callEventAsync(Class<T> executionClass,E event);
+    <T> void callEvents(Class<T> executionClass,Object... events);
+
+    <T> void callEventsAsync(Class<T> executionClass, Runnable callback,Object... events);
+
+    default <T> CompletableFuture<Void> callEventsAsync(Class<T> executionClass,Object... events){
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        callEventsAsync(executionClass,()->{
+            try{
+                future.complete(null);
+            }catch (Exception exception){
+                future.completeExceptionally(exception);
+            }
+        },events);
+        return future;
+    }
+
+    void registerMappedClass(Class<?> original, Class<?> mapped);
 }

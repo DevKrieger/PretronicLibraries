@@ -27,6 +27,6 @@ public interface EventExecutor {
 
     ObjectOwner getOwner();
 
-    void execute(Object event);
+    void execute(Object... events);
 
 }

@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.event.executor;
 
+import net.prematic.libraries.event.EventException;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.function.Consumer;
@@ -27,11 +28,13 @@ public class ConsumerEventExecutor<E> implements EventExecutor{
 
     private final ObjectOwner owner;
     private final byte priority;
+    private final Class<?> allowedClass;
     private final Consumer<E> consumer;
 
-    public ConsumerEventExecutor(ObjectOwner owner, byte priority,  Consumer<E> consumer) {
+    public ConsumerEventExecutor(ObjectOwner owner, byte priority,Class<?> allowedClass,  Consumer<E> consumer) {
         this.owner = owner;
         this.priority = priority;
+        this.allowedClass = allowedClass;
         this.consumer = consumer;
     }
 
@@ -50,7 +53,16 @@ public class ConsumerEventExecutor<E> implements EventExecutor{
     }
 
     @Override
-    public void execute(Object event) {
-        consumer.accept((E) event);
+    public void execute(Object... events) {
+        for (Object event : events){
+            if(allowedClass.isAssignableFrom(event.getClass())){
+                try{
+                    consumer.accept((E) event);
+                }catch (Exception exception){
+                    throw new EventException("Could not execute listener "+consumer,exception);
+                }
+            }
+        }
     }
+
 }

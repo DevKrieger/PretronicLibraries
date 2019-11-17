@@ -24,6 +24,7 @@ import net.prematic.libraries.event.executor.EventExecutor;
 import net.prematic.libraries.event.executor.MethodEventExecutor;
 import net.prematic.libraries.utility.GeneralUtil;
 import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.annonations.Internal;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.lang.reflect.Method;
@@ -32,19 +33,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-public class DefaultEventManager implements EventManager{
+public class DefaultEventBus implements EventBus {
 
     private final Executor executor;
     private final Map<Class<?>, List<EventExecutor>> executors;
+    private final Map<Class<?>,Class<?>> mappedClasses;
 
-    public DefaultEventManager() {
+    public DefaultEventBus() {
         this(GeneralUtil.getDefaultExecutorService());
     }
 
-    public DefaultEventManager(Executor executor) {
+    public DefaultEventBus(Executor executor) {
         this.executor = executor;
-
-        this.executors = new HashMap<>();
+        this.executors = new LinkedHashMap<>();
+        this.mappedClasses = new LinkedHashMap<>();
     }
 
     @Override
@@ -52,14 +54,17 @@ public class DefaultEventManager implements EventManager{
         Objects.requireNonNull(owner,"Owner can't be null.");
         Objects.requireNonNull(listener,"Listener can't be null.");
 
-        //Search every listener method in the listener object.
         for(Method method : listener.getClass().getDeclaredMethods()){
             try{
                 Listener info = method.getAnnotation(Listener.class);
                 if(info != null && method.getParameterTypes().length == 1){
-                    List<EventExecutor> executors = this.executors.computeIfAbsent(method.getParameterTypes()[0], k -> new ArrayList<>());
-                    executors.add(new MethodEventExecutor(owner,info.priority(),listener,method));
-                    sort(executors);
+                    Class<?> eventClass = method.getParameterTypes()[0];
+                    Class<?> mappedClass = this.mappedClasses.get(eventClass);
+                    if(mappedClass == null) mappedClass = eventClass;
+
+                    List<EventExecutor> executors = this.executors.computeIfAbsent(mappedClass, k -> new ArrayList<>());
+                    executors.add(new MethodEventExecutor(owner,info.priority(),listener,eventClass,method));
+                    sortByPriority(executors);
                 }
             }catch (Exception exception){
                 throw new IllegalArgumentException("Could not register listener "+listener,exception);
@@ -73,13 +78,17 @@ public class DefaultEventManager implements EventManager{
         Objects.requireNonNull(eventClass,"Event type can't be null.");
         Objects.requireNonNull(handler,"Handler can't be null.");
 
-        List<EventExecutor> executors = this.executors.computeIfAbsent(eventClass, k -> new ArrayList<>());
-        executors.add(new ConsumerEventExecutor<>(owner,priority,handler));
-        sort(executors);
+        Class<?> mappedClass = this.mappedClasses.get(eventClass);
+        if(mappedClass == null) mappedClass = eventClass;
+
+        List<EventExecutor> executors = this.executors.computeIfAbsent(mappedClass, k -> new ArrayList<>());
+        executors.add(new ConsumerEventExecutor<>(owner,priority,eventClass,handler));
+        sortByPriority(executors);
     }
 
     @Override
     public void unsubscribe(Object listener) {
+        Objects.requireNonNull(listener,"Listener can't be null.");
         executors.forEach((event, executors) -> Iterators.removeSilent(executors,
                 executor -> executor instanceof MethodEventExecutor
                         && ((MethodEventExecutor) executor).getListener().equals(listener)));
@@ -87,6 +96,7 @@ public class DefaultEventManager implements EventManager{
 
     @Override
     public void unsubscribe(Consumer<?> handler) {
+        Objects.requireNonNull(handler,"Handler can't be null.");
         executors.forEach((event, executors) -> Iterators.removeSilent(executors,
                 executor -> executor instanceof ConsumerEventExecutor
                         && ((ConsumerEventExecutor) executor).getConsumer().equals(handler)));
@@ -94,16 +104,27 @@ public class DefaultEventManager implements EventManager{
 
     @Override
     public void unsubscribe(ObjectOwner owner) {
+        Objects.requireNonNull(owner,"Owner can't be null.");
         executors.forEach((event, executors) -> Iterators.removeSilent(executors, executor -> executor.getOwner().equals(owner)));
     }
 
     @Override
     public void unsubscribeAll(Class<?> eventClass) {
+        Objects.requireNonNull(eventClass,"Class can't be null.");
         this.executors.remove(eventClass);
     }
 
     @Override
+    public void addExecutor(Class<?> eventClass, EventExecutor executor) {
+        List<EventExecutor> executors = this.executors.computeIfAbsent(eventClass, k -> new ArrayList<>());
+        executors.add(executor);
+        sortByPriority(executors);
+    }
+
+    @Override
     public <T, E extends T> E callEvent(Class<T> executionClass, E event) {
+        Objects.requireNonNull(executionClass,"Class can't be null.");
+        Objects.requireNonNull(event,"Event can't be null.");
         List<EventExecutor> executors = this.executors.get(executionClass);
         if(executors != null) executors.forEach(executor -> executor.execute(event));
         return event;
@@ -128,7 +149,34 @@ public class DefaultEventManager implements EventManager{
         return future;
     }
 
-    private void sort(List<EventExecutor> executors){
+    @Override
+    public <T> void callEvents(Class<T> executionClass, Object... events) {
+        callEventsInternal(executionClass,events);
+    }
+
+    @Override
+    public <T> void callEventsAsync(Class<T> executionClass, Runnable callback, Object... events) {
+        if(callback != null){
+            executor.execute(()->{
+                callEventsInternal(executionClass,events);
+                callback.run();
+            });
+        }else executor.execute(()-> callEvent(events));
+    }
+
+    @Override
+    public void registerMappedClass(Class<?> original, Class<?> mapped) {
+        this.mappedClasses.put(original,mapped);
+    }
+
+    @Internal
+    private <T> void callEventsInternal(Class<T> executionClass, Object[] events){
+        List<EventExecutor> executors = this.executors.get(executionClass);
+        if(executors != null) executors.forEach(executor -> executor.execute(events));
+    }
+
+    @Internal
+    private void sortByPriority(List<EventExecutor> executors){
         //Sort all listeners by the priority.
         executors.sort((o1, o2) -> o1.getPriority() >= o2.getPriority()?0:-1);
     }

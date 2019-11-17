@@ -29,12 +29,14 @@ public class MethodEventExecutor implements EventExecutor{
     private final ObjectOwner owner;
     private final byte priority;
     private final Object listener;
+    private final Class<?> allowedClass;
     private final Method method;
 
-    public MethodEventExecutor(ObjectOwner owner, byte priority, Object listener, Method method) {
+    public MethodEventExecutor(ObjectOwner owner, byte priority, Object listener,Class<?> allowedClass, Method method) {
         this.owner = owner;
         this.priority = priority;
         this.listener = listener;
+        this.allowedClass = allowedClass;
         this.method = method;
     }
 
@@ -53,11 +55,15 @@ public class MethodEventExecutor implements EventExecutor{
     }
 
     @Override
-    public void execute(Object event) {
-        try{
-            this.method.invoke(this.listener,event);
-        }catch (Exception exception){
-            throw new EventException("Could not execute listener "+listener,exception);
+    public void execute(Object... events) {
+        for (Object event : events) {
+            if(allowedClass.isAssignableFrom(event.getClass())){
+                try{
+                    this.method.invoke(this.listener,event);
+                }catch (Exception exception){
+                    throw new EventException("Could not execute listener "+listener,exception);
+                }
+            }
         }
     }
 }
