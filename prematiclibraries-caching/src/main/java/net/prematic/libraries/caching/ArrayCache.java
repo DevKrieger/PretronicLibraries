@@ -95,7 +95,6 @@ public class ArrayCache<O> implements Cache<O>{
         CacheEntry[] entries = this.entries;
         this.entries = new CacheEntry[buffer];
         this.size = 0;
-        //Reset for GC
         Arrays.fill(entries, null);
     }
 
@@ -108,6 +107,8 @@ public class ArrayCache<O> implements Cache<O>{
 
     @Override
     public O get(String queryName, Object... identifiers) {
+        Objects.requireNonNull(queryName,"Query is null");
+        Objects.requireNonNull(identifiers,"Identifiers are null");
         CacheQuery<O> query = queries.get(queryName.toLowerCase());
         if(query == null) throw new IllegalArgumentException(queryName+" not found.");
         query.validate(identifiers);
@@ -121,7 +122,7 @@ public class ArrayCache<O> implements Cache<O>{
             }
         }
         O value = query.load(identifiers);
-        insert(value);
+        if(value!= null) insert(value);
         return value;
     }
 
@@ -132,6 +133,7 @@ public class ArrayCache<O> implements Cache<O>{
 
     @Override
     public O get(Predicate<O> query, Supplier<O> loader) {
+        Objects.requireNonNull(query,"Query is null");
         for(int i = 0; i < size; i++) {
             if(query.test((O) this.entries[i].value)){
                 CacheEntry entry = this.entries[i];
@@ -143,7 +145,7 @@ public class ArrayCache<O> implements Cache<O>{
         }
         if(loader != null){
             O value = loader.get();
-            insert(value);
+            if(value!= null) insert(value);
             return value;
         }
         return null;
@@ -166,6 +168,7 @@ public class ArrayCache<O> implements Cache<O>{
 
     @Override
     public void insert(O value) {
+        Objects.requireNonNull(value,"Object is null");
         if(size >= maxSize){
             move(0);
             this.entries[size-1] = new CacheEntry(value);
@@ -183,6 +186,8 @@ public class ArrayCache<O> implements Cache<O>{
 
     @Override
     public O remove(String queryName, Object... identifiers) {
+        Objects.requireNonNull(queryName,"Query is null");
+        Objects.requireNonNull(identifiers,"Identifiers are null");
         CacheQuery<O> query = queries.get(queryName.toLowerCase());
         if(query == null) throw new IllegalArgumentException(queryName+" not found.");
         query.validate(identifiers);
@@ -199,6 +204,7 @@ public class ArrayCache<O> implements Cache<O>{
 
     @Override
     public O remove(Predicate<O> query) {
+        Objects.requireNonNull(query,"Query is null");
         for(int i = 0; i < size; i++) {
             O value = (O)this.entries[i].value;
             if(query.test(value)){
@@ -212,6 +218,7 @@ public class ArrayCache<O> implements Cache<O>{
 
     @Override
     public boolean remove(Object value) {
+        Objects.requireNonNull(value,"Object is null");
         for(int i = 0; i < size; i++) {
             if(this.entries[i].value.equals(value)){
                 move(i);
