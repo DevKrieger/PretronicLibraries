@@ -19,14 +19,12 @@ package net.prematic.libraries.utility;
  * under the License.
  */
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public final class Iterators {
 
@@ -34,7 +32,7 @@ public final class Iterators {
 
     public static <U> U findOne(Iterable<U> list, Predicate<U> acceptor) {
         Iterator<U> iterator = list.iterator();
-        U result = null;
+        U result;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptor.test(result)) return result;
         return null;
     }
@@ -48,14 +46,42 @@ public final class Iterators {
 
     public static <U> void forEach(Iterable<U> list, Consumer<U> forEach){
         Iterator<U> iterator = list.iterator();
-        U result = null;
+        U result;
         while(iterator.hasNext() && (result=iterator.next()) != null) forEach.accept(result);
+    }
+
+    public static <U> void forEach(U[] array, Consumer<U> forEach){
+        for (U u : array) {
+            forEach.accept(u);
+        }
     }
 
     public static <U> void forEach(Iterable<U> list, Consumer<U> forEach, Predicate<U> acceptor) {
         Iterator<U> iterator = list.iterator();
-        U result = null;
+        U result;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptor.test(result)) forEach.accept(result);
+    }
+
+    public static <U> void forEach(U[] array, Consumer<U> forEach, Predicate<U> acceptor) {
+        for (U u : array) {
+            if(acceptor.test(u)) forEach.accept(u);
+        }
+    }
+
+    public static <U> void forEachIndexed(Iterable<U> list, BiConsumer<U, Integer> forEach) {
+        Iterator<U> iterator = list.iterator();
+        U result;
+        int index = 0;
+        while(iterator.hasNext() && (result=iterator.next()) != null) {
+            forEach.accept(result, index);
+            index++;
+        }
+    }
+
+    public static <U> void forEachIndexed(U[] array, BiConsumer<U, Integer> forEach) {
+        for (int i = 0; i < array.length; i++) {
+            forEach.accept(array[i], i);
+        }
     }
 
     public static <U> List<U> filter(Iterable<U> list, Predicate<U> acceptor){
@@ -95,6 +121,27 @@ public final class Iterators {
             R object = mapper.apply(value);
             if (object != null) {
                 source.add(object);
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <U, R> R[] map(U[] array, Function<U, R> mapper) {
+        R[] result = (R[]) new Object[array.length];
+        forEachIndexed(array, (value, index) -> {
+            R object = mapper.apply(value);
+            if(object != null) {
+                result[index] = object;
+            }
+        });
+        return result;
+    }
+
+    public static <U, R> void map(U[] array, R[] source, Function<U, R> mapper) {
+        forEachIndexed(array, (value, index) -> {
+            R object = mapper.apply(value);
+            if (object != null) {
+                source[index] = object;
             }
         });
     }
