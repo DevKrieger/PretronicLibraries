@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 15.06.19 22:58
+ * @since 27.10.19, 19:12
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
 
 package net.prematic.libraries.utility.interfaces;
 
-public interface DeepCopyable<T> extends Cloneable {
+public interface Castable<T>  {
 
-    T copyDeep();
+    <N extends T> N getAs(Class<N> castedClass);
 
 }

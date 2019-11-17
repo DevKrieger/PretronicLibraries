@@ -125,10 +125,30 @@ public final class Iterators {
         }
         return result;
     }
+
     public static <U> void removeSilent(Iterable<U> list, Predicate<U> acceptor){
         Iterator<U> iterator = list.iterator();
         U result = null;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptor.test(result)) iterator.remove();
     }
+
+    //Merge
+
+    public static <U> List<U> merge(Collection<Collection<U>> collections){
+        List<U> result = new ArrayList<>();
+        Iterator<Collection<U>> iterator = collections.iterator();
+        Collection<U> item = null;
+        while(iterator.hasNext() && (item=iterator.next()) != null) result.addAll(item);
+        return result;
+    }
+
+    public static <U, R> List<R> mergeMapped(Collection<Collection<U>> collections, Function<U, R> mapper){
+        List<R> result = new ArrayList<>();
+        Iterator<Collection<U>> iterator = collections.iterator();
+        Collection<U> item = null;
+        while(iterator.hasNext() && (item=iterator.next()) != null) item.forEach(u -> result.add(mapper.apply(u)));
+        return result;
+    }
+
 
 }

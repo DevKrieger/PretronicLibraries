@@ -42,6 +42,7 @@ Todo Update Network Util
 
  */
 
+@Deprecated
 public final class NetworkUtil {
 
     public static final boolean EPOLL = Epoll.isAvailable();
