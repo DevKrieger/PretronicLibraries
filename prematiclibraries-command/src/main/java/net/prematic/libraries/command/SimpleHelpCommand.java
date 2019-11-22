@@ -43,7 +43,7 @@ public class SimpleHelpCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(CommandSender sender,String cmd, String[] args) {
         sender.sendMessage("Available Commands:");
         for(Command command : this.commandManager.getCommands())
             if(command != this) sender.sendMessage(commandFormatter.apply(command));

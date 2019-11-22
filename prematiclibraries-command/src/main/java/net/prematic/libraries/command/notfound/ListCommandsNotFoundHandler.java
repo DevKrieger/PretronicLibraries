@@ -20,13 +20,14 @@
 package net.prematic.libraries.command.notfound;
 
 import net.prematic.libraries.command.command.Command;
+import net.prematic.libraries.command.command.CommandExecutor;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.GeneralUtil;
 
 import java.util.List;
 
-public abstract class ListCommandsNotFoundHandler implements CommandNotFoundHandler {
+public abstract class ListCommandsNotFoundHandler implements CommandExecutor {
 
     private final CommandManager manager;
     private final int perPage;
@@ -42,9 +43,9 @@ public abstract class ListCommandsNotFoundHandler implements CommandNotFoundHand
         int page = 0;
         int maxPage = GeneralUtil.getMaxPages(page,commands);
 
-        if(GeneralUtil.isNumber(cmdName)) page = Integer.valueOf(cmdName);
+        if(GeneralUtil.isNumber(cmdName)) page = Integer.parseInt(cmdName);
         else if(cmdName.equalsIgnoreCase("help") && args.length > 0 && GeneralUtil.isNumber(args[0]))
-            page = Integer.valueOf(args[0]);
+            page = Integer.parseInt(args[0]);
 
         int from = (perPage*(page - 1))+1;
         int to = page*perPage;

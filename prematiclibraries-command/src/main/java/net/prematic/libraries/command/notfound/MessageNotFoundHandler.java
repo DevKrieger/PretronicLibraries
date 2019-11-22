@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 31.03.19 18:28
+ * @since 18.11.19, 19:13
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,27 @@
  * under the License.
  */
 
-package net.prematic.libraries.command;
+package net.prematic.libraries.command.notfound;
 
-import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.prematic.libraries.command.command.CommandExecutor;
+import net.prematic.libraries.command.sender.CommandSender;
 
-public class CommandEntry {
+public class MessageNotFoundHandler implements CommandExecutor {
 
-    private final ObjectOwner owner;
-    private final Command command;
+    private static MessageNotFoundHandler DEFAULT = new MessageNotFoundHandler("The command %command% was not found.");
 
-    public CommandEntry(ObjectOwner owner, Command command) {
-        this.owner = owner;
-        this.command = command;
+    private final String message;
+
+    public MessageNotFoundHandler(String message) {
+        this.message = message;
     }
 
-    public ObjectOwner getOwner() {
-        return owner;
+    @Override
+    public void execute(CommandSender sender, String command, String[] args) {
+        sender.sendMessage(message.replace("%command%",command));
     }
 
-    public Command getCommand() {
-        return command;
+    public static MessageNotFoundHandler newDefaultHandler(){
+        return DEFAULT;
     }
 }

@@ -29,7 +29,7 @@ import java.util.function.Function;
 public class SimpleListCommandsNotFoundHandler extends ListCommandsNotFoundHandler {
 
     public static String DEFAULT_START_MESSAGE = "";
-    public static String DEFAULT_PAGE_NOTFOUND_MESSAGE= "";
+    public static String DEFAULT_PAGE_NOTFOUND_MESSAGE = "";
 
     private final Function<Command,String> formatter;
     private final String startMessage, pageNotFound;

@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 31.03.19 18:28
+ * @since 17.11.19, 17:41
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,12 @@
  * under the License.
  */
 
-package net.prematic.libraries.command;
+package net.prematic.libraries.command.command;
 
-import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.prematic.libraries.command.sender.CommandSender;
 
-public class CommandEntry {
+public interface CommandExecutor {
 
-    private final ObjectOwner owner;
-    private final Command command;
+    void execute(CommandSender sender, String command, String[] args);
 
-    public CommandEntry(ObjectOwner owner, Command command) {
-        this.owner = owner;
-        this.command = command;
-    }
-
-    public ObjectOwner getOwner() {
-        return owner;
-    }
-
-    public Command getCommand() {
-        return command;
-    }
 }

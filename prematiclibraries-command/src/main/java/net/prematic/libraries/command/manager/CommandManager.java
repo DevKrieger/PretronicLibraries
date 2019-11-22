@@ -20,7 +20,7 @@
 package net.prematic.libraries.command.manager;
 
 import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
+import net.prematic.libraries.command.command.CommandExecutor;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
@@ -34,7 +34,8 @@ public interface CommandManager {
 
     List<Command> getCommands();
 
-    void setNotFoundHandler(CommandNotFoundHandler notFoundHandler);
+    void setNotFoundHandler(CommandExecutor executor);
+
 
     void dispatchCommand(CommandSender sender, String command);
 
@@ -46,6 +47,6 @@ public interface CommandManager {
 
     void unregisterCommand(ObjectOwner owner);
 
-    void unregisterAll();
+    void unregisterCommands();
 
 }

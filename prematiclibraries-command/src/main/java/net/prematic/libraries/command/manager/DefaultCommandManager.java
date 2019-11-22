@@ -19,9 +19,8 @@
 
 package net.prematic.libraries.command.manager;
 
-import net.prematic.libraries.command.CommandEntry;
 import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
+import net.prematic.libraries.command.command.CommandExecutor;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
@@ -29,14 +28,12 @@ import net.prematic.libraries.utility.interfaces.ObjectOwner;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleCommandManager implements CommandManager {
+public class DefaultCommandManager implements CommandManager {
 
-    public static String DEFAULT_NOT_FOUND_MESSAGE = "The command %command% was not found.";
+    private final List<Command> commands;
+    private CommandExecutor notFoundHandler;
 
-    private final List<CommandEntry> commands;
-    private CommandNotFoundHandler notFoundHandler;
-
-    public SimpleCommandManager() {
+    public DefaultCommandManager() {
         this.commands = new ArrayList<>();
     }
 
@@ -47,16 +44,16 @@ public class SimpleCommandManager implements CommandManager {
 
     @Override
     public Command getCommand(String name) {
-        return Iterators.mapOne(this.commands, entry -> entry.getCommand().hasAlias(name),CommandEntry::getCommand);
+        return Iterators.findOne(this.commands, command -> command.getName().equalsIgnoreCase(name));
     }
 
     @Override
     public List<Command> getCommands() {
-        return Iterators.map(this.commands,CommandEntry::getCommand);
+        return commands;
     }
 
     @Override
-    public void setNotFoundHandler(CommandNotFoundHandler handler) {
+    public void setNotFoundHandler(CommandExecutor handler) {
         this.notFoundHandler = handler;
     }
 
@@ -69,35 +66,34 @@ public class SimpleCommandManager implements CommandManager {
         else command = name.substring(0,index);
         Command cmd = getCommand(command);
         String[] args = index==-1?new String[0]:name.substring(index+1).split(" ");
-        if(cmd != null) cmd.execute(sender,args);
+        if(cmd != null) cmd.execute(sender,command,args);
         else if(notFoundHandler != null) notFoundHandler.execute(sender,command,args);
-        else sender.sendMessage(DEFAULT_NOT_FOUND_MESSAGE.replace("%command%",command));
     }
 
     @Override
     public void registerCommand(ObjectOwner owner, Command command) {
         if(getCommand(command.getName()) != null) throw new IllegalArgumentException("There is already a commend with the name "+command.getName()+" registered.");
-        this.commands.add(command.toEntry(owner));
+        command.init(owner);
+        this.commands.add(command);
     }
 
     @Override
-    public void unregisterCommand(String command) {
-        Command cmd = getCommand(command);
-        if(cmd != null) unregisterCommand(cmd);
+    public void unregisterCommand(String name) {
+        Iterators.removeOne(this.commands, entry -> entry.getName().equalsIgnoreCase(name));
     }
 
     @Override
     public void unregisterCommand(Command command) {
-        Iterators.remove(this.commands, entry -> entry.getCommand().equals(command));
+        Iterators.removeOne(this.commands, entry -> entry.equals(command));
     }
 
     @Override
     public void unregisterCommand(ObjectOwner owner) {
-        Iterators.remove(this.commands, entry -> entry.getOwner().equals(owner));
+        Iterators.removeSilent(this.commands, entry -> entry.getOwner().equals(owner));
     }
 
     @Override
-    public void unregisterAll() {
+    public void unregisterCommands() {
         this.commands.clear();
     }
 }

@@ -19,19 +19,19 @@
 
 package net.prematic.libraries.command.command;
 
-import net.prematic.libraries.command.CommandEntry;
-import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
-public abstract class Command {
+public abstract class Command implements CommandExecutor{
 
     private final String name, description, permission;
     private final Collection<String> aliases;
+
     private String prefix;
+    private ObjectOwner owner;
 
     public Command(String name) {
         this(name,"none");
@@ -42,7 +42,7 @@ public abstract class Command {
     }
 
     public Command(String name, String description, String permission) {
-        this(name, description,permission,new HashSet<>());
+        this(name, description,permission,new LinkedHashSet<>());
     }
 
     public Command(String name, String description, String permission,String... aliases) {
@@ -54,7 +54,7 @@ public abstract class Command {
         this.description = description;
         this.permission = permission;
         this.aliases = aliases;
-        this.prefix =  "[PrematicLibraries] ";
+        this.prefix =  "[UNKNOWN]";
     }
 
     public String getName() {
@@ -73,6 +73,10 @@ public abstract class Command {
         return prefix;
     }
 
+    public ObjectOwner getOwner() {
+        return owner;
+    }
+
     public Collection<String> getAliases() {
         return this.aliases;
     }
@@ -85,10 +89,9 @@ public abstract class Command {
         this.prefix = prefix;
     }
 
-    public CommandEntry toEntry(ObjectOwner owner) {
-        return new CommandEntry<>(owner,this);
+    public void init(ObjectOwner owner){
+        if(owner == null) throw new IllegalArgumentException("This command is already initialised");
+        this.owner = owner;
     }
-
-    public abstract void execute(CommandSender sender, String[] args);
 
 }

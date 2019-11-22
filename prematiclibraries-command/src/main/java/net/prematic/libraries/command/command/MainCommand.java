@@ -19,9 +19,7 @@
 
 package net.prematic.libraries.command.command;
 
-import net.prematic.libraries.command.CommandEntry;
 import net.prematic.libraries.command.manager.CommandManager;
-import net.prematic.libraries.command.notfound.CommandNotFoundHandler;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
@@ -30,10 +28,8 @@ import java.util.*;
 
 public class MainCommand extends Command implements CommandManager {
 
-    public static String DEFAULT_NOT_FOUND_MESSAGE = "The object %object% was not found.";
-
-    private final List<CommandEntry> subCommands;
-    private CommandNotFoundHandler notFoundHandler;
+    private final List<Command> subCommands;
+    private CommandExecutor notFoundHandler;
 
     public MainCommand(String name) {
         this(name,"none");
@@ -58,28 +54,35 @@ public class MainCommand extends Command implements CommandManager {
 
     @Override
     public Command getCommand(String name) {
-        return Iterators.mapOne(this.subCommands, entry -> entry.getCommand().hasAlias(name),CommandEntry::getCommand);
+        return Iterators.findOne(this.subCommands, command -> command.getName().equalsIgnoreCase(name));
     }
 
     @Override
     public List<Command> getCommands() {
-        return Iterators.map(this.subCommands,CommandEntry::getCommand);
+        return subCommands;
     }
 
     @Override
-    public void setNotFoundHandler(CommandNotFoundHandler notFoundHandler) {
+    public void setNotFoundHandler(CommandExecutor notFoundHandler) {
         this.notFoundHandler = notFoundHandler;
     }
 
     @Override
-    public void dispatchCommand(CommandSender sender, String command) {
-        execute(sender,new String[]{command});
+    public void dispatchCommand(CommandSender sender, String name) {
+        name = name.trim();
+        int index = name.indexOf(" ");
+        String command;
+        if(index == -1) command = name;
+        else command = name.substring(0,index);
+        String[] args = index==-1?new String[0]:name.substring(index+1).split(" ");
+        execute(sender,command,args);
     }
 
     @Override
     public void registerCommand(ObjectOwner owner, Command command) {
         if(getCommand(command.getName()) != null) throw new IllegalArgumentException("A command with the name "+command.getName()+" is already registered as sub command.");
-        this.subCommands.add(command.toEntry(owner));
+        command.init(owner);
+        this.subCommands.add(command);
     }
 
     @Override
@@ -90,7 +93,7 @@ public class MainCommand extends Command implements CommandManager {
 
     @Override
     public void unregisterCommand(Command command) {
-        Iterators.removeSilent(this.subCommands, entry -> entry.getCommand().equals(command));
+        Iterators.removeOne(this.subCommands, entry -> entry.equals(command));
     }
 
     @Override
@@ -99,28 +102,29 @@ public class MainCommand extends Command implements CommandManager {
     }
 
     @Override
-    public void unregisterAll() {
-    this.subCommands.clear();
+    public void unregisterCommands() {
+        this.subCommands.clear();
     }
 
     public void registerSubCommand(ObjectOwner owner, Command command) {
         registerCommand(owner, command);
     }
 
-    public void setNotFoundCommand(CommandNotFoundHandler handler){
+    public void setNotFoundCommand(CommandExecutor handler){
         this.notFoundHandler = handler;
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(CommandSender sender,String cmd, String[] args) {
+        String name = null;
         if(args.length > 0) {
-            Command command = getCommand(args[0]);
+            name = args[0];
+            Command command = getCommand(name);
             if(command != null){
-                command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
+                command.execute(sender,name,Arrays.copyOfRange(args, 1, args.length));
                 return;
             }
         }
-        if(notFoundHandler != null) notFoundHandler.execute(sender,args.length>=1?args[0]:"Unknown",Arrays.copyOfRange(args, 1, args.length));
-        else sender.sendMessage(DEFAULT_NOT_FOUND_MESSAGE.replace("%command%",getName()).replace("%subCommand%",args.length>=1?args[0]:"Unknown"));
+        if(notFoundHandler != null) notFoundHandler.execute(sender,name,Arrays.copyOfRange(args, 1, args.length));
     }
 }
