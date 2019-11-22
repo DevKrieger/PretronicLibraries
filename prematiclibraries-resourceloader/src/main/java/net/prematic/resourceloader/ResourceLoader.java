@@ -43,6 +43,10 @@ public class ResourceLoader {
         info.getLocation().mkdirs();
     }
 
+    public boolean isLatestVersion(){
+        return getLatestVersion().equals(getCurrentVersion());
+    }
+
     public File download(){
         return download(null);
     }

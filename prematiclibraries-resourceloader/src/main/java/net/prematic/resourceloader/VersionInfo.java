@@ -56,7 +56,7 @@ public class VersionInfo {
         if(this == o) return true;
         if(!(o instanceof VersionInfo)) return false;
         VersionInfo info = (VersionInfo) o;
-        return build == info.build && name.equalsIgnoreCase(info.name);
+        return build == info.build;
     }
 
     @Override
