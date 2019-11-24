@@ -20,9 +20,14 @@
 package net.prematic.resourceloader;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 
 /**
  * The resource loader manages the installation of an application.
@@ -32,6 +37,16 @@ import java.nio.file.Files;
 public class ResourceLoader {
 
     private final static String VERSION_INFO_FILE_NAME = "version.txt";
+    private final static Method METHOD_ADD_URL;
+
+    static {
+        try {
+            METHOD_ADD_URL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            METHOD_ADD_URL.setAccessible(true);
+        } catch (NoSuchMethodException exception) {
+            throw new ExceptionInInitializerError(exception);
+        }
+    }
 
     private final ResourceInfo info;
 
@@ -41,6 +56,46 @@ public class ResourceLoader {
     public ResourceLoader(ResourceInfo info) {
         this.info = info;
         info.getLocation().mkdirs();
+    }
+
+    /**
+     * Gert the latest version of a resource
+     *
+     * @return the latest version
+     */
+    public VersionInfo getLatestVersion(){
+        if(latestVersion == null){
+            try {
+                InputStream input = openHttpConnection(info.getVersionUrl());
+                latestVersion = VersionInfo.parse(readFirstLine(input));
+                input.close();
+            } catch (IOException exception) {
+                throw new IllegalArgumentException("Could not check latest version",exception);
+            }
+        }
+        return latestVersion;
+    }
+
+    /**
+     * Get the current installed version.
+     *
+     * @return The installed version
+     */
+    public VersionInfo getCurrentVersion(){
+        if(currentVersion == null){
+            File file = new File(info.getLocation(),VERSION_INFO_FILE_NAME);
+            try {
+                Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+            } catch (IOException ignored) {}
+            if(file.exists()){
+                try {
+                    currentVersion =  VersionInfo.parse(readFirstLine(new FileInputStream(file)));
+                } catch (IOException exception) {
+                    throw new ResourceException("Could not read version info file",exception);
+                }
+            }else currentVersion = VersionInfo.UNKNOWN;
+        }
+        return currentVersion;
     }
 
     public boolean isLatestVersion(){
@@ -71,59 +126,57 @@ public class ResourceLoader {
         }
     }
 
-    public ResourceClassLoader load(){
-        return load(null);
+    public ClassLoader load(){
+        return load(null,null);
+    }
+
+    public ClassLoader load(ClassLoader parent){
+        return load(null,parent);
+    }
+
+    public ClassLoader load(VersionInfo version){
+        return load(version,null);
     }
 
     /**
      * Load a downloaded resource.
      *
      * @param version The version for loading.
+     * @param parent The parent class loader
      * @return THe class loader
      */
-    public ResourceClassLoader load(VersionInfo version){
+    public ClassLoader load(VersionInfo version,ClassLoader parent){
         if(version == null) version = getCurrentVersion();
         if(version == null) throw new ResourceException("No installed version found");
         File file = getLocalFile(version);
-        if(file.exists() && file.isFile()) return new ResourceClassLoader(file);
+        if(file.exists() && file.isFile()){
+            try {
+                if(parent == null) return new URLClassLoader(new URL[]{file.toURI().toURL()},parent);
+                else return new URLClassLoader(new URL[]{file.toURI().toURL()});
+            } catch (MalformedURLException ignored) {}
+        }
         throw new ResourceException(file.getAbsolutePath()+" is not a valid resource (jar) file");
     }
 
-    /**
-     * Gert the latest version of a resource
-     *
-     * @return the latest version
-     */
-    public VersionInfo getLatestVersion(){
-        if(latestVersion == null){
-            try {
-                InputStream input = openHttpConnection(info.getVersionUrl());
-                latestVersion = VersionInfo.parse(readFirstLine(input));
-                input.close();
-            } catch (IOException exception) {
-                throw new IllegalArgumentException("Could not check latest version",exception);
-            }
-        }
-        return latestVersion;
+    public void loadReflected(URLClassLoader loader){
+        loadReflected(loader,null);
     }
 
     /**
-     * Get the current installed version.
+     * Invoke a jar file into another url class loader
      *
-     * @return The installed version
+     * @param loader The class loader to add this jar file
+     * @param version the version for loading
      */
-    public VersionInfo getCurrentVersion(){
-        if(currentVersion == null){
-            File file = new File(info.getLocation(),VERSION_INFO_FILE_NAME);
-            if(file.exists()){
-                try {
-                    currentVersion =  VersionInfo.parse(readFirstLine(new FileInputStream(file)));
-                } catch (IOException exception) {
-                    throw new ResourceException("Could not read version info file",exception);
-                }
-            }else currentVersion = VersionInfo.UNKNOWN;
-        }
-        return currentVersion;
+    public void loadReflected(URLClassLoader loader, VersionInfo version){
+        if(version == null) version = getCurrentVersion();
+        if(version == null) throw new ResourceException("No installed version found");
+        File file = getLocalFile(version);
+        if(file.exists() && file.isFile()){
+            try {
+                METHOD_ADD_URL.invoke(loader, file.toURI().toURL());
+            } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {}
+        }else throw new ResourceException(file.getAbsolutePath()+" is not a valid resource (jar) file");
     }
 
     /**
@@ -143,10 +196,9 @@ public class ResourceLoader {
         }
     }
 
-
     private String prepareUrl(String url, VersionInfo version){
         if(version == null) version = getCurrentVersion();
-        if(version != null) return url.replace("${version}",version.getName()).replace("${build}",String.valueOf(version.getBuild()));
+        if(version != null) return url.replace("$version",version.getName()).replace("$build",String.valueOf(version.getBuild()));
         throw new ResourceException("Could not get latest resource version");
     }
 
