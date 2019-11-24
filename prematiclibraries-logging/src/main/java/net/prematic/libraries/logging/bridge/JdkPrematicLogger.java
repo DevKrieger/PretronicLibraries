@@ -55,7 +55,7 @@ public class JdkPrematicLogger implements PrematicLogger {
 
     @Override
     public LogLevel getLogLevel() {
-        return null;
+        return translateLevel(logger.getLevel());
     }
 
     @Override
