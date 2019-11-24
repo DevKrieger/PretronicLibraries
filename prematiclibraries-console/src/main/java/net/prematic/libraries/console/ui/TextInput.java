@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.04.19 08:14
+ * @since 06.04.19 17:04
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,10 @@
  * under the License.
  */
 
-package net.prematic.libraries.plugin.exception;
+package net.prematic.libraries.console.ui;
 
-public class NoDriverException extends RuntimeException{
+public class TextInput {
 
-    public NoDriverException() {
-    }
 
-    public NoDriverException(String message) {
-        super(message);
-    }
+
 }

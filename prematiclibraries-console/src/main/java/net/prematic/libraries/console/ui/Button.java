@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 25.10.19, 21:00
+ * @since 17.06.19 19:15
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,7 @@
  * under the License.
  */
 
-package net.prematic.resourceloader;
+package net.prematic.libraries.console.ui;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
-/**
- * This is a simple class loader based on the java url class loader.
- */
-public class ResourceClassLoader extends URLClassLoader {
-
-    public ResourceClassLoader(File resource) {
-        super(new URL[]{toUrl(resource)});
-    }
-
-    private static URL toUrl(File resource){
-        try {
-            return resource.toURI().toURL();
-        } catch (MalformedURLException exception) {
-            throw new IllegalArgumentException("Could not create url from file ("+exception.getMessage()+")");
-        }
-    }
+public class Button {
 }

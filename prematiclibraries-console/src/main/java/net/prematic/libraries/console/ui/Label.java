@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 03.04.19 11:33
+ * @since 17.06.19 19:21
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@
  * under the License.
  */
 
-package net.prematic.libraries.command.notfound;
+package net.prematic.libraries.console.ui;
 
-import net.prematic.libraries.command.sender.CommandSender;
+public class Label {
 
-public interface CommandNotFoundHandler {
-
-    void execute(CommandSender sender, String command, String[] args);
+    private String text;
 
 }
