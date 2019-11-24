@@ -26,24 +26,27 @@ import net.prematic.libraries.plugin.Plugin;
 import net.prematic.libraries.plugin.RuntimeEnvironment;
 import net.prematic.libraries.plugin.description.DefaultPluginDescription;
 import net.prematic.libraries.plugin.description.PluginDescription;
+import net.prematic.libraries.plugin.description.dependency.Dependency;
 import net.prematic.libraries.plugin.exception.InvalidPluginDescriptionException;
+import net.prematic.libraries.plugin.exception.PluginLoadException;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
 import net.prematic.libraries.plugin.loader.DefaultPluginLoader;
 import net.prematic.libraries.plugin.loader.PluginLoader;
+import net.prematic.libraries.plugin.loader.classloader.URLPluginClassLoader;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 import net.prematic.libraries.utility.io.archive.ZipArchive;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public class DefaultPluginManager implements PluginManager{
+public final class DefaultPluginManager implements PluginManager{
 
     private final PrematicLogger logger;
     private final RuntimeEnvironment environment;
+    private final String descriptionName;
 
     private final Map<String, BiConsumer<Plugin,LifecycleState>> stateListeners;
 
@@ -55,9 +58,14 @@ public class DefaultPluginManager implements PluginManager{
         this(PrematicLoggerFactory.getLogger(PluginManager.class),environment);
     }
 
-    public DefaultPluginManager(PrematicLogger logger, RuntimeEnvironment environment) {
+    public DefaultPluginManager(PrematicLogger logger, RuntimeEnvironment environment){
+        this(logger,environment,"manifest.json");
+    }
+
+    public DefaultPluginManager(PrematicLogger logger, RuntimeEnvironment environment,String descriptionName) {
         this.logger = logger;
         this.environment = environment;
+        this.descriptionName = descriptionName;
 
         this.stateListeners = new LinkedHashMap<>();
         this.loaders = new ArrayList<>();
@@ -152,23 +160,19 @@ public class DefaultPluginManager implements PluginManager{
 
     @Override
     public PluginLoader createPluginLoader(File location) {
-        return createPluginLoader(location,null);
+        return createPluginLoader(location,loadPluginDescription(location));
     }
 
     @Override
-    public PluginLoader createPluginLoader(PluginDescription description) {
-        return createPluginLoader(description.getLocation(),description);
-    }
-
-    private PluginLoader createPluginLoader(File location, PluginDescription description) {
+    public PluginLoader createPluginLoader(File location,PluginDescription description) {
         PluginLoader loader = Iterators.findOne(this.loaders, loader1 -> loader1.getLocation().equals(location));
         if(loader != null) return loader;
-        loader = new DefaultPluginLoader(this,environment,location,description);
+        loader = new DefaultPluginLoader(this,environment,null//@Todo add prefixed logger
+                ,URLPluginClassLoader.of(this,location),location,description,true);
         if(logger.isDebugging()) logger.debug("Created plugin loader for {} v{}",loader.getDescription().getName(),loader.getDescription().getVersion().getName());
         this.loaders.add(loader);
         return loader;
     }
-
 
     @Override
     public PluginDescription detectPluginDescription(File location) {
@@ -225,7 +229,12 @@ public class DefaultPluginManager implements PluginManager{
         List<PluginLoader> loaders = findLoaders(directory);
         List<Plugin> plugins = new ArrayList<>();
 
-        //@Todo sort by dependencies
+        loaders.sort((o1, o2) -> {
+            for (Dependency dependency : o1.getDescription().getDependencies()) {
+                if(dependency.isDepended(o2.getDescription())) return 1;
+            }
+            return 0;
+        });
 
         loaders.forEach(loader -> plugins.add(loader.construct()));
         loaders.forEach(PluginLoader::initialize);
@@ -274,29 +283,23 @@ public class DefaultPluginManager implements PluginManager{
     private PluginDescription loadPluginDescription(File jarFile){
         ZipArchive archive = new ZipArchive(jarFile);
 
-        InputStream input = archive.getStream(PluginDescription.getBasePath()+".yml");
         try{
-            if(input == null){
-                input = archive.getStream(PluginDescription.getBasePath()+".yml");
-                if(input == null) throw new InvalidPluginDescriptionException("No plugin description found.");
-                else return new DefaultPluginDescription(jarFile, DocumentFileType.YAML.getReader().read(input));
-            }else return new DefaultPluginDescription(jarFile,DocumentFileType.JSON.getReader().read(input));
-        }finally {
-            if(input != null) {
-                try {input.close();
-                } catch (IOException ignored) {}
-            }
+            InputStream input = archive.getStream(descriptionName);
+            if(input == null) throw new InvalidPluginDescriptionException("No plugin description found for "+jarFile.getAbsolutePath());
+            return DefaultPluginDescription.create(this,DocumentFileType.JSON.getReader().read(input));
+        }catch (Exception exception){
+            throw new PluginLoadException("Could not load plugin description for "+jarFile.getAbsolutePath(),exception);
         }
     }
 
-    private class ServiceEntry {
+    private static class ServiceEntry {
 
         private final ObjectOwner owner;
         private final Class<?> serviceClass;
         private final Object service;
         private final byte priority;
 
-        public ServiceEntry(ObjectOwner owner, Class<?> serviceClass, Object service,byte priority) {
+        private ServiceEntry(ObjectOwner owner, Class<?> serviceClass, Object service,byte priority) {
             this.owner = owner;
             this.serviceClass = serviceClass;
             this.service = service;

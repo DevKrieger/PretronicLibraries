@@ -54,10 +54,10 @@
         <module>prematiclibraries-message</module>
         <module>prematiclibraries-dependency</module>
         <module>prematiclibraries-console</module>
-        <module>prematiclibraries-plugin-test</module>
         <module>prematiclibraries-jarsignature</module>
         <module>prematiclibraries-document</module>
         <module>prematiclibraries-copy</module>
+        <module>prematiclibraries-resourceloader</module>
     </modules>
 
 </project>

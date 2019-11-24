@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.plugin;
 
+import net.prematic.libraries.logging.PrematicLogger;
 import net.prematic.libraries.plugin.description.PluginDescription;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
@@ -32,6 +33,7 @@ public abstract class Plugin<R> implements ObjectOwner {
 
     private PluginDescription description;
     private PluginLoader loader;
+    private PrematicLogger logger;
     private R runtime;
 
     @Override
@@ -47,6 +49,10 @@ public abstract class Plugin<R> implements ObjectOwner {
         return this.loader;
     }
 
+    public PrematicLogger getLogger(){
+        return logger;
+    }
+
     public R getRuntime(){
         return this.runtime;
     }
@@ -55,7 +61,7 @@ public abstract class Plugin<R> implements ObjectOwner {
         return new File(loader.getLocation().getParentFile(),getName().toLowerCase()+"/");
     }
 
-    public void initialize(PluginDescription description, PluginLoader loader,R runtime){
+    public void initialize(PluginDescription description, PluginLoader loader,PrematicLogger logger,R runtime){
         if(this.loader != null) throw new IllegalArgumentException("This plugin instance is already initialized.");
 
         //Check runtime permission
@@ -64,6 +70,7 @@ public abstract class Plugin<R> implements ObjectOwner {
 
         this.description = description;
         this.loader = loader;
+        this.logger = logger;
         this.runtime = runtime;
     }
 

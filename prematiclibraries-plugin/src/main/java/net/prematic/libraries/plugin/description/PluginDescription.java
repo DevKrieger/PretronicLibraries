@@ -1,10 +1,8 @@
-package net.prematic.libraries.plugin.description;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 19.03.19 11:00
+ * @since 22.11.19, 21:23
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +17,16 @@ package net.prematic.libraries.plugin.description;
  * under the License.
  */
 
-import net.prematic.libraries.document.Document;
+package net.prematic.libraries.plugin.description;
 
-import java.io.File;
+import net.prematic.libraries.document.Document;
+import net.prematic.libraries.plugin.description.dependency.Dependency;
+import net.prematic.libraries.plugin.description.mainclass.MainClass;
+
 import java.util.Collection;
 import java.util.UUID;
 
-public interface PluginDescription extends Document {
-
-    Registry REGISTRY = new Registry();
-
-    File getLocation();
+public interface PluginDescription{
 
     String getName();
 
@@ -45,28 +42,12 @@ public interface PluginDescription extends Document {
 
     PluginVersion getVersion();
 
-    PluginMainClass getMainClass();
+    MainClass getMain();
 
-    Collection<String> getDependencies();
+    Collection<Dependency> getDependencies();
 
-    Collection<String> getSoftDependencies();
-
-    Collection<String> getRequiredServices();
-
-    Collection<String> getProvidedServices();
+    Collection<String> getProviders();
 
 
-    static String getBasePath(){
-        return REGISTRY.basePath;
-    }
-
-    static void setBasePath(String path){
-        REGISTRY.basePath = path;
-    }
-
-    class Registry {
-
-        private String basePath = "plugin";
-
-    }
+    Document getProperties();
 }

@@ -19,5 +19,17 @@
 
 package net.prematic.libraries.plugin.exception;
 
-public class MissingDependencyException {
+public class MissingDependencyException extends PluginLoadException{
+
+    public MissingDependencyException(String message) {
+        super(message);
+    }
+
+    public MissingDependencyException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public MissingDependencyException(Throwable cause) {
+        super(cause);
+    }
 }

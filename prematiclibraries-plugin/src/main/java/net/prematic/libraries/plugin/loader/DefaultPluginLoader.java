@@ -20,7 +20,7 @@
 package net.prematic.libraries.plugin.loader;
 
 import net.prematic.libraries.document.type.DocumentFileType;
-import net.prematic.libraries.logging.level.DebugLevel;
+import net.prematic.libraries.logging.PrematicLogger;
 import net.prematic.libraries.plugin.Plugin;
 import net.prematic.libraries.plugin.RuntimeEnvironment;
 import net.prematic.libraries.plugin.description.DefaultPluginDescription;
@@ -29,26 +29,27 @@ import net.prematic.libraries.plugin.exception.InvalidPluginDescriptionException
 import net.prematic.libraries.plugin.exception.PluginLoadException;
 import net.prematic.libraries.plugin.lifecycle.Lifecycle;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
+import net.prematic.libraries.plugin.loader.classloader.PluginClassLoader;
 import net.prematic.libraries.plugin.manager.PluginManager;
-import net.prematic.libraries.utility.Iterators;
-import net.prematic.libraries.utility.io.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.*;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultPluginLoader extends URLClassLoader implements PluginLoader {
+public class DefaultPluginLoader implements PluginLoader {
 
     private final PluginManager pluginManager;
     private final RuntimeEnvironment environment;
+    private final PrematicLogger logger;
+    private final PluginClassLoader classLoader;
+    private final String descriptionName;
 
     private final File location;
     private final PluginDescription description;
+    private final boolean lifecycleLogging;
 
     private final Collection<Class<?>> loadedClasses;
     private final LifecycleState defaultState;
@@ -56,18 +57,47 @@ public class DefaultPluginLoader extends URLClassLoader implements PluginLoader 
     private Plugin instance;
     private boolean enabled;
 
-    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, File location){
-        this(pluginManager,environment,location,null);
+    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, PrematicLogger logger
+            , PluginClassLoader classLoader, String descriptionName, File location,boolean lifecycleLogging) {
+        this(pluginManager,environment,logger,classLoader,descriptionName,location,null,lifecycleLogging);
+    }
+
+    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, PrematicLogger logger
+            , PluginClassLoader classLoader,  File location, PluginDescription description,boolean lifecycleLogging) {
+        this(pluginManager,environment,logger,classLoader,null,location,description,lifecycleLogging);
+    }
+
+    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, PrematicLogger logger
+            , PluginClassLoader classLoader, String descriptionName, File location, PluginDescription description,boolean lifecycleLogging) {
+        this.pluginManager = pluginManager;
+        this.environment = environment;
+        this.logger = logger;
+        this.classLoader = classLoader;
+        this.descriptionName = descriptionName;
+        this.location = location;
+        this.lifecycleLogging = lifecycleLogging;
+
+        this.description = description!=null?description:loadDescription();;
+
+        this.loadedClasses = ConcurrentHashMap.newKeySet();
+        this.defaultState = new LifecycleState<>(this.description,this,this.environment);
+    }
+
+    /*
+    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment,String descriptionName, File location){
+        this(pluginManager,environment,descriptionName,location,null,null);
     }
 
     public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, File location, PluginDescription description){
-        this(pluginManager,environment,location,description,null);
+        this(pluginManager,environment,null,location,description,null);
     }
 
-    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, File location, PluginDescription description, LifecycleState defaultState) {
+    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment,String descriptionName, File location
+            , PluginDescription description, LifecycleState defaultState) {
         super(new URL[] {FileUtil.fileToUrl(location)});
         this.pluginManager = pluginManager;
         this.environment = environment;
+        this.descriptionName = descriptionName;
         this.location = location;
 
         this.description = description!=null?description:loadDescription();
@@ -75,6 +105,9 @@ public class DefaultPluginLoader extends URLClassLoader implements PluginLoader 
 
         this.loadedClasses = ConcurrentHashMap.newKeySet();
     }
+     */
+
+
 
     @Override
     public File getLocation() {
@@ -92,13 +125,8 @@ public class DefaultPluginLoader extends URLClassLoader implements PluginLoader 
     }
 
     @Override
-    public Collection<Class<?>> getLoadedClasses() {
-        return this.loadedClasses;
-    }
-
-    @Override
-    public Class<?> getLoadedClass(String name) {
-        return Iterators.findOne(this.loadedClasses, clazz -> clazz.getName().equals(name));
+    public PluginClassLoader getClassLoader() {
+        return classLoader;
     }
 
     @Override
@@ -165,7 +193,7 @@ public class DefaultPluginLoader extends URLClassLoader implements PluginLoader 
             Class<? extends Plugin> mainClass = loadMainClass();
             this.instance = mainClass.getDeclaredConstructor().newInstance();
             executeLifeCycleState(LifecycleState.CONSTRUCTION);
-            if(pluginManager.getLogger().isDebugging()) pluginManager.getLogger().debug("Created instance for {} v{}",description.getName(),description.getVersion().getName());
+            if(lifecycleLogging) if(pluginManager.getLogger().isDebugging()) pluginManager.getLogger().debug("Created instance for {} v{}",description.getName(),description.getVersion().getName());
             return this.instance;
         }catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException exception){
             throw new PluginLoadException("Could not create plugin instance for plugin "+description.getName()+" ("+exception.getMessage()+")",exception);
@@ -179,83 +207,56 @@ public class DefaultPluginLoader extends URLClassLoader implements PluginLoader 
         Type type = pluginClass.getGenericSuperclass();
         if(!(type instanceof Class)) {
             ParameterizedType parameterized = (ParameterizedType)type;
-            if(!this.environment.getInstance().getClass().isAssignableFrom((Class<?>) parameterized.getActualTypeArguments()[0])){
-                throw new IllegalArgumentException("Invalid runtime type at plugin class ("+parameterized.getActualTypeArguments()[0]+" is not assignable by "+this.instance.getClass()+").");
+            if(!(((Class<?>) parameterized.getActualTypeArguments()[0]).isAssignableFrom(this.environment.getInstance().getClass()))){
+                throw new IllegalArgumentException("Invalid runtime type at plugin class ("+parameterized.getActualTypeArguments()[0]+" is not assignable by "+this.environment.getInstance().getClass()+").");
             }
         }
-        this.instance.initialize(this.description,this,this.environment.getInstance());
+        this.instance.initialize(this.description,this,logger,this.environment.getInstance());
         executeLifeCycleState(LifecycleState.INITIALISATION);
     }
 
     @Override
     public void load() {
         executeLifeCycleState(LifecycleState.LOAD);
-        pluginManager.getLogger().info("Loaded plugin {} v{}",description.getName(),description.getVersion().getName());
+        if(lifecycleLogging) pluginManager.getLogger().info("Loaded plugin {} v{}",description.getName(),description.getVersion().getName());
     }
 
     @Override
     public void bootstrap() {
         enabled = true;
         executeLifeCycleState(LifecycleState.BOOTSTRAP);
-        pluginManager.getLogger().info("Started plugin {} v{} by {}",description.getName(),description.getVersion().getName(),description.getAuthor());
+        if(lifecycleLogging)  pluginManager.getLogger().info("Started plugin {} v{} by {}",description.getName(),description.getVersion().getName(),description.getAuthor());
     }
 
     @Override
     public void shutdown() {
         enabled = false;
         executeLifeCycleState(LifecycleState.SHUTDOWN);
-        pluginManager.getLogger().info("Stopped plugin {} v{} by {}",description.getName(),description.getVersion().getName(),description.getAuthor());
+        if(lifecycleLogging) pluginManager.getLogger().info("Stopped plugin {} v{} by {}",description.getName(),description.getVersion().getName(),description.getAuthor());
     }
 
     @Override
     public void unload() {
         executeLifeCycleState(LifecycleState.UNLOAD);
         instance = null;
-        pluginManager.getLogger().info("Unloaded plugin {} v{}",description.getName(),description.getVersion().getName());
+        if(lifecycleLogging) pluginManager.getLogger().info("Unloaded plugin {} v{}",description.getName(),description.getVersion().getName());
     }
 
-
     private Class<? extends Plugin> loadMainClass() throws ClassNotFoundException{
-        String className = description.getMainClass().getMainClass(this.environment.getName());
+        String className = description.getMain().getMainClass(this.environment.getName());
         if(className == null) throw new PluginLoadException("No main class for plugin "+description.getName()+" v"+description.getVersion().getName()+" found.");
-        Class<?> clazz = loadClass(className);
+        Class<?> clazz = classLoader.loadClass(className);
         if(clazz != null && Plugin.class.isAssignableFrom(clazz)) return (Class<Plugin>) clazz;
         throw new PluginLoadException("No main class for plugin "+description.getName()+" v"+description.getVersion().getName()+" found.");
     }
 
-    @Override
-    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        Class result = getLoadedClass(name);
-        if(result == null){
-            if(this.pluginManager != null){
-                for(PluginLoader loader : this.pluginManager.getLoaders()){
-                    result = loader.getLoadedClass(name);
-                    if(result != null) break;
-                }
-            }
-            if(result == null){
-                result = super.loadClass(name,resolve);
-                this.loadedClasses.add(result);
-                if(this.pluginManager.getLogger().canDebug(DebugLevel.HEIGHT)) this.pluginManager.getLogger().debug(DebugLevel.HEIGHT,"Loaded class {}",name);
-            }
-        }
-        if(result == null) throw new ClassNotFoundException(name);
-        return result;
-    }
-
-    public PluginDescription loadDescription(){
-        InputStream resourceStream = getResourceAsStream(PluginDescription.getBasePath()+".json");
+    public PluginDescription loadDescription(){//Paths  json / yml
+        InputStream stream = classLoader.getResourceAsStream(descriptionName);
         try{
-            if(resourceStream == null){
-                resourceStream = getResourceAsStream(PluginDescription.getBasePath()+".yml");
-                if(resourceStream == null) throw new InvalidPluginDescriptionException("No plugin description found.");
-                else return new DefaultPluginDescription(location,DocumentFileType.YAML.getReader().read(resourceStream));
-            }else return new DefaultPluginDescription(location,DocumentFileType.JSON.getReader().read(resourceStream));
+            if(stream == null) throw new InvalidPluginDescriptionException("No plugin description found");
+            return DefaultPluginDescription.create(pluginManager,DocumentFileType.JSON.getReader().read(stream));
         }finally {
-            if(resourceStream != null) {
-                try {resourceStream.close();
-                } catch (IOException ignored) {}
-            }
+            try { stream.close(); } catch (IOException ignored) {}
         }
     }
 }

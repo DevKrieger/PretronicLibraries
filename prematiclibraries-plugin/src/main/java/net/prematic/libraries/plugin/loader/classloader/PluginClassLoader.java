@@ -1,10 +1,8 @@
-package net.prematic.libraries.plugin.description;
-
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 19.03.19 11:00
+ * @since 24.11.19, 18:45
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +17,30 @@ package net.prematic.libraries.plugin.description;
  * under the License.
  */
 
-public class PluginVersion {
+package net.prematic.libraries.plugin.loader.classloader;
 
-    private final String name;
-    private final int build;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Enumeration;
 
-    public PluginVersion(String name, int build) {
-        this.name = name;
-        this.build = build;
-    }
+public interface PluginClassLoader {
 
-    public String getName() {
-        return name;
-    }
+    Collection<Class<?>> getLoadedClasses();
 
-    public int getBuild() {
-        return build;
-    }
+    Class<?> getLoadedClass(String name) throws ClassNotFoundException;
+
+    boolean isClassLoaded(String name);
+
+    Class<?> loadClass(String name) throws ClassNotFoundException;
+
+    URL getResource(String name);
+
+    InputStream getResourceAsStream(String name);
+
+    Enumeration<URL> getResources(String name) throws IOException;
+
+    ClassLoader asJVMLoader();
 
 }

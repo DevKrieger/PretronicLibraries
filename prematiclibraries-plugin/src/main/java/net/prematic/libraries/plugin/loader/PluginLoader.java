@@ -22,10 +22,10 @@ package net.prematic.libraries.plugin.loader;
 import net.prematic.libraries.plugin.Plugin;
 import net.prematic.libraries.plugin.description.PluginDescription;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
+import net.prematic.libraries.plugin.loader.classloader.PluginClassLoader;
 import net.prematic.libraries.plugin.manager.PluginManager;
 
 import java.io.File;
-import java.util.Collection;
 
 public interface PluginLoader {
 
@@ -35,10 +35,7 @@ public interface PluginLoader {
 
     PluginDescription getDescription();
 
-
-    Collection<Class<?>> getLoadedClasses();
-
-    Class<?> getLoadedClass(String name);
+    PluginClassLoader getClassLoader();
 
 
     boolean isInstanceAvailable();

@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.08.19, 19:15
+ * @since 23.11.19, 13:21
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,45 +20,54 @@
 package net.prematic.libraries.plugin.description;
 
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.WrappedDocument;
-import net.prematic.libraries.utility.reflect.TypeReference;
+import net.prematic.libraries.document.DocumentContext;
+import net.prematic.libraries.plugin.description.dependency.Dependency;
+import net.prematic.libraries.plugin.description.dependency.DependencyAdapter;
+import net.prematic.libraries.plugin.description.dependency.PluginDependency;
+import net.prematic.libraries.plugin.description.mainclass.MainClass;
+import net.prematic.libraries.plugin.description.mainclass.MainClassAdapter;
+import net.prematic.libraries.plugin.manager.PluginManager;
 
-import java.io.File;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
-public class DefaultPluginDescription extends WrappedDocument implements PluginDescription {
+public class DefaultPluginDescription implements PluginDescription{
 
-    private final File location;
-    private final String name, category, description, author, website;
-    private final UUID id;
-    private final PluginVersion version;
-    private final PluginMainClass mainClass;
+    public static final Map<String, BiFunction<PluginManager,Document, Dependency>> DEPENDENCY_FACTORIES = new LinkedHashMap<>();
 
-    private final Collection<String> dependencies, softDependencies;
-
-    public DefaultPluginDescription(File location, Document original) {
-        super(original);
-        this.location = location;
-
-        this.name = original.getString("name");
-        this.category = original.getString("category","");
-        this.description = original.getString("description","");
-        this.author = original.getString("author","");
-        this.website = original.getString("website","");
-        this.id = original.getObject("id",UUID.class);
-        this.mainClass = PluginMainClass.readFromDocumentEntry(original.getEntry("mainClass"));
-
-        PluginVersion version = original.getObject("version",PluginVersion.class);
-        this.version = version!=null?version:new PluginVersion("Unknown",0,0);
-
-        this.dependencies = original.getObject("dependencies",new TypeReference<Collection<String>>(){});
-        this.softDependencies = original.getObject("softDependencies",new TypeReference<Collection<String>>(){});
+    static {
+        DEPENDENCY_FACTORIES.put("plugin",new PluginDependency.Factory());
     }
 
-    @Override
-    public File getLocation() {
-        return this.location;
+    private final String name;
+    private final String category;
+    private final String description;
+    private final String author;
+    private final String website;
+    private final UUID id;
+    private final PluginVersion version;
+    private final MainClass main;
+    private final Document properties;
+    private final Collection<Dependency> dependencies;
+    private final Collection<String> providers;
+
+    public DefaultPluginDescription(String name, String category, String description, String author
+            , String website, UUID id, PluginVersion version, MainClass main, Document properties
+            , Collection<Dependency> dependencies, Collection<String> providers) {
+        this.name = name;
+        this.category = category;
+        this.description = description;
+        this.author = author;
+        this.website = website;
+        this.id = id;
+        this.version = version;
+        this.main = main;
+        this.properties = properties;
+        this.dependencies = dependencies;
+        this.providers = providers;
     }
 
     @Override
@@ -97,27 +106,30 @@ public class DefaultPluginDescription extends WrappedDocument implements PluginD
     }
 
     @Override
-    public PluginMainClass getMainClass() {
-        return mainClass;
+    public MainClass getMain() {
+        return main;
     }
 
     @Override
-    public Collection<String> getDependencies() {
+    public Collection<Dependency> getDependencies() {
         return dependencies;
     }
 
     @Override
-    public Collection<String> getSoftDependencies() {
-        return softDependencies;
+    public Collection<String> getProviders() {
+        return providers;
     }
 
     @Override
-    public Collection<String> getRequiredServices() {
-        return null;
+    public Document getProperties() {
+        return properties;
     }
 
-    @Override
-    public Collection<String> getProvidedServices() {
-        return null;
+    public static PluginDescription create(PluginManager manager, Document document){
+        DocumentContext context = Document.factory().newContext();
+        context.registerAdapter(Dependency.class,new DependencyAdapter(manager,DEPENDENCY_FACTORIES));
+        context.registerAdapter(MainClass.class,new MainClassAdapter());
+        document.setContext(context);
+        return document.getAsObject(DefaultPluginDescription.class);
     }
 }

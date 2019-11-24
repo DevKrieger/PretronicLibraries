@@ -55,7 +55,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         commands = new ArrayList<>();
     }
 
-    public MainObjectCommand(String name, String description, String permission, Collection aliases) {
+    public MainObjectCommand(String name, String description, String permission, Collection<String> aliases) {
         super(name, description, permission, aliases);
         commands = new ArrayList<>();
     }

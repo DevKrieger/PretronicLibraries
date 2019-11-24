@@ -49,7 +49,7 @@ public interface PluginManager extends ServiceRegistry,ShutdownAble {
 
     PluginLoader createPluginLoader(File location);
 
-    PluginLoader createPluginLoader(PluginDescription description);
+    PluginLoader createPluginLoader(File location, PluginDescription description);
 
 
     PluginDescription detectPluginDescription(File location);
