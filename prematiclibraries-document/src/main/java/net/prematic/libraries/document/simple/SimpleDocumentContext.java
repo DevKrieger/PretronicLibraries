@@ -72,6 +72,7 @@ public class SimpleDocumentContext implements DocumentContext {
         for(DocumentAdapterFactory factory : factories){
             adapter = factory.create(reference);
             if(adapter != null){
+                if(adapter instanceof DocumentAdapterInitializeAble) ((DocumentAdapterInitializeAble) adapter).initialize(this);
                 adapters.put(reference.getRawType(),adapter);
                 return adapter;
             }

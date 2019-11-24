@@ -86,6 +86,16 @@ public class EmptyDocument implements Document{
     }
 
     @Override
+    public List<DocumentEntry> getEntries() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void setEntries(List<DocumentEntry> entries) {
+        //Unused in empty set
+    }
+
+    @Override
     public DocumentEntry getEntry(String key) {
         return null;
     }

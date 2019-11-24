@@ -34,9 +34,9 @@ import java.util.stream.Stream;
 
 public class SimpleDocument implements Document {
 
-    private final String key;
-    private List<DocumentEntry> entries;
-    private DocumentContext context;
+    private transient final String key;
+    private transient List<DocumentEntry> entries;
+    private transient DocumentContext context;
 
     public SimpleDocument(String key) {
         this.key = key;
@@ -92,6 +92,16 @@ public class SimpleDocument implements Document {
     @Override
     public <K, V> Map<K, V> getAsMap(Class<K> keyClass, Class<V> valueClass) {
         return getContext().deserialize(this,new TypeReference<Map<K,V>>(){});
+    }
+
+    @Override
+    public List<DocumentEntry> getEntries() {
+        return entries;
+    }
+
+    @Override
+    public void setEntries(List<DocumentEntry> entries) {
+        this.entries = entries;
     }
 
     @Override

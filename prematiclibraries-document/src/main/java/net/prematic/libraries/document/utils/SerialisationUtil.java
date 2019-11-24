@@ -41,13 +41,13 @@ public class SerialisationUtil {
 
     public static DocumentEntry serialize(DocumentContext context,String key, Object value){
         if(value == null || Primitives.isPrimitive(value)) return DocumentRegistry.getFactory().newPrimitiveEntry(key,value);
+        else if(DocumentEntry.class.isAssignableFrom(value.getClass())) return (DocumentEntry) value;
         else if(value.getClass().isArray()) return serializeArray(context,key, value);
         return serializeObject(context,key, value);
     }
 
     public static DocumentEntry serializeArray(DocumentContext context,String key, Object object){
         ArrayEntry array = DocumentRegistry.getFactory().newArrayEntry(key);
-
         for(int i = 0; i< Array.getLength(object); i++) array.entries().add(serialize(context,"array-index-"+i,Array.get(object,i)));
         return array;
     }

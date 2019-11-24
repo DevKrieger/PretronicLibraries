@@ -92,6 +92,16 @@ public class WrappedDocument implements Document{
     }
 
     @Override
+    public List<DocumentEntry> getEntries() {
+        return original.getEntries();
+    }
+
+    @Override
+    public void setEntries(List<DocumentEntry> entries) {
+        original.setEntries(entries);
+    }
+
+    @Override
     public DocumentEntry getEntry(String key) {
         return original.getEntry(key);
     }

@@ -38,8 +38,6 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
 
     void setContext(DocumentContext context);
 
-    //Current entry
-
     <T> T getAsObject(Class<T> classOf);
 
     <T> T getAsObject(Type type);
@@ -59,6 +57,10 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
 
 
     //Sub entries
+
+    List<DocumentEntry> getEntries();
+
+    void setEntries(List<DocumentEntry> entries);
 
     DocumentEntry getEntry(String key);
 

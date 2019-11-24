@@ -101,7 +101,7 @@ public class JsonDocumentWriter implements DocumentWriter {
                 output.write(',');
                 if(multiLine) writeNewLine(output, indent);
             }
-            if(key) writeKey(output,entry.getKey());
+            if(key) writeKey(output,entry.getKey(),indent >= 0);
             if(entry.isPrimitive()) writePrimitiveValue(output, entry.toPrimitive());
             else if(entry.isArray()) indent = writeArrayValue(output, entry.toArray(),indent);
             else if(entry.isObject()) indent = writeObjectValue(output, entry.toDocument(),indent);
@@ -109,11 +109,12 @@ public class JsonDocumentWriter implements DocumentWriter {
         return indent;
     }
 
-    private void writeKey(Writer output, String key) throws IOException {
+    private void writeKey(Writer output, String key, boolean pretty) throws IOException {
         if(key != null){
             output.write('"');
             output.write(key);
-            output.write("\": ");
+            output.write("\":");
+            if(pretty) output.write(' ');
         }
     }
 

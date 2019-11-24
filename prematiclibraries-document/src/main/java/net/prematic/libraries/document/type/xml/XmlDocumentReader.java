@@ -61,14 +61,19 @@ public class XmlDocumentReader implements DocumentReader {
         while(parser.hasNext()){
             char input = parser.nextChar();
             if(!isIgnoredChar(input)){
-                if(input == LESSER_THAN && parser.hasNext() && parser.nextChar() == QUESTION_MARK){
+                if(input == LESSER_THAN && parser.hasNext()){
+                    char next = parser.nextChar();
+                    if(next == QUESTION_MARK || next== '!'){
+                        parser.skipUntil(LESSER_THAN);
+                        parser.skipChar();
+                    }
+                }else {
+                    parser.previousChar();
+                    String key = readKey(parser);
                     parser.skipUntil(LESSER_THAN);
                     parser.skipChar();
-                }else parser.previousChar();
-                String key = readKey(parser);
-                parser.skipUntil(LESSER_THAN);
-                parser.skipChar();
-                return readObject(key,parser);
+                    return readObject(key,parser);
+                }
             }
         }
         parser.throwException(ERROR_INVALID_CHARACTER);
@@ -97,9 +102,14 @@ public class XmlDocumentReader implements DocumentReader {
         while (parser.hasNext() && (input = parser.nextChar()) != SLASH) {
             if(!isIgnoredChar(input)){
                 parser.previousChar();
-                String entryKey = readKey(parser);
-                entries.add(readNext(entryKey, parser));
-
+                if(input == '!'){
+                    parser.skipUntil('-');
+                    parser.skipChars(3);
+                    //@Todo fix bastelei
+                }else{
+                    String entryKey = readKey(parser);
+                    entries.add(readNext(entryKey, parser));
+                }
             }
         }
         parser.skipUntil(LESSER_THAN);
@@ -150,3 +160,4 @@ public class XmlDocumentReader implements DocumentReader {
         return   c == SPACE || c == BREAK || c == BACK || c == TAB;
     }
 }
+
