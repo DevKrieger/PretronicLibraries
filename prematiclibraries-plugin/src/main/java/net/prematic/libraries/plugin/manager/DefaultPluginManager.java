@@ -34,6 +34,7 @@ import net.prematic.libraries.plugin.loader.DefaultPluginLoader;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.plugin.loader.classloader.URLPluginClassLoader;
 import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.annonations.Internal;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 import net.prematic.libraries.utility.io.archive.ZipArchive;
 
@@ -204,6 +205,7 @@ public final class DefaultPluginManager implements PluginManager{
         this.stateListeners.put(state,listener);
     }
 
+    @Internal
     @Override
     public void executeLifecycleStateListener(String state, LifecycleState stateEvent, Plugin plugin) {
         if(state.equals(LifecycleState.CONSTRUCTION)) this.plugins.add(plugin);
@@ -211,17 +213,6 @@ public final class DefaultPluginManager implements PluginManager{
 
         BiConsumer<Plugin,LifecycleState> listener = this.stateListeners.get(state);
         if(listener != null) listener.accept(plugin,stateEvent);
-    }
-
-    @Override
-    public void executeLifecycleStateListener(String state, LifecycleState stateEvent, Collection<Plugin> plugins) {
-        BiConsumer<Plugin,LifecycleState> listener = this.stateListeners.get(state);
-        plugins.forEach(plugin -> {
-            if(state.equals(LifecycleState.CONSTRUCTION)) DefaultPluginManager.this.plugins.add(plugin);
-            else if(state.equals(LifecycleState.UNLOAD)) DefaultPluginManager.this.plugins.remove(plugin);
-
-            if(listener != null) listener.accept(plugin,stateEvent);
-        });
     }
 
     @Override

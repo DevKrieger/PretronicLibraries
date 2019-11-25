@@ -25,6 +25,7 @@ import net.prematic.libraries.plugin.description.PluginDescription;
 import net.prematic.libraries.plugin.lifecycle.LifecycleState;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.plugin.service.ServiceRegistry;
+import net.prematic.libraries.utility.annonations.Internal;
 import net.prematic.libraries.utility.interfaces.ShutdownAble;
 
 import java.io.File;
@@ -59,9 +60,8 @@ public interface PluginManager extends ServiceRegistry,ShutdownAble {
 
     void setLifecycleStateListener(String state, BiConsumer<Plugin,LifecycleState> listener);
 
+    @Internal
     void executeLifecycleStateListener(String state,LifecycleState stateEvent, Plugin plugin);
-
-    void executeLifecycleStateListener(String state,LifecycleState stateEvent, Collection<Plugin> plugins);
 
 
     Collection<Plugin> enablePlugins(File directory);

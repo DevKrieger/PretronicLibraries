@@ -83,32 +83,6 @@ public class DefaultPluginLoader implements PluginLoader {
         this.defaultState = new LifecycleState<>(this.description,this,this.environment);
     }
 
-    /*
-    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment,String descriptionName, File location){
-        this(pluginManager,environment,descriptionName,location,null,null);
-    }
-
-    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, File location, PluginDescription description){
-        this(pluginManager,environment,null,location,description,null);
-    }
-
-    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment,String descriptionName, File location
-            , PluginDescription description, LifecycleState defaultState) {
-        super(new URL[] {FileUtil.fileToUrl(location)});
-        this.pluginManager = pluginManager;
-        this.environment = environment;
-        this.descriptionName = descriptionName;
-        this.location = location;
-
-        this.description = description!=null?description:loadDescription();
-        this.defaultState = defaultState!=null?defaultState:new LifecycleState<>(this.description,this,this.environment);
-
-        this.loadedClasses = ConcurrentHashMap.newKeySet();
-    }
-     */
-
-
-
     @Override
     public File getLocation() {
         return this.location;
