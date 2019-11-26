@@ -190,9 +190,7 @@ public final class DefaultPluginManager implements PluginManager{
                     if(file.isFile() && file.getName().endsWith(".jar")){
                         try {
                             descriptions.add(loadPluginDescription(file));
-                        } catch (Exception exception) {
-                            exception.printStackTrace();
-                        }
+                        } catch (Exception ignored) {}
                     }
                 }
             }
@@ -281,6 +279,11 @@ public final class DefaultPluginManager implements PluginManager{
         }catch (Exception exception){
             throw new PluginLoadException("Could not load plugin description for "+jarFile.getAbsolutePath(),exception);
         }
+    }
+
+    @Override
+    public void provideLoader(PluginLoader loader) {
+        throw new UnsupportedOperationException("Method is not allowed");
     }
 
     private static class ServiceEntry {

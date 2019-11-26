@@ -69,4 +69,7 @@ public interface PluginManager extends ServiceRegistry,ShutdownAble {
 
     void disablePlugins();
 
+    @SuppressWarnings("May be blocked by some maangers")
+    void provideLoader(PluginLoader loader);
+
 }
