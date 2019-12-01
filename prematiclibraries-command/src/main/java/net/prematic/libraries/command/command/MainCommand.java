@@ -26,7 +26,7 @@ import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.*;
 
-public class MainCommand extends Command implements CommandManager {
+public class MainCommand extends SimpleCommand implements CommandManager {
 
     private final List<Command> subCommands;
     private CommandExecutor notFoundHandler;
@@ -81,7 +81,7 @@ public class MainCommand extends Command implements CommandManager {
     @Override
     public void registerCommand(ObjectOwner owner, Command command) {
         if(getCommand(command.getName()) != null) throw new IllegalArgumentException("A command with the name "+command.getName()+" is already registered as sub command.");
-        command.init(owner);
+        command.init(this,owner);
         this.subCommands.add(command);
     }
 

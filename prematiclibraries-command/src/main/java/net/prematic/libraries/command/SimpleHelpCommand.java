@@ -20,32 +20,35 @@
 package net.prematic.libraries.command;
 
 import net.prematic.libraries.command.command.Command;
+import net.prematic.libraries.command.command.SimpleCommand;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.function.Function;
 
-public class SimpleHelpCommand extends Command {
+public class SimpleHelpCommand extends SimpleCommand {
 
     public static final Function<Command,String> DEFAULT_FORMATTER = command -> command.getName()+" | "+command.getDescription();
 
-    private final CommandManager commandManager;
     private final Function<Command,String> commandFormatter;
+    private CommandManager manager;
 
-    public SimpleHelpCommand(CommandManager commandManager){
-        this(commandManager,DEFAULT_FORMATTER);
-    }
-
-    public SimpleHelpCommand(CommandManager commandManager,Function<Command,String> commandFormatter) {
+    public SimpleHelpCommand(Function<Command,String> commandFormatter) {
         super("help", "Shows information about all commands");
-        this.commandManager = commandManager;
         this.commandFormatter = commandFormatter;
     }
 
     @Override
     public void execute(CommandSender sender,String cmd, String[] args) {
         sender.sendMessage("Available Commands:");
-        for(Command command : this.commandManager.getCommands())
+        for(Command command : this.manager.getCommands())
             if(command != this) sender.sendMessage(commandFormatter.apply(command));
+    }
+
+    @Override
+    public void init(CommandManager manager, ObjectOwner owner) {
+        super.init(manager, owner);
+        this.manager = manager;
     }
 }

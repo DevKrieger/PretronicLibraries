@@ -23,7 +23,7 @@ import net.prematic.libraries.command.sender.CommandSender;
 
 import java.util.Collection;
 
-public abstract class ObjectCommand<T> extends Command{
+public abstract class ObjectCommand<T> extends SimpleCommand{
 
     public ObjectCommand(String name) {
         super(name);

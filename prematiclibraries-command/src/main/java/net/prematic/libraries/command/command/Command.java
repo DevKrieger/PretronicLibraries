@@ -19,79 +19,29 @@
 
 package net.prematic.libraries.command.command;
 
+import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 
-public abstract class Command implements CommandExecutor{
+public interface Command extends CommandExecutor{
 
-    private final String name, description, permission;
-    private final Collection<String> aliases;
+    String getName();
 
-    private String prefix;
-    private ObjectOwner owner;
+    String getDescription();
 
-    public Command(String name) {
-        this(name,"none");
-    }
+    String getPermission();
 
-    public Command(String name, String description) {
-        this(name,description,null);
-    }
+    String getPrefix();
 
-    public Command(String name, String description, String permission) {
-        this(name, description,permission,new LinkedHashSet<>());
-    }
+    ObjectOwner getOwner();
 
-    public Command(String name, String description, String permission,String... aliases) {
-        this(name, description,permission,Arrays.asList(aliases));
-    }
+    Collection<String> getAliases();
 
-    public Command(String name, String description, String permission, Collection<String> aliases) {
-        this.name = name;
-        this.description = description;
-        this.permission = permission;
-        this.aliases = aliases;
-        this.prefix =  "[UNKNOWN]";
-    }
+    boolean hasAlias(String command);
 
-    public String getName() {
-        return this.name;
-    }
+    void setPrefix(String prefix);
 
-    public String getDescription() {
-        return this.description;
-    }
-
-    public String getPermission() {
-        return this.permission;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public ObjectOwner getOwner() {
-        return owner;
-    }
-
-    public Collection<String> getAliases() {
-        return this.aliases;
-    }
-
-    public boolean hasAlias(String command) {
-        return name.equalsIgnoreCase(command) || aliases.contains(command);
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public void init(ObjectOwner owner){
-        if(owner == null) throw new IllegalArgumentException("This command is already initialised");
-        this.owner = owner;
-    }
+    void init(CommandManager manager,ObjectOwner owner);
 
 }

@@ -73,7 +73,7 @@ public class DefaultCommandManager implements CommandManager {
     @Override
     public void registerCommand(ObjectOwner owner, Command command) {
         if(getCommand(command.getName()) != null) throw new IllegalArgumentException("There is already a commend with the name "+command.getName()+" registered.");
-        command.init(owner);
+        command.init(this,owner);
         this.commands.add(command);
     }
 
