@@ -92,13 +92,13 @@ public class ReflectionUtil {
 
     public static Method getMethod(Class<?> clazz, String methodName){
         try {
-            return clazz.getMethod(methodName);
+            return clazz.getDeclaredMethod(methodName);
         } catch (Exception exception) {throw new ReflectException(exception);}
     }
 
     public static Method getMethod(Class<?> clazz, String methodName,Class<?>[] parameters){
         try {
-            return clazz.getMethod(methodName,parameters);
+            return clazz.getDeclaredMethod(methodName,parameters);
         } catch (Exception exception) {throw new ReflectException(exception);}
     }
 
