@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Philipp Elvin Friedhoff
- * @since 08.12.19, 21:10
+ * @since 08.12.19, 21:15
  *
  * The PrematicDatabaseQuery Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,19 +19,9 @@
 
 package net.prematic.libraries.utility.map;
 
-import net.prematic.libraries.utility.map.caseintensive.CaseIntensiveLinkedHashMap;
+import net.prematic.libraries.utility.map.caseintensive.CaseIntensiveMap;
+import net.prematic.libraries.utility.map.index.IndexMap;
 
-import java.util.Map;
+public interface IndexCaseIntensiveMap<V> extends IndexMap<String, V>, CaseIntensiveMap<V> {
 
-public class IndexCaseIntensiveLinkedHashMap<V> extends CaseIntensiveLinkedHashMap<V> implements IndexCaseIntensiveMap<V> {
-
-    @Override
-    public V getIndex(int index) {
-        int i = 0;
-        for (Map.Entry<String, V> entry : this.entrySet()) {
-            if(i == index) return entry.getValue();
-            i++;
-        }
-        return null;
-    }
 }
