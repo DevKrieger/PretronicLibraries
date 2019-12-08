@@ -52,7 +52,7 @@ public class Convert {
         else{
             String content = input.toString();
             if(content.length() > 0) return content.charAt(0);
-            else return 0;
+            else throw new IllegalArgumentException("Can not be converted to character " + input);
         }
     }
 
@@ -72,7 +72,13 @@ public class Convert {
         else if(input instanceof Float) return (Float) input == 1;
         else if(input instanceof Byte) return (Byte) input == 1;
         else if(input instanceof Number) return ((Number) input).intValue() == 1;
-        else return input.toString().equalsIgnoreCase("true");
+        else if(input.toString().equalsIgnoreCase("true")) return true;
+        else if(input.toString().equalsIgnoreCase("false")) return false;
+        else if(input.toString().equalsIgnoreCase("on")) return true;
+        else if(input.toString().equalsIgnoreCase("off")) return false;
+        else if(input.toString().equalsIgnoreCase("enabled")) return true;
+        else if(input.toString().equalsIgnoreCase("disabled")) return false;
+        throw new IllegalArgumentException("Can not be converted to character " + input);
     }
 
     /**
@@ -91,7 +97,7 @@ public class Convert {
             try{
                 return Integer.parseInt(input.toString());
             }catch (NumberFormatException ignored){
-                return 0;
+                throw new IllegalArgumentException("Can not be converted to integer  " + input);
             }
         }
     }
@@ -112,7 +118,7 @@ public class Convert {
             try{
                 return Long.parseLong(input.toString());
             }catch (NumberFormatException ignored){
-                return 0;
+                throw new IllegalArgumentException("Can not be converted to long " + input);
             }
         }
     }
@@ -133,7 +139,7 @@ public class Convert {
             try{
                 return Double.parseDouble(input.toString());
             }catch (NumberFormatException ignored){
-                return 0;
+                throw new IllegalArgumentException("Can not be converted to double " + input);
             }
         }
     }
@@ -154,7 +160,7 @@ public class Convert {
             try{
                 return Float.parseFloat(input.toString());
             }catch (NumberFormatException ignored){
-                return 0;
+                throw new IllegalArgumentException("Can not be converted to float " + input);
             }
         }
     }
@@ -175,7 +181,7 @@ public class Convert {
             try{
                 return Short.parseShort(input.toString());
             }catch (NumberFormatException ignored){
-                return 0;
+                throw new IllegalArgumentException("Can not be converted to short " + input);
             }
         }
     }
@@ -196,7 +202,7 @@ public class Convert {
             try{
                 return Byte.parseByte(input.toString());
             }catch (NumberFormatException ignored){
-                return 0;
+                throw new IllegalArgumentException("Can not be converted to byte " + input);
             }
         }
     }
@@ -210,13 +216,13 @@ public class Convert {
         try {
             return UUID.fromString(input instanceof String ? (String) input : String.valueOf(input));
         } catch (IllegalArgumentException exception) {
-            return null;
+            throw new IllegalArgumentException("Can not be converted to uuid " + input);
         }
     }
 
     public static Date toDate(Object input) {
         if(input instanceof Date) return (Date) input;
         else if(input instanceof Long) return new Date((long) input);
-        return null;
+        throw new IllegalArgumentException("Can not be converted to date " + input);
     }
 }
