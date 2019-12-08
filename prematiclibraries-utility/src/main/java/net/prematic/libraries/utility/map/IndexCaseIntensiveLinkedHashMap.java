@@ -26,6 +26,11 @@ import java.util.Map;
 public class IndexCaseIntensiveLinkedHashMap<V> extends CaseIntensiveLinkedHashMap<V> implements IndexCaseIntensiveMap<V> {
 
     @Override
+    public boolean containsIndex(int index) {
+        return this.size() > index;
+    }
+
+    @Override
     public V getIndex(int index) {
         int i = 0;
         for (Map.Entry<String, V> entry : this.entrySet()) {

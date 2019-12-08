@@ -23,5 +23,7 @@ import java.util.Map;
 
 public interface IndexMap<K, V> extends Map<K, V> {
 
+    boolean containsIndex(int index);
+
     V getIndex(int index);
 }

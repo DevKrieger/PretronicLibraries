@@ -25,6 +25,11 @@ import java.util.Map;
 public class IndexLinkedHashMap<K, V> extends LinkedHashMap<K, V> implements IndexMap<K, V> {
 
     @Override
+    public boolean containsIndex(int index) {
+        return this.size() > index;
+    }
+
+    @Override
     public V getIndex(int index) {
         int i = 0;
         for (Map.Entry<K, V> entry : this.entrySet()) {
