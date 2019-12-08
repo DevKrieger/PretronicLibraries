@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.utility;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public final class Validate {
@@ -31,6 +32,10 @@ public final class Validate {
         if(!expression) throw new IllegalArgumentException(message);
     }
 
+    public static void isTrue(boolean expression) {
+        if(!expression) throw new IllegalArgumentException();
+    }
+
     public static void checkMatches(CharSequence value, Pattern pattern, String message, Object... objects) {
         if(value == null || pattern == null || !pattern.matcher(value).matches()) throw new IllegalArgumentException(String.format(message, objects));
     }
@@ -40,10 +45,24 @@ public final class Validate {
     }
 
     public static void notNull(Object value, String message, Object... objects) {
-        if(value == null) throw new IllegalArgumentException(String.format(message, objects));
+        if(value == null) throw new NullPointerException(String.format(message, objects));
     }
 
     public static void notNull(Object value, String message) {
-        if(value == null) throw new IllegalArgumentException(message);
+        if(value == null) throw new NullPointerException(message);
+    }
+
+    public static void notNull(String message, Object... values) {
+        if(values == null) throw new NullPointerException(message);
+        for (Object value : values) {
+            if(value == null) throw new NullPointerException(message);
+        }
+    }
+
+    public static void notNull(Object... values) {
+        if(values == null) throw new NullPointerException();
+        for (Object value : values) {
+            if(value == null) throw new NullPointerException();
+        }
     }
 }
