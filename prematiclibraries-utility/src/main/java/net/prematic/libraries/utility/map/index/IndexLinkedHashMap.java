@@ -22,7 +22,7 @@ package net.prematic.libraries.utility.map.index;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class LinkedHashIndexMap<K, V> extends LinkedHashMap<K, V> implements IndexMap<K, V> {
+public class IndexLinkedHashMap<K, V> extends LinkedHashMap<K, V> implements IndexMap<K, V> {
 
     @Override
     public V getIndex(int index) {
