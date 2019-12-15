@@ -36,6 +36,16 @@ public final class Iterators {
         return null;
     }
 
+    public static <U> U findOneReversed(List<U> list, Predicate<U> acceptor) {
+        for (int i = list.size() - 1; i >= 0; i--) {
+            U result = list.get(i);
+            if(acceptor.test(result)) {
+                return result;
+            }
+        }
+        return null;
+    }
+
     public static <U> U findOneOrWhenNull(Iterable<U> list, Predicate<U> acceptor, Supplier<U> whenNull) {
         Iterator<U> iterator = list.iterator();
         U result;
