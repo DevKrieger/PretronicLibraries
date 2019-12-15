@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.annotationss;
+package net.prematic.libraries.document.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,8 +26,4 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface DocumentName {
-
-    String value();
-
-}
+public @interface DocumentIgnored {}

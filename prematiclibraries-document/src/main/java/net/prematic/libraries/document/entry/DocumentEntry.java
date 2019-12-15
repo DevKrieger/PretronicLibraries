@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.11.19, 21:23
+ * @since 14.12.19, 16:53
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,26 @@
  * under the License.
  */
 
-package net.prematic.libraries.plugin.description.dependency;
+package net.prematic.libraries.document.entry;
 
-import net.prematic.libraries.document.entry.Document;
-import net.prematic.libraries.plugin.description.PluginDescription;
+public interface DocumentEntry extends DocumentBase{
 
-public interface Dependency {
+    String getKey();
 
-    String getType();
+    void setKey(String key);
 
-    boolean isAvailable();
 
-    void write(Document document);
+    DocumentAttributes getAttributes();
 
-    boolean isDepended(PluginDescription description);
+    void setAttributes(DocumentAttributes attributes);
+
+    boolean hasAttributes();
+
+
+    default DocumentEntry copy(){
+        return copy(getKey());
+    }
+
+    DocumentEntry copy(String key);
 
 }

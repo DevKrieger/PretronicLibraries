@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.06.19 22:01
+ * @since 14.08.19, 18:37
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,22 @@
  * under the License.
  */
 
-package net.prematic.libraries.document;
+package net.prematic.libraries.document.annotations;
 
-public interface PrimitiveEntry extends DocumentEntry{
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    Object getAsObject();
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DocumentFile {
 
-    String getAsString();
+    String source() default "Unknown";
 
-    char getAsCharacter();
+    String type() default "Unknown";
 
-    boolean getAsBoolean();
+    boolean appendMissing() default false;
 
-    Number getAsNumber();
-
-    byte getAsByte();
-
-    int getAsInt();
-
-    long getAsLong();
-
-    float getAsFloat();
-
-    short getAsShort();
-
-    double getAsDouble();
-
-    boolean isNull();
-
+    boolean loadAll() default false;
 }

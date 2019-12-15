@@ -19,12 +19,13 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
+import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.Primitives;
 import net.prematic.libraries.utility.reflect.ReflectException;
 import net.prematic.libraries.utility.reflect.TypeReference;
@@ -40,7 +41,7 @@ public class MapAdapter implements DocumentAdapter<Map>, DocumentAdapterInitiali
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map read(DocumentEntry entry, TypeReference<Map> type) {
+    public Map read(DocumentBase entry, TypeReference<Map> type) {
         if(entry.isPrimitive()) throw new IllegalArgumentException("Object is a primitive type.");
 
         Type keyType = type.getArgument(0);

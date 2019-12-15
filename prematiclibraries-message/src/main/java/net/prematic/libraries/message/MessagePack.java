@@ -19,7 +19,7 @@
 
 package net.prematic.libraries.message;
 
-import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.entry.Document;
 
 import java.io.File;
 import java.io.InputStream;

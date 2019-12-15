@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.06.19 21:42
+ * @since 14.12.19, 16:53
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,12 @@
  * under the License.
  */
 
-package net.prematic.libraries.document;
+package net.prematic.libraries.document.entry;
 
+import net.prematic.libraries.document.DocumentFactory;
+import net.prematic.libraries.document.DocumentRegistry;
+import net.prematic.libraries.document.EmptyDocument;
+import net.prematic.libraries.utility.annonations.Internal;
 import net.prematic.libraries.utility.parser.StringParser;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
@@ -29,20 +33,13 @@ import java.io.Writer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
-public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
-
-    DocumentContext getContext();
-
-    void setContext(DocumentContext context);
-
-    <T> T getAsObject(Class<T> classOf);
-
-    <T> T getAsObject(Type type);
-
-    <T> T getAsObject(TypeReference<T> reference);
+public interface Document extends DocumentNode,DocumentEntry {
 
     Array getAsArray();
 
@@ -57,38 +54,6 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
 
 
     //Sub entries
-
-    List<DocumentEntry> getEntries();
-
-    void setEntries(List<DocumentEntry> entries);
-
-    DocumentEntry getEntry(String key);
-
-    DocumentEntry getEntry(int index);
-
-    DocumentEntry getFirst();
-
-    DocumentEntry getLast();
-
-    String getString(String key);
-
-    char getCharacter(String key);
-
-    boolean getBoolean(String key);
-
-    Number getNumber(String key);
-
-    byte getByte(String key);
-
-    int getInt(String key);
-
-    long getLong(String key);
-
-    float getFloat(String key);
-
-    short getShort(String key);
-
-    double getDouble(String key);
     
     Document getDocument(String key);
 
@@ -108,49 +73,39 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
 
     <T> T getObject(String key, TypeReference<T> reference);
 
-    //entry info
+    //Update entry
 
-    List<DocumentEntry> entries();
+    Document set(String key, Object value);
 
-    Set<String> keys();
-
-    int size();
-
-    boolean contains(String key);
-
-    boolean containsOne(String... keys);
-
-    boolean containsAll(String... keys);
+    boolean isArray(String key);
 
     boolean isObject(String key);
 
     boolean isPrimitive(String key);
 
-    boolean isArray(String key);
-
-
-    //Update entry
-
-    Document set(String key, Object value);
-
     default Document rename(String source,String destination){
         DocumentEntry entry = getEntry(source);
-        if(entry != null){
-            set(destination,entry);
-            remove(source);
-        }
+        if(entry != null) entry.setKey(destination);
         return this;
     }
-
-    Document remove(String key);
-
-    Document clear();
 
     Stream<DocumentEntry> stream(String key);
 
     Iterable<DocumentEntry> iterate(String key);
 
     Document sort(String key, Comparator<DocumentEntry> sorter);
+
+    @Internal
+    void addEntry(DocumentEntry entry);
+
+    @Internal
+    void removeEntry(DocumentEntry entry);
+
+
+    Document remove(String key);
+
+
+    Document clear();
 
 
     //Update current entry
@@ -159,7 +114,13 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
 
     Document sort(Comparator<DocumentEntry> sorter);
 
+
+    default Document copy(){
+        return copy(getKey());
+    }
+
     Document copy(String key);
+
 
     //Save entry
 
@@ -176,45 +137,6 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
 
     //Extra implementation
 
-    default boolean isEmpty(){
-        return size() <= 0;
-    }
-
-    default String getString(String key, String defaultValue){
-        return contains(key)?getString(key):defaultValue;
-    }
-
-    default char getCharacter(String key, char defaultValue){
-        return contains(key)?getCharacter(key):defaultValue;
-    }
-
-    default boolean getBoolean(String key, boolean defaultValue){
-        return contains(key)?getBoolean(key):defaultValue;
-    }
-
-    default byte getByte(String key, byte defaultValue){
-        return contains(key)?getByte(key):defaultValue;
-    }
-
-    default int getInt(String key, int defaultValue){
-        return contains(key)?getInt(key):defaultValue;
-    }
-
-    default long getLong(String key, long defaultValue){
-        return contains(key)?getLong(key):defaultValue;
-    }
-
-    default float getFloat(String key, float defaultValue){
-        return contains(key)?getFloat(key):defaultValue;
-    }
-
-    default short getShort(String key, short defaultValue){
-        return contains(key)?getShort(key):defaultValue;
-    }
-
-    default double getDouble(String key, double defaultValue){
-        return contains(key)?getDouble(key):defaultValue;
-    }
 
     default Document getDocument(String key, Document defaultValue){
         return contains(key)?getDocument(key):defaultValue;
@@ -232,6 +154,7 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
         if(value != null && !contains(key)) set(key, value);
         return this;
     }
+
 
     default String write(String type){
         return write(type,true);
@@ -253,6 +176,7 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
         write(type, output,true);
     }
 
+
     //Static content
 
     static DocumentFactory factory(){
@@ -270,6 +194,11 @@ public interface Document extends Iterable<DocumentEntry>,DocumentEntry {
     static Document newDocument(Object object){
         return DocumentRegistry.getDefaultContext().serialize(object).toDocument();
     }
+
+    static Document newEmptyDocument(){
+        return EmptyDocument.newDocument();
+    }
+
 
     static Document read(File location){
         return DocumentRegistry.getTypeByEnding(location.getName().substring(location.getName().lastIndexOf(".")+1)).getReader().read(location);

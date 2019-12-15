@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.sql.Time;
@@ -29,7 +30,7 @@ import java.sql.Time;
 public class SqlTimeAdapter implements DocumentAdapter<Time> {
 
     @Override
-    public Time read(DocumentEntry entry, TypeReference<Time> type) {
+    public Time read(DocumentBase entry, TypeReference<Time> type) {
         if(entry.isPrimitive()) return new Time(entry.toPrimitive().getAsLong());
         throw new IllegalArgumentException("Can't convert a object to a time.");
     }

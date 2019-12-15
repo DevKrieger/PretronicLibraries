@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.util.UUID;
@@ -29,7 +30,7 @@ import java.util.UUID;
 public class UUIDAdapter implements DocumentAdapter<UUID> {
 
     @Override
-    public UUID read(DocumentEntry entry, TypeReference<UUID> reference) {
+    public UUID read(DocumentBase entry, TypeReference<UUID> reference) {
         if(entry.isPrimitive()){
             String content = entry.toPrimitive().getAsString();
             if(content.indexOf('-') == -1)

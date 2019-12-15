@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.util.TimeZone;
@@ -29,7 +30,7 @@ import java.util.TimeZone;
 public class TimeZoneAdapter implements DocumentAdapter<TimeZone> {
 
     @Override
-    public TimeZone read(DocumentEntry entry, TypeReference<TimeZone> type) {
+    public TimeZone read(DocumentBase entry, TypeReference<TimeZone> type) {
         if(entry.isPrimitive()) return TimeZone.getTimeZone(entry.toPrimitive().getAsString());
         throw new IllegalArgumentException("Can't convert a object to a time zone.");
     }

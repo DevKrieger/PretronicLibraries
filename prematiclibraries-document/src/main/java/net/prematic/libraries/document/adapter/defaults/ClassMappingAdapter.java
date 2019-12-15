@@ -20,9 +20,10 @@
 package net.prematic.libraries.document.adapter.defaults;
 
 import net.prematic.libraries.document.DocumentContext;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.utils.SerialisationUtil;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
@@ -36,7 +37,7 @@ public class ClassMappingAdapter<T> implements DocumentAdapter<T>, DocumentAdapt
     }
 
     @Override
-    public T read(DocumentEntry entry, TypeReference<T> type) {
+    public T read(DocumentBase entry, TypeReference<T> type) {
         return context.deserialize(entry,mappedClass);
     }
 

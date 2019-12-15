@@ -19,10 +19,12 @@
 
 package net.prematic.libraries.document.utils;
 
-import net.prematic.libraries.document.*;
+import net.prematic.libraries.document.DocumentContext;
+import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
-import net.prematic.libraries.document.annotationss.DocumentIgnored;
-import net.prematic.libraries.document.annotationss.DocumentName;
+import net.prematic.libraries.document.annotations.DocumentIgnored;
+import net.prematic.libraries.document.annotations.DocumentName;
+import net.prematic.libraries.document.entry.*;
 import net.prematic.libraries.utility.reflect.Primitives;
 import net.prematic.libraries.utility.reflect.TypeReference;
 import net.prematic.libraries.utility.reflect.UnsafeInstanceCreator;
@@ -76,26 +78,26 @@ public class SerialisationUtil {
         return document;
     }
 
-    public static <T> T deserialize(DocumentContext context,DocumentEntry entry, Class<T> clazz){
+    public static <T> T deserialize(DocumentContext context, DocumentBase entry, Class<T> clazz){
         return deserialize(context,entry,new TypeReference<>(clazz));
     }
 
-    public static <T> T deserialize(DocumentContext context,DocumentEntry entry, Type type){
+    public static <T> T deserialize(DocumentContext context,DocumentBase entry, Type type){
         return deserialize(context,entry,new TypeReference<>(type));
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T deserialize(DocumentContext context,DocumentEntry entry,TypeReference type){
+    public static <T> T deserialize(DocumentContext context,DocumentBase entry,TypeReference type){
         return (T) deserializeRaw(context,entry, type);
     }
 
     @SuppressWarnings("unchecked")
-    private static Object deserializeRaw(DocumentContext context,DocumentEntry entry,TypeReference type){
+    private static Object deserializeRaw(DocumentContext context,DocumentBase entry,TypeReference type){
         if(entry.isPrimitive()){
             if(Primitives.isPrimitive(type.getRawClass())) return deserializePrimitive(entry, type);
             else if(type.getRawClass().isEnum()) return Enum.valueOf(type.getRawClass(),entry.toPrimitive().getAsString());
             else{
-                DocumentAdapter adapter = context.findAdapter(type);
+                DocumentAdapter<?> adapter = context.findAdapter(type);
                 if(adapter != null) return adapter.read(entry, type);
                 else throw new IllegalArgumentException("Invalid Primitive type");
             }
@@ -104,7 +106,7 @@ public class SerialisationUtil {
         else throw new IllegalArgumentException("Invalid object type");
     }
 
-    public static Object deserializePrimitive(DocumentEntry entry,TypeReference type){
+    public static Object deserializePrimitive(DocumentBase entry,TypeReference type){
         if(type.getRawClass() == String.class){
             return entry.toPrimitive().getAsString();
         }else if(type.getRawClass() == int.class || type.getRawClass() == Integer.class){
@@ -126,8 +128,8 @@ public class SerialisationUtil {
         }else throw new IllegalArgumentException("Invalid Primitive type");
     }
 
-    public static Object deserializeArray(DocumentContext context,DocumentEntry entry,TypeReference type){
-        ArrayList<?> instance = new ArrayList();
+    public static Object deserializeArray(DocumentContext context,DocumentBase entry,TypeReference type){
+        ArrayList<?> instance = new ArrayList<>();
         entry.toDocument().forEach(entry1 -> instance.add(deserialize(context,entry1,type.getRawType())));
 
         Object array = Array.newInstance((Class<?>) type.getRawType(), instance.size());
@@ -137,14 +139,14 @@ public class SerialisationUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Object deserializeObject(DocumentContext context,DocumentEntry entry,TypeReference type){
-        DocumentAdapter adapter = context.findAdapter(type);
+    public static Object deserializeObject(DocumentContext context,DocumentBase entry,TypeReference type){
+        DocumentAdapter<?> adapter = context.findAdapter(type);
         if(adapter != null) return adapter.read(entry, type);
 
         Object instance = UnsafeInstanceCreator.newInstance(type.getRawClass());
 
-        Document document = entry.toDocument();
-        for(Class clazz = type.getRawClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
+        DocumentNode document = entry.toNode();
+        for(Class<?> clazz = type.getRawClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
             for(Field field : clazz.getDeclaredFields()) {
                 try{
                     field.setAccessible(true);

@@ -19,12 +19,13 @@
 
 package net.prematic.libraries.document.simple;
 
-import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.adapter.DocumentAdapterFactory;
 import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
+import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.document.utils.ConfigurationUtil;
 import net.prematic.libraries.document.utils.SerialisationUtil;
@@ -67,19 +68,19 @@ public class SimpleDocumentContext implements DocumentContext {
     @SuppressWarnings("unchecked")
     @Override
     public <T> DocumentAdapter<T> findAdapter(TypeReference<T> reference) {
-        DocumentAdapter adapter = adapters.get(reference.getRawType());
-        if(adapter != null) return adapter;
+        DocumentAdapter<?> adapter = adapters.get(reference.getRawType());
+        if(adapter != null) return (DocumentAdapter<T>) adapter;
         for(DocumentAdapterFactory factory : factories){
             adapter = factory.create(reference);
             if(adapter != null){
                 if(adapter instanceof DocumentAdapterInitializeAble) ((DocumentAdapterInitializeAble) adapter).initialize(this);
                 adapters.put(reference.getRawType(),adapter);
-                return adapter;
+                return (DocumentAdapter<T>) adapter;
             }
         }
         for(DocumentContext context : contexts){
             adapter = context.findAdapter(reference);
-            if(adapter != null) return adapter;
+            if(adapter != null) return (DocumentAdapter<T>) adapter;
         }
         return null;
     }
@@ -116,17 +117,17 @@ public class SimpleDocumentContext implements DocumentContext {
     }
 
     @Override
-    public <T> T deserialize(DocumentEntry entry, Class<T> clazz) {
+    public <T> T deserialize(DocumentBase entry, Class<T> clazz) {
         return SerialisationUtil.deserialize(this,entry,clazz);
     }
 
     @Override
-    public <T> T deserialize(DocumentEntry entry, Type type) {
+    public <T> T deserialize(DocumentBase entry, Type type) {
         return SerialisationUtil.deserialize(this,entry,type);
     }
 
     @Override
-    public <T> T deserialize(DocumentEntry entry, TypeReference type) {
+    public <T> T deserialize(DocumentBase entry, TypeReference<?> type) {
         return SerialisationUtil.deserialize(this,entry,type);
     }
 

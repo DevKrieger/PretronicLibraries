@@ -19,7 +19,7 @@
 
 package net.prematic.libraries.jarsignature.certificate;
 
-import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.entry.Document;
 import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.utility.http.HttpClient;
 import net.prematic.libraries.utility.http.HttpResult;

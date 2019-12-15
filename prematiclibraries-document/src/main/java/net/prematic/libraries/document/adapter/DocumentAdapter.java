@@ -19,12 +19,13 @@
 
 package net.prematic.libraries.document.adapter;
 
-import net.prematic.libraries.document.DocumentEntry;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 public interface DocumentAdapter<T> {
 
-    T read(DocumentEntry entry, TypeReference<T> type);
+    T read(DocumentBase base, TypeReference<T> type);
 
     DocumentEntry write(String key, T object);
 

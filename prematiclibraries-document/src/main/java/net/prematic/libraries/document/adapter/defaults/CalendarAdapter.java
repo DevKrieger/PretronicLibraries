@@ -19,10 +19,11 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.util.Calendar;
@@ -32,7 +33,7 @@ import java.util.TimeZone;
 public class CalendarAdapter implements DocumentAdapter<Calendar> {
 
     @Override
-    public Calendar read(DocumentEntry entry, TypeReference<Calendar> type) {
+    public Calendar read(DocumentBase entry, TypeReference<Calendar> type) {
         if(entry.isObject()){
             Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone(entry.toDocument().getString("timeZone")));
             calendar.setTimeInMillis(entry.toDocument().getLong("time"));

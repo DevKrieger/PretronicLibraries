@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.11.19, 21:23
+ * @since 14.12.19, 19:49
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,21 @@
  * under the License.
  */
 
-package net.prematic.libraries.plugin.description.dependency;
+package net.prematic.libraries.document.annotations;
 
-import net.prematic.libraries.document.entry.Document;
-import net.prematic.libraries.plugin.description.PluginDescription;
+public class TestObject {
 
-public interface Dependency {
+    @DocumentAttribute("id")
+    public int id;
 
-    String getType();
+    @DocumentRequired
+    public String test2;
 
-    boolean isAvailable();
+    @DocumentIgnored
+    public String test3;
 
-    void write(Document document);
+    public String test7;
 
-    boolean isDepended(PluginDescription description);
-
+    @DocumentKey("hallo")
+    public String test9;
 }

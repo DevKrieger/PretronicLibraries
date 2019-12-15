@@ -19,9 +19,11 @@
 
 package net.prematic.libraries.document.simple;
 
-import net.prematic.libraries.document.*;
+import net.prematic.libraries.document.DocumentRegistry;
+import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.entry.DocumentAttributes;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.GeneralUtil;
-import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.io.File;
@@ -29,44 +31,24 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
-public class SimpleDocument implements Document {
+public class SimpleDocument extends AbstractDocumentNode implements Document {
 
-    private transient final String key;
-    private transient List<DocumentEntry> entries;
-    private transient DocumentContext context;
+    private transient String key;
+    private transient DocumentAttributes attributes;
 
     public SimpleDocument(String key) {
         this.key = key;
-        this.entries = new ArrayList<>();
     }
 
-    @Override
-    public DocumentContext getContext() {
-        if(context == null) return DocumentContext.getDefaultContext();
-        return context;
-    }
-
-    @Override
-    public void setContext(DocumentContext context) {
-        this.context = context;
-    }
-
-    @Override
-    public <T> T getAsObject(Class<T> classOf) {
-        return getContext().deserialize(this,classOf);
-    }
-
-    @Override
-    public <T> T getAsObject(Type typeOf) {
-        return getContext().deserialize(this,typeOf);
-    }
-
-    @Override
-    public <T> T getAsObject(TypeReference<T> reference) {
-        return getContext().deserialize(this,reference);
+    public SimpleDocument(String key,List<DocumentEntry> entries) {
+        super(entries);
+        this.key = key;
     }
 
     @Override
@@ -92,108 +74,6 @@ public class SimpleDocument implements Document {
     @Override
     public <K, V> Map<K, V> getAsMap(Class<K> keyClass, Class<V> valueClass) {
         return getContext().deserialize(this,new TypeReference<Map<K,V>>(){});
-    }
-
-    @Override
-    public List<DocumentEntry> getEntries() {
-        return entries;
-    }
-
-    @Override
-    public void setEntries(List<DocumentEntry> entries) {
-        this.entries = entries;
-    }
-
-    @Override
-    public DocumentEntry getEntry(String key) {
-        String[] sequences = key.split("\\.");
-        DocumentEntry last;
-        if(GeneralUtil.isNaturalNumber(sequences[0])) last = getEntry(Integer.parseInt(sequences[0]));
-        else last = findLocalEntry(sequences[0]);
-        for(int i = 1;i<sequences.length;i++){
-            if(last != null && last.isObject()) last = last.toDocument().getEntry(sequences[0]);
-            else return null;
-        }
-        return last;
-    }
-
-    public DocumentEntry findLocalEntry(String key){
-        return Iterators.findOne(this.entries, entry -> key.equals(entry.getKey()));
-    }
-
-    @Override
-    public DocumentEntry getEntry(int index) {
-        return this.entries.size()>index?this.entries.get(index):null;
-    }
-
-    @Override
-    public DocumentEntry getFirst() {
-        return this.entries.size()>0?this.entries.get(0):null;
-    }
-
-    @Override
-    public DocumentEntry getLast() {
-        return this.entries.size()>0?this.entries.get(this.entries.size()-1):null;
-    }
-
-    @Override
-    public String getString(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsString():null;
-    }
-
-    @Override
-    public char getCharacter(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsCharacter():' ';
-    }
-
-    @Override
-    public boolean getBoolean(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry != null && entry.isPrimitive() && entry.toPrimitive().getAsBoolean();
-    }
-
-    @Override
-    public Number getNumber(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsNumber():0;
-    }
-
-    @Override
-    public byte getByte(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsByte():0;
-    }
-
-    @Override
-    public int getInt(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsInt():0;
-    }
-
-    @Override
-    public long getLong(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsLong():0;
-    }
-
-    @Override
-    public float getFloat(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsFloat():0;
-    }
-
-    @Override
-    public short getShort(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsShort():0;
-    }
-
-    @Override
-    public double getDouble(String key) {
-        DocumentEntry entry = getEntry(key);
-        return entry!=null&&entry.isPrimitive()?entry.toPrimitive().getAsDouble():0;
     }
 
     @Override
@@ -251,37 +131,40 @@ public class SimpleDocument implements Document {
     }
 
     @Override
-    public List<DocumentEntry> entries() {
-        return this.entries;
+    public DocumentEntry getEntry(String key) {
+        String[] sequences = key.split("\\.");
+        DocumentEntry last;
+        if(GeneralUtil.isNaturalNumber(sequences[0])) last = getEntry(Integer.parseInt(sequences[0]));
+        else last = findLocalEntry(sequences[0]);
+        for(int i = 1;i<sequences.length;i++){
+            if(last != null && last.isObject()) last = last.toDocument().getEntry(sequences[0]);
+            else return null;
+        }
+        return last;
     }
 
     @Override
-    public Set<String> keys() {
-        Set<String> keys = new HashSet<>();
-        forEach(entry -> keys.add(entry.getKey()));
-        return keys;
-    }
+    public Document set(String key, Object value) {
+        int index = key.indexOf('.');
+        if(index == -1){
+            DocumentEntry entry = findLocalEntry(key);
+            if(entry != null) this.entries.remove(entry);
 
-    @Override
-    public int size() {
-        return this.entries.size();
-    }
-
-    @Override
-    public boolean contains(String key) {
-        return getEntry(key)!=null;
-    }
-
-    @Override
-    public boolean containsOne(String... keys) {
-        for(String key : keys) if(contains(key)) return true;
-        return false;
-    }
-
-    @Override
-    public boolean containsAll(String... keys) {
-        for(String key : keys) if(!contains(key)) return false;
-        return true;
+            if(value instanceof DocumentEntry){
+                if(key.equals(((DocumentEntry) value).getKey())) this.entries.add((DocumentEntry) value);
+                else this.entries.add(((DocumentEntry) value).copy(key));
+            }else this.entries.add(getContext().serialize(key, value));
+        }else{
+            String localKey = key.substring(0,index);
+            DocumentEntry entry = findLocalEntry(localKey);
+            if (entry == null || !entry.isObject()) {
+                this.entries.remove(entry);
+                entry = new SimpleDocument(localKey);
+                this.entries.add(entry);
+            }
+            entry.toDocument().set(key.substring(index+1), value);
+        }
+        return this;
     }
 
     @Override
@@ -300,55 +183,6 @@ public class SimpleDocument implements Document {
     public boolean isPrimitive(String key) {
         DocumentEntry entry = getEntry(key);
         return entry!= null && entry.isPrimitive();
-    }
-
-    @Override
-    public Document set(String key, Object value) {
-        int index = key.indexOf('.');
-        if(index == -1){
-            DocumentEntry entry = findLocalEntry(key);
-            if(entry != null) this.entries.remove(entry);
-
-            if(value instanceof DocumentEntry){
-                if(key.equals(((DocumentEntry) value).getKey())) this.entries.add((DocumentEntry) value);
-                else this.entries.add(((DocumentEntry) value).copy(key));
-            }else this.entries.add(getContext().serialize(key,value));
-        }else{
-            String localKey = key.substring(0,index);
-            DocumentEntry entry = findLocalEntry(localKey);
-            if(entry != null && entry.isObject()) entry.toDocument().set(key.substring(index+1), value);
-            else{
-                this.entries.remove(entry);
-                entry = new SimpleDocument(localKey);
-                this.entries.add(entry);
-                entry.toDocument().set(key.substring(index+1),value);
-            }
-        }
-        return this;
-    }
-
-    public DocumentEntry addInternal(String key, Document previous, DocumentEntry entry){
-        previous.set(key,entry);
-        return entry;
-    }
-
-    @Override
-    public Document remove(String key) {
-        int index = key.lastIndexOf('.');
-        if(index == -1){
-            DocumentEntry entry = findLocalEntry(key);
-            if(entry != null) this.entries.remove(entry);
-        }else{
-            DocumentEntry entry = getEntry(key.substring(0,index-1));
-            if(entry != null && entry.isObject()) entry.toDocument().remove(key.substring(index+1));
-        }
-        return this;
-    }
-
-    @Override
-    public Document clear() {
-        this.entries.clear();
-        return this;
     }
 
     @Override
@@ -371,14 +205,71 @@ public class SimpleDocument implements Document {
     }
 
     @Override
-    public Stream<DocumentEntry> stream() {
-        return this.entries.stream();
+    public Document remove(String key) {
+        int index = key.lastIndexOf('.');
+        if(index == -1){
+            DocumentEntry entry = findLocalEntry(key);
+            if(entry != null) this.entries.remove(entry);
+        }else{
+            DocumentEntry entry = getEntry(key.substring(0,index-1));
+            if(entry != null && entry.isObject()) entry.toDocument().remove(key.substring(index+1));
+        }
+        return this;
+    }
+
+    @Override
+    public Document clear() {
+        super.clear();
+        return this;
     }
 
     @Override
     public Document sort(Comparator<DocumentEntry> sorter) {
-        this.entries.sort(sorter);
+        super.sort(sorter);
         return this;
+    }
+
+    @Override
+    public Document toDocument() {
+        return this;
+    }
+
+    @Override
+    public String getKey() {
+        return key;
+    }
+
+    @Override
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Override
+    public boolean isObject() {
+        return true;
+    }
+
+    @Override
+    public DocumentAttributes getAttributes() {
+        if(attributes == null) attributes = Document.factory().newAttributes();
+        return attributes;
+    }
+
+    @Override
+    public void setAttributes(DocumentAttributes attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public boolean hasAttributes() {
+        return attributes != null && !attributes.isEmpty();
+    }
+
+    @Override
+    public Document copy(String key) {
+        SimpleDocument document = new SimpleDocument(key);
+        forEach(entry -> document.entries.add(entry.copy(entry.getKey())));
+        return document;
     }
 
     @Override
@@ -404,52 +295,5 @@ public class SimpleDocument implements Document {
     @Override
     public void write(String type, Writer output, boolean pretty) {
         DocumentRegistry.getType(type).getWriter().write(output,this,pretty);
-    }
-
-    @Override
-    public Iterator<DocumentEntry> iterator() {
-        return this.entries.iterator();
-    }
-
-    @Override
-    public String getKey() {
-        return this.key;
-    }
-
-    @Override
-    public PrimitiveEntry toPrimitive() {
-        throw new UnsupportedOperationException("This entry is not a primitive.");
-    }
-
-    @Override
-    public ArrayEntry toArray() {
-        throw new UnsupportedOperationException("This entry is not a array.");
-    }
-
-    @Override
-    public Document toDocument() {
-        return this;
-    }
-
-    @Override
-    public boolean isPrimitive() {
-        return false;
-    }
-
-    @Override
-    public boolean isArray() {
-        return false;
-    }
-
-    @Override
-    public boolean isObject() {
-        return true;
-    }
-
-    @Override
-    public Document copy(String key) {
-        SimpleDocument document = new SimpleDocument(key);
-        forEach(entry -> document.entries.add(entry.copy(entry.getKey())));
-        return document;
     }
 }

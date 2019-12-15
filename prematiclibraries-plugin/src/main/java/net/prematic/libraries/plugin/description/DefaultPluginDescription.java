@@ -19,8 +19,8 @@
 
 package net.prematic.libraries.plugin.description;
 
-import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
+import net.prematic.libraries.document.entry.Document;
 import net.prematic.libraries.plugin.description.dependency.Dependency;
 import net.prematic.libraries.plugin.description.dependency.DependencyAdapter;
 import net.prematic.libraries.plugin.description.dependency.PluginDependency;

@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,7 +34,7 @@ public class AtomicAdapter {
     public static class Integer implements DocumentAdapter<AtomicInteger> {
 
         @Override
-        public AtomicInteger read(DocumentEntry entry, TypeReference<AtomicInteger> type) {
+        public AtomicInteger read(DocumentBase entry, TypeReference<AtomicInteger> type) {
             if(entry.isPrimitive()) return new AtomicInteger(entry.toPrimitive().getAsInt());
             else throw new IllegalArgumentException("Entry is not primitive.");
         }
@@ -47,7 +48,7 @@ public class AtomicAdapter {
     public static class Long implements DocumentAdapter<AtomicLong> {
 
         @Override
-        public AtomicLong read(DocumentEntry entry, TypeReference<AtomicLong> type) {
+        public AtomicLong read(DocumentBase entry, TypeReference<AtomicLong> type) {
             if(entry.isPrimitive()) return new AtomicLong(entry.toPrimitive().getAsLong());
             else throw new IllegalArgumentException("Entry is not primitive.");
         }
@@ -61,7 +62,7 @@ public class AtomicAdapter {
     public static class Boolean implements DocumentAdapter<AtomicBoolean> {
 
         @Override
-        public AtomicBoolean read(DocumentEntry entry, TypeReference<AtomicBoolean> type) {
+        public AtomicBoolean read(DocumentBase entry, TypeReference<AtomicBoolean> type) {
             if(entry.isPrimitive()) return new AtomicBoolean(entry.toPrimitive().getAsBoolean());
             else throw new IllegalArgumentException("Entry is not primitive.");
         }

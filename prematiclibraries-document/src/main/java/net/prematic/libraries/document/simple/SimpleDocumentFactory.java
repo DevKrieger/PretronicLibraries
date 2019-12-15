@@ -19,7 +19,11 @@
 
 package net.prematic.libraries.document.simple;
 
-import net.prematic.libraries.document.*;
+import net.prematic.libraries.document.DocumentContext;
+import net.prematic.libraries.document.DocumentFactory;
+import net.prematic.libraries.document.entry.*;
+
+import java.util.List;
 
 public class SimpleDocumentFactory implements DocumentFactory {
 
@@ -39,6 +43,11 @@ public class SimpleDocumentFactory implements DocumentFactory {
     }
 
     @Override
+    public Document newDocument(String key, List<DocumentEntry> entries) {
+        return new SimpleDocument(key,entries);
+    }
+
+    @Override
     public PrimitiveEntry newPrimitiveEntry(String key, Object object) {
         return new SimplePrimitiveEntry(key,object);
     }
@@ -46,5 +55,20 @@ public class SimpleDocumentFactory implements DocumentFactory {
     @Override
     public ArrayEntry newArrayEntry(String key) {
         return new SimpleArrayEntry(key);
+    }
+
+    @Override
+    public ArrayEntry newArrayEntry(String key, List<DocumentEntry> entries) {
+        return new SimpleArrayEntry(key,entries);
+    }
+
+    @Override
+    public DocumentAttributes newAttributes() {
+        return new SimpleDocumentAttribute();
+    }
+
+    @Override
+    public DocumentAttributes newAttributes(List<DocumentEntry> entries) {
+        return new SimpleDocumentAttribute(entries);
     }
 }

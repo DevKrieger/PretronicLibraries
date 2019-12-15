@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.util.Currency;
@@ -29,7 +30,7 @@ import java.util.Currency;
 public class CurrencyAdapter implements DocumentAdapter<Currency> {
 
     @Override
-    public Currency read(DocumentEntry entry, TypeReference<Currency> type) {
+    public Currency read(DocumentBase entry, TypeReference<Currency> type) {
         if(entry.isPrimitive()) return Currency.getInstance(entry.toPrimitive().getAsString());
         throw new IllegalArgumentException("Can't convert a object to a currency.");
     }

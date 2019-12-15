@@ -19,10 +19,11 @@
 
 package net.prematic.libraries.plugin.description.dependency;
 
-import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.plugin.exception.InvalidPluginDescriptionException;
 import net.prematic.libraries.plugin.manager.PluginManager;
 import net.prematic.libraries.utility.reflect.TypeReference;
@@ -41,7 +42,7 @@ public final class DependencyAdapter implements DocumentAdapter<Dependency> {
     }
 
     @Override
-    public Dependency read(DocumentEntry entry, TypeReference<Dependency> type0) {
+    public Dependency read(DocumentBase entry, TypeReference<Dependency> type0) {
         if(!entry.isObject()) throw new IllegalArgumentException("Entry is not a document");
         Document document = entry.toDocument();
         String type = entry.toPrimitive().getAsString();

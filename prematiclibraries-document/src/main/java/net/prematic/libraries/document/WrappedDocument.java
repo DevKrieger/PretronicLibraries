@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.document;
 
+import net.prematic.libraries.document.entry.*;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.io.File;
@@ -29,7 +30,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class WrappedDocument implements Document{
+public class WrappedDocument implements Document {
 
     private final Document original;
 
@@ -89,11 +90,6 @@ public class WrappedDocument implements Document{
     @Override
     public <K, V> Map<K, V> getAsMap(Class<K> keyClass, Class<V> valueClass) {
         return original.getAsMap(keyClass, valueClass);
-    }
-
-    @Override
-    public List<DocumentEntry> getEntries() {
-        return original.getEntries();
     }
 
     @Override
@@ -242,8 +238,8 @@ public class WrappedDocument implements Document{
     }
 
     @Override
-    public boolean containsAll(String... keys) {
-        return original.containsAll(keys);
+    public boolean containsMany(String... keys) {
+        return original.containsMany(keys);
     }
 
     @Override
@@ -289,6 +285,16 @@ public class WrappedDocument implements Document{
     @Override
     public Document sort(String key, Comparator<DocumentEntry> sorter) {
         return original.sort(key, sorter);
+    }
+
+    @Override
+    public void addEntry(DocumentEntry entry) {
+        original.addEntry(entry);
+    }
+
+    @Override
+    public void removeEntry(DocumentEntry entry) {
+        original.removeEntry(entry);
     }
 
     @Override
@@ -342,6 +348,26 @@ public class WrappedDocument implements Document{
     }
 
     @Override
+    public void setKey(String key) {
+        original.setKey(key);
+    }
+
+    @Override
+    public DocumentAttributes getAttributes() {
+        return original.getAttributes();
+    }
+
+    @Override
+    public void setAttributes(DocumentAttributes attributes) {
+        original.setAttributes(attributes);
+    }
+
+    @Override
+    public boolean hasAttributes() {
+        return original.hasAttributes();
+    }
+
+    @Override
     public PrimitiveEntry toPrimitive() {
         return original.toPrimitive();
     }
@@ -357,6 +383,16 @@ public class WrappedDocument implements Document{
     }
 
     @Override
+    public DocumentAttributes toAttributes() {
+        return original.toAttributes();
+    }
+
+    @Override
+    public DocumentNode toNode() {
+        return original.toNode();
+    }
+
+    @Override
     public boolean isPrimitive() {
         return original.isPrimitive();
     }
@@ -369,5 +405,15 @@ public class WrappedDocument implements Document{
     @Override
     public boolean isObject() {
         return original.isObject();
+    }
+
+    @Override
+    public boolean isAttributes() {
+        return original.isAttributes();
+    }
+
+    @Override
+    public boolean isNode() {
+        return original.isNode();
     }
 }
