@@ -19,12 +19,16 @@
 
 package net.prematic.libraries.document.utils;
 
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.annotations.DocumentIgnored;
 import net.prematic.libraries.document.annotations.DocumentName;
-import net.prematic.libraries.document.entry.*;
+import net.prematic.libraries.document.entry.ArrayEntry;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.document.entry.DocumentNode;
 import net.prematic.libraries.utility.reflect.Primitives;
 import net.prematic.libraries.utility.reflect.TypeReference;
 import net.prematic.libraries.utility.reflect.UnsafeInstanceCreator;

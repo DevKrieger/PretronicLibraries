@@ -19,11 +19,11 @@
 
 package net.prematic.libraries.document.simple;
 
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.adapter.DocumentAdapterFactory;
 import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
-import net.prematic.libraries.document.entry.Document;
 import net.prematic.libraries.document.entry.DocumentBase;
 import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.type.DocumentFileType;

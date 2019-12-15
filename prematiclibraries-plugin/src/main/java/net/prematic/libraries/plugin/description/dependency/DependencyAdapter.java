@@ -19,9 +19,9 @@
 
 package net.prematic.libraries.plugin.description.dependency;
 
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
-import net.prematic.libraries.document.entry.Document;
 import net.prematic.libraries.document.entry.DocumentBase;
 import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.plugin.exception.InvalidPluginDescriptionException;
@@ -47,7 +47,7 @@ public final class DependencyAdapter implements DocumentAdapter<Dependency> {
         Document document = entry.toDocument();
         String type = entry.toPrimitive().getAsString();
         if(type == null) throw new InvalidPluginDescriptionException("Dependency requires a type");
-        BiFunction<PluginManager,Document, Dependency>factory = dependencyFactories.get(type.toLowerCase());
+        BiFunction<PluginManager,Document, Dependency> factory = dependencyFactories.get(type.toLowerCase());
         if(factory == null) throw new InvalidPluginDescriptionException("Invalid dependency type");
         return factory.apply(manager,document);
     }

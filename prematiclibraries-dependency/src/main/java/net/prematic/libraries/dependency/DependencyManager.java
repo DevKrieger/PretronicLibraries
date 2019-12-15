@@ -19,7 +19,7 @@
 
 package net.prematic.libraries.dependency;
 
-import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.logging.PrematicLogger;
 import net.prematic.libraries.utility.Iterators;
 

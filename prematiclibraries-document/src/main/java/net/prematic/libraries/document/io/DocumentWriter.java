@@ -19,7 +19,7 @@
 
 package net.prematic.libraries.document.io;
 
-import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.utility.io.IORuntimeException;
 
 import java.io.*;

@@ -1,7 +1,7 @@
 package net.prematic.libraries.document.type.xml;
 
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentRegistry;
-import net.prematic.libraries.document.entry.Document;
 import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.utility.GeneralUtil;

@@ -19,7 +19,11 @@
 
 package net.prematic.libraries.document.simple;
 
-import net.prematic.libraries.document.entry.*;
+import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.entry.ArrayEntry;
+import net.prematic.libraries.document.entry.DocumentAttributes;
+import net.prematic.libraries.document.entry.DocumentNode;
+import net.prematic.libraries.document.entry.PrimitiveEntry;
 import net.prematic.libraries.utility.GeneralUtil;
 
 public class SimplePrimitiveEntry implements PrimitiveEntry {

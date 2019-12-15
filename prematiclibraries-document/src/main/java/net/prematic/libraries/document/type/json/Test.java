@@ -19,16 +19,18 @@
 
 package net.prematic.libraries.document.type.json;
 
-import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.Document;
 
 import java.io.File;
 
 public class Test {
 
-    public static void main(String[] args) {
+    public static void mainu(String[] args) {
         JsonDocumentReader reader = new JsonDocumentReader();
 
         Document result = reader.read(new File("test.json"));
+
+
 
         System.out.println();
     }
@@ -57,13 +59,13 @@ public class Test {
         writer.write(new File("output.json"),document);
     }
 
-    public static void mainG(String[] args) {
+    public static void main(String[] args) {
         JsonDocumentReader reader = new JsonDocumentReader();
         JsonDocumentWriter writer = new JsonDocumentWriter();
 
         Document result = reader.read(new File("testFinal.json"));
 
-        writer.write(new File("output.json"),result);
+        writer.write(new File("output.json"),result,false);
         System.out.println();
     }
 

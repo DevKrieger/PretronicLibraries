@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.document.type.json;
 
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.entry.*;
 import net.prematic.libraries.document.io.DocumentWriter;
 import net.prematic.libraries.utility.io.IORuntimeException;

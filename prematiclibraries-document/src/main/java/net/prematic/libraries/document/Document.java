@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 14.12.19, 16:53
+ * @since 15.12.19, 18:42
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.entry;
+package net.prematic.libraries.document;
 
-import net.prematic.libraries.document.DocumentFactory;
-import net.prematic.libraries.document.DocumentRegistry;
-import net.prematic.libraries.document.EmptyDocument;
+import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.document.entry.DocumentNode;
 import net.prematic.libraries.utility.annonations.Internal;
 import net.prematic.libraries.utility.parser.StringParser;
 import net.prematic.libraries.utility.reflect.TypeReference;
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public interface Document extends DocumentNode,DocumentEntry {
+public interface Document extends DocumentNode, DocumentEntry {
 
     Array getAsArray();
 

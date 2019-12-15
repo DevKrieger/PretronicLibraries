@@ -27,7 +27,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.type.json.JsonDocumentReader;
 import net.prematic.libraries.document.type.json.JsonDocumentWriter;
 

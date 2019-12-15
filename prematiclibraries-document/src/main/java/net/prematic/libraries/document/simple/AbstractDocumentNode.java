@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.document.simple;
 
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.entry.*;
 import net.prematic.libraries.utility.Iterators;

@@ -19,6 +19,8 @@
 
 package net.prematic.libraries.document.entry;
 
+import net.prematic.libraries.document.Document;
+
 public interface ArrayEntry extends Document {
 
     boolean isPrimitiveArray();

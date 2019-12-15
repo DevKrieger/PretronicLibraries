@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.Document;
 
 import java.io.File;
 

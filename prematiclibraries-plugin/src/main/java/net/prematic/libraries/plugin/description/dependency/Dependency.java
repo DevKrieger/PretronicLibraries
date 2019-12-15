@@ -19,7 +19,7 @@
 
 package net.prematic.libraries.plugin.description.dependency;
 
-import net.prematic.libraries.document.entry.Document;
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.plugin.description.PluginDescription;
 
 public interface Dependency {
