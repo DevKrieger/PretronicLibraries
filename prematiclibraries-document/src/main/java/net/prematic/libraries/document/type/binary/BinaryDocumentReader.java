@@ -20,9 +20,9 @@
 package net.prematic.libraries.document.type.binary;
 
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
-import net.prematic.libraries.document.PrimitiveEntry;
+import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.document.entry.PrimitiveEntry;
 import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.utility.io.IORuntimeException;
 import net.prematic.libraries.utility.parser.StringParser;

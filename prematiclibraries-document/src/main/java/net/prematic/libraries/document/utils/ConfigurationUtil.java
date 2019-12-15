@@ -20,8 +20,8 @@
 package net.prematic.libraries.document.utils;
 
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.annotationss.DocumentFile;
-import net.prematic.libraries.document.annotationss.DocumentKey;
+import net.prematic.libraries.document.annotations.DocumentFile;
+import net.prematic.libraries.document.annotations.DocumentKey;
 import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.utility.io.IORuntimeException;
 import net.prematic.libraries.utility.reflect.ReflectException;

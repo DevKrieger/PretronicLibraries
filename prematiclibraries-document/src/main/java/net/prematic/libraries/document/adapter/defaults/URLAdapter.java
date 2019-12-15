@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.net.MalformedURLException;
@@ -30,7 +31,7 @@ import java.net.URL;
 public class URLAdapter implements DocumentAdapter<URL> {
 
     @Override
-    public URL read(DocumentEntry entry, TypeReference<URL> type) {
+    public URL read(DocumentBase entry, TypeReference<URL> type) {
         if(entry.isPrimitive()) {
             try {
                 return new URL(entry.toPrimitive().getAsString());

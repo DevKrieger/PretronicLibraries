@@ -172,19 +172,19 @@ public final class Iterators {
 
     public static <U> U removeOne(Iterable<U> list, Predicate<U> acceptor){
         Iterator<U> iterator = list.iterator();
-        U result = null;
+        U result;
         while(iterator.hasNext() && (result=iterator.next()) != null){
             if(acceptor.test(result)){
                 iterator.remove();
                 return result;
             }
         }
-        return result;
+        return null;
     }
 
     public static <U> void removeSilent(Iterable<U> list, Predicate<U> acceptor){
         Iterator<U> iterator = list.iterator();
-        U result = null;
+        U result;
         while(iterator.hasNext() && (result=iterator.next()) != null) if(acceptor.test(result)) iterator.remove();
     }
 

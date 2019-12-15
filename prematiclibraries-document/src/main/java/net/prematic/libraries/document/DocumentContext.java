@@ -23,6 +23,8 @@ import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.adapter.DocumentAdapterFactory;
 import net.prematic.libraries.document.adapter.defaults.ClassMappingAdapter;
 import net.prematic.libraries.document.adapter.defaults.HierarchyAdapterFactory;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
@@ -64,11 +66,11 @@ public interface DocumentContext {
     DocumentEntry serialize(String key, Object value);
 
 
-    <T> T deserialize(DocumentEntry entry, Class<T> clazz);
+    <T> T deserialize(DocumentBase entry, Class<T> clazz);
 
-    <T> T deserialize(DocumentEntry entry, Type type);
+    <T> T deserialize(DocumentBase entry, Type type);
 
-    <T> T deserialize(DocumentEntry entry, TypeReference type);
+    <T> T deserialize(DocumentBase entry, TypeReference<?> type);
 
 
     void loadConfigurationClass(Class<?> configurationClass);

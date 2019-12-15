@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.net.InetAddress;
@@ -32,7 +33,7 @@ public class InetAddressAdapter implements DocumentAdapter<InetAddress> {
     public static InetAddressAdapter INSTANCE = new InetAddressAdapter();
 
     @Override
-    public InetAddress read(DocumentEntry entry, TypeReference<InetAddress> type) {
+    public InetAddress read(DocumentBase entry, TypeReference<InetAddress> type) {
         if(entry.isPrimitive()) {
             try {
                 return InetAddress.getByName(entry.toPrimitive().getAsString());

@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.sql.Date;
@@ -29,7 +30,7 @@ import java.sql.Date;
 public class SqlDateAdapter implements DocumentAdapter<Date> {
 
     @Override
-    public Date read(DocumentEntry entry, TypeReference<Date> type) {
+    public Date read(DocumentBase entry, TypeReference<Date> type) {
         if(entry.isPrimitive()) return new Date(entry.toPrimitive().getAsLong());
         throw new IllegalArgumentException("Can't convert a object to a date.");
     }

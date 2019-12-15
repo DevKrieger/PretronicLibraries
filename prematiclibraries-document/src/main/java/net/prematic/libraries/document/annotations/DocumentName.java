@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.06.19 22:11
+ * @since 09.06.19 21:11
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,17 @@
  * under the License.
  */
 
-package net.prematic.libraries.document;
+package net.prematic.libraries.document.annotations;
 
-public interface ArrayEntry extends Document{
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    boolean isPrimitiveArray();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface DocumentName {
+
+    String value();
 
 }

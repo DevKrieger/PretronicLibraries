@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.document;
 
+import net.prematic.libraries.document.entry.*;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.io.File;
@@ -29,11 +30,11 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class EmptyDocument implements Document{
-
-    private static final List<DocumentEntry> EMPTY_ENTRIES = Collections.emptyList();
+public class EmptyDocument implements Document {
 
     private static final Document EMPTY = new EmptyDocument();
+
+    private EmptyDocument(){}
 
     @Override
     public DocumentContext getContext() {
@@ -83,11 +84,6 @@ public class EmptyDocument implements Document{
     @Override
     public <K, V> Map<K, V> getAsMap(Class<K> keyClass, Class<V> valueClass) {
         return null;
-    }
-
-    @Override
-    public List<DocumentEntry> getEntries() {
-        return Collections.emptyList();
     }
 
     @Override
@@ -212,7 +208,7 @@ public class EmptyDocument implements Document{
 
     @Override
     public List<DocumentEntry> entries() {
-        return EMPTY_ENTRIES;
+        return Collections.emptyList();
     }
 
     @Override
@@ -236,9 +232,10 @@ public class EmptyDocument implements Document{
     }
 
     @Override
-    public boolean containsAll(String... keys) {
+    public boolean containsMany(String... keys) {
         return false;
     }
+
 
     @Override
     public boolean isObject(String key) {
@@ -286,8 +283,18 @@ public class EmptyDocument implements Document{
     }
 
     @Override
+    public void addEntry(DocumentEntry entry) {
+        //Unused
+    }
+
+    @Override
+    public void removeEntry(DocumentEntry entry) {
+        //Unused
+    }
+
+    @Override
     public Stream<DocumentEntry> stream() {
-        return EMPTY_ENTRIES.stream();
+        return entries().stream();
     }
 
     @Override
@@ -297,7 +304,7 @@ public class EmptyDocument implements Document{
 
     @Override
     public Document copy(String key) {
-        return null;
+        return this;
     }
 
     @Override
@@ -327,12 +334,32 @@ public class EmptyDocument implements Document{
 
     @Override
     public Iterator<DocumentEntry> iterator() {
-        return EMPTY_ENTRIES.iterator();
+        return entries().iterator();
     }
 
     @Override
     public String getKey() {
         return null;
+    }
+
+    @Override
+    public void setKey(String key) {
+
+    }
+
+    @Override
+    public DocumentAttributes getAttributes() {
+        return EmptyDocumentAttribute.newAttribute();
+    }
+
+    @Override
+    public void setAttributes(DocumentAttributes attributes) {
+
+    }
+
+    @Override
+    public boolean hasAttributes() {
+        return false;
     }
 
     @Override
@@ -351,6 +378,16 @@ public class EmptyDocument implements Document{
     }
 
     @Override
+    public DocumentAttributes toAttributes() {
+        return null;
+    }
+
+    @Override
+    public DocumentNode toNode() {
+        return null;
+    }
+
+    @Override
     public boolean isPrimitive() {
         return false;
     }
@@ -362,6 +399,16 @@ public class EmptyDocument implements Document{
 
     @Override
     public boolean isObject() {
+        return true;
+    }
+
+    @Override
+    public boolean isAttributes() {
+        return false;
+    }
+
+    @Override
+    public boolean isNode() {
         return true;
     }
 

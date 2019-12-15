@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 14.08.19, 18:37
+ * @since 14.12.19, 19:56
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,34 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.annotationss;
+package net.prematic.libraries.document.entry;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import net.prematic.libraries.document.Document;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface DocumentFile {
+public interface DocumentBase {
 
-    String source() default "Unknown";
+    PrimitiveEntry toPrimitive();
 
-    String type() default "Unknown";
+    ArrayEntry toArray();
 
-    boolean appendMissing() default false;
+    Document toDocument();
 
-    boolean loadAll() default false;
+    DocumentAttributes toAttributes();
+
+    DocumentNode toNode();
+
+
+    boolean isPrimitive();
+
+    boolean isArray();
+
+    boolean isObject();
+
+    boolean isAttributes();
+
+    boolean isNode();
+
+
+    DocumentBase copy();
+
 }

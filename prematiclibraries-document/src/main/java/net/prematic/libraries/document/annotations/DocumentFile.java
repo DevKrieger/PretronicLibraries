@@ -17,17 +17,22 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.annotationss;
+package net.prematic.libraries.document.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DocumentKey {
+public @interface DocumentFile {
 
-    String value();
+    String source() default "Unknown";
 
+    String type() default "Unknown";
+
+    boolean appendMissing() default false;
+
+    boolean loadAll() default false;
 }

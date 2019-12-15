@@ -19,9 +19,9 @@
 
 package net.prematic.libraries.document.type.properties;
 
-import net.prematic.libraries.document.ArrayEntry;
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
+import net.prematic.libraries.document.entry.ArrayEntry;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.io.DocumentWriter;
 import net.prematic.libraries.utility.io.IORuntimeException;
 

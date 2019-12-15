@@ -19,8 +19,9 @@
 
 package net.prematic.libraries.plugin.description.mainclass;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.lang.reflect.Type;
@@ -31,7 +32,7 @@ public class MainClassAdapter implements DocumentAdapter<MainClass> {
     private final static Type MAP_TYPE = new TypeReference<Map<String,String>>(){}.getType();
 
     @Override
-    public MainClass read(DocumentEntry entry, TypeReference<MainClass> type) {
+    public MainClass read(DocumentBase entry, TypeReference<MainClass> type) {
         if(entry.isPrimitive()) return new SingleMainClass(entry.toPrimitive().getAsString());
         else return new MultipleMainClass(entry.toDocument().getAsObject(MAP_TYPE));
     }

@@ -21,10 +21,11 @@ package net.prematic.libraries.document.adapter.defaults;
 
 import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.ReflectException;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
@@ -46,7 +47,7 @@ public class CollectionAdapter implements DocumentAdapter<Collection>, DocumentA
     private DocumentContext context;
 
     @Override
-    public Collection read(DocumentEntry entry, TypeReference<Collection> type) {
+    public Collection read(DocumentBase entry, TypeReference<Collection> type) {
         if(entry.isPrimitive()) throw new IllegalArgumentException("Object is a primitive type.");
         Collection<?> instance;
 

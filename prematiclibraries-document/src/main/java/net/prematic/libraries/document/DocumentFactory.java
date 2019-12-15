@@ -19,15 +19,30 @@
 
 package net.prematic.libraries.document;
 
+import net.prematic.libraries.document.entry.*;
+
+import java.util.List;
+
 public interface DocumentFactory {
 
     DocumentContext newContext();
+
 
     Document newDocument();
 
     Document newDocument(String key);
 
+    Document newDocument(String key, List<DocumentEntry> entries);
+
+
     PrimitiveEntry newPrimitiveEntry(String key, Object object);
 
     ArrayEntry newArrayEntry(String key);
+
+    ArrayEntry newArrayEntry(String key, List<DocumentEntry> entries);
+
+
+    DocumentAttributes newAttributes();
+
+    DocumentAttributes newAttributes(List<DocumentEntry> entries);
 }

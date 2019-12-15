@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 14.12.19, 13:06
+ * @since 14.12.19, 19:49
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,21 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.type.json;
+package net.prematic.libraries.document.annotations;
 
-import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.io.DocumentReader;
-import net.prematic.libraries.utility.parser.StringParser;
+public class TestObject {
 
-public class JsonDocumentReader implements DocumentReader {
+    @DocumentAttribute("id")
+    public int id;
 
-    @Override
-    public Document read(StringParser parser) {
-        JsonSequence sequence = new JsonSequence("root",false,ParserState.DOCUMENT_START);
-        while (parser.hasNextChar()){
-            sequence.getCurrentState().parse(sequence,parser,parser.nextChar());
-        }
-        return sequence.getSequenceEntry().toDocument();
-    }
+    @DocumentRequired
+    public String test2;
+
+    @DocumentIgnored
+    public String test3;
+
+    public String test7;
+
+    @DocumentKey("hallo")
+    public String test9;
 }

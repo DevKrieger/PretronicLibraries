@@ -80,8 +80,6 @@ public class StringParser {
         resetIndex();
     }
 
-
-
     //Index operations
 
     public int lineIndex(){
@@ -106,14 +104,13 @@ public class StringParser {
     }
 
     public void resetIndex(){
-        this.lineIndex = 0;
-        this.charIndex = 0;
+        this.lineIndex = -1;
+        this.charIndex = -1;
     }
 
-    //Check
     public void setPosition(int position){
         int newLineIndex = 0;
-        while(position > this.lines[newLineIndex].length){
+        while(position+1 > this.lines[newLineIndex].length){
             position -= this.lines[newLineIndex].length;
             newLineIndex++;
         }
@@ -121,27 +118,28 @@ public class StringParser {
     }
 
 
-
     //Index Checks (Check all)
 
+    @Deprecated
     public boolean hasNext(){
         return hasNextChar();
     }
 
     public boolean hasNextChar(){
-        return hasChar(this.lineIndex,this.charIndex);
+        return hasChar(lineIndex,charIndex+1) || hasLine(lineIndex+1);
     }
 
     public boolean hasNextLine(){
         return hasLine(this.lineIndex);
     }
 
+    @Deprecated
     public boolean has(int lineIndex, int charIndex){
         return hasChar(lineIndex,charIndex) || hasLine(lineIndex);
     }
 
     public boolean hasChar(int lineIndex,int charIndex){
-        return lines.length>lineIndex && lines[lineIndex].length > charIndex;
+        return lineIndex >= 0 && lines.length>lineIndex && lines[lineIndex].length > charIndex;
     }
 
     public boolean hasLine(int lineIndex){
@@ -161,17 +159,10 @@ public class StringParser {
 
     public String[] lines(){
         String[] lines = new String[this.lines.length];
-        StringBuilder lineBuilder = new StringBuilder();
         for(int i = 0;i<lines.length;i++){
-            for(char c : this.lines[i])lineBuilder.append(c);
-            lines[i] = lineBuilder.toString();
-            lineBuilder.setLength(0);
+            lines[i] = new String(this.lines[i]);
         }
         return lines;
-    }
-
-    public String[] lines(int from, int to){
-        return null;
     }
 
     public String line(){
@@ -179,22 +170,19 @@ public class StringParser {
     }
 
     public String line(int lineIndex){
-        StringBuilder builder = new StringBuilder();
-        for(int i = 0;i<this.lines[lineIndex].length;i++) builder.append(this.lines[lineIndex][i]);
-        return builder.toString();
+        return new String(this.lines[lineIndex]);
     }
 
     public String nextLine(){
-        String result =  line();
         this.lineIndex++;
-        this.charIndex = 0;
-        return result;
+        this.charIndex = -1;
+        return line();
     }
 
     public String currentUntilNextLine() {
         String result = get(lineIndex,charIndex,lines[lineIndex].length);
         this.lineIndex++;
-        this.charIndex = 0;
+        this.charIndex = -1;
         return result;
     }
 
@@ -204,7 +192,7 @@ public class StringParser {
 
     public void skipLines(int amount){
         this.lineIndex += amount;
-        this.charIndex = 0;
+        this.charIndex = -1;
     }
 
     public void previousLine(){
@@ -214,7 +202,7 @@ public class StringParser {
     public void previousLine(int amount){
         this.lineIndex = this.lineIndex-amount;
         if(hasLine(this.lineIndex)) this.charIndex = this.lines[lineIndex].length-1;
-        else this.charIndex = 0;
+        else this.charIndex = -1;
     }
 
     public boolean isLineFinished(){
@@ -248,15 +236,12 @@ public class StringParser {
     }
 
     public char nextChar(){
-        char result = this.lines[this.lineIndex][this.charIndex];
-
-
-        if(this.lines[this.lineIndex].length > charIndex+1) charIndex++;
+        if(lineIndex >= 0 && this.lines[this.lineIndex].length > charIndex+1) charIndex++;
         else{
             lineIndex++;
             charIndex = 0;
         }
-        return result;
+        return this.lines[this.lineIndex][this.charIndex];
     }
 
     public void skipChars(int amount){
@@ -274,7 +259,6 @@ public class StringParser {
     public void skipChars(char c){
         skipChars(c,null);
     }
-
 
 
     public void skipChars(char c, Character comment){
@@ -390,6 +374,10 @@ public class StringParser {
 
 
     //Get Part operations
+
+    public String getOnLine(int from, int to){
+        return String.copyValueOf(Arrays.copyOfRange(lines[lineIndex],from,to));
+    }
 
     public String get(int line, int from, int to){
         return String.copyValueOf(Arrays.copyOfRange(lines[line],from,to));
@@ -529,7 +517,7 @@ public class StringParser {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for(int i = 0;i<lines.length;i++) builder.append(lines[i]).append('\n');
+        for (char[] line : lines) builder.append(line).append('\n');
         builder.setLength(builder.length()-1);
         return builder.toString();
     }

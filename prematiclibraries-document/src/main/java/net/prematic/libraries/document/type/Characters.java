@@ -51,4 +51,5 @@ public class Characters {
 
     public static String ERROR_INVALID_CHARACTER = "Invalid Character";
 
+
 }

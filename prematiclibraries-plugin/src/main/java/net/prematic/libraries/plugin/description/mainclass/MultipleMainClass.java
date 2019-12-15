@@ -20,7 +20,7 @@
 package net.prematic.libraries.plugin.description.mainclass;
 
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
+import net.prematic.libraries.document.entry.DocumentEntry;
 
 import java.util.Map;
 

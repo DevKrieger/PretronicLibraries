@@ -1,8 +1,8 @@
 package net.prematic.libraries.document.type.xml;
 
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.utility.GeneralUtil;
 import net.prematic.libraries.utility.parser.StringParser;
@@ -58,7 +58,7 @@ public class XmlDocumentReader implements DocumentReader {
     }
 
     private Document load(StringParser parser) {
-        while(parser.hasNext()){
+        while(parser.hasNextChar()){
             char input = parser.nextChar();
             if(!isIgnoredChar(input)){
                 if(input == LESSER_THAN && parser.hasNext()){

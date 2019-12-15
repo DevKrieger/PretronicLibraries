@@ -20,9 +20,10 @@
 package net.prematic.libraries.document.adapter.defaults;
 
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.net.InetSocketAddress;
@@ -30,7 +31,7 @@ import java.net.InetSocketAddress;
 public class InetSocketAddressAdapter implements DocumentAdapter<InetSocketAddress> {
 
     @Override
-    public InetSocketAddress read(DocumentEntry entry, TypeReference<InetSocketAddress> type) {
+    public InetSocketAddress read(DocumentBase entry, TypeReference<InetSocketAddress> type) {
         if(entry.isObject()) {
             return new InetSocketAddress(InetAddressAdapter.INSTANCE.read(
                     entry.toDocument().getEntry("address"),new TypeReference<>()),

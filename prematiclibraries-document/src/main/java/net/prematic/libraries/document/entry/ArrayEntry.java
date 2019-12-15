@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 08.06.19 22:01
+ * @since 14.12.19, 16:53
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,18 @@
  * under the License.
  */
 
-package net.prematic.libraries.document;
+package net.prematic.libraries.document.entry;
 
-public interface PrimitiveEntry extends DocumentEntry{
+import net.prematic.libraries.document.Document;
 
-    Object getAsObject();
+public interface ArrayEntry extends Document {
 
-    String getAsString();
+    boolean isPrimitiveArray();
 
-    char getAsCharacter();
+    default ArrayEntry copy(){
+        return copy(getKey());
+    }
 
-    boolean getAsBoolean();
-
-    Number getAsNumber();
-
-    byte getAsByte();
-
-    int getAsInt();
-
-    long getAsLong();
-
-    float getAsFloat();
-
-    short getAsShort();
-
-    double getAsDouble();
-
-    boolean isNull();
+    ArrayEntry copy(String key);
 
 }

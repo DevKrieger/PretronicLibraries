@@ -19,16 +19,17 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.ReflectException;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 public class ClassAdapter implements DocumentAdapter<Class> {
 
     @Override
-    public Class read(DocumentEntry entry, TypeReference<Class> type) {
+    public Class read(DocumentBase entry, TypeReference<Class> type) {
         if(entry.isPrimitive()) {
             try {
                 return Class.forName(entry.toPrimitive().getAsString());

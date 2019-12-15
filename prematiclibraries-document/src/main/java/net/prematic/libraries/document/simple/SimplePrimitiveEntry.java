@@ -19,16 +19,18 @@
 
 package net.prematic.libraries.document.simple;
 
-import net.prematic.libraries.document.ArrayEntry;
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
-import net.prematic.libraries.document.PrimitiveEntry;
+import net.prematic.libraries.document.entry.ArrayEntry;
+import net.prematic.libraries.document.entry.DocumentAttributes;
+import net.prematic.libraries.document.entry.DocumentNode;
+import net.prematic.libraries.document.entry.PrimitiveEntry;
 import net.prematic.libraries.utility.GeneralUtil;
 
 public class SimplePrimitiveEntry implements PrimitiveEntry {
 
-    private final String key;
-    private Object value;
+    private transient String key;
+    private transient Object value;
+    private transient DocumentAttributes attributes;
 
     public SimplePrimitiveEntry(String key, Object value) {
         this.key = key;
@@ -139,6 +141,27 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
     }
 
     @Override
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Override
+    public DocumentAttributes getAttributes() {
+        if(attributes == null) attributes = Document.factory().newAttributes();
+        return attributes;
+    }
+
+    @Override
+    public void setAttributes(DocumentAttributes attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public boolean hasAttributes() {
+        return attributes != null && !attributes.isEmpty();
+    }
+
+    @Override
     public PrimitiveEntry toPrimitive() {
         return this;
     }
@@ -151,6 +174,16 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
     @Override
     public Document toDocument() {
         throw new UnsupportedOperationException("This entry is not a document.");
+    }
+
+    @Override
+    public DocumentAttributes toAttributes() {
+        throw new UnsupportedOperationException("This entry is not a attribute.");
+    }
+
+    @Override
+    public DocumentNode toNode() {
+        throw new UnsupportedOperationException("This entry is not a node.");
     }
 
     @Override
@@ -169,12 +202,22 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
     }
 
     @Override
-    public boolean isNull() {
-        return value != null;
+    public boolean isAttributes() {
+        return false;
     }
 
     @Override
-    public DocumentEntry copy(String key) {
+    public boolean isNode() {
+        return false;
+    }
+
+    @Override
+    public boolean isNull() {
+        return value == null;
+    }
+
+    @Override
+    public PrimitiveEntry copy(String key) {
         return new SimplePrimitiveEntry(key,this.value);
     }
 }

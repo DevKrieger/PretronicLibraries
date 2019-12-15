@@ -24,12 +24,15 @@ import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.utility.parser.StringParser;
 
+/*
+@Todo implement attributes
+ */
 public class PropertiesDocumentReader implements DocumentReader {
 
     @Override
     public Document read(StringParser parser) {
         Document document = Document.newDocument();
-        while(parser.hasNext()){
+        while(parser.hasNextChar()){
             char input = parser.nextChar();
             if(!isIgnoredCharacter(input)){
                 if(input == '#' || input == '!') parser.skipLine();
@@ -47,7 +50,7 @@ public class PropertiesDocumentReader implements DocumentReader {
         int start = parser.charIndex()-1;
         int end = start;
         boolean pending = false;
-        while(parser.hasNext()){
+        while(parser.hasNextChar()){
             char input = parser.nextChar();
             if(input == ' ' || input == '\n' || input == '\r' || input == '\t' || input ==  '=' || input == ':' ) pending = true;
             else if(parser.isLineFinished()) break;

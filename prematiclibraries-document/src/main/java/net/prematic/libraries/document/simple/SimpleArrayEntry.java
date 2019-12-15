@@ -19,14 +19,19 @@
 
 package net.prematic.libraries.document.simple;
 
-import net.prematic.libraries.document.ArrayEntry;
-import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentEntry;
+import net.prematic.libraries.document.entry.ArrayEntry;
+import net.prematic.libraries.document.entry.DocumentEntry;
+
+import java.util.List;
 
 public class SimpleArrayEntry extends SimpleDocument implements ArrayEntry {
 
     public SimpleArrayEntry(String key) {
         super(key);
+    }
+
+    public SimpleArrayEntry(String key, List<DocumentEntry> entries) {
+        super(key,entries);
     }
 
     @Override
@@ -46,8 +51,8 @@ public class SimpleArrayEntry extends SimpleDocument implements ArrayEntry {
     }
 
     @Override
-    public Document copy(String key) {
-        SimpleDocument document = new SimpleArrayEntry(key);
+    public ArrayEntry copy(String key) {
+        SimpleArrayEntry document = new SimpleArrayEntry(key);
         forEach(entry -> document.entries().add(entry.copy(entry.getKey())));
         return document;
     }

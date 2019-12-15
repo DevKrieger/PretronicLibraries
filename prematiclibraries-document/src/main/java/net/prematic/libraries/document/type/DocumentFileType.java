@@ -23,8 +23,6 @@ import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.document.io.DocumentWriter;
 import net.prematic.libraries.document.type.binary.BinaryDocumentReader;
 import net.prematic.libraries.document.type.binary.BinaryDocumentWriter;
-import net.prematic.libraries.document.type.ini.INIDocumentReader;
-import net.prematic.libraries.document.type.ini.INIDocumentWriter;
 import net.prematic.libraries.document.type.json.JsonDocumentReader;
 import net.prematic.libraries.document.type.json.JsonDocumentWriter;
 import net.prematic.libraries.document.type.properties.PropertiesDocumentReader;
@@ -34,6 +32,12 @@ import net.prematic.libraries.document.type.xml.XmlDocumentWriter;
 import net.prematic.libraries.document.type.yaml.YamlDocumentReader;
 import net.prematic.libraries.document.type.yaml.YamlDocumentWriter;
 
+/*
+@Todo FileTypes
+    InI
+    Toml
+
+ */
 public class DocumentFileType {
 
     public static final DocumentFileType JSON = new DocumentFileType("JSON","json",new JsonDocumentWriter(),new JsonDocumentReader());
@@ -45,8 +49,6 @@ public class DocumentFileType {
     public static final DocumentFileType XML = new DocumentFileType("XML", "xml", new XmlDocumentWriter(), new XmlDocumentReader());
 
     public static final DocumentFileType PROPERTIES = new DocumentFileType("PROPERTIES", "properties", new PropertiesDocumentWriter(), new PropertiesDocumentReader());
-
-    public static final DocumentFileType INI = new DocumentFileType("INI", "ini", new INIDocumentWriter(), new INIDocumentReader());
 
 
     private final String name, ending;

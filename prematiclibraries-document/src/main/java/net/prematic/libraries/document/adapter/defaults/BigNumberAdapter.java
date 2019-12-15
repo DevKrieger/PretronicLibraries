@@ -19,9 +19,10 @@
 
 package net.prematic.libraries.document.adapter.defaults;
 
-import net.prematic.libraries.document.DocumentEntry;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.entry.DocumentBase;
+import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.math.BigDecimal;
@@ -32,7 +33,7 @@ public class BigNumberAdapter {
     public static class Integer implements DocumentAdapter<BigInteger> {
 
         @Override
-        public BigInteger read(DocumentEntry entry, TypeReference<BigInteger> type) {
+        public BigInteger read(DocumentBase entry, TypeReference<BigInteger> type) {
             if(entry.isPrimitive()) return BigInteger.valueOf(entry.toPrimitive().getAsInt());
             else throw new IllegalArgumentException("Entry is not primitive.");
         }
@@ -46,7 +47,7 @@ public class BigNumberAdapter {
     public static class Decimal implements DocumentAdapter<BigDecimal> {
 
         @Override
-        public BigDecimal read(DocumentEntry entry, TypeReference<BigDecimal> type) {
+        public BigDecimal read(DocumentBase entry, TypeReference<BigDecimal> type) {
             if(entry.isPrimitive()) return BigDecimal.valueOf(entry.toPrimitive().getAsDouble());
             else throw new IllegalArgumentException("Entry is not primitive.");
         }
