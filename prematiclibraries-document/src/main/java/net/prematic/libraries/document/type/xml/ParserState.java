@@ -19,6 +19,7 @@
 
 package net.prematic.libraries.document.type.xml;
 
+import net.prematic.libraries.document.Document;
 import net.prematic.libraries.utility.parser.StringParser;
 
 public interface ParserState {
@@ -27,7 +28,28 @@ public interface ParserState {
 
     ParserState FIRST_TAG = new FirstTag();
     ParserState SPECIAL_TAG = new SpecialTag();
-    ParserState PRE_TAG = new SpecialTag();
+    ParserState SPECIAL_END_TAG = new SpecialEndTag();
+
+    ParserState TAG_IN = new TagIn();
+    ParserState TAG_ATTRIBUTE_KEY = new TagAttributeKey();
+    ParserState TAG_ATTRIBUTE_KEY_END = new TagAttributeKeyEnd();
+    ParserState TAG_ATTRIBUTE_VALUE_PRE = new TagAttributeValuePre();
+    ParserState TAG_ATTRIBUTE_VALUE = new TagAttributeValue();
+
+    ParserState TAG_FINISHING = new TagFinishing();
+    ParserState TAG_FINISH = new TagFinish();
+
+    ParserState NEXT = new Next();
+    ParserState NEXT_TAG_PRE = new NextTagPre();
+    ParserState NEXT_TAG = new NextTag();
+
+    ParserState TEXT = new Text();
+
+    ParserState COMMENT_PRE = new CommentPre();
+    ParserState COMMENT_PRE2 = new CommentPre2();
+    ParserState COMMENT = new Comment();
+    ParserState COMMENT_FINISHING = new CommentFinishing();
+    ParserState COMMENT_FINISHING2 = new CommentFinishing2();
 
     ParserState TAG_NAME = new TagName();
 
@@ -42,9 +64,8 @@ public interface ParserState {
 
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
-            if(current == '<'){
-                sequence.setCurrentState(FIRST_TAG);
-            }else if(isNotIgnoredChar(current)) parser.throwException("Invalid Character");
+            if(current == '<') sequence.setCurrentState(FIRST_TAG);
+            else if(isNotIgnoredChar(current)) parser.throwException("Invalid Character");
         }
     }
 
@@ -53,7 +74,10 @@ public interface ParserState {
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
             if(current == ':' || current == '?') sequence.setCurrentState(SPECIAL_TAG);
-            else if(isNotIgnoredChar(current)) parser.throwException("Invalid Character");
+            else if(Character.isLetter(current)){
+                sequence.mark(parser);
+                sequence.setCurrentState(TAG_NAME);
+            }else if(isNotIgnoredChar(current)) parser.throwException("Invalid Character");
         }
     }
 
@@ -61,20 +85,18 @@ public interface ParserState {
 
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
-
+            if(current == '>') sequence.setCurrentState(SPECIAL_END_TAG);
         }
     }
 
-    class PreTag implements ParserState{
+    class SpecialEndTag implements ParserState {
 
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
-            if(current == '/'){
-
-            }else if(Character.isLetter(current)){
-                sequence.mark(parser);
+            if(current == '<'){
                 sequence.setCurrentState(TAG_NAME);
-            }
+                sequence.markNext(parser);
+            }else if(isNotIgnoredChar(current)) parser.throwException("Invalid character at document start");
         }
     }
 
@@ -82,12 +104,184 @@ public interface ParserState {
 
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
-            if(current == ' ' || current == '>'){
-                sequence.setCurrentKey(parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()));
-            //    sequence.setCurrentState(current == ' ' ? : TAG_VALUE);
+            if(current == ' ' || current == '\t'  || current == '\r'  || current == '>'){
+                if(parser.charIndex()-sequence.getCharacterMark() <= 1) parser.throwException("Invalid space");
+                else{
+                    sequence.setKey(parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()));
+                    if(current == '>') sequence.setCurrentState(NEXT);
+                    else sequence.setCurrentState(TAG_IN);
+                }
             }
         }
     }
 
+    class TagIn implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '>') sequence.setCurrentState(NEXT);
+            else if(Character.isLetter(current) || Character.isDigit(current)){
+                sequence.mark(parser);
+                sequence.setCurrentState(TAG_ATTRIBUTE_KEY);
+            }
+        }
+    }
+
+    class TagAttributeKey implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == ' ' || current == '='){
+                sequence.setTempKey(parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()));
+                sequence.setCurrentState(current == ' ' ? TAG_ATTRIBUTE_KEY_END : TAG_ATTRIBUTE_VALUE_PRE);
+            }
+        }
+    }
+
+    class TagAttributeKeyEnd implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '='){
+                sequence.markNext(parser);
+                sequence.setCurrentState(TAG_ATTRIBUTE_VALUE_PRE);
+            }else if(isNotIgnoredChar(current)) parser.throwException("= required");
+        }
+    }
+
+    class TagAttributeValuePre implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '"'){
+                sequence.markNext(parser);
+                sequence.setCurrentState(TAG_ATTRIBUTE_VALUE);
+            }else if(isNotIgnoredChar(current)) parser.throwException("Invalid character");
+        }
+    }
+
+    class TagAttributeValue implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '"'){
+                sequence.pushAttribute(parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()));
+                sequence.setCurrentState(TAG_IN);
+            }
+        }
+    }
+
+    class Next implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '<'){
+                sequence.setCurrentState(NEXT_TAG_PRE);
+                sequence.mark(parser);
+            }else if(isNotIgnoredChar(current)){
+                sequence.mark(parser);
+                sequence.setCurrentState(TEXT);
+            }
+        }
+    }
+
+    class NextTagPre implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '/') sequence.setCurrentState(TAG_FINISHING);
+            else if(current == '!') sequence.setCurrentState(COMMENT_PRE);
+            else if(Character.isLetter(current)){
+                sequence.setNextSequence(new XmlSequence(TAG_NAME));
+                sequence.getNextSequence().mark(parser);
+                sequence.setCurrentState(NEXT_TAG);
+            }else if(isNotIgnoredChar(current)) sequence.setCurrentState(TEXT);
+        }
+    }
+
+    class NextTag implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            ParserState state = sequence.getNextSequence().getCurrentState();
+            if(state.equals(TAG_FINISH)){
+                sequence.pushEntry(sequence.getNextSequence().getSequenceEntry());
+                sequence.setCurrentState(NEXT);
+                parser.previousChar();
+            }else state.parse(sequence.getNextSequence(), parser, current);
+        }
+    }
+
+
+    class Text implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '<'){
+                sequence.pushEntry(Document.factory().newPrimitiveEntry("_text"
+                        ,parser.get(sequence.getLineMark(),sequence.getCharacterMark(),parser.lineIndex(),parser.charIndex())));
+                sequence.setCurrentState(NEXT_TAG_PRE);
+            }
+        }
+    }
+
+    class CommentPre implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '-') sequence.setCurrentState(COMMENT_PRE2);
+            else if(isNotIgnoredChar(current)) sequence.setCurrentState(TEXT);
+        }
+    }
+
+    class CommentPre2 implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '-') sequence.setCurrentState(COMMENT);
+            else if(isNotIgnoredChar(current)) parser.throwException("Invalid character");
+        }
+    }
+
+    class Comment implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '-') sequence.setCurrentState(COMMENT_FINISHING);
+        }
+    }
+
+    class CommentFinishing implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '-') sequence.setCurrentState(COMMENT_FINISHING2);
+            else sequence.setCurrentState(COMMENT);
+        }
+    }
+
+    class CommentFinishing2 implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '>') sequence.setCurrentState(NEXT);
+            else sequence.setCurrentState(COMMENT);
+        }
+    }
+
+    class TagFinishing implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == '>') sequence.setCurrentState(TAG_FINISH);
+        }
+    }
+
+    class TagFinish implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {}
+
+    }
 
 }

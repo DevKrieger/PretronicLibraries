@@ -27,8 +27,8 @@ import net.prematic.libraries.document.type.json.JsonDocumentReader;
 import net.prematic.libraries.document.type.json.JsonDocumentWriter;
 import net.prematic.libraries.document.type.properties.PropertiesDocumentReader;
 import net.prematic.libraries.document.type.properties.PropertiesDocumentWriter;
+import net.prematic.libraries.document.type.xml.XMLDocumentWriter;
 import net.prematic.libraries.document.type.xml.XmlDocumentReader;
-import net.prematic.libraries.document.type.xml.XmlDocumentWriter;
 import net.prematic.libraries.document.type.yaml.YamlDocumentReader;
 import net.prematic.libraries.document.type.yaml.YamlDocumentWriter;
 
@@ -46,7 +46,7 @@ public class DocumentFileType {
 
     public static final DocumentFileType BINARY = new DocumentFileType("BINARY","bin",new BinaryDocumentWriter(),new BinaryDocumentReader());
 
-    public static final DocumentFileType XML = new DocumentFileType("XML", "xml", new XmlDocumentWriter(), new XmlDocumentReader());
+    public static final DocumentFileType XML = new DocumentFileType("XML", "xml", new XMLDocumentWriter(), new XmlDocumentReader());
 
     public static final DocumentFileType PROPERTIES = new DocumentFileType("PROPERTIES", "properties", new PropertiesDocumentWriter(), new PropertiesDocumentReader());
 

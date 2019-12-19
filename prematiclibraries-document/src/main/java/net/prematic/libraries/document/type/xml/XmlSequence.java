@@ -19,6 +19,8 @@
 
 package net.prematic.libraries.document.type.xml;
 
+import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.entry.DocumentAttributes;
 import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.parser.StringParser;
 
@@ -27,22 +29,27 @@ import java.util.List;
 
 public class XmlSequence {
 
-    private final String key;
     private final List<DocumentEntry> entries;
+    private String key;
+    private DocumentAttributes attributes;
 
     private ParserState currentState;
-    private String currentKey;
-    private int characterMark;
+    private int characterMark, lineMark;
 
-    public XmlSequence(String key, ParserState currentState) {
-        this.key = key;
+    private String tempKey;
+    private XmlSequence nextSequence;
+
+    public XmlSequence(ParserState currentState) {
         this.currentState = currentState;
-
-        this.entries = new ArrayList<>();
+        this.entries =  new ArrayList<>();
     }
 
     public String getKey() {
         return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public List<DocumentEntry> getEntries() {
@@ -53,6 +60,11 @@ public class XmlSequence {
         this.entries.add(entry);
     }
 
+    public void pushAttribute(String value){
+        if(attributes == null) attributes = Document.factory().newAttributes();
+        attributes.add(tempKey,value);
+    }
+
     public ParserState getCurrentState() {
         return currentState;
     }
@@ -61,19 +73,67 @@ public class XmlSequence {
         this.currentState = currentState;
     }
 
-    public String getCurrentKey() {
-        return currentKey;
+    public String getTempKey() {
+        return tempKey;
     }
 
-    public void setCurrentKey(String currentKey) {
-        this.currentKey = currentKey;
+    public void setTempKey(String tempKey) {
+        this.tempKey = tempKey;
+    }
+
+    public XmlSequence getNextSequence() {
+        return nextSequence;
+    }
+
+    public void setNextSequence(XmlSequence nextSequence) {
+        this.nextSequence = nextSequence;
     }
 
     public int getCharacterMark() {
         return characterMark;
     }
 
+    public int getLineMark() {
+        return lineMark;
+    }
+
     public void mark(StringParser parser){
         this.characterMark = parser.charIndex();
+        this.lineMark = parser.lineIndex();
+    }
+
+    public void markNext(StringParser parser){
+        parser.skipChar();
+        mark(parser);
+        parser.previousChar();
+    }
+
+    public void markPrevious(StringParser parser){
+        parser.previousChar();
+        mark(parser);
+        parser.skipChar();
+    }
+
+    public DocumentEntry getSequenceEntry(){
+        DocumentEntry result;
+        if(entries.size() == 1 && entries.get(0).getKey().equals("_text")){
+            result = entries.get(0);
+            result.setKey(key);
+        }else{
+            if(isArray()) result = Document.factory().newArrayEntry(key,entries);
+            else result = Document.factory().newDocument(key,entries);
+        }
+        if(attributes != null) result.setAttributes(attributes);
+        return result;
+    }
+
+    private boolean isArray(){
+        if(entries.size() <= 1) return false;
+        String first = entries.get(0).getKey();
+        for (int i = 1; i < entries.size(); i++) {
+            DocumentEntry entry = entries.get(i);
+            if(!(entry.getKey().equalsIgnoreCase(first) || entry.getKey().startsWith("array-index"))) return false;
+        }
+        return true;
     }
 }
