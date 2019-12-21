@@ -20,7 +20,9 @@
 package net.prematic.libraries.document.type.properties;
 
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.DocumentRegistry;
+import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.document.entry.DocumentNode;
+import net.prematic.libraries.document.entry.PrimitiveEntry;
 import net.prematic.libraries.document.io.DocumentReader;
 import net.prematic.libraries.utility.parser.StringParser;
 
@@ -31,43 +33,80 @@ public class PropertiesDocumentReader implements DocumentReader {
 
     @Override
     public Document read(StringParser parser) {
-        Document document = Document.newDocument();
+        Document root = Document.newDocument("root");
         while(parser.hasNextChar()){
-            char input = parser.nextChar();
-            if(!isIgnoredCharacter(input)){
-                if(input == '#' || input == '!') parser.skipLine();
+            char current = parser.nextChar();
+            if(!isIgnoredCharacter(current)){
+                if(current == '#' || current == '!') parser.skipLine();
                 else{
                     String key = readNextKey(parser);
-                    String value = readValue(parser);
-                    document.entries().add(DocumentRegistry.getFactory().newPrimitiveEntry(key,value));
+                    readPrimitive(parser,root,key);
                 }
             }
         }
-        return document;
+        return root;
+    }
+
+    private void readPrimitive(StringParser parser, Document root,String key){
+        int keyIndex = key.lastIndexOf(".");
+        String entryKey = keyIndex == -1 ? key : key.substring(keyIndex+1);
+        PrimitiveEntry entry = prepareEntry(parser,root,key,entryKey);
+        if(!parser.isLineFinished()){
+            entry.setValue(readValue(parser));
+        }
+    }
+
+    private PrimitiveEntry prepareEntry(StringParser parser,Document root, String key, String entryKey){
+        DocumentNode current = root;
+        String[] parts = key.split("\\.");
+        for (int i = 0; i < parts.length-1; i++) {
+            String part = parts[i];
+            if(part.equals("_attributes")){
+                current = current.toDocument().getAttributes();
+                break;
+            }else{
+                DocumentEntry temp = current.getEntry(part);
+                if(entryKey.equals("_value")){
+                    PrimitiveEntry entry = Document.factory().newPrimitiveEntry(part,null);
+                    if(temp != null){
+                        current.removeEntry(temp);
+                        if(temp.hasAttributes()) entry.setAttributes(temp.getAttributes());
+                    }
+                    current.addEntry(entry);
+                    return entry;
+                }else if(temp == null){
+                    temp = Document.newDocument(part);
+                    current.addEntry(temp);
+                }
+                else if(temp.isPrimitive()) parser.throwException("Invalid object");
+                current = temp.toDocument();
+            }
+        }
+        PrimitiveEntry entry = Document.factory().newPrimitiveEntry(entryKey,null);
+        System.out.println(current);
+        current.addEntry(entry);
+        return entry;
     }
 
     private String readNextKey(StringParser parser){
-        int start = parser.charIndex()-1;
-        int end = start;
-        boolean pending = false;
-        while(parser.hasNextChar()){
+        int start = parser.charIndex();
+        int startLine = parser.lineIndex();
+        while (parser.hasNextChar()){
             char input = parser.nextChar();
-            if(input == ' ' || input == '\n' || input == '\r' || input == '\t' || input ==  '=' || input == ':' ) pending = true;
-            else if(parser.isLineFinished()) break;
-            else if(pending){
-                parser.previousChar();
-                break;
-            }else end++;
+            if(input == '=' || input == ':' || parser.isLineFinished()) break;
         }
-        return parser.get(parser.lineIndex(),start,end+1);
+        if(startLine != parser.lineIndex()) parser.throwException("Invalid key");
+        String key = parser.getOnLine(start,parser.charIndex());
+        parser.skipChar();
+        return key;
     }
 
     private String readValue(StringParser parser){
         String value = parser.currentUntilNextLine();
         if(value.charAt(value.length()-1) == '\\'){
-            value = value.substring(0,value.length()-1);
+            value = value.substring(0,value.length()-1)+"\n";
             parser.skipSpaces();
-            value += " "+readValue(parser);
+            value += readValue(parser);
         }
         return value;
     }

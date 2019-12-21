@@ -21,6 +21,7 @@ package net.prematic.libraries.document.type.binary;
 
 import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentRegistry;
+import net.prematic.libraries.document.entry.DocumentAttributes;
 import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.entry.PrimitiveEntry;
 import net.prematic.libraries.document.io.DocumentReader;
@@ -108,11 +109,20 @@ public class BinaryDocumentReader implements DocumentReader {
     }
 
     private PrimitiveEntry nextPrimitive(DataInputStream stream, Charset charset,Object object, boolean key) throws IOException{
-        return DocumentRegistry.getFactory().newPrimitiveEntry(key?readString(stream,charset):null,object);
+        DocumentAttributes attributes = null;
+        if(stream.readByte() == TYPE_ATTRIBUTE_IN) attributes = readAttributes(stream, charset);
+        PrimitiveEntry entry = DocumentRegistry.getFactory().newPrimitiveEntry(key?readString(stream,charset):null,object);
+        if(attributes != null) entry.setAttributes(attributes);
+        return entry;
     }
 
     private Document readObject(DataInputStream stream, Charset charset, String key) throws IOException{
         Document document = DocumentRegistry.getFactory().newDocument(key);
+        if(stream.available() > 0){
+            if(stream.readByte() == TYPE_ATTRIBUTE_IN){
+                document.setAttributes(readAttributes(stream,charset));
+            }
+        }
         while(stream.available() > 0){
             DocumentEntry entry = next(stream,charset,true);
             if(entry == null) break;
@@ -129,6 +139,16 @@ public class BinaryDocumentReader implements DocumentReader {
             else document.entries().add(entry);
         }
         return document;
+    }
+
+    private DocumentAttributes readAttributes(DataInputStream stream, Charset charset) throws IOException{
+        DocumentAttributes attributes = Document.factory().newAttributes();
+        while(stream.available() > 0){
+            DocumentEntry entry = next(stream,charset,true);
+            if(entry != null) attributes.addEntry(entry);
+            else return attributes;
+        }
+        return attributes;
     }
 
     private String readString(DataInputStream stream, Charset charset) throws IOException {

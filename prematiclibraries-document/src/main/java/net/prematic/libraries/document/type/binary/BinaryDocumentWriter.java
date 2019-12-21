@@ -22,6 +22,7 @@ package net.prematic.libraries.document.type.binary;
 import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.entry.ArrayEntry;
 import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.document.entry.DocumentNode;
 import net.prematic.libraries.document.entry.PrimitiveEntry;
 import net.prematic.libraries.document.io.DocumentWriter;
 import net.prematic.libraries.utility.io.IORuntimeException;
@@ -47,6 +48,9 @@ public class BinaryDocumentWriter implements DocumentWriter {
     public static final byte TYPE_ARRAY_IN = 32;
     public static final byte TYPE_ARRAY_OUT = 33;
 
+    public static final byte TYPE_ATTRIBUTE_IN = 34;
+    public static final byte TYPE_ATTRIBUTE_OUT = 35;
+    public static final byte TYPE_ATTRIBUTE_EMPTY = 36;
 
     @Override
     public byte[] write(Document document) {
@@ -103,6 +107,7 @@ public class BinaryDocumentWriter implements DocumentWriter {
     private void writeObject(DataOutputStream stream, Charset charset, Document document) throws IOException{
         stream.write(TYPE_OBJECT_IN);
         if(document.getKey() != null) writeString(stream,charset,document.getKey());
+        writeAttributes(stream,charset,document);
         writeObjectEntries(stream,charset, document,true);
         stream.write(TYPE_OBJECT_OUT);
     }
@@ -110,12 +115,13 @@ public class BinaryDocumentWriter implements DocumentWriter {
     private void writeArray(DataOutputStream stream, Charset charset, ArrayEntry document) throws IOException{
         stream.write(TYPE_ARRAY_IN);
         if(document.getKey() != null) writeString(stream,charset,document.getKey());
+        writeAttributes(stream,charset,document);
         writeObjectEntries(stream,charset, document,false);
         stream.write(TYPE_ARRAY_OUT);
     }
 
-    private void writeObjectEntries(DataOutputStream stream, Charset charset, Document document, boolean key) throws IOException{
-        for(DocumentEntry entry : document) {
+    private void writeObjectEntries(DataOutputStream stream, Charset charset, DocumentNode node, boolean key) throws IOException{
+        for(DocumentEntry entry : node) {
             if(entry.isPrimitive()){
                 writePrimitiveValue(stream,charset,entry.toPrimitive());
                 if(key) writeString(stream,charset,entry.getKey());
@@ -157,7 +163,19 @@ public class BinaryDocumentWriter implements DocumentWriter {
             stream.write(TYPE_STRING);
             writeString(stream,charset, (String) object);
         }
+        writeAttributes(stream,charset,entry);
     }
+
+    private void writeAttributes(DataOutputStream stream, Charset charset, DocumentEntry entry) throws IOException{
+        if(!entry.hasAttributes() || entry.getAttributes().isEmpty()){
+            stream.write(TYPE_ATTRIBUTE_EMPTY);
+        }else{
+            stream.write(TYPE_ATTRIBUTE_IN);
+            writeObjectEntries(stream,charset,entry.getAttributes(),true);
+            stream.write(TYPE_ATTRIBUTE_OUT);
+        }
+    }
+
 
     private void writeString(DataOutputStream stream, Charset charset,String content) throws IOException{
         byte[] bytes = content.getBytes(charset);

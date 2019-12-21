@@ -23,7 +23,6 @@ import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.entry.DocumentAttributes;
 import net.prematic.libraries.document.entry.DocumentEntry;
-import net.prematic.libraries.utility.GeneralUtil;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.io.File;
@@ -132,15 +131,16 @@ public class SimpleDocument extends AbstractDocumentNode implements Document {
 
     @Override
     public DocumentEntry getEntry(String key) {
-        String[] sequences = key.split("\\.");
-        DocumentEntry last;
-        if(GeneralUtil.isNaturalNumber(sequences[0])) last = getEntry(Integer.parseInt(sequences[0]));
-        else last = findLocalEntry(sequences[0]);
-        for(int i = 1;i<sequences.length;i++){
-            if(last != null && last.isObject()) last = last.toDocument().getEntry(sequences[0]);
-            else return null;
-        }
-        return last;
+        return getEntry(key.split("\\."),0);
+    }
+
+    @Override
+    public DocumentEntry getEntry(String[] keys, int offset) {
+        DocumentEntry entry = findLocalEntry(keys[offset]);
+        if(offset+1 == keys.length) return entry;
+        else if(entry == null) return null;
+        else if(entry.isNode()) return entry.toNode().getEntry(keys,offset+1);
+        else throw new IllegalArgumentException("Object is not an object");
     }
 
     @Override
@@ -269,6 +269,7 @@ public class SimpleDocument extends AbstractDocumentNode implements Document {
     public Document copy(String key) {
         SimpleDocument document = new SimpleDocument(key);
         forEach(entry -> document.entries.add(entry.copy(entry.getKey())));
+        document.setAttributes(getAttributes().copy());
         return document;
     }
 

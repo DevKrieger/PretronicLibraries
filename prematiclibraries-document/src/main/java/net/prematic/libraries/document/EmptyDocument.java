@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 05.07.19 11:39
+ * @since 20.12.19, 22:36
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * The {@link EmptyDocument} is singleton document which is always empty and can not contain any kind of data.
+ */
 public class EmptyDocument implements Document {
 
     private static final Document EMPTY = new EmptyDocument();
@@ -98,6 +101,11 @@ public class EmptyDocument implements Document {
 
     @Override
     public DocumentEntry getEntry(int index) {
+        return null;
+    }
+
+    @Override
+    public DocumentEntry getEntry(String[] keys, int offset) {
         return null;
     }
 
@@ -412,6 +420,11 @@ public class EmptyDocument implements Document {
         return true;
     }
 
+    /**
+     * Create a new empty document.
+     *
+     * @return The new document
+     */
     public static Document newDocument(){
         return EMPTY;
     }

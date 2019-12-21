@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.09.19, 23:11
+ * @since 20.12.19, 22:50
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,17 @@ package net.prematic.libraries.document.adapter;
 
 import net.prematic.libraries.document.DocumentContext;
 
+/**
+ * If an adapter contains the {@link DocumentAdapterInitializeAble} class, after registering
+ * an adapter to a context the method {@link #initialize(DocumentContext)} will be called.
+ */
 public interface DocumentAdapterInitializeAble {
 
+    /**
+     * Called after the registration in the context.
+     *
+     * @param context The context, where the adapter is registered
+     */
     void initialize(DocumentContext context);
 
 }

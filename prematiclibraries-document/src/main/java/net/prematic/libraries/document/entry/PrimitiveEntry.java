@@ -45,6 +45,8 @@ public interface PrimitiveEntry extends DocumentEntry{
 
     boolean isNull();
 
+    void setValue(Object object);
+
 
     default PrimitiveEntry copy(){
         return copy(getKey());

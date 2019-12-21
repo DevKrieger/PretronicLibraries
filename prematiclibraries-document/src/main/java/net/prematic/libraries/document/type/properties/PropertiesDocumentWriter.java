@@ -22,6 +22,8 @@ package net.prematic.libraries.document.type.properties;
 import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.entry.ArrayEntry;
 import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.document.entry.DocumentNode;
+import net.prematic.libraries.document.entry.PrimitiveEntry;
 import net.prematic.libraries.document.io.DocumentWriter;
 import net.prematic.libraries.utility.io.IORuntimeException;
 
@@ -50,23 +52,33 @@ public class PropertiesDocumentWriter implements DocumentWriter {
         }
     }
 
-    private void write(Writer output,Document document, String baseString) throws IOException {
+    private void write(Writer output, DocumentNode node, String baseString) throws IOException {
         int i = 0;
-        for (DocumentEntry entry : document) {
+        if(node.isObject() && node.toDocument().hasAttributes()){
+            write(output,node.toDocument().getAttributes(),baseString+"_attributes.");
+        }
+        for (DocumentEntry entry : node) {
             if(entry.isPrimitive()){
-                if(document instanceof ArrayEntry){
-                    output.write(baseString+i);
+                String key;
+                if(node instanceof ArrayEntry){
+                    key = baseString+i;
                     i++;
-                }else{
-                    output.write(baseString);
-                    output.write(entry.getKey());
-                }
-                output.write("=");
-                output.write(entry.toPrimitive().getAsString());
+                }else key = baseString+entry.getKey();
+                writePrimitive(output,entry.toPrimitive(),key);
             }else{
                 write(output,entry.toDocument(),baseString+entry.getKey()+".");
             }
             output.write("\n");
         }
+    }
+
+    private void writePrimitive(Writer output, PrimitiveEntry entry, String key) throws IOException {
+        if(entry.hasAttributes()){
+            write(output,entry.getAttributes(),key+"._attributes.");
+            output.write(key);
+            output.write("._value");
+        }else output.write(key);
+        output.write("=");
+        output.write(entry.toPrimitive().getAsString());
     }
 }

@@ -32,11 +32,9 @@ import net.prematic.libraries.document.type.xml.XmlDocumentReader;
 import net.prematic.libraries.document.type.yaml.YamlDocumentReader;
 import net.prematic.libraries.document.type.yaml.YamlDocumentWriter;
 
-/*
-@Todo FileTypes
-    InI
-    Toml
-
+/**
+ * The document libraries supports different file types for reading and writing the data. You are able to
+ * register a custom {@link DocumentFileType} in the {@link net.prematic.libraries.document.DocumentRegistry}
  */
 public class DocumentFileType {
 

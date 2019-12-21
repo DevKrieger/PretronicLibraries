@@ -34,7 +34,8 @@ public class XmlSequence {
     private DocumentAttributes attributes;
 
     private ParserState currentState;
-    private int characterMark, lineMark;
+    private int characterMark;
+    private int lineMark;
 
     private String tempKey;
     private XmlSequence nextSequence;
@@ -106,12 +107,6 @@ public class XmlSequence {
         parser.skipChar();
         mark(parser);
         parser.previousChar();
-    }
-
-    public void markPrevious(StringParser parser){
-        parser.previousChar();
-        mark(parser);
-        parser.skipChar();
     }
 
     public DocumentEntry getSequenceEntry(){

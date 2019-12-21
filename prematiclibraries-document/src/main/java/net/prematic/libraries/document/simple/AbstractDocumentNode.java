@@ -22,6 +22,7 @@ package net.prematic.libraries.document.simple;
 import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.entry.*;
+import net.prematic.libraries.utility.GeneralUtil;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.annonations.Internal;
 import net.prematic.libraries.utility.reflect.TypeReference;
@@ -268,7 +269,8 @@ public abstract class AbstractDocumentNode implements DocumentNode {
 
     @Internal
     protected DocumentEntry findLocalEntry(String key){
-        return Iterators.findOne(this.entries, entry -> key.equals(entry.getKey()));
+        if(GeneralUtil.isNaturalNumber(key)) return getEntry(Integer.parseInt(key));
+        else return Iterators.findOne(this.entries, entry -> key.equals(entry.getKey()));
     }
 
 }

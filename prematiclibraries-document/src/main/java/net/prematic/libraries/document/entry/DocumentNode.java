@@ -58,6 +58,12 @@ public interface DocumentNode extends DocumentBase,Iterable<DocumentEntry>{
 
     DocumentEntry getEntry(int index);
 
+    default DocumentEntry getEntry(String[] keys){
+        return getEntry(keys,0);
+    }
+
+    DocumentEntry getEntry(String[] keys, int offset);
+
     DocumentEntry getFirst();
 
     DocumentEntry getLast();

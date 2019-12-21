@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.09.19, 22:20
+ * @since 20.12.19, 22:40
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * The {@link DocumentRegistry} is a static class which provides the {@link DocumentFactory} and all
+ * available file types ({@link DocumentFileType}). This class also manages
+ * global adapters {@link net.prematic.libraries.document.adapter.DocumentAdapter}.
+ */
 public class DocumentRegistry {
 
     private static Collection<DocumentFileType> TYPES = new HashSet<>();
@@ -71,36 +76,82 @@ public class DocumentRegistry {
         getDefaultContext().registerHierarchyAdapter(Map.class,new MapAdapter());
     }
 
+    private DocumentRegistry(){
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Get all available file types.
+     *
+     * @return All types in a collection
+     */
     public static Collection<DocumentFileType> getTypes() {
         return TYPES;
     }
 
+    /**
+     * Get a type by the name
+     *
+     * @param name The name of the type
+     * @return The type, or null when not available
+     */
     public static DocumentFileType getType(String name){
         return Iterators.findOne(TYPES, type -> type.getName().equalsIgnoreCase(name));
     }
 
+    /**
+     * Get a type by the ending
+     *
+     * @param ending The ending of the type (json, yml, bin)
+     * @return The type, or null when not available
+     */
     public static DocumentFileType getTypeByEnding(String ending){
         return Iterators.findOne(TYPES, type -> type.getEnding().equalsIgnoreCase(ending));
     }
 
+    /**
+     * Register a new file type.
+     *
+     * @param type The type to register
+     */
     public static void registerType(DocumentFileType type){
         TYPES.add(type);
     }
 
-
+    /**
+     * Get the default context (Contains all global adapters).
+     *
+     * @return The global context
+     */
     public static DocumentContext getDefaultContext() {
         return DEFAULT_CONTEXT;
     }
 
+    /**
+     * Change the global context.
+     *
+     * <p>Warning: If you change this, you will override all global registered adapters.</p>
+     *
+     * @param defaultContext The new context
+     */
     public static void setDefaultContext(DocumentContext defaultContext) {
         DEFAULT_CONTEXT = defaultContext;
     }
 
-
+    /**
+     * Get the document factory.
+     *
+     * @return The registered factory
+     */
     public static DocumentFactory getFactory() {
         return FACTORY;
     }
 
+    /**
+     * Set a new document factory
+     *
+     * @param factory The nw factory
+     */
     public static void setFactory(DocumentFactory factory) {
         FACTORY = factory;
     }

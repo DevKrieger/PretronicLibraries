@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.08.19, 19:18
+ * @since 20.12.19, 22:39
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * The {@link WrappedDocument} maps another document, it is designed as a proxy pattern.
+ */
 public class WrappedDocument implements Document {
 
     private final Document original;
@@ -105,6 +108,16 @@ public class WrappedDocument implements Document {
     @Override
     public DocumentEntry getEntry(int index) {
         return original.getEntry(index);
+    }
+
+    @Override
+    public DocumentEntry getEntry(String[] keys) {
+        return original.getEntry(keys);
+    }
+
+    @Override
+    public DocumentEntry getEntry(String[] keys, int offset) {
+        return original.getEntry(keys, offset);
     }
 
     @Override
