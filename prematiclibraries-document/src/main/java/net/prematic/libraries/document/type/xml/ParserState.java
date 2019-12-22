@@ -73,7 +73,7 @@ public interface ParserState {
 
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
-            if(current == ':' || current == '?') sequence.setCurrentState(SPECIAL_TAG);
+            if(current == ':' || current == '?' || current == '!') sequence.setCurrentState(SPECIAL_TAG);
             else if(Character.isLetter(current)){
                 sequence.mark(parser);
                 sequence.setCurrentState(TAG_NAME);
@@ -94,7 +94,7 @@ public interface ParserState {
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
             if(current == '<'){
-                sequence.setCurrentState(TAG_NAME);
+                sequence.setCurrentState(NEXT_TAG_PRE);
                 sequence.markNext(parser);
             }else if(isNotIgnoredChar(current)) parser.throwException("Invalid character at document start");
         }

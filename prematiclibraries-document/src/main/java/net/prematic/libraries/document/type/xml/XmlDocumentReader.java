@@ -29,6 +29,6 @@ public class XmlDocumentReader implements DocumentReader {
     public Document read(StringParser parser) {
         XmlSequence sequence = new XmlSequence(ParserState.DOCUMENT_START);
         while(parser.hasNextChar()) sequence.getCurrentState().parse(sequence,parser,parser.nextChar());
-        return sequence.getSequenceEntry().toDocument();
+        return sequence.getNextSequence().getSequenceEntry().toDocument();
     }
 }
