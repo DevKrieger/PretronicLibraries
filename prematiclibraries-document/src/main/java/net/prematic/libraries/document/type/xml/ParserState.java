@@ -45,7 +45,12 @@ public interface ParserState {
 
     ParserState TEXT = new Text();
 
-    ParserState COMMENT_PRE = new CommentPre();
+    ParserState SPECIAL = new Special();
+
+    ParserState CDAT_PRE = new CommentCDataPre();
+    ParserState CDAT = new CommentCData();
+    ParserState CDAT_ENDING = new CommentCDataEnding();
+
     ParserState COMMENT_PRE2 = new CommentPre2();
     ParserState COMMENT = new Comment();
     ParserState COMMENT_FINISHING = new CommentFinishing();
@@ -75,8 +80,9 @@ public interface ParserState {
         public void parse(XmlSequence sequence, StringParser parser, char current) {
             if(current == ':' || current == '?' || current == '!') sequence.setCurrentState(SPECIAL_TAG);
             else if(Character.isLetter(current)){
-                sequence.mark(parser);
-                sequence.setCurrentState(TAG_NAME);
+                sequence.setNextSequence(new XmlSequence(TAG_NAME));
+                sequence.getNextSequence().mark(parser);
+                sequence.setCurrentState(NEXT_TAG);
             }else if(isNotIgnoredChar(current)) parser.throwException("Invalid Character");
         }
     }
@@ -111,6 +117,10 @@ public interface ParserState {
                     if(current == '>') sequence.setCurrentState(NEXT);
                     else sequence.setCurrentState(TAG_IN);
                 }
+            }else if(current == '/'){
+                sequence.setKey(parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()));
+                sequence.setCurrentState(TAG_FINISHING);
+                parser.skipChar();
             }
         }
     }
@@ -190,7 +200,7 @@ public interface ParserState {
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
             if(current == '/') sequence.setCurrentState(TAG_FINISHING);
-            else if(current == '!') sequence.setCurrentState(COMMENT_PRE);
+            else if(current == '!') sequence.setCurrentState(SPECIAL);
             else if(Character.isLetter(current)){
                 sequence.setNextSequence(new XmlSequence(TAG_NAME));
                 sequence.getNextSequence().mark(parser);
@@ -225,14 +235,50 @@ public interface ParserState {
         }
     }
 
-    class CommentPre implements ParserState {
+    class Special implements ParserState {
 
         @Override
         public void parse(XmlSequence sequence, StringParser parser, char current) {
             if(current == '-') sequence.setCurrentState(COMMENT_PRE2);
+            else if(current == '[') sequence.setCurrentState(CDAT_PRE);
             else if(isNotIgnoredChar(current)) sequence.setCurrentState(TEXT);
         }
     }
+
+    class CommentCDataPre implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == 'C'){
+                parser.skipChars(5);
+                sequence.setCurrentState(CDAT);
+                sequence.markNext(parser);
+            }
+        }
+    }
+
+    class CommentCData implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == ']') sequence.setCurrentState(CDAT_ENDING);
+        }
+    }
+
+    class CommentCDataEnding implements ParserState {
+
+        @Override
+        public void parse(XmlSequence sequence, StringParser parser, char current) {
+            if(current == ']'){
+                parser.previousChars(2);
+                sequence.pushEntry(Document.factory().newPrimitiveEntry("_text"
+                        ,parser.get(sequence.getLineMark(),sequence.getCharacterMark(),parser.lineIndex(),parser.charIndex())));
+                parser.skipChars(3);
+                sequence.setCurrentState(ParserState.NEXT);
+            }else sequence.setCurrentState(CDAT);
+        }
+    }
+
 
     class CommentPre2 implements ParserState {
 
