@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.10.19, 19:56
+ * @since 23.12.19, 20:33
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,27 @@
 
 package net.prematic.libraries.dependency;
 
-public class Repository {
+/**
+ * This exception is thrown, if an error is caused by the installation or loading.
+ */
+public class DependencyException extends RuntimeException{
 
-    private final String id;
-    private final String url;
-
-    public Repository(String id, String url) {
-        this.id = id;
-        this.url = url;
+    public DependencyException() {
     }
 
-    public String getId() {
-        return id;
+    public DependencyException(String message) {
+        super(message);
     }
 
-    public String getUrl() {
-        return url;
+    public DependencyException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public DependencyException(Throwable cause) {
+        super(cause);
+    }
+
+    public DependencyException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

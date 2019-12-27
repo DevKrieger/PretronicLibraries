@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.10.19, 19:54
+ * @since 23.12.19, 20:33
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,43 +19,60 @@
 
 package net.prematic.libraries.dependency;
 
-import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.type.DocumentFileType;
-import net.prematic.libraries.utility.annonations.Internal;
 import net.prematic.libraries.utility.http.HttpClient;
 import net.prematic.libraries.utility.http.HttpResult;
-import net.prematic.libraries.utility.io.IORuntimeException;
-import net.prematic.libraries.utility.reflect.ReflectException;
+import net.prematic.libraries.utility.io.FileUtil;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
 
+/**
+The {@link Dependency} class represents a dependency which is located in a maven repository.
+ This class provides methods for installing and loading the dependency at runtime.
+ */
 public class Dependency {
 
-    private static final Method METHOD_ADD_URL;
+    private final static Method METHOD_ADD_URL;
 
     static {
-        METHOD_ADD_URL = null;
+        try {
+            METHOD_ADD_URL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            METHOD_ADD_URL.setAccessible(true);
+        } catch (NoSuchMethodException exception) {
+            throw new ExceptionInInitializerError(exception);
+        }
     }
 
-    private DependencyManager manager;
+    private final transient DependencyManager manager;
+    private final String repository;
     private final String groupId;
     private final String artifactId;
     private final String version;
 
-    private Repository repository;
-    private Collection<Dependency> dependencies;
+    private transient ClassLoader loader;
 
-    Dependency(DependencyManager manager, String groupId, String artifactId, String version) {
+    Dependency(DependencyManager manager, String repository, String groupId, String artifactId, String version) {
         this.manager = manager;
+        this.repository = repository;
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
+    }
+
+    /**
+     * Get the manager to which this dependency belongs.
+     *
+     * @return The manager
+     */
+    public DependencyManager getManager() {
+        return manager;
+    }
+
+    public String getRepository() {
+        return repository;
     }
 
     public String getGroupId() {
@@ -70,126 +87,86 @@ public class Dependency {
         return version;
     }
 
-    public Repository getRepository() {
-        return repository;
+    public File getLocalJar(){
+        return new File(manager.getInstallationFolder(),artifactId+"/"+artifactId+"-"+version+".jar");
     }
 
-    public void setRepository(Repository repository) {
-        this.repository = repository;
+    public URL getRemoteJar(){
+        return FileUtil.newUrl(repository+groupId.replace(".","/")+"/"+artifactId+"/"+version+"/"+artifactId+"-"+version+".jar");
     }
 
-    public URL getPomUrl(){
-        try {
-            return new URL(buildBaseUrl()+buildFileName("pom"));
-        } catch (MalformedURLException e) {
-            return null;//io run
-        }
+    public boolean isInstalled(){
+        return getLocalJar().exists();
     }
 
-    public URL getJarUrl(){
-        try {
-            return new URL(buildBaseUrl()+buildFileName("jar"));
-        } catch (MalformedURLException e) {
-            return null;
-        }
+    public boolean isLoaded(){
+        return loader != null;
     }
 
-    public File getLocalFile(){
-        return new File(manager.getLocalRepository(),artifactId+"/"+buildFileName("jar"));
-    }
-
-    private String buildBaseUrl(){
-        if(repository == null) throw new IllegalArgumentException("Repository is not defined.");
-        return repository.getUrl()+"/"+groupId.replace(".","/")+"/"+artifactId+"/"+version+"/";
-    }
-
-    private String buildFileName(String ending){
-        return artifactId+"-"+version+"."+ending;
-    }
-
-    public boolean isResolved(){
-        return dependencies != null;
-    }
-
-    public void reset(){
-        this.repository = null;
-        this.dependencies = null;
-    }
-
-    public void resolve(Repository repository){
-        this.repository = repository;
-        if(!resolveInternal()) throw new IllegalArgumentException("Could not resolve dependency (Resource "+repository.getUrl()+" in not found)");
-    }
-
-    public boolean resolve(){
-        if(isResolved()) throw new IllegalArgumentException("Dependency is already resolved");
-        if(this.repository == null){
-            for (Repository repository : manager.getRepositories()) {
-                this.repository = repository;
-                if(resolveInternal()) return true;
-            }
-            manager.getLogger().info("Could not resolve dependency {} (Dependency in {} not found)",artifactId,repository.getUrl());
-            return false;
-        }else return resolveInternal();
-    }
-
-    @Internal
-    private boolean resolveInternal(){
-        HttpClient client = new HttpClient();
-        client.setTimeout(2000);
-        client.setUrl(getPomUrl());
-        System.out.println(getPomUrl().toString());
-        HttpResult result = null;
-        try{
-            result = client.connect();
-            if(result.getCode() == 200){
-                Document pom = result.getContent(DocumentFileType.XML.getReader());
-                dependencies = manager.loadPom(pom,groupId,this.repository);
-                manager.getLogger().info("Resolved dependency {}",artifactId);
-                boolean success = true;
-                for (Dependency dependency : dependencies) {
-                    if(!dependency.isResolved()){
-                        if(!dependency.resolve()) success = false;
-                    }
-                }
-                return success;
-            }
-        }catch (Exception ignored){
-            ignored.printStackTrace();
-        }finally {
-            if(result != null) result.close();
-        }
-        return false;
-    }
-
+    /**
+     * Install this dependency om the local machine
+     */
     public void install(){
-        if(!isResolved()) throw new IllegalArgumentException("Dependency is not resolved.");
-        HttpClient client = new HttpClient();
-        client.setTimeout(2000);
-        client.setUrl(getJarUrl());
-        HttpResult result = null;
-        try{
-            result = client.connect();
-            if(result.getCode() == 200){
-                File folder = new File(manager.getLocalRepository(),artifactId+"/");
-                folder.mkdirs();
-                result.save(new File(folder,buildFileName("jar")));
-                result.close();
-                dependencies.forEach(Dependency::install);
-            }else throw new IllegalArgumentException("Could not install dependency "+artifactId+" (Server respond with code "+result.getCode()+")");
-        }catch (Exception exception){
-            if(result != null) result.close();
-            throw new IllegalArgumentException("Could not install dependency "+artifactId+" ("+exception.getMessage()+")");
+        File jar = getLocalJar();
+        if(!jar.exists()){
+            jar.getParentFile().mkdirs();
+            try{
+                HttpClient client = new HttpClient();
+                client.setTimeout(2000);
+                client.setUrl(getRemoteJar());
+                HttpResult result = client.connect();
+                if(result.getCode() == 200){
+                    result.save(jar);
+                }else{
+                    throw new DependencyException("Could not install dependency "+artifactId+" v"+version+" (Server responded with "+result.getCode()+")");
+                }
+            }catch (Exception exception){
+                throw new DependencyException("Could not install dependency "+artifactId+" v"+version+" ("+exception.getMessage()+")",exception);
+            }
         }
     }
 
-    public void load(URLClassLoader loader){
-        try {
-            METHOD_ADD_URL.invoke(loader, getLocalFile().toURI().toURL());
-        } catch (IllegalAccessException | InvocationTargetException exception) {
-            throw new ReflectException(exception);
-        }catch (MalformedURLException exception) {
-            throw new IORuntimeException(exception);
-        }
+    /**
+     * Load the dependency, a new class loader will be created.
+     *
+     * @return The new class laoder
+     */
+    public ClassLoader load(){
+        if(isLoaded()) return loader;
+        File jar = getLocalJar();
+        if(!jar.exists()) throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" (Dependency is not installed)");
+        return new URLClassLoader(new URL[]{FileUtil.fileToUrl(jar)});
     }
+
+    /**
+     * Load the dependency with a parent loader, a new class loader will be created.
+     *
+     * @return The new class laoder
+     */
+    public ClassLoader load(ClassLoader parent){
+        if(isLoaded()) return loader;
+        File jar = getLocalJar();
+        if(!jar.exists()) throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" (Dependency is not installed)");
+        return new URLClassLoader(new URL[]{FileUtil.fileToUrl(jar)},parent);
+    }
+
+    /**
+     * Inject the dependency in an existing url class loader.
+     *
+     * @param loader The existing laoder
+     */
+    public void loadReflected(URLClassLoader loader){
+        if(isLoaded()) return;
+        File jar = getLocalJar();
+        if(!jar.exists()) throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" (Dependency is not installed)");
+        try {
+            METHOD_ADD_URL.invoke(loader, FileUtil.fileToUrl(jar));
+            this.loader = loader;
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" ("+exception.getMessage()+")",exception);
+        }
+
+    }
+
+
 }

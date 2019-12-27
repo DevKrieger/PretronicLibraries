@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.10.19, 20:40
+ * @since 23.12.19, 20:33
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,25 @@
 
 package net.prematic.libraries.dependency;
 
-import java.util.Collection;
+import net.prematic.libraries.document.Document;
+import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.document.type.DocumentFileType;
+import net.prematic.libraries.utility.Iterators;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * The {@link DependencyGroup} provides a collection of different dependencies. It is possible to create
+ * the dependency manually or by loading a dependency.json via the manager.
+ */
 public class DependencyGroup {
 
     private final String name;
-    private final Collection<Dependency> dependencies;
+    private final List<Dependency> dependencies;
 
-    public DependencyGroup(String name, Collection<Dependency> dependencies) {
+    public DependencyGroup(String name, List<Dependency> dependencies) {
         this.name = name;
         this.dependencies = dependencies;
     }
@@ -35,11 +46,66 @@ public class DependencyGroup {
         return name;
     }
 
-    public Collection<Dependency> getDependencies() {
+    public List<Dependency> getDependencies() {
         return dependencies;
     }
 
-    public void addDependency(Dependency dependency){
-
+    public Dependency getDependency(String groupId, String artifactId){
+        return Iterators.findOne(this.dependencies, dependency
+                -> dependency.getGroupId().equals(groupId)
+                && dependency.getArtifactId().equals(artifactId));
     }
+
+    /**
+     * Install al dependencies.
+     */
+    public void install(){
+        dependencies.forEach(Dependency::install);
+    }
+
+    /**
+     * Load all dependencies
+     * @return A list with all loader
+     */
+    public List<ClassLoader> load(){
+        List<ClassLoader> loaders = new ArrayList<>();
+        this.dependencies.forEach(dependency -> loaders.add(dependency.load()));
+        return loaders;
+    }
+
+    public List<ClassLoader> load(ClassLoader parent){
+        List<ClassLoader> loaders = new ArrayList<>();
+        this.dependencies.forEach(dependency -> loaders.add(dependency.load(parent)));
+        return loaders;
+    }
+
+    public static DependencyGroup load(DependencyManager manager,File location){
+        return load(manager,DocumentFileType.JSON.getReader().read(location));
+    }
+
+    public static DependencyGroup load(DependencyManager manager,Document raw){
+        if(raw.containsOne("name","dependencies")){
+            List<Dependency> dependencies = new ArrayList<>();
+            for (DocumentEntry entry : raw.getDocument("dependencies")) {
+                if(entry.isObject() && entry.toDocument().containsOne("repository","artifactId","groupId","version")){
+                    Document data = entry.toDocument();
+                    dependencies.add(manager.addDependency(
+                            data.getString("repository")
+                            ,data.getString("groupId")
+                            ,data.getString("artifactId")
+                            ,data.getString("version")));
+                }else throw new IllegalArgumentException("Invalid or corrupt dependency file");
+            }
+            return new DependencyGroup(raw.getString("name"),dependencies);
+        }else throw new IllegalArgumentException("Invalid or corrupt dependency file");
+    }
+
+    public Document save(){
+        return Document.newDocument(this);
+    }
+
+    public void save(File location){
+        DocumentFileType.JSON.getWriter().write(location,save());
+    }
+
 }
