@@ -35,7 +35,9 @@ import java.util.stream.Stream;
  */
 public class WrappedDocument implements Document {
 
-    private final Document original;
+    private Document original;
+
+    public WrappedDocument() {}
 
     public WrappedDocument(Document original) {
         this.original = original;
@@ -428,5 +430,9 @@ public class WrappedDocument implements Document {
     @Override
     public boolean isNode() {
         return original.isNode();
+    }
+
+    public void setOriginal(Document original) {
+        this.original = original;
     }
 }
