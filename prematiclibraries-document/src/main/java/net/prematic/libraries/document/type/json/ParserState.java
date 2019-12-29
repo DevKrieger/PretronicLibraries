@@ -52,7 +52,10 @@ public interface ParserState {
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
             if(current == '{') sequence.setCurrentState(DOCUMENT_PRE_KEY);
-            else if(!isIgnoredChar(current)) parser.throwException("Invalid Document start (A json document has to start with {)");
+            else if(current == '['){
+                sequence.setCurrentState(DOCUMENT_PRE_VALUE);
+                sequence.setArray(true);
+            }else if(!isIgnoredChar(current)) parser.throwException("Invalid Document start (A json document has to start with {)");
         }
     }
 

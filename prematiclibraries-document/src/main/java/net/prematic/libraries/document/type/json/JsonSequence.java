@@ -32,7 +32,7 @@ public class JsonSequence {
 
     private final String key;
     private final List<DocumentEntry> entries;
-    private final boolean array;
+    private boolean array;
 
     private ParserState currentState;
     private String currentKey;
@@ -86,6 +86,10 @@ public class JsonSequence {
 
     public boolean isArray(){
         return array;
+    }
+
+    public void setArray(boolean array) {
+        this.array = array;
     }
 
     public ParserState getCurrentState() {
