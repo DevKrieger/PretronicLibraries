@@ -51,14 +51,7 @@
         <dependency>
             <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.25</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
