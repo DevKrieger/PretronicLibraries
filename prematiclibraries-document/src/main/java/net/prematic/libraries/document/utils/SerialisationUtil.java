@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.09.19, 23:03
+ * @since 20.12.19, 22:22
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
+import net.prematic.libraries.document.annotations.DocumentAttribute;
 import net.prematic.libraries.document.annotations.DocumentIgnored;
-import net.prematic.libraries.document.annotations.DocumentName;
+import net.prematic.libraries.document.annotations.DocumentKey;
+import net.prematic.libraries.document.annotations.DocumentRequired;
 import net.prematic.libraries.document.entry.ArrayEntry;
 import net.prematic.libraries.document.entry.DocumentBase;
 import net.prematic.libraries.document.entry.DocumentEntry;
@@ -73,7 +75,7 @@ public class SerialisationUtil {
                 try{
                     field.setAccessible(true);
                     if(field.getAnnotation(DocumentIgnored.class) == null){
-                        DocumentName name = field.getAnnotation(DocumentName.class);
+                        DocumentKey name = field.getAnnotation(DocumentKey.class);
                         document.entries().add(serialize(context,name!=null?name.value():field.getName(),field.get(value)));
                     }
                 }catch (Exception ignored){}
@@ -149,22 +151,26 @@ public class SerialisationUtil {
 
         Object instance = UnsafeInstanceCreator.newInstance(type.getRawClass());
 
+        //@Todo implement attribute annotation
         DocumentNode document = entry.toNode();
         for(Class<?> clazz = type.getRawClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
             for(Field field : clazz.getDeclaredFields()) {
                 try{
                     field.setAccessible(true);
                     if(field.getAnnotation(DocumentIgnored.class) == null){
-                        DocumentName name = field.getAnnotation(DocumentName.class);
+                        DocumentAttribute attribute = field.getAnnotation(DocumentAttribute.class);
+                        DocumentNode node = attribute == null ? document :document.toDocument().getAttributes();
+
+                        DocumentKey name = field.getAnnotation(DocumentKey.class);
                         String endName = name!=null?name.value():field.getName();
 
-                        if(document.contains(endName)) field.set(clazz.cast(instance),deserialize(context,document.getEntry(endName),field.getGenericType()));
-                        else{
+                        if(node.contains(endName)) field.set(clazz.cast(instance),deserialize(context,node.getEntry(endName),field.getGenericType()));
+                        else if(field.getAnnotation(DocumentRequired.class) == null){
                             if(Primitives.isPrimitive(field.getType())){
                                 if(field.getType().equals(boolean.class)) field.set(clazz.cast(instance),false);
                                 else field.set(clazz.cast(instance),0);
                             }else field.set(clazz.cast(instance),null);
-                        }
+                        }else throw new IllegalArgumentException("The key "+name+" is required");
                     }
                 }catch (Exception ignored){}
             }

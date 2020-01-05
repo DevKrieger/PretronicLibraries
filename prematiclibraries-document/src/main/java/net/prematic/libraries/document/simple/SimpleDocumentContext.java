@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.09.19, 22:19
+ * @since 20.12.19, 22:36
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,19 +19,15 @@
 
 package net.prematic.libraries.document.simple;
 
-import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.adapter.DocumentAdapterFactory;
 import net.prematic.libraries.document.adapter.DocumentAdapterInitializeAble;
 import net.prematic.libraries.document.entry.DocumentBase;
 import net.prematic.libraries.document.entry.DocumentEntry;
-import net.prematic.libraries.document.type.DocumentFileType;
-import net.prematic.libraries.document.utils.ConfigurationUtil;
 import net.prematic.libraries.document.utils.SerialisationUtil;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
-import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,20 +125,5 @@ public class SimpleDocumentContext implements DocumentContext {
     @Override
     public <T> T deserialize(DocumentBase entry, TypeReference<?> type) {
         return SerialisationUtil.deserialize(this,entry,type);
-    }
-
-    @Override
-    public void loadConfigurationClass(Class<?> configurationClass) {
-        ConfigurationUtil.loadConfigurationClass(configurationClass);
-    }
-
-    @Override
-    public void loadConfigurationClass(Class<?> clazz, Document data) {
-        ConfigurationUtil.loadConfigurationClass(clazz, data);
-    }
-
-    @Override
-    public void loadConfigurationClass(Class<?> clazz, Document data, File source, DocumentFileType type) {
-        ConfigurationUtil.loadConfigurationClass(clazz, data, source, type);
     }
 }

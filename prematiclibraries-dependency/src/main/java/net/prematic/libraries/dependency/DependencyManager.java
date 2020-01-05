@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.10.19, 19:55
+ * @since 23.12.19, 20:33
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,24 +21,30 @@ package net.prematic.libraries.dependency;
 
 import net.prematic.libraries.document.Document;
 import net.prematic.libraries.logging.PrematicLogger;
+import net.prematic.libraries.logging.PrematicLoggerFactory;
 import net.prematic.libraries.utility.Iterators;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
+/**
+ * The {@link DependencyManager} is the responsible for installing and laodering the dependencies.
+ */
 public class DependencyManager {
 
     private final PrematicLogger logger;
-    private final File localRepository;
-    private final Collection<Repository> repositories;
-    private Collection<Dependency> dependencies;
+    private final File installationFolder;
+    private final Collection<Dependency> dependencies;
 
-    public DependencyManager(PrematicLogger logger,File localRepository) {
+    public DependencyManager(File installationFolder) {
+        this(PrematicLoggerFactory.getLogger(DependencyManager.class),installationFolder);
+    }
+
+    public DependencyManager(PrematicLogger logger, File installationFolder) {
         this.logger = logger;
-        this.localRepository = localRepository;
-        this.repositories = new ArrayList<>();
+        this.installationFolder = installationFolder;
+
         this.dependencies = new ArrayList<>();
     }
 
@@ -46,100 +52,40 @@ public class DependencyManager {
         return logger;
     }
 
-    public File getLocalRepository(){
-        return localRepository;
+    public File getInstallationFolder() {
+        return installationFolder;
     }
 
-    public Collection<Repository> getRepositories() {
-        return repositories;
-    }
-
-    public Repository getRepository(String id){
-        return Iterators.findOne(this.repositories, repository -> repository.getId().equals(id));
-    }
-
-    public void addRepository(String id, String repository){
-        if(getRepository(id) != null) throw new IllegalArgumentException("A repository with the id "+id+" is already registered.");
-        System.out.println(id+" | "+repository);
-        if(repository.charAt(repository.length()-1) == '/') repository = repository.substring(0,repository.length()-1);
-        this.repositories.add(new Repository(id,repository));
+    public Collection<Dependency> getDependencies() {
+        return dependencies;
     }
 
     public Dependency getDependency(String groupId, String artifactId){
-        return Iterators.findOne(this.dependencies, dependency -> dependency.getArtifactId().equals(artifactId) && dependency.getGroupId().equals(groupId));
+        return Iterators.findOne(this.dependencies, dependency
+                -> dependency.getGroupId().equals(groupId)
+                && dependency.getArtifactId().equals(artifactId));
     }
 
-    public Dependency addDependency(String groupId, String artifactId, String version){
+    public Dependency addDependency(String repository, String groupId, String artifactId, String version){
         Dependency dependency = getDependency(groupId, artifactId);
-        if(dependency == null){
-            dependency = new Dependency(this,groupId, artifactId, version);
+        if(dependency == null) {
+            dependency = new Dependency(this,repository,groupId,artifactId,version);
             this.dependencies.add(dependency);
-        }else if(!dependency.getVersion().equals(version)){
-            logger.warn("Found a possibly version conflict in "+artifactId+" ("+version+"/"+dependency.getVersion()+")");
+        }else{
+            if(!dependency.getVersion().equals(version)){
+                logger.warn("Found a possible version conflict with dependency "+artifactId+" (Installed: "+version+", Required:"+dependency.getVersion()+")");
+            }
         }
         return dependency;
     }
 
-    public Dependency addDependency(Document dependency){
-        return addDependency(dependency.getString("groupId"),dependency.getString("artifactId"),dependency.getString("version"));
+    public DependencyGroup load(File location){
+        return DependencyGroup.load(this,location);
     }
 
-    public Dependency addDependency(Document dependency, Repository repository){
-        return addDependency(dependency.getString("groupId"),dependency.getString("artifactId"),dependency.getString("version"));
+    public DependencyGroup load(Document raw){
+        return DependencyGroup.load(this,raw);
     }
 
-    public Collection<Dependency> addDependencies(Document dependencies){
-        Collection<Dependency> result = new ArrayList<>();
-        dependencies.forEach(entry -> result.add(addDependency(entry.toDocument())));
-        return result;
-    }
 
-    public Collection<Dependency> loadPom(Document pom){
-        return loadPom(pom,null,null);
-    }
-
-    public Collection<Dependency> loadPom(Document pom, String currentGroupId, Repository currentRepository){
-        Document repositories = pom.getDocument("repositories");
-        if(repositories != null){
-            repositories.forEach(rawRepository -> {
-                Document repository = rawRepository.toDocument();
-                addRepository(repository.getString("id"),repository.getString("url"));
-            });
-        }
-        Document dependencies = pom.getDocument("dependencies");
-        if(dependencies != null){
-            Collection<Dependency> result = new ArrayList<>();
-            dependencies.forEach(entry -> {
-                if(entry.isObject()){
-                    Document rawDependency = entry.toDocument();
-                    String scope = rawDependency.getString("scope");
-                    if(scope == null || scope.equalsIgnoreCase("compile")){
-                        Dependency dependency = addDependency(rawDependency);
-                        if(rawDependency.getString("groupId").equals(currentGroupId)){
-                            dependency.setRepository(currentRepository);
-                        }
-                        result.add(dependency);
-                    }
-                }
-            });
-            return result;
-        }
-        return Collections.emptyList();
-    }
-
-    public void resolveDependencies(){
-
-    }
-
-    public void installDependencies(){
-
-    }
-
-    public void loadDependencies(){
-
-    }
-
-    public void load(String group){
-
-    }
 }

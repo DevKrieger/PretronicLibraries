@@ -206,15 +206,8 @@ public class StringParser {
     }
 
     public boolean isLineFinished(){
-        int tempIndex = this.charIndex;
-        while(this.lines[lineIndex].length > tempIndex){
-            char current = this.lines[lineIndex][tempIndex];
-            if(!(current == ' ' || current == '\t' || current == '\r')) return false;
-            tempIndex++;
-        }
-        return true;
+        return charIndex+1 >= lines[lineIndex].length;
     }
-
 
 
     //Char operation
@@ -273,7 +266,6 @@ public class StringParser {
 
     public void skipSpaces(){
         while(hasNext() && nextChar() == ' ');
-        previousChar();
     }
 
     public void previousChar(){

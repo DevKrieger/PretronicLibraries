@@ -45,6 +45,7 @@
     </build>
 
     <dependencies>
+
         <!-- Internal project dependencies -->
 
         <dependency>

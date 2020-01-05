@@ -136,6 +136,11 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
     }
 
     @Override
+    public void setValue(Object object) {
+        this.value = object;
+    }
+
+    @Override
     public String getKey() {
         return key;
     }
@@ -215,6 +220,7 @@ public class SimplePrimitiveEntry implements PrimitiveEntry {
     public boolean isNull() {
         return value == null;
     }
+
 
     @Override
     public PrimitiveEntry copy(String key) {

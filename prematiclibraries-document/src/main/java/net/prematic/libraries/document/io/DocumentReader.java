@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+/**
+ * The {@link DocumentReader} provides different methods for reading a document form a specified file type.
+ */
 public interface DocumentReader extends InputStreamReadable<Document> {
 
     default Document read(byte[] content) {

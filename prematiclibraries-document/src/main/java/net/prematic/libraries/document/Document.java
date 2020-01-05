@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 15.12.19, 18:42
+ * @since 20.12.19, 22:36
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package net.prematic.libraries.document;
 
 import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.entry.DocumentNode;
+import net.prematic.libraries.document.utils.ConfigurationUtil;
 import net.prematic.libraries.utility.annonations.Internal;
 import net.prematic.libraries.utility.parser.StringParser;
 import net.prematic.libraries.utility.reflect.TypeReference;
@@ -38,6 +39,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * The {@link Document} is the main object of the documentation library. A {@link Document} is a
+ * node and holds different types of primitives or node entries.
+ *
+ * The {@link Document} provides many methods for getting and transforming the data.
+ * There are also methods for reading and writing documents in file or streams.
+ */
 public interface Document extends DocumentNode, DocumentEntry {
 
     Array getAsArray();
@@ -231,13 +239,11 @@ public interface Document extends DocumentNode, DocumentEntry {
         return DocumentRegistry.getType(type).getReader().read(parser);
     }
 
-
-    //Load a class with document injection
-    static void loadConfigurationClass(Class<?> clazz){
-        DocumentRegistry.getDefaultContext().loadConfigurationClass(clazz);
+    static void loadConfigurationClass(Class<?> clazz, Document document){
+        ConfigurationUtil.loadConfigurationClass(clazz, document);
     }
 
-    static void loadConfigurationClass(Class<?> clazz, Document document){
-        DocumentRegistry.getDefaultContext().loadConfigurationClass(clazz, document);
+    static void loadConfigurationClass(Class<?> clazz, Document document, boolean appendMissing){
+        ConfigurationUtil.loadConfigurationClass(clazz, document,appendMissing);
     }
 }

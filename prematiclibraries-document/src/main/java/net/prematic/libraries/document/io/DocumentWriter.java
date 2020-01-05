@@ -25,6 +25,9 @@ import net.prematic.libraries.utility.io.IORuntimeException;
 import java.io.*;
 import java.nio.charset.Charset;
 
+/**
+ * The {@link DocumentReader} provides different methods for writing a document to a specified file type.
+ */
 public interface DocumentWriter {
 
     byte[] write(Document document);

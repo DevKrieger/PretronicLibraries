@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 09.06.19 21:56
+ * @since 20.12.19, 22:47
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,19 @@
 
 package net.prematic.libraries.document;
 
-import net.prematic.libraries.document.entry.*;
+import net.prematic.libraries.document.entry.ArrayEntry;
+import net.prematic.libraries.document.entry.DocumentAttributes;
+import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.document.entry.PrimitiveEntry;
 
 import java.util.List;
 
+/**
+ * The {@link DocumentFactory} creates new instances of the different entry types.
+ * A factory is registered in the {@link DocumentRegistry}, only one factory can exist per application.
+ *
+ * <p>Default implementation: {@link net.prematic.libraries.document.simple.SimpleDocumentFactory}</p>>
+ */
 public interface DocumentFactory {
 
     DocumentContext newContext();

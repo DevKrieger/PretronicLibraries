@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 10.06.19 18:47
+ * @since 21.12.19, 18:30
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,9 @@
 package net.prematic.libraries.document.type.yaml;
 
 import net.prematic.libraries.document.Document;
-import net.prematic.libraries.document.entry.ArrayEntry;
-import net.prematic.libraries.document.entry.DocumentEntry;
-import net.prematic.libraries.document.entry.PrimitiveEntry;
+import net.prematic.libraries.document.entry.*;
 import net.prematic.libraries.document.io.DocumentWriter;
+import net.prematic.libraries.utility.GeneralUtil;
 import net.prematic.libraries.utility.io.IORuntimeException;
 
 import java.io.IOException;
@@ -31,86 +30,118 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 
 public class YamlDocumentWriter implements DocumentWriter {
-
     @Override
     public byte[] write(Document document) {
-        return new byte[0];
+        return write(document,false).getBytes();
     }
 
     @Override
     public byte[] write(Document document, Charset charset) {
-        return new byte[0];
+        return write(document,false).getBytes(charset);
     }
 
     @Override
     public void write(Writer output, Document document, boolean pretty) {
         try {
-            writeObjectValue(output,document,0);
-        } catch (IOException exception) {
-            throw new IORuntimeException(exception);
+            writeObjectValue(output,document,0,true);
+        } catch (IOException e) {
+            throw new IORuntimeException(e);
         }
     }
 
-    public int writeObjectValue(Writer output,Document document, int indent) throws IOException{
-        boolean first = true;
-
-        if(document.getKey() != null){
-            indent++;
-            if(indent != 0) writeNewLine(output, indent);
+    public void writeObjectValue(Writer output,Document document, int indent,boolean first0) throws IOException {
+        boolean first = first0;
+        if(document.hasAttributes()){
+            if(indent != 0)  writeNewLine(output,indent);
+            writeAttributes(output,document.getAttributes(),indent);
+            first = false;
         }
+        writeObjectEntries(output,document,indent,first);
+    }
 
-        for(DocumentEntry entry : document){
-            if(entry.isPrimitive() && entry.toPrimitive().getAsObject() == null) continue;
+    private void writeObjectEntries(Writer output, DocumentNode node, int indent, boolean first) throws IOException {
+        for (DocumentEntry entry : node) {
             if(first) first = false;
             else writeNewLine(output, indent);
+
             writeKey(output,entry.getKey());
-            if(entry.isPrimitive()) writePrimitiveValue(output, entry.toPrimitive());
-            else if(entry.isArray()) indent = writeArrayValue(output, entry.toArray(),indent);
-            else if(entry.isObject()) indent = writeObjectValue(output, entry.toDocument(),indent);
-        }
-
-        if(document.getKey() != null) indent--;
-        return indent;
-    }
-
-    public int writeArrayValue(Writer output, ArrayEntry array, int indent) throws IOException {
-        if(array.isEmpty()) output.write("[]");
-        else{
-            boolean multiLine = !array.isPrimitiveArray() || array.size()>=8;
-            if(multiLine){
-                indent++;
-                writeNewLine(output, indent);
-            }else output.write("[");
-            boolean first = true;
-            for(DocumentEntry entry : array){
-                if(first){
-                    first = false;
-                    if(multiLine) output.write("- ");
-                }else{
-                    if(multiLine){
-                        writeNewLine(output, indent);
-                        output.write("- ");
-                    }else output.write(",");
-                }
-                writeEntry(output,entry,indent);
+            if(entry.isPrimitive()){
+                writePrimitiveValue(output,entry.toPrimitive(),indent+1);
+            }else if(entry.isArray()){
+                writeArrayValue(output,entry.toArray(),indent+1);
+            }else if(entry.isObject()){
+                writeObjectValue(output,entry.toDocument(),indent+1,false);
             }
-            if(!multiLine) output.write("]");
         }
-        return indent;
     }
 
-    public void writeEntry(Writer output, DocumentEntry entry, int indent) throws IOException{
-        if(entry.isPrimitive()) writePrimitiveValue(output, entry.toPrimitive());
-        else if(entry.isArray()) indent = writeArrayValue(output, entry.toArray(),indent);
-        else if(entry.isObject()) indent = writeObjectValue(output, entry.toDocument(),indent);
+    public void writeArrayValue(Writer output, ArrayEntry array, int indent) throws IOException {
+        if(array.hasAttributes()){
+            writeNewLine(output, indent);
+            writeAttributes(output,array.getAttributes(),indent);
+            writeNewLine(output,indent);
+            writeKey(output,"_value");
+        }
+        if(array.isEmpty() || (array.isPrimitiveArray() && array.size() <= 4)){
+            writeSimpleArray(output, array);
+        }else{
+            writeAdvancedArray(output, array, indent);
+        }
     }
 
-    public void writePrimitiveValue(Writer output, PrimitiveEntry entry) throws IOException {
-        if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character){
-            output.write('\'');
-            output.write(entry.getAsString());
-            output.write('\'');
-        }else output.write(entry.getAsString());
+    public void writeSimpleArray(Writer output, ArrayEntry array) throws IOException{
+        output.write("[");
+        boolean first = true;
+        for (DocumentEntry entry : array) {
+            if(first) first = false;
+            else output.write(",");
+            writePrimitiveData(output,entry.toPrimitive());
+        }
+        output.write("]");
+    }
+
+    public void writeAdvancedArray(Writer output, ArrayEntry array,int indent) throws IOException {
+        for (DocumentEntry entry : array) {
+            writeNewLine(output,indent);
+            output.write("- ");
+            if(entry.isPrimitive()){
+                writePrimitiveValue(output,entry.toPrimitive(),indent+1);
+            }else if(entry.isArray()){
+                writeArrayValue(output,entry.toArray(),indent+1);
+            }else if(entry.isObject()){
+                writeObjectValue(output,entry.toDocument(),indent+1,true);
+            }
+        }
+    }
+
+    private void writeAttributes(Writer output, DocumentAttributes attributes, int indent) throws IOException {
+        writeKey(output,"_attributes");
+        writeObjectEntries(output,attributes,indent+1,false);
+    }
+
+    private void writePrimitiveValue(Writer output, PrimitiveEntry entry, int indent) throws IOException {
+        if(entry.hasAttributes()){
+            writeNewLine(output, indent);
+            writeAttributes(output,entry.getAttributes(),indent);
+            writeNewLine(output,indent);
+            writeKey(output,"_value");
+        }
+        writePrimitiveData(output, entry);
+    }
+
+    private void writePrimitiveData(Writer output, PrimitiveEntry entry) throws IOException {
+        if(!entry.isNull()){
+            String data = entry.getAsString();
+            if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character){
+                if(!(data.equalsIgnoreCase("false") || data.equalsIgnoreCase("true") || GeneralUtil.isNumber(data))){
+                    output.write('\'');
+                    output.write(entry.getAsString());
+                    output.write('\'');
+                    return;
+                }
+            }
+            output.write(data);
+        }
     }
 
     public void writeKey(Writer output, String key) throws IOException {

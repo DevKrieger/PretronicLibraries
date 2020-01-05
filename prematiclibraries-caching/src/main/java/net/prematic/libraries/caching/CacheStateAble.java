@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.06.19 19:41
+ * @since 05.01.20, 15:08
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,13 @@
  * under the License.
  */
 
-package net.prematic.libraries.document.io;
+package net.prematic.libraries.caching;
 
-public class DocumentReaderException extends RuntimeException{
+public interface CacheStateAble<T> {
 
-    public DocumentReaderException() {
-    }
+    boolean isCached();
 
-    public DocumentReaderException(String message) {
-        super(message);
-    }
+    boolean setCached(boolean cached);
 
-    public DocumentReaderException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    T reload();
 }

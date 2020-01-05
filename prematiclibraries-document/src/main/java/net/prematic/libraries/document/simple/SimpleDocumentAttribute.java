@@ -40,6 +40,11 @@ public class SimpleDocumentAttribute extends AbstractDocumentNode implements Doc
     }
 
     @Override
+    public DocumentEntry getEntry(String[] keys, int offset) {
+        return keys.length == 1 ? getEntry(keys[0]) : null;
+    }
+
+    @Override
     public DocumentAttributes set(String key, Object value) {
         if(!Primitives.isPrimitive(value)) throw new IllegalArgumentException("DocumentAttribute allows only primitive values.");
         remove(key);

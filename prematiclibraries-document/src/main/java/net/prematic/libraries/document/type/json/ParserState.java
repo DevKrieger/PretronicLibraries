@@ -21,7 +21,6 @@ package net.prematic.libraries.document.type.json;
 
 import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.entry.DocumentEntry;
-import net.prematic.libraries.document.type.Characters;
 import net.prematic.libraries.utility.parser.StringParser;
 
 import java.math.BigDecimal;
@@ -30,8 +29,15 @@ public interface ParserState {
 
     ParserState DOCUMENT_START = new DocumentStart();
     ParserState DOCUMENT_PRE_KEY = new DocumentPreKey();
+    ParserState DOCUMENT_KEY = new DocumentKey();
     ParserState DOCUMENT_KEY_ENDING = new DocumentKeyEnding();
     ParserState DOCUMENT_PRE_VALUE = new DocumentPreValue();
+    ParserState DOCUMENT_VALUE_STRING1 = new DocumentString('"');
+    ParserState DOCUMENT_VALUE_STRING2 = new DocumentString('\'');
+    ParserState DOCUMENT_VALUE_KEYWORD_TRUE = new DocumentKeyword(new char[]{'t','r','u','e'},true);
+    ParserState DOCUMENT_VALUE_KEYWORD_FALSE = new DocumentKeyword(new char[]{'f','a','l','s','e'},false);
+    ParserState DOCUMENT_VALUE_KEYWORD_NULL = new DocumentKeyword(new char[]{'n','u','l','l'},null);
+    ParserState DOCUMENT_VALUE_OBJECT = new DocumentObject();
     ParserState DOCUMENT_NEXT_PAIR = new DocumentNextPair();
     ParserState DOCUMENT_FINISHED = new DocumentFinished();
 
@@ -46,7 +52,10 @@ public interface ParserState {
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
             if(current == '{') sequence.setCurrentState(DOCUMENT_PRE_KEY);
-            else if(!isIgnoredChar(current)) parser.throwException("Invalid Document start (A json document has to start with {)");
+            else if(current == '['){
+                sequence.setCurrentState(DOCUMENT_PRE_VALUE);
+                sequence.setArray(true);
+            }else if(!isIgnoredChar(current)) parser.throwException("Invalid Document start (A json document has to start with {)");
         }
     }
 
@@ -54,8 +63,10 @@ public interface ParserState {
 
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
-            if(current == '"') sequence.setCurrentState(new DocumentKey());
-            else if(current == '}' && !sequence.isArray()){
+            if(current == '"'){
+                sequence.setCurrentState(DOCUMENT_KEY);
+                sequence.markNext(parser);
+            }else if(current == '}' && !sequence.isArray()){
                 sequence.setCurrentState(DOCUMENT_FINISHED);
             }else if(current == ']' && sequence.isArray()){
                 sequence.setCurrentState(DOCUMENT_FINISHED);
@@ -65,15 +76,12 @@ public interface ParserState {
 
     class DocumentKey implements ParserState {
 
-        private int start;
-
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
             if(current == '"'){
-                sequence.setCurrentKey(parser.getOnLine(start,parser.charIndex()));
+                sequence.setCurrentKey(parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()));
                 sequence.setCurrentState(DOCUMENT_KEY_ENDING);
-            }else if(start == 0) start = parser.charIndex();
-            else if(parser.isLineFinished()) parser.throwException("Key can't be on multiple lines.");
+            }else if(parser.isLineFinished()) parser.throwException("Key can't be on multiple lines.");
         }
     }
 
@@ -89,18 +97,27 @@ public interface ParserState {
 
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
-            if(current == '"' || current == '\''){
-                sequence.setCurrentState(new DocumentString(current,parser.charIndex()));
+            if(current == '"'){
+                sequence.setCurrentState(DOCUMENT_VALUE_STRING1);
+                sequence.markNext(parser);
+            }else if(current == '\''){
+                sequence.setCurrentState(DOCUMENT_VALUE_STRING2);
+                sequence.markNext(parser);
             }else if(current == 't' || current == 'T'){
-                sequence.setCurrentState(new DocumentKeyword(Characters.BOOLEAN_TRUE,true));
+                sequence.setCurrentState(DOCUMENT_VALUE_KEYWORD_TRUE);
+                sequence.setCharacterMark(1);
             }else if(current == 'f' || current == 'F'){
-                sequence.setCurrentState(new DocumentKeyword(Characters.BOOLEAN_FALSE,false));
+                sequence.setCurrentState(DOCUMENT_VALUE_KEYWORD_FALSE);
+                sequence.setCharacterMark(1);
             }else if(current == 'n' || current == 'N'){
-                sequence.setCurrentState(new DocumentKeyword(Characters.NULL,null));
+                sequence.setCurrentState(DOCUMENT_VALUE_KEYWORD_NULL);
+                sequence.setCharacterMark(1);
             }else if(current == '['){
-                sequence.setCurrentState(new DocumentObject(sequence.getCurrentKey(),true));
+                sequence.setNextSequence(new JsonSequence(sequence.getCurrentKey(),true,DOCUMENT_PRE_VALUE));
+                sequence.setCurrentState(DOCUMENT_VALUE_OBJECT);
             }else if(current == '{'){
-                sequence.setCurrentState(new DocumentObject(sequence.getCurrentKey(),false));
+                sequence.setNextSequence(new JsonSequence(sequence.getCurrentKey(),false,DOCUMENT_PRE_KEY));
+                sequence.setCurrentState(DOCUMENT_VALUE_OBJECT);
             }else if(current == '-' || current == '+' || Character.isDigit(current)){
                 sequence.setCurrentState(new DocumentNumber(parser.charIndex()));
             }else if(!isIgnoredChar(current)) parser.throwException("Invalid character");
@@ -125,22 +142,21 @@ public interface ParserState {
     class DocumentString implements ParserState {
 
         private final char end;
-        private final int start;
-        private boolean blocked;
 
-        public DocumentString(char end, int start) {
+        public DocumentString(char end) {
             this.end = end;
-            this.start = start;
         }
 
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
-            if(current == end && !blocked){
-                String value = parser.getOnLine(start+1,parser.charIndex());
+            parser.previousChar();
+            if(current == end && parser.currentChar() != '\\'){
+                String value = parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()+1);
                 DocumentEntry primitive = Document.factory().newPrimitiveEntry(sequence.getCurrentKey(),value);
                 sequence.pushEntry(primitive);
                 sequence.setCurrentState(DOCUMENT_NEXT_PAIR);
-            }else blocked = current == '\\';
+            }
+            parser.skipChar();
         }
     }
 
@@ -173,44 +189,36 @@ public interface ParserState {
 
     class DocumentObject implements ParserState {
 
-        private final JsonSequence sequence;
-
-        public DocumentObject(String key, boolean array) {
-            sequence = new JsonSequence(key,array,array ? DOCUMENT_PRE_VALUE : DOCUMENT_PRE_KEY);
-        }
-
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
-            ParserState state = this.sequence.getCurrentState();
+            ParserState state = sequence.getNextSequence().getCurrentState();
             if(state == DOCUMENT_FINISHED){
-                sequence.pushEntry(this.sequence.getSequenceEntry());
+                sequence.pushEntry(sequence.getNextSequence().getSequenceEntry());
                 parser.previousChar();
                 sequence.setCurrentState(DOCUMENT_NEXT_PAIR);
-            }else state.parse(this.sequence,parser,current);
+            }else state.parse(sequence.getNextSequence(),parser,current);
         }
     }
 
     class DocumentKeyword implements ParserState {
 
-        private int start;
         private char[] equals;
         private Object value;
 
         public DocumentKeyword(char[] equals,Object value) {
-            this.start = 1;
             this.equals = equals;
             this.value = value;
         }
 
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
-            if((current == ',' || current == '}' || current == ']') && start == equals.length){
+            if((current == ',' || current == '}' || current == ']') && sequence.getCharacterMark() == equals.length){
                 parser.previousChar();
                 DocumentEntry entry = Document.factory().newPrimitiveEntry(sequence.getCurrentKey(),value);
                 sequence.pushEntry(entry);
                 sequence.setCurrentState(DOCUMENT_NEXT_PAIR);
-            }else if(start < equals.length && Character.toLowerCase(current) == equals[start]){
-                start++;
+            }else if(sequence.getCharacterMark() < equals.length && Character.toLowerCase(current) == equals[sequence.getCharacterMark()]){
+                sequence.setCharacterMark(sequence.getCharacterMark()+1);
             }else if(!isIgnoredChar(current)){
                 parser.throwException("Invalid Characters");
             }

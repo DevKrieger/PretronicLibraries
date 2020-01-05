@@ -23,6 +23,7 @@ import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.entry.DocumentAttributes;
 import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.parser.StringParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +32,14 @@ public class JsonSequence {
 
     private final String key;
     private final List<DocumentEntry> entries;
-    private final boolean array;
+    private boolean array;
 
     private ParserState currentState;
     private String currentKey;
+
+    private int characterMark;
+    private int lineMark;
+    private JsonSequence nextSequence;
 
     public JsonSequence(String key,boolean array,ParserState currentState) {
         this.key = key;
@@ -83,6 +88,10 @@ public class JsonSequence {
         return array;
     }
 
+    public void setArray(boolean array) {
+        this.array = array;
+    }
+
     public ParserState getCurrentState() {
         return currentState;
     }
@@ -97,5 +106,36 @@ public class JsonSequence {
 
     public void setCurrentKey(String currentKey) {
         this.currentKey = currentKey;
+    }
+
+    public int getCharacterMark() {
+        return characterMark;
+    }
+
+    public int getLineMark() {
+        return lineMark;
+    }
+
+    public void setCharacterMark(int characterMark) {
+        this.characterMark = characterMark;
+    }
+
+    public void mark(StringParser parser){
+        this.characterMark = parser.charIndex();
+        this.lineMark = parser.lineIndex();
+    }
+
+    public void markNext(StringParser parser){
+        parser.skipChar();
+        mark(parser);
+        parser.previousChar();
+    }
+
+    public JsonSequence getNextSequence() {
+        return nextSequence;
+    }
+
+    public void setNextSequence(JsonSequence nextSequence) {
+        this.nextSequence = nextSequence;
     }
 }

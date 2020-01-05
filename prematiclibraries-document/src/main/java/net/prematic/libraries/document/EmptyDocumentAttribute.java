@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 09.12.19, 20:54
+ * @since 20.12.19, 22:38
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * The {@link EmptyDocumentAttribute} is singleton attribute entry which is always empty and can not contain any kind of data.
+ */
 public class EmptyDocumentAttribute implements DocumentAttributes {
 
     private static final DocumentAttributes EMPTY = new EmptyDocumentAttribute();
@@ -39,6 +42,11 @@ public class EmptyDocumentAttribute implements DocumentAttributes {
 
     @Override
     public PrimitiveEntry getEntry(int index) {
+        return null;
+    }
+
+    @Override
+    public DocumentEntry getEntry(String[] keys, int offset) {
         return null;
     }
 
