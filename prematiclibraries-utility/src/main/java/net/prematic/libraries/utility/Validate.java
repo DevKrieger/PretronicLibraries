@@ -43,6 +43,10 @@ public final class Validate {
         if(value == null || pattern == null || !pattern.matcher(value).matches()) throw new IllegalArgumentException(message);
     }
 
+    public static void notNull(Object value) {
+        if(value == null) throw new NullPointerException();
+    }
+
     public static void notNull(Object value, String message, Object... objects) {
         if(value == null) throw new NullPointerException(String.format(message, objects));
     }
