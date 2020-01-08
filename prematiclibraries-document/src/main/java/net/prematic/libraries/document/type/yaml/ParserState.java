@@ -111,7 +111,6 @@ public interface ParserState {
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(current == ':'){
                 yaml.setTempKey(parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()).trim());
-                System.out.println("KEY "+yaml.getTempKey());
                 yaml.setState(DOCUMENT_VALUE_PRE);
             }
         }
@@ -208,9 +207,7 @@ public interface ParserState {
                 yaml.mark(parser);
             }
             if(!isSpaceChar(current)){
-                System.out.println("Indent Parse "+parser.charIndex()+" | "+current);
                 int indent = parser.charIndex()-yaml.getCharacterMark();
-                System.out.println("Indent: "+indent);
                 if(indent == yaml.getSequence().getIndent()){
                     if(current == '-'){
                         yaml.setTempIndent(1);
@@ -243,11 +240,9 @@ public interface ParserState {
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if (yaml.getLineMark() != parser.lineIndex()) {
                 yaml.mark(parser);
-                System.out.println("MARK SAME");
             }
             if (!isSpaceChar(current)) {
                 int indent = parser.charIndex() - yaml.getCharacterMark();
-                System.out.println("NS " + indent + " | " + yaml.getSequence().getIndent());
                 if (indent == yaml.getSequence().getIndent()) {
                     yaml.mark(parser);
                     yaml.setState(DOCUMENT_KEY);
@@ -318,7 +313,6 @@ public interface ParserState {
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(parser.isLineFinished()){
-                System.out.println("FINISHED");
             }else if(!isSpaceChar(current)){
                 yaml.mark(parser);
                 yaml.setState(DOCUMENT_ARRAY_ADVANCED_KEY);
@@ -332,9 +326,7 @@ public interface ParserState {
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(current == ':'){
                 yaml.setTempKey(parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()).trim());
-                System.out.println(yaml.getTempKey());
                 int indent = yaml.getSequence().getIndent()+yaml.getTempIndent();
-                System.out.println("OArray Indent "+indent);
                 if(indent != yaml.getSequence().getIndent()){
                     yaml.setSequence(new YamlSequence("value",indent,yaml.getSequence(),false));
                 }
@@ -344,7 +336,6 @@ public interface ParserState {
                 String value = parser.getOnLine(yaml.getCharacterMark(),parser.currentChar()).trim();
                 yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry("value",value));
                 yaml.setState(DOCUMENT_NEXT);
-                System.out.println("AValue: "+value);
             }
         }
     }
@@ -395,7 +386,6 @@ public interface ParserState {
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(current == ':'){
                 yaml.setTempKey(parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()).trim());
-                System.out.println(yaml.getTempKey());
                 yaml.setState(DOCUMENT_ARRAY_ADVANCED_VALUE);
                 yaml.markNext(parser);
             }else if(parser.isLineFinished()){

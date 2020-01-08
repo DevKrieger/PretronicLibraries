@@ -21,8 +21,10 @@ package net.prematic.libraries.document;
 
 import net.prematic.libraries.document.entry.DocumentEntry;
 import net.prematic.libraries.document.entry.DocumentNode;
+import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.document.utils.ConfigurationUtil;
 import net.prematic.libraries.utility.annonations.Internal;
+import net.prematic.libraries.utility.map.Pair;
 import net.prematic.libraries.utility.parser.StringParser;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
@@ -237,6 +239,14 @@ public interface Document extends DocumentNode, DocumentEntry {
 
     static Document read(String type, StringParser parser){
         return DocumentRegistry.getType(type).getReader().read(parser);
+    }
+
+    static Pair<File,DocumentFileType> findExistingType(File location, String baseName){
+        for (DocumentFileType type : DocumentRegistry.getTypes()) {
+            File file = new File(location,baseName+"."+type.getEnding());
+            if(file.exists()) return new Pair<>(file,type);
+        }
+        return null;
     }
 
     static void loadConfigurationClass(Class<?> clazz, Document document){
