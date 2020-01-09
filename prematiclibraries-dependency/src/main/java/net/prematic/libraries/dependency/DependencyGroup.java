@@ -25,6 +25,7 @@ import net.prematic.libraries.document.type.DocumentFileType;
 import net.prematic.libraries.utility.Iterators;
 
 import java.io.File;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +78,10 @@ public class DependencyGroup {
         List<ClassLoader> loaders = new ArrayList<>();
         this.dependencies.forEach(dependency -> loaders.add(dependency.load(parent)));
         return loaders;
+    }
+
+    public void loadReflected(URLClassLoader loader){
+        this.dependencies.forEach(dependency -> dependency.loadReflected(loader));
     }
 
     public static DependencyGroup load(DependencyManager manager,File location){
