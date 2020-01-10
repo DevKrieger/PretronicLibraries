@@ -36,11 +36,11 @@ public class ConfigurationUtil {
     public static void loadConfigurationClass(Class<?> clazz, Document data, boolean appendMissing){
         try{
             for(Field field : clazz.getDeclaredFields()){
-                if(Modifier.isStatic(field.getModifiers()) && field.getAnnotation(DocumentIgnored.class) == null){
+                if(Modifier.isStatic(field.getModifiers()) && field.getAnnotation(DocumentIgnored.class) == null && !Modifier.isTransient(field.getModifiers())){
                     field.setAccessible(true);
                     DocumentKey key = field.getAnnotation(DocumentKey.class);
                     String name = key != null ? key.value() : field.getName().toLowerCase().replace('_','.');
-                    Object result = data.getObject(name,field.getType());
+                    Object result = data.getObject(name,field.getGenericType());
                     if(result != null) field.set(null,result);
                     else if(appendMissing){
                         Object defaultValue = field.get(null);
