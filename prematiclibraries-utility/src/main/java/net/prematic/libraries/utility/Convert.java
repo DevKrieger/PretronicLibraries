@@ -212,12 +212,23 @@ public class Convert {
         else if(input instanceof byte[]) {
             ByteBuffer byteBuffer = ByteBuffer.wrap((byte[]) input);
             return new UUID(byteBuffer.getLong(), byteBuffer.getLong());
+        } else if(input instanceof String) {
+            if(((String)input).contains("-")) {
+                return UUID.fromString((String) input);
+            } else {
+                StringBuilder dashBuilder = new StringBuilder((String)input)
+                        .insert(20, '-')
+                        .insert(16, '-')
+                        .insert(12, '-')
+                        .insert(8, '-');
+                try {
+                    return UUID.fromString(dashBuilder.toString());
+                } catch (IllegalArgumentException exception) {
+                    throw new IllegalArgumentException("Can not be converted to uuid " + input);
+                }
+            }
         }
-        try {
-            return UUID.fromString(input instanceof String ? (String) input : String.valueOf(input));
-        } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Can not be converted to uuid " + input);
-        }
+        throw new IllegalArgumentException("Can not be converted to uuid " + input);
     }
 
     public static Date toDate(Object input) {

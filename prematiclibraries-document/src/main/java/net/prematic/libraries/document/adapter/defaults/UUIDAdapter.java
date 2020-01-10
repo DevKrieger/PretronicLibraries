@@ -23,6 +23,7 @@ import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
 import net.prematic.libraries.document.entry.DocumentBase;
 import net.prematic.libraries.document.entry.DocumentEntry;
+import net.prematic.libraries.utility.Convert;
 import net.prematic.libraries.utility.reflect.TypeReference;
 
 import java.util.UUID;
@@ -32,11 +33,7 @@ public class UUIDAdapter implements DocumentAdapter<UUID> {
     @Override
     public UUID read(DocumentBase entry, TypeReference<UUID> reference) {
         if(entry.isPrimitive()){
-            String content = entry.toPrimitive().getAsString();
-            if(content.indexOf('-') == -1)
-                content = content.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
-
-            return UUID.fromString(content);
+            return Convert.toUUID(entry.toPrimitive().getAsObject());
         }
         throw new IllegalArgumentException("It is not possible to convert this entry into a uuid.");
     }
