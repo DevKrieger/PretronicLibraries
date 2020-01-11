@@ -140,7 +140,7 @@ public class SimpleDocument extends AbstractDocumentNode implements Document {
         if(offset+1 == keys.length) return entry;
         else if(entry == null) return null;
         else if(entry.isNode()) return entry.toNode().getEntry(keys,offset+1);
-        else throw new IllegalArgumentException("Object is not an object");
+        else throw new IllegalArgumentException("Entry is not an object");
     }
 
     @Override

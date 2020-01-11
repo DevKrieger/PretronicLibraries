@@ -149,9 +149,10 @@ public class SerialisationUtil {
         DocumentAdapter<?> adapter = context.findAdapter(type);
         if(adapter != null) return adapter.read(entry, type);
 
+        if(Primitives.isPrimitive(type.getRawClass())) throw new IllegalArgumentException("Entry is not a primitive");
+
         Object instance = UnsafeInstanceCreator.newInstance(type.getRawClass());
 
-        //@Todo implement attribute annotation
         DocumentNode document = entry.toNode();
         for(Class<?> clazz = type.getRawClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
             for(Field field : clazz.getDeclaredFields()) {

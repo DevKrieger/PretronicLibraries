@@ -30,6 +30,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 
 public class YamlDocumentWriter implements DocumentWriter {
+
     @Override
     public byte[] write(Document document) {
         return write(document,false).getBytes();
@@ -61,16 +62,23 @@ public class YamlDocumentWriter implements DocumentWriter {
 
     private void writeObjectEntries(Writer output, DocumentNode node, int indent, boolean first) throws IOException {
         for (DocumentEntry entry : node) {
-            if(first) first = false;
-            else writeNewLine(output, indent);
-
-            writeKey(output,entry.getKey());
             if(entry.isPrimitive()){
+                if(first) first = false;
+                else writeNewLine(output, indent);
+                writeKey(output,entry.getKey());
                 writePrimitiveValue(output,entry.toPrimitive(),indent+1);
             }else if(entry.isArray()){
+                if(first) first = false;
+                else writeNewLine(output, indent);
+                writeKey(output,entry.getKey());
                 writeArrayValue(output,entry.toArray(),indent+1);
             }else if(entry.isObject()){
-                writeObjectValue(output,entry.toDocument(),indent+1,false);
+                if(!entry.toDocument().isEmpty()){
+                    if(first) first = false;
+                    else writeNewLine(output, indent);
+                    writeKey(output,entry.getKey());
+                    writeObjectValue(output,entry.toDocument(),indent+1,false);
+                }
             }
         }
     }
