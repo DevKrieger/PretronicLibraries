@@ -46,7 +46,7 @@ public class SerialisationUtil {
     public static DocumentEntry serialize(DocumentContext context, Object value){
         return serialize(context,null,value);
     }
-    
+
     public static DocumentEntry serialize(DocumentContext context,String key, Object value){
         if(value == null || Primitives.isPrimitive(value)) return DocumentRegistry.getFactory().newPrimitiveEntry(key,value);
         else if(DocumentEntry.class.isAssignableFrom(value.getClass())) return (DocumentEntry) value;
