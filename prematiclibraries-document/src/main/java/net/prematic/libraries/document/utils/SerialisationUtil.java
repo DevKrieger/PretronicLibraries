@@ -46,7 +46,7 @@ public class SerialisationUtil {
     public static DocumentEntry serialize(DocumentContext context, Object value){
         return serialize(context,null,value);
     }
-
+    
     public static DocumentEntry serialize(DocumentContext context,String key, Object value){
         if(value == null || Primitives.isPrimitive(value)) return DocumentRegistry.getFactory().newPrimitiveEntry(key,value);
         else if(DocumentEntry.class.isAssignableFrom(value.getClass())) return (DocumentEntry) value;
@@ -70,15 +70,33 @@ public class SerialisationUtil {
         if(adapter != null) return adapter.write(key, value);
 
         Document document = DocumentRegistry.getFactory().newDocument(key);
-        for(Field field : objectClass.getDeclaredFields()){
-            if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())){
-                try{
-                    field.setAccessible(true);
-                    if(field.getAnnotation(DocumentIgnored.class) == null){
-                        DocumentKey name = field.getAnnotation(DocumentKey.class);
-                        document.entries().add(serialize(context,name!=null?name.value():field.getName(),field.get(value)));
-                    }
-                }catch (Exception ignored){}
+        for(Class<?> clazz = objectClass; clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
+            for(Field field : clazz.getDeclaredFields()){
+                if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())){
+                    try{
+                        field.setAccessible(true);
+                        if(field.getAnnotation(DocumentIgnored.class) == null){
+                            DocumentKey name = field.getAnnotation(DocumentKey.class);
+                            String endName = name!=null?name.value():field.getName();
+
+                            DocumentNode current = document;
+                            String[] keys = endName.split("\\.");
+                            if(keys.length > 1 && current.isObject()){
+                                for (int i = 0; i < keys.length-1; i++) {
+                                    Document next = current.toDocument().getDocument(keys[i]);
+                                    if(next == null){
+                                        next = Document.factory().newDocument(keys[i]);
+                                        current.entries().add(next);
+                                    }
+                                    current = next;
+                                }
+                                endName = keys[keys.length-1];
+                            }
+
+                            current.entries().add(serialize(context,endName,field.get(value)));
+                        }
+                    }catch (Exception ignored){}
+                }
             }
         }
         return document;
