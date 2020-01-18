@@ -72,4 +72,19 @@ public final class StringUtil {
 
         return result.toArray(new String[0]);
     }
+
+    public static String[] split(String input,char splitPoint){
+        List<String> parts = new ArrayList<>();
+        char[] chars = input.toCharArray();
+        int last = 0;
+        for (int i = 0; i < chars.length; i++) {
+            if(chars[i] == splitPoint){
+                parts.add(input.substring(last,i));
+                last = i+1;
+            }
+        }
+        parts.add(input.substring(last));
+        return parts.toArray(new String[0]);
+    }
+
 }
