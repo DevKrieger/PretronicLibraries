@@ -134,7 +134,7 @@ public class DefaultPluginLoader implements PluginLoader {
                     this.pluginManager.executeLifecycleStateListener(state,stateEvent,instance);
                 }catch (Exception exception) {
                     pluginManager.getLogger().error("Could not execute lifecycle state {} for plugin {}",state,description.getName());
-                    pluginManager.getLogger().error(exception);
+                    exception.printStackTrace();
                 }
             }
         }

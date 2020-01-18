@@ -46,6 +46,7 @@ public final class FormatHelper {
      * @return The formatted message.
      */
     public static String format(String message, Object... objects){
+        if(message == null) return "null";
         final StringBuilder builder = new StringBuilder();
         char last = ' ';
         int position = 0;
