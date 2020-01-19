@@ -47,7 +47,8 @@ public class Convert {
      * @return The input object as character
      */
     public static char toCharacter(Object input){
-        if(input instanceof Character) return (char) input;
+        if(input == null) return 0;
+        else if(input instanceof Character) return (char) input;
         else if(input instanceof Number) return (char) input;
         else{
             String content = input.toString();
@@ -65,7 +66,8 @@ public class Convert {
      * @return The input object as boolean
      */
     public static boolean toBoolean(Object input){
-        if(input instanceof Boolean) return (boolean) input;
+        if(input == null) return false;
+        else if(input instanceof Boolean) return (boolean) input;
         else if(input instanceof Integer) return (Integer) input == 1;
         else if(input instanceof Long) return (Long) input == 1;
         else if(input instanceof Double) return (Double) input == 1;
@@ -90,7 +92,8 @@ public class Convert {
      * @return The input object as integer
      */
     public static int toInteger(Object input){
-        if(input instanceof Number) return ((Number) input).intValue();
+        if(input == null) return 0;
+        else if(input instanceof Number) return ((Number) input).intValue();
         else if(input instanceof Character) return (int)input;
         else if(input instanceof Boolean) return ((Boolean)input?1:0);
         else{
@@ -111,7 +114,8 @@ public class Convert {
      * @return The input object as long
      */
     public static long toLong(Object input){
-        if(input instanceof Number) return ((Number) input).longValue();
+        if(input == null) return 0;
+        else if(input instanceof Number) return ((Number) input).longValue();
         else if(input instanceof Character) return (int)input;
         else if(input instanceof Boolean) return ((Boolean)input?1:0);
         else{
@@ -132,7 +136,8 @@ public class Convert {
      * @return The input object as double
      */
     public static double toDouble(Object input){
-        if(input instanceof Number) return ((Number) input).doubleValue();
+        if(input == null) return 0;
+        else if(input instanceof Number) return ((Number) input).doubleValue();
         else if(input instanceof Character) return (int)input;
         else if(input instanceof Boolean) return ((Boolean)input?1:0);
         else{
@@ -153,7 +158,8 @@ public class Convert {
      * @return The input object as float
      */
     public static float toFloat(Object input){
-        if(input instanceof Number) return ((Number) input).floatValue();
+        if(input == null) return 0;
+        else if(input instanceof Number) return ((Number) input).floatValue();
         else if(input instanceof Character) return (int)input;
         else if(input instanceof Boolean) return ((Boolean)input?1:0);
         else{
@@ -174,7 +180,8 @@ public class Convert {
      * @return The input object as short
      */
     public static short toShort(Object input){
-        if(input instanceof Number) return ((Number) input).shortValue();
+        if(input == null) return 0;
+        else if(input instanceof Number) return ((Number) input).shortValue();
         else if(input instanceof Character) return (byte)input;
         else if(input instanceof Boolean) return (short) ((Boolean)input?1:0);
         else{
@@ -195,7 +202,8 @@ public class Convert {
      * @return The input object as byte
      */
     public static byte toByte(Object input){
-        if(input instanceof Number) return ((Number) input).byteValue();
+        if(input == null) return 0;
+        else if(input instanceof Number) return ((Number) input).byteValue();
         else if(input instanceof Character) return (byte)input;
         else if(input instanceof Boolean) return (byte) ((Boolean)input?1:0);
         else{
@@ -208,20 +216,23 @@ public class Convert {
     }
 
     public static UUID toUUID(Object input) {
-        if(input instanceof UUID) return (UUID) input;
+        if(input == null) return null;
+        else if(input instanceof UUID) return (UUID) input;
         else if(input instanceof byte[]) {
             ByteBuffer byteBuffer = ByteBuffer.wrap((byte[]) input);
             return new UUID(byteBuffer.getLong(), byteBuffer.getLong());
-        }
-        try {
-            return UUID.fromString(input instanceof String ? (String) input : String.valueOf(input));
-        } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Can not be converted to uuid " + input);
+        }else{
+            try {
+                return UUID.fromString(input instanceof String ? (String) input : String.valueOf(input));
+            } catch (IllegalArgumentException exception) {
+                throw new IllegalArgumentException("Can not be converted to uuid " + input);
+            }
         }
     }
 
     public static Date toDate(Object input) {
-        if(input instanceof Date) return (Date) input;
+        if(input == null) return null;
+        else if(input instanceof Date) return (Date) input;
         else if(input instanceof Long) return new Date((long) input);
         throw new IllegalArgumentException("Can not be converted to date " + input);
     }
