@@ -119,6 +119,17 @@ public class DocumentRegistry {
     }
 
     /**
+     * Find a file type by a file (Must end with extension name)
+     * @param file The file
+     * @return The type of the file or null when not available
+     */
+    public static DocumentFileType findType(File file){
+        String name = file.getName();
+        int index = name.lastIndexOf('.');
+        return index > 0 ? getTypeByEnding(name.substring(index+1)) : null;
+    }
+
+    /**
      * Get the default context (Contains all global adapters).
      *
      * @return The global context
