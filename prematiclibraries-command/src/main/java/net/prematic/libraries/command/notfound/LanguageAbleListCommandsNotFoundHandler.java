@@ -22,19 +22,19 @@ package net.prematic.libraries.command.notfound;
 import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
-import net.prematic.libraries.message.LanguageAble;
-import net.prematic.libraries.message.MessageManager;
+import net.prematic.libraries.message.MessageProvider;
+import net.prematic.libraries.message.language.LanguageAble;
 
 public class LanguageAbleListCommandsNotFoundHandler extends ListCommandsNotFoundHandler{
 
-    private MessageManager messageManager;
+    private MessageProvider messageManager;
     private String commandHelpKey, startMessageKey, pageNotFoundKey;
 
-    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, MessageManager messageManager){
+    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, MessageProvider messageManager){
         this(manager,perPage,messageManager,"command.help","command.help.header","command.help.page.notfound");
     }
 
-    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, MessageManager messageManager, String commandHelpKey, String startMessageKey, String pageNotFoundKey) {
+    public LanguageAbleListCommandsNotFoundHandler(CommandManager manager, int perPage, MessageProvider messageManager, String commandHelpKey, String startMessageKey, String pageNotFoundKey) {
         super(manager, perPage);
         this.messageManager = messageManager;
         this.commandHelpKey = commandHelpKey;
@@ -60,7 +60,7 @@ public class LanguageAbleListCommandsNotFoundHandler extends ListCommandsNotFoun
     }
 
     private String getMessage(CommandSender sender, String key){
-        if(sender instanceof LanguageAble && ((LanguageAble) sender).getLanguage() != null) messageManager.getMessage((LanguageAble) sender,key);
+        if(sender instanceof LanguageAble && ((LanguageAble) sender).getLanguage() != null) messageManager.getMessage(key,(LanguageAble) sender);
         return messageManager.getMessage(key);
     }
 }
