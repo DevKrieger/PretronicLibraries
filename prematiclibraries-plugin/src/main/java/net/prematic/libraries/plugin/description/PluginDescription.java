@@ -30,6 +30,8 @@ public interface PluginDescription{
 
     String getName();
 
+    String getNamespace();
+
     String getCategory();
 
     String getDescription();
@@ -42,12 +44,15 @@ public interface PluginDescription{
 
     PluginVersion getVersion();
 
+    PluginVersion getLatestVersion();
+
+    void setLatestVersion(PluginVersion version);
+
     MainClass getMain();
 
     Collection<Dependency> getDependencies();
 
     Collection<String> getProviders();
-
 
     Document getProperties();
 }

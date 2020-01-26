@@ -43,6 +43,7 @@ public class DefaultPluginDescription implements PluginDescription{
     }
 
     private final String name;
+    private final String namespace;
     private final String category;
     private final String description;
     private final String author;
@@ -54,10 +55,13 @@ public class DefaultPluginDescription implements PluginDescription{
     private final Collection<Dependency> dependencies;
     private final Collection<String> providers;
 
-    public DefaultPluginDescription(String name, String category, String description, String author
+    private PluginVersion latestVersion;
+
+    public DefaultPluginDescription(String name,String namespace, String category, String description, String author
             , String website, UUID id, PluginVersion version, MainClass main, Document properties
             , Collection<Dependency> dependencies, Collection<String> providers) {
         this.name = name;
+        this.namespace = namespace;
         this.category = category;
         this.description = description;
         this.author = author;
@@ -73,6 +77,11 @@ public class DefaultPluginDescription implements PluginDescription{
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getNamespace() {
+        return namespace;
     }
 
     @Override
@@ -103,6 +112,16 @@ public class DefaultPluginDescription implements PluginDescription{
     @Override
     public PluginVersion getVersion() {
         return version;
+    }
+
+    @Override
+    public PluginVersion getLatestVersion() {
+        return latestVersion;
+    }
+
+    @Override
+    public void setLatestVersion(PluginVersion version) {
+        this.latestVersion = version;
     }
 
     @Override
