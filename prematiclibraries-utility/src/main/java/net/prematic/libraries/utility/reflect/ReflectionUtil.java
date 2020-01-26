@@ -49,7 +49,7 @@ public class ReflectionUtil {
     }
 
     public static <R> R getFieldValue(Class<?> clazz, String fieldName, Class<R> value){
-       return getFieldValue(null,clazz,fieldName,value);
+       return getFieldValue(clazz,null,fieldName,value);
     }
 
     public static Object getFieldValue(Object object, String fieldName){
