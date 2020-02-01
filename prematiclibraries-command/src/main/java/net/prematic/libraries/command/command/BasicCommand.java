@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 31.03.19 18:28
+ * @since 01.12.19, 15:30
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,28 @@
  * under the License.
  */
 
-package net.prematic.libraries.command;
+package net.prematic.libraries.command.command;
 
-import net.prematic.libraries.command.command.Command;
+import net.prematic.libraries.command.command.configuration.CommandConfiguration;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-public class CommandEntry {
+public abstract class BasicCommand implements Command {
 
     private final ObjectOwner owner;
-    private final Command command;
+    private final CommandConfiguration configuration;
 
-    public CommandEntry(ObjectOwner owner, Command command) {
+    public BasicCommand(ObjectOwner owner, CommandConfiguration configuration) {
         this.owner = owner;
-        this.command = command;
+        this.configuration = configuration;
     }
 
+    @Override
     public ObjectOwner getOwner() {
         return owner;
     }
 
-    public Command getCommand() {
-        return command;
+    @Override
+    public CommandConfiguration getConfiguration() {
+        return configuration;
     }
 }

@@ -19,42 +19,29 @@
 
 package net.prematic.libraries.command.command;
 
+import net.prematic.libraries.command.command.configuration.CommandConfiguration;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class MainCommand extends SimpleCommand implements CommandManager {
+public class MainCommand extends BasicCommand implements CommandManager {
 
     private final List<Command> subCommands;
-    private CommandExecutor notFoundHandler;
+    private NotFoundHandler notFoundHandler;
 
-    public MainCommand(String name) {
-        this(name,"none");
-    }
-
-    public MainCommand(String name, String description) {
-        this(name, description,null);
-    }
-
-    public MainCommand(String name, String description, String permission) {
-        this(name, description, permission,new HashSet<>());
-    }
-
-    public MainCommand(String name, String description, String permission, String... aliases) {
-        this(name, description, permission,Arrays.asList(aliases));
-    }
-
-    public MainCommand(String name, String description, String permission, Collection<String> aliases) {
-        super(name, description, permission, aliases);
-        this.subCommands = new ArrayList<>();
+    public MainCommand(ObjectOwner owner,CommandConfiguration configuration) {
+        super(owner,configuration);
+        subCommands = new ArrayList<>();
     }
 
     @Override
     public Command getCommand(String name) {
-        return Iterators.findOne(this.subCommands, command -> command.getName().equalsIgnoreCase(name));
+        return Iterators.findOne(this.subCommands, command -> command.getConfiguration().getName().equalsIgnoreCase(name));
     }
 
     @Override
@@ -63,7 +50,7 @@ public class MainCommand extends SimpleCommand implements CommandManager {
     }
 
     @Override
-    public void setNotFoundHandler(CommandExecutor notFoundHandler) {
+    public void setNotFoundHandler(NotFoundHandler notFoundHandler) {
         this.notFoundHandler = notFoundHandler;
     }
 
@@ -71,17 +58,15 @@ public class MainCommand extends SimpleCommand implements CommandManager {
     public void dispatchCommand(CommandSender sender, String name) {
         name = name.trim();
         int index = name.indexOf(" ");
-        String command;
-        if(index == -1) command = name;
-        else command = name.substring(0,index);
         String[] args = index==-1?new String[0]:name.substring(index+1).split(" ");
-        execute(sender,command,args);
+        execute(sender,args);
     }
 
     @Override
-    public void registerCommand(ObjectOwner owner, Command command) {
-        if(getCommand(command.getName()) != null) throw new IllegalArgumentException("A command with the name "+command.getName()+" is already registered as sub command.");
-        command.init(this,owner);
+    public void registerCommand(Command command) {
+        if(getCommand(command.getConfiguration().getName()) != null){
+            throw new IllegalArgumentException("A command with the name "+command.getConfiguration().getName()+" is already registered as sub command.");
+        }
         this.subCommands.add(command);
     }
 
@@ -106,25 +91,21 @@ public class MainCommand extends SimpleCommand implements CommandManager {
         this.subCommands.clear();
     }
 
-    public void registerSubCommand(ObjectOwner owner, Command command) {
-        registerCommand(owner, command);
-    }
-
-    public void setNotFoundCommand(CommandExecutor handler){
-        this.notFoundHandler = handler;
+    public void registerSubCommand(Command command) {
+        registerCommand(command);
     }
 
     @Override
-    public void execute(CommandSender sender,String cmd, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         String name = null;
         if(args.length > 0) {
             name = args[0];
             Command command = getCommand(name);
             if(command != null){
-                command.execute(sender,name,Arrays.copyOfRange(args, 1, args.length));
+                command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
                 return;
             }
         }
-        if(notFoundHandler != null) notFoundHandler.execute(sender,name,Arrays.copyOfRange(args, 1, args.length));
+        if(notFoundHandler != null) notFoundHandler.handle(sender,name,Arrays.copyOfRange(args, 1, args.length));
     }
 }

@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 17.11.19, 17:41
+ * @since 01.02.20, 17:18
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ package net.prematic.libraries.command.command;
 
 import net.prematic.libraries.command.sender.CommandSender;
 
-public interface CommandExecutor {
+public interface NotFoundHandler {
 
-    void execute(CommandSender sender, String[] args);
+    void handle(CommandSender sender,String command, String[] args);
 
 }

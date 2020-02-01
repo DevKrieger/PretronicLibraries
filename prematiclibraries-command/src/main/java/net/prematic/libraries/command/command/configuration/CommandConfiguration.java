@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 17.11.19, 17:41
+ * @since 01.02.20, 17:46
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,21 @@
  * under the License.
  */
 
-package net.prematic.libraries.command.command;
+package net.prematic.libraries.command.command.configuration;
 
-import net.prematic.libraries.command.sender.CommandSender;
+public interface CommandConfiguration {
 
-public interface CommandExecutor {
+    String getName();
 
-    void execute(CommandSender sender, String[] args);
+    String getPermission();
 
+    String getDescription();
+
+    String[] getAliases();
+
+    boolean hasAlias(String alias);
+
+    static DefaultCommandConfigurationBuilder newBuilder(){
+        return new DefaultCommandConfigurationBuilder();
+    }
 }

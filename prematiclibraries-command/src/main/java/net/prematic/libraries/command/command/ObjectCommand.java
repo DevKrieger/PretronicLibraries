@@ -19,36 +19,20 @@
 
 package net.prematic.libraries.command.command;
 
+import net.prematic.libraries.command.command.configuration.CommandConfiguration;
 import net.prematic.libraries.command.sender.CommandSender;
+import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.Collection;
+public abstract class ObjectCommand<T> extends BasicCommand {
 
-public abstract class ObjectCommand<T> extends SimpleCommand{
-
-    public ObjectCommand(String name) {
-        super(name);
-    }
-
-    public ObjectCommand(String name, String description) {
-        super(name, description);
-    }
-
-    public ObjectCommand(String name, String description, String permission) {
-        super(name, description, permission);
-    }
-
-    public ObjectCommand(String name, String description, String permission, String... aliases) {
-        super(name, description, permission, aliases);
-    }
-
-    public ObjectCommand(String name, String description, String permission, Collection<String> aliases) {
-        super(name, description, permission, aliases);
+    public ObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
+        super(owner, configuration);
     }
 
     @Override
-    public void execute(CommandSender sender, String command, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         throw new UnsupportedOperationException("You have to register this command in a main object command.");
     }
 
-    public abstract void execute(CommandSender sender,String command, T object, String[] args);
+    public abstract void execute(CommandSender sender, T object, String[] args);
 }
