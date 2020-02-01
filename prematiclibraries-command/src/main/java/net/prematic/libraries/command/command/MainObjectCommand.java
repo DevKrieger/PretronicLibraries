@@ -45,6 +45,11 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     }
 
     @Override
+    public Command getCommand(String name) {
+        return Iterators.findOne(this.commands, command -> command.getConfiguration().getName().equalsIgnoreCase(name));
+    }
+
+    @Override
     public void setNotFoundHandler(NotFoundHandler handler) {
         this.notFoundHandler = handler;
     }
