@@ -69,6 +69,21 @@ public interface PrematicLogger {
      */
     Collection<LogHandler> getHandlers();
 
+
+    /**
+     * Attach a new handler to this logger.
+     *
+     * @param handler A log handler
+     */
+    void addHandler(LogHandler handler);
+
+    /**
+     * Detach a existing handler from logger.
+     *
+     * @param handler A log handler
+     */
+    void removeHandler(LogHandler handler);
+
     /**
      * Check if another level can log on this logger.
      *
@@ -120,20 +135,6 @@ public interface PrematicLogger {
      * @param formatter The new formatter
      */
     void setFormatter(LogFormatter formatter);
-
-    /**
-     * Register a new handler on this logger.
-     *
-     * @param handler A log handler
-     */
-    void registerHandler(LogHandler handler);
-
-    /**
-     * Unregister a register log handler from this logger.
-     *
-     * @param handler The log handler
-     */
-    void unregisterHandler(LogHandler handler);
 
 
     //Info
@@ -248,11 +249,11 @@ public interface PrematicLogger {
     }
 
     default void debug(DebugLevel level, String message){
-        debug(null,level,message);
+        debug(message,level);
     }
 
     default void debug(DebugLevel level, Object object){
-        debug(null,level,object);
+        debug(object.toString(),level);
     }
 
     default void debug(DebugLevel level, String message, Object... objects){

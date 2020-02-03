@@ -19,8 +19,8 @@
 
 package net.prematic.libraries.logging.bridge.slf4j;
 
+import net.prematic.libraries.logging.AsyncPrematicLogger;
 import net.prematic.libraries.logging.PrematicLogger;
-import net.prematic.libraries.logging.SimplePrematicLogger;
 import net.prematic.libraries.logging.level.DebugLevel;
 import net.prematic.libraries.logging.level.LogLevel;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class SLF4JBridge implements Logger {
     private final PrematicLogger logger;
 
     public SLF4JBridge() {
-        this(new SimplePrematicLogger());
+        this(new AsyncPrematicLogger());
     }
 
     public SLF4JBridge(PrematicLogger logger) {

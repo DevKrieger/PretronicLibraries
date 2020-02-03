@@ -19,14 +19,15 @@ package net.prematic.libraries.logging;
  * under the License.
  */
 
+import net.prematic.libraries.logging.format.DefaultLogFormatter;
 import net.prematic.libraries.logging.format.FormatHelper;
 import net.prematic.libraries.logging.format.LogFormatter;
-import net.prematic.libraries.logging.format.SimpleLogFormatter;
 import net.prematic.libraries.logging.handler.LogHandler;
 import net.prematic.libraries.logging.level.DebugLevel;
 import net.prematic.libraries.logging.level.LogLevel;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -48,16 +49,23 @@ public abstract class AbstractPrematicLogger implements PrematicLogger {
     }
 
     public AbstractPrematicLogger(String name){
-        this(name,new SimpleLogFormatter());
+        this(name,new DefaultLogFormatter());
     }
 
-    public AbstractPrematicLogger(String name, LogFormatter formatter) {
+    public AbstractPrematicLogger(String name, LogFormatter formatter){
+        this(name,formatter,null);
+    }
+
+    public AbstractPrematicLogger(String name, LogFormatter formatter,Collection<LogHandler> handlers) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(formatter);
         this.name = name;
         this.formatter = formatter;
         this.handlers = ConcurrentHashMap.newKeySet();
 
         this.logLevel = LogLevel.INFO;
         this.debugLevel = DebugLevel.NORMAL;
+        if(handlers != null) this.handlers.addAll(handlers);
     }
 
     @Override
@@ -86,28 +94,33 @@ public abstract class AbstractPrematicLogger implements PrematicLogger {
     }
 
     @Override
+    public void addHandler(LogHandler handler) {
+        Objects.requireNonNull(handler);
+        this.handlers.add(handler);
+    }
+
+    @Override
+    public void removeHandler(LogHandler handler) {
+        Objects.requireNonNull(handler);
+        this.handlers.remove(handler);
+    }
+
+    @Override
     public void setLevel(LogLevel level) {
+        Objects.requireNonNull(level);
         this.logLevel = level;
     }
 
     @Override
     public void setDebugLevel(DebugLevel level) {
+        Objects.requireNonNull(level);
         this.debugLevel = level;
     }
 
     @Override
     public void setFormatter(LogFormatter formatter) {
+        Objects.requireNonNull(formatter);
         this.formatter = formatter;
-    }
-
-    @Override
-    public void registerHandler(LogHandler handler) {
-        if(!this.handlers.contains(handler)) this.handlers.add(handler);
-    }
-
-    @Override
-    public void unregisterHandler(LogHandler handler) {
-        this.handlers.remove(handler);
     }
 
     @Override
@@ -144,6 +157,7 @@ public abstract class AbstractPrematicLogger implements PrematicLogger {
     public void log(MessageInfo info, LogLevel level, String message, Thread thread){
         formatAndWrite(info,level,null,message,null,thread);
     }
+
     private void formatAndWrite(MessageInfo info, LogLevel logLevel, DebugLevel debugLevel, String message, Throwable throwable){
         formatAndWrite(info, logLevel, debugLevel, message, throwable,Thread.currentThread());
     }
@@ -152,6 +166,10 @@ public abstract class AbstractPrematicLogger implements PrematicLogger {
 
     @Override
     public String toString() {
-        return name+" with level "+logLevel;
+        return "PrematicLogger{" +
+                "name='" + name + '\'' +
+                ", logLevel=" + logLevel +
+                ", debugLevel=" + debugLevel +
+                '}';
     }
 }

@@ -19,6 +19,9 @@
 
 package net.prematic.libraries.logging;
 
+import net.prematic.libraries.logging.format.FormatHelper;
+import net.prematic.libraries.logging.handler.LogHandler;
+
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -28,10 +31,12 @@ import java.util.concurrent.BlockingQueue;
  */
 public class AsyncQueuePrinter extends Thread {
 
-    private final BlockingQueue<Runnable> queue;
+    private final PrematicLogger logger;
+    private final BlockingQueue<LogRecord> queue;
 
-    public AsyncQueuePrinter(BlockingQueue<Runnable> queue){
-        super("PrematicQueuePrinter");
+    public AsyncQueuePrinter(PrematicLogger logger, BlockingQueue<LogRecord> queue){
+        super("Prematic Queue Printer");
+        this.logger = logger;
         this.queue = queue;
         setPriority(Thread.MIN_PRIORITY);
         setDaemon(true);
@@ -41,10 +46,14 @@ public class AsyncQueuePrinter extends Thread {
     public void run() {
         while(!isInterrupted()) {
             try {
-                Runnable runnable = queue.take();
-                runnable.run();
+                LogRecord record = queue.take();
+                String result = logger.getFormatter().format(logger,record);
+                for(LogHandler handler : logger.getHandlers()) handler.handleLog(record,result);
             }catch (Exception exception) {
-                exception.printStackTrace();
+                System.out.println("[Logger-Exception] An error in logging service occurred:");
+                StringBuilder builder = new StringBuilder();
+                FormatHelper.buildStackTrace(builder,Thread.currentThread(),exception,"[Logger-Exception]");
+                System.out.println(builder.toString());
             }
         }
     }

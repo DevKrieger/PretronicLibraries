@@ -19,116 +19,65 @@
 
 package net.prematic.libraries.logging;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import net.prematic.libraries.logging.format.DefaultLogFormatter;
+import net.prematic.libraries.logging.handler.ConsoleHandler;
 
-public class PrematicLoggerFactory {
+import java.util.Collections;
+import java.util.Objects;
 
-    private static LoggerCreator CREATOR;
+public abstract class PrematicLoggerFactory {
 
-    public static LoggerCreator getCreator(){
-        if(CREATOR == null) CREATOR = new SimpleCreator();
-        return CREATOR;
+    private static PrematicLoggerFactory FACTORY = new DefaultFactory();
+
+    public static PrematicLoggerFactory getFactory() {
+        return FACTORY;
     }
 
     public static PrematicLogger getLogger(){
-        return getCreator().getLogger();
+        return FACTORY.newLogger();
     }
 
     public static PrematicLogger getLogger(String name){
-        return getCreator().getLogger(name);
+        Objects.requireNonNull(name);
+        return FACTORY.newLogger(name);
     }
 
     public static PrematicLogger getLogger(Class<?> clazz){
-        return getCreator().getLogger(clazz);
+        Objects.requireNonNull(clazz);
+        return FACTORY.newLogger(clazz);
     }
 
-    public static PrematicLogger getLogger(String name, Class<?> clazz){
-        return getCreator().getLogger(name, clazz);
-    }
 
-    public static void setCreator(LoggerCreator creator){
-        CREATOR = creator;
-    }
+    public abstract PrematicLogger newLogger();
 
-    public interface LoggerCreator {
+    public abstract PrematicLogger newLogger(Class<?> clazz);
 
-        PrematicLogger getLogger();
+    public abstract PrematicLogger newLogger(String name);
 
-        PrematicLogger getLogger(String name);
 
-        PrematicLogger getLogger(Class<?> clazz);
 
-        PrematicLogger getLogger(String name, Class<?> clazz);
+    private static class DefaultFactory extends PrematicLoggerFactory{
 
-    }
+        private PrematicLogger logger;
 
-    public static void main(String[] args){
-        getLogger();
-    }
+        private DefaultFactory() {}
 
-    public static class SimpleCreator implements LoggerCreator{
-
-        private final Map<String,PrematicLogger> loggers;
-
-        public SimpleCreator() {
-            this.loggers = new LinkedHashMap<>();
+        @Override
+        public PrematicLogger newLogger() {
+            return newLogger("UNKNOWN");
         }
 
         @Override
-        public PrematicLogger getLogger() {
-            return getLogger("UNKNOWN");
+        public PrematicLogger newLogger(Class<?> clazz) {
+            return newLogger(clazz.toString());
         }
 
         @Override
-        public PrematicLogger getLogger(String name) {
-            PrematicLogger logger =  loggers.get(name);
+        public PrematicLogger newLogger(String name) {
             if(logger == null){
-                logger = new SimplePrematicLogger(name);
-                this.loggers.put(name,logger);
+                logger = new AsyncPrematicLogger(name,new DefaultLogFormatter(), Collections.singletonList(new ConsoleHandler()));
             }
             return logger;
         }
-
-        @Override
-        public PrematicLogger getLogger(Class<?> clazz) {
-            return getLogger(clazz.getName());
-        }
-
-        @Override
-        public PrematicLogger getLogger(String name, Class<?> clazz) {
-            return getLogger(name);
-        }
-
     }
-
-    public static class LogGetter implements LoggerCreator{
-
-        private final PrematicLogger logger;
-
-        public LogGetter(PrematicLogger logger) {
-            this.logger = logger;
-        }
-
-        @Override
-        public PrematicLogger getLogger() {
-            return logger;
-        }
-
-        @Override
-        public PrematicLogger getLogger(String name) {
-            return logger;
-        }
-
-        @Override
-        public PrematicLogger getLogger(Class<?> clazz) {
-            return logger;
-        }
-
-        @Override
-        public PrematicLogger getLogger(String name, Class<?> clazz) {
-            return logger;
-        }
-    }
-
 }

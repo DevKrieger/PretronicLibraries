@@ -1,26 +1,8 @@
-/*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
- *
- * @author Davide Wietlisbach
- * @since 27.03.19 12:37
- *
- * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
-
 package net.prematic.libraries.logging;
 
+import net.prematic.libraries.logging.format.DefaultLogFormatter;
 import net.prematic.libraries.logging.format.LogFormatter;
-import net.prematic.libraries.logging.format.SimpleLogFormatter;
+import net.prematic.libraries.logging.handler.ConsoleHandler;
 import net.prematic.libraries.logging.handler.LogHandler;
 import net.prematic.libraries.logging.level.DebugLevel;
 import net.prematic.libraries.logging.level.LogLevel;
@@ -28,25 +10,15 @@ import net.prematic.libraries.logging.level.LogLevel;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Collection;
 
-/**
- * This is a simple async implementation of the prematic logging framework.
- */
-public class SimplePrematicLogger extends AbstractPrematicLogger {
+@Deprecated
+public class SimplePrematicLogger implements PrematicLogger{
 
-    private final OutputStream outputStream, errorStream;
-    private final Charset charset;
-    private final BlockingQueue<Runnable> queue;
-    private final AsyncQueuePrinter printer;
-
-    public SimplePrematicLogger(){
-        this("Unknown");
-    }
+    private final PrematicLogger original;
 
     public SimplePrematicLogger(String name){
-        this(name,new SimpleLogFormatter());
+        this(name,new DefaultLogFormatter());
     }
 
     public SimplePrematicLogger(String name, LogFormatter formatter){
@@ -62,35 +34,97 @@ public class SimplePrematicLogger extends AbstractPrematicLogger {
     }
 
     public SimplePrematicLogger(String name, LogFormatter formatter, OutputStream outputStream, OutputStream errorStream, Charset charset) {
-        super(name, formatter);
-        this.outputStream = outputStream;
-        this.errorStream = errorStream;
-        this.charset = charset;
-        this.queue = new LinkedBlockingQueue<>();
-        this.printer = new AsyncQueuePrinter(this.queue);
-        this.printer.start();
-        info("Starting Prematic logging service.");
+        original = new AsyncPrematicLogger(name,formatter);
+        original.addHandler(new ConsoleHandler(outputStream,errorStream,charset));
     }
 
-    public void formatAndWrite(MessageInfo info, LogLevel logLevel, DebugLevel debugLevel, String message, Throwable throwable, Thread thread){
-        if(!canLog(logLevel)) return;
-        this.queue.offer(()->{
-            try{
-                long timeStamp = System.currentTimeMillis();
-                LogRecord record = new LogRecord(timeStamp,info, logLevel, debugLevel, message, throwable, thread);
-                String result = formatter.format(this,record);
-                if(logLevel == LogLevel.ERROR) errorStream.write(result.getBytes(charset));
-                else outputStream.write(result.getBytes(charset));
+    @Override
+    public String getName() {
+        return original.getName();
+    }
 
-                for(LogHandler handler : handlers) handler.handleLog(record,result);
-            }catch (Exception ignored){}
-        });
+    @Override
+    public LogLevel getLogLevel() {
+        return original.getLogLevel();
+    }
+
+    @Override
+    public DebugLevel getDebugLevel() {
+        return original.getDebugLevel();
+    }
+
+    @Override
+    public LogFormatter getFormatter() {
+        return original.getFormatter();
+    }
+
+    @Override
+    public Collection<LogHandler> getHandlers() {
+        return original.getHandlers();
+    }
+
+    @Override
+    public void addHandler(LogHandler handler) {
+        original.addHandler(handler);
+    }
+
+    @Override
+    public void removeHandler(LogHandler handler) {
+        original.removeHandler(handler);
+    }
+
+    @Override
+    public void setLevel(LogLevel level) {
+        original.setLevel(level);
+    }
+
+    @Override
+    public void setDebugLevel(DebugLevel level) {
+        original.setDebugLevel(level);
+    }
+
+    @Override
+    public void setFormatter(LogFormatter formatter) {
+        original.setFormatter(formatter);
+    }
+
+    @Override
+    public void error(MessageInfo info, Throwable throwable) {
+        original.error(info,throwable);
+    }
+
+    @Override
+    public void error(MessageInfo info, Throwable throwable, String extraMessage) {
+        original.error(info,throwable,extraMessage);
+    }
+
+    @Override
+    public void error(MessageInfo info, Throwable throwable, String extraMessage, Object... objects) {
+        original.error(info,throwable,extraMessage,objects);
+    }
+
+    @Override
+    public void debug(DebugLevel level, MessageInfo info, String message) {
+        original.debug(level,info,message);
+    }
+
+    @Override
+    public void debug(DebugLevel level, MessageInfo info, Object object) {
+        original.debug(level,info,object);
+    }
+
+    @Override
+    public void debug(DebugLevel level, MessageInfo info, String message, Object... objects) {
+        original.debug(level,info,message,objects);
+    }
+
+    @Override
+    public void log(MessageInfo info, LogLevel level, String message, Thread thread) {
+        original.log(info,level,message,thread);
     }
 
     @Override
     public void shutdown() {
-        this.printer.interrupt();
-        for(LogHandler handler : handlers) handler.shutdown();
+        original.shutdown();
     }
-
 }

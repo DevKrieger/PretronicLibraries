@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 27.03.19 12:42
+ * @since 27.03.19 12:37
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,55 +19,49 @@
 
 package net.prematic.libraries.logging;
 
-import jline.console.ConsoleReader;
+import net.prematic.libraries.logging.format.DefaultLogFormatter;
 import net.prematic.libraries.logging.format.LogFormatter;
-import net.prematic.libraries.logging.format.SimpleLogFormatter;
 import net.prematic.libraries.logging.handler.LogHandler;
 import net.prematic.libraries.logging.level.DebugLevel;
 import net.prematic.libraries.logging.level.LogLevel;
 
+import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * This logger writes all log message over the jline console reader.
+ * This is a simple async implementation of the prematic logging framework.
  */
-public class JlinePrematicLogger extends AbstractPrematicLogger {
+public class AsyncPrematicLogger extends AbstractPrematicLogger {
 
-    private final ConsoleReader reader;
-    private final BlockingQueue<Runnable> queue;
+    private final BlockingQueue<LogRecord> queue;
     private final AsyncQueuePrinter printer;
 
-    public JlinePrematicLogger(ConsoleReader reader) {
-        this(reader,"Unknown");
+    public AsyncPrematicLogger(){
+        this("Unknown");
     }
 
-    public JlinePrematicLogger(ConsoleReader reader, String name) {
-        this(reader,name,new SimpleLogFormatter());
+    public AsyncPrematicLogger(String name){
+        this(name,new DefaultLogFormatter());
     }
 
-    public JlinePrematicLogger(ConsoleReader reader,String name, LogFormatter formatter) {
-        super(name, formatter);
+    public AsyncPrematicLogger(String name, LogFormatter formatter){
+        this(name,formatter,null);
+    }
 
-        this.reader =  reader;
+    public AsyncPrematicLogger(String name, LogFormatter formatter, Collection<LogHandler> handlers) {
+        super(name, formatter,handlers);
         this.queue = new LinkedBlockingQueue<>();
-        this.printer = new AsyncQueuePrinter(this.queue);
+        this.printer = new AsyncQueuePrinter(this,this.queue);
         this.printer.start();
+        info("Starting Prematic async logging service");
     }
 
     public void formatAndWrite(MessageInfo info, LogLevel logLevel, DebugLevel debugLevel, String message, Throwable throwable, Thread thread){
         if(!canLog(logLevel)) return;
         long timeStamp = System.currentTimeMillis();
-        this.queue.add(() -> {
-            try{
-                LogRecord record = new LogRecord(timeStamp,info, logLevel, debugLevel, message, throwable, thread);
-                String result = formatter.format(this,record);
-                reader.print(result);
-                reader.drawLine();
-                reader.flush();
-                for(LogHandler handler : handlers) handler.handleLog(record,result);
-            }catch (Exception exception){}
-        });
+        LogRecord record = new LogRecord(timeStamp,info, logLevel, debugLevel, message, throwable, thread);
+        queue.offer(record);
     }
 
     @Override

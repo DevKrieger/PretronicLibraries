@@ -61,7 +61,7 @@ public final class LogRecord {
     /**
      * Get the info
      *
-     * @return
+     * @return The info object
      */
     public MessageInfo getInfo() {
         return info;

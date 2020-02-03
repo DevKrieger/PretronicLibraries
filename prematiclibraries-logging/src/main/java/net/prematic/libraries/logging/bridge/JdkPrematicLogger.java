@@ -74,6 +74,16 @@ public class JdkPrematicLogger implements PrematicLogger {
     }
 
     @Override
+    public void addHandler(LogHandler handler) {
+        this.handlers.add(handler);
+    }
+
+    @Override
+    public void removeHandler(LogHandler handler) {
+        this.handlers.remove(handler);
+    }
+
+    @Override
     public void setLevel(LogLevel level) {
         logger.setLevel(translateLevel(level));
     }
@@ -175,7 +185,13 @@ public class JdkPrematicLogger implements PrematicLogger {
             net.prematic.libraries.logging.LogRecord translatedRecord = new net.prematic.libraries.logging.LogRecord(
                     record.getMillis(),null,translateLevel(record.getLevel()),debugLevel
                     ,record.getMessage(),record.getThrown(),findThread(record.getThreadID()));
-            handlers.forEach(handler -> handler.handleLog(translatedRecord,record.getMessage()));
+            handlers.forEach(handler -> {
+                try {
+                    handler.handleLog(translatedRecord,record.getMessage());
+                }catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            });
         }
 
         @Override
