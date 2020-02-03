@@ -39,11 +39,11 @@ public class GeneralUtil {
         return DEFAULT_EXECUTOR_SERVICE;
     }
 
-    public void setDefaultExecutorService(ExecutorService executorService){
+    public static void setDefaultExecutorService(ExecutorService executorService){
         DEFAULT_EXECUTOR_SERVICE = executorService;
     }
 
-    public Random getDefaultRandom(){
+    public static Random getDefaultRandom(){
         return RANDOM;
     }
 
