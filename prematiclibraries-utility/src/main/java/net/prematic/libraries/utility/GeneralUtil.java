@@ -3,6 +3,7 @@ package net.prematic.libraries.utility;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
@@ -26,11 +27,15 @@ import java.util.concurrent.Executors;
 public class GeneralUtil {
 
     private static ExecutorService DEFAULT_EXECUTOR_SERVICE;
-
-    public static final Random RANDOM = new Random();
+    private static final Random RANDOM = new Random();
 
     public static ExecutorService getDefaultExecutorService(){
-        if(DEFAULT_EXECUTOR_SERVICE == null) DEFAULT_EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+        AtomicInteger integer = new AtomicInteger(1);
+        if(DEFAULT_EXECUTOR_SERVICE == null) DEFAULT_EXECUTOR_SERVICE = Executors.newCachedThreadPool(runnable -> {
+            Thread thread = new Thread(runnable,"General Default Executor Pool | Thread-"+integer.getAndIncrement());
+            thread.setDaemon(true);
+            return thread;
+        });
         return DEFAULT_EXECUTOR_SERVICE;
     }
 
@@ -38,6 +43,9 @@ public class GeneralUtil {
         DEFAULT_EXECUTOR_SERVICE = executorService;
     }
 
+    public Random getDefaultRandom(){
+        return RANDOM;
+    }
 
     public static boolean isNaturalNumber(String value){
         for(char c : value.toCharArray()) if(!Character.isDigit(c)) return false;
