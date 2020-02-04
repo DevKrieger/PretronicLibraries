@@ -1,0 +1,42 @@
+simple: 'Hallo %player%, du bist %age% alt!'
+simpleFunction: 'Hallo Player, dein Passwort: @RandomText(20)'
+simpleParameterText: 'Hallo ich habe was für dich: ![Klicken:Test]'
+
+
+function: 'Zufall: @contains(%required%,@RandomText(8))'
+function2: 'Sub: @substring("TestHallo",4)'
+
+condition: 'Hallo du bist @hasRole(%player%,"admin") ? Administrator : User'
+condition2: 'Hallo du bist @hasRole(%player%,"admin") ? Administrator'
+condition3: 'Hallo du bist @if(%player%,"admin") Administrator'
+condition4: >
+  Hallo du bist @if(%player%,"admin") Administrator
+  else() Moderator
+
+condition5: >
+  Hallo du bist @if(%player%,"admin"){ Administrator
+  }else() Moderator
+
+simpleCondition: '@hasRole(%admin%)?Hey admin:Hey user'
+simpleCondition2: '(@hasRole(admin)?Hey admin:Hey user) that is cool'
+
+
+loop: '@for(reason) %reason.id -> %reason.name%'
+
+loopAndCondition: |-
+  Reasons:
+  @for(id,reason in reasons sort id,false){ @if(hasPerm(reason.permission)) %reason.id% -> %reason.name%} @Space;
+  Use /ban <name>
+
+  for(10)
+  for(reason in reasons)
+  for(reason in reasons;X;10)
+  for(reason in reasons;4;--)
+  for(reason in reasons;4)
+
+loopAndConditiond: |-
+  @if(hasRole(%player%,admin)){
+    Hallo du bist Admin
+  }else{
+    Hallo du bist kein Admin
+  }

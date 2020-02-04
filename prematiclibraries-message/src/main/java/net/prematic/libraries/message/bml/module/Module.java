@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 31.03.19 19:00
+ * @since 22.12.19, 21:47
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,19 @@
  * under the License.
  */
 
-package net.prematic.libraries.message;
+package net.prematic.libraries.message.bml.module;
 
-public interface LanguageAble {
+import net.prematic.libraries.message.bml.variable.VariableSet;
 
-    Language getLanguage();
+public interface Module {
+
+    void setNext(Module next);
+
+    void pushParameter(Module module);
+
+
+    Object process(VariableSet variables);
+
+    void process(StringBuilder builder, VariableSet variables);
 
 }
