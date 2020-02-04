@@ -97,12 +97,20 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     @Override
     public void execute(CommandSender sender,  String[] args) {
         String name = null;//perms object <xy> delete
-        if(args.length > 0){
+        if(args.length > 1){
+            name = args[0];
             T object = getObject(name);
             if(object != null) execute(sender, object,Arrays.copyOfRange(args,1,args.length));
+            else{
+                if(objectNotFoundHandler != null){
+                    objectNotFoundHandler.handle(sender, name, Arrays.copyOfRange(args,1,args.length));
+                }
+            }
             return;
         }
-        objectNotFoundHandler.handle(sender, name, Arrays.copyOfRange(args,1,args.length));
+        if(notFoundHandler != null){
+            notFoundHandler.handle(sender,args[0],Arrays.copyOfRange(args,1,args.length));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -118,7 +126,9 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
                }
            }
        }
-       notFoundHandler.handle(sender,args[0],Arrays.copyOfRange(args,1,args.length));
+       if(notFoundHandler != null){
+           notFoundHandler.handle(sender,args[0],Arrays.copyOfRange(args,1,args.length));
+       }
     }
 
     public abstract T getObject(String name);

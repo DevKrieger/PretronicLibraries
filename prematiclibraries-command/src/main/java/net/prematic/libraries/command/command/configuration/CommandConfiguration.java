@@ -34,4 +34,12 @@ public interface CommandConfiguration {
     static DefaultCommandConfigurationBuilder newBuilder(){
         return new DefaultCommandConfigurationBuilder();
     }
+
+    static CommandConfiguration name(String name){
+        return newBuilder().name(name).create();
+    }
+
+    static CommandConfiguration name(String name,String... aliases){
+        return newBuilder().name(name).aliases(aliases).create();
+    }
 }

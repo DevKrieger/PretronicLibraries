@@ -19,6 +19,9 @@
 
 package net.prematic.libraries.command.sender;
 
+import net.prematic.libraries.message.Textable;
+import net.prematic.libraries.message.bml.variable.VariableSet;
+
 public interface CommandSender {
 
     String getName();
@@ -26,5 +29,13 @@ public interface CommandSender {
     boolean hasPermission(String permission);
 
     void sendMessage(String message);
+
+    default void sendMessage(Textable textable){
+        sendMessage(textable.toText());
+    }
+
+    default void sendMessage(Textable textable, VariableSet variables){
+        sendMessage(textable.toText(variables));
+    }
 
 }
