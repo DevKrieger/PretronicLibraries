@@ -100,10 +100,11 @@ public class MainCommand extends BasicCommand implements CommandManager {
         String name = null;
         if(args.length > 0) {
             name = args[0];
-            Command command = getCommand(name);
-            if(command != null){
-                command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
-                return;
+            for (Command command : subCommands) {
+                if (command.getConfiguration().hasAlias(args[0])) {
+                    command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
+                    return;
+                }
             }
         }
         if(notFoundHandler != null) notFoundHandler.handle(sender,name,Arrays.copyOfRange(args, 1, args.length));

@@ -55,6 +55,12 @@ public class DefaultCommandConfiguration implements CommandConfiguration {
 
     @Override
     public boolean hasAlias(String alias) {
-        return false;
+        if(name.equalsIgnoreCase(alias)) return true;
+        else{
+            for (String alias0 : aliases) {
+                if(alias0.equalsIgnoreCase(alias)) return true;
+            }
+            return false;
+        }
     }
 }

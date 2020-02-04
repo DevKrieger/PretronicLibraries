@@ -66,27 +66,26 @@ public interface VariableSet extends Set<Variable> {
     }
 
     static String replace(String text, VariableSet variables){
-        char[] chars = text.toCharArray();
+        char[] content = text.toCharArray();
+        StringBuilder builder = new StringBuilder(content.length);
         int start = -1;
-        StringBuilder builder = new StringBuilder(text.length());
-        boolean in = false;
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
-            if(c == '%'){
-                if(start == -1) start = i;
-                else{
-                    if(start < i){
-                        Variable variable = variables.get(text.substring(start+1,i));
-                        if(variable != null){
-                            builder.append(variable.getObject());//@Todo parse with dot (advanced string processing)
-                            start = -1;
-                            continue;
-                        }
-                    }
-                    builder.append("{Unknown}");
+        for (int i = 0; i < content.length; i++) {
+            if(content[i] == '{'){
+                if(i != 0 && content[i-1] == '\\'){
+                    builder.setCharAt(builder.length()-1,content[i]);
+                }else{
+                    start = i;
                 }
+            }else if(content[i] == '}' && start != -1){
+                String key = text.substring(start+1,i);
+                Variable variable = variables.get(key);
+                if(variable != null){
+                    builder.append(variable.getObject());
+                }else builder.append("NULL");
+                start = -1;
+            }else if(start == -1){
+                builder.append(content[i]);
             }
-            else builder.append(c);
         }
         return builder.toString();
     }
