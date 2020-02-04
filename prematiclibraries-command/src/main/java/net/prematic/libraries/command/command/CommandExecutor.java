@@ -23,6 +23,6 @@ import net.prematic.libraries.command.sender.CommandSender;
 
 public interface CommandExecutor {
 
-    void execute(CommandSender sender, String command, String[] args);
+    void execute(CommandSender sender, String[] args);
 
 }

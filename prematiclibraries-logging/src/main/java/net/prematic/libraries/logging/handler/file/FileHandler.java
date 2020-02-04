@@ -94,7 +94,7 @@ public class FileHandler implements LogHandler {
                     FileReader fileReader = new FileReader(latest);
                     BufferedReader reader = new BufferedReader(fileReader);
                     String info = reader.readLine();
-                    long start = Long.valueOf(info.substring(0,info.indexOf("/")));
+                    long start = Long.parseLong(info.substring(0,info.indexOf("/")));
                     reader.close();
                     fileReader.close();
                     Files.move(latest.toPath(),new File(location,LOG_FILE_DATE_FORMAT.format(start)+"."+fileEnding).toPath());

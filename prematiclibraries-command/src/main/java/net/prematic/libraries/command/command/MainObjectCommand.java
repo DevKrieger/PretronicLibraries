@@ -19,7 +19,7 @@
 
 package net.prematic.libraries.command.command;
 
-import net.prematic.libraries.command.CommandEntry;
+import net.prematic.libraries.command.command.configuration.CommandConfiguration;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
@@ -27,56 +27,34 @@ import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements CommandManager {
 
-    private final List<CommandEntry> commands;
-    private CommandExecutor notFoundHandler, objectNotFoundHandler;
+    private final List<Command> commands;
+    private NotFoundHandler notFoundHandler, objectNotFoundHandler;
 
-    public MainObjectCommand(String name) {
-        super(name);
+    public MainObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
+        super(owner, configuration);
         commands = new ArrayList<>();
-    }
-
-    public MainObjectCommand(String name, String description) {
-        super(name, description);
-        commands = new ArrayList<>();
-    }
-
-    public MainObjectCommand(String name, String description, String permission) {
-        super(name, description, permission);
-        commands = new ArrayList<>();
-    }
-
-    public MainObjectCommand(String name, String description, String permission, String... aliases) {
-        super(name, description, permission, aliases);
-        commands = new ArrayList<>();
-    }
-
-    public MainObjectCommand(String name, String description, String permission, Collection<String> aliases) {
-        super(name, description, permission, aliases);
-        commands = new ArrayList<>();
-    }
-
-    @Override
-    public Command getCommand(String name) {
-        CommandEntry result = Iterators.findOne(commands, entry -> entry.getCommand().getName().equalsIgnoreCase(name));
-        return result != null? result.getCommand() : null;
     }
 
     @Override
     public List<Command> getCommands() {
-        return Iterators.map(this.commands, CommandEntry::getCommand);
+        return this.commands;
     }
 
     @Override
-    public void setNotFoundHandler(CommandExecutor executor) {
-        this.notFoundHandler = executor;
+    public Command getCommand(String name) {
+        return Iterators.findOne(this.commands, command -> command.getConfiguration().getName().equalsIgnoreCase(name));
     }
 
-    public void setObjectNotFoundHandler(CommandExecutor executor){
+    @Override
+    public void setNotFoundHandler(NotFoundHandler handler) {
+        this.notFoundHandler = handler;
+    }
+
+    public void setObjectNotFoundHandler(NotFoundHandler executor){
         this.objectNotFoundHandler = executor;
     }
 
@@ -92,18 +70,18 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     }
 
     @Override
-    public void registerCommand(ObjectOwner owner, Command command) {
-        this.commands.add(new CommandEntry(owner,command));
+    public void registerCommand(Command command) {
+        this.commands.add(command);
     }
 
     @Override
     public void unregisterCommand(String command) {
-        Iterators.removeOne(this.commands, entry -> entry.getCommand().getName().equalsIgnoreCase(command));
+        Iterators.removeOne(this.commands, entry -> entry.getConfiguration().getName().equalsIgnoreCase(command));
     }
 
     @Override
     public void unregisterCommand(Command command) {
-        Iterators.removeOne(this.commands, entry -> entry.getCommand().equals(command));
+        Iterators.removeOne(this.commands, entry -> entry.equals(command));
     }
 
     @Override
@@ -117,29 +95,30 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     }
 
     @Override
-    public void execute(CommandSender sender, String command, String[] args) {
+    public void execute(CommandSender sender,  String[] args) {
         String name = null;//perms object <xy> delete
         if(args.length > 0){
             T object = getObject(name);
-            if(object != null) execute(sender,command, object,Arrays.copyOfRange(args,1,args.length));
+            if(object != null) execute(sender, object,Arrays.copyOfRange(args,1,args.length));
             return;
         }
-        objectNotFoundHandler.execute(sender, name, Arrays.copyOfRange(args,1,args.length));
+        objectNotFoundHandler.handle(sender, name, Arrays.copyOfRange(args,1,args.length));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void execute(CommandSender sender,String command, Object object, String[] args) {
+    public void execute(CommandSender sender, Object object, String[] args) {
        if(args.length > 0){
-           for (CommandEntry entry : commands) {
-               if(entry.getCommand().hasAlias(args[0])){
-                   if(entry.getCommand() instanceof ObjectCommand){
-                       ((ObjectCommand) entry.getCommand()).execute(sender,args[0],object,Arrays.copyOfRange(args,1,args.length));
-                   }else entry.getCommand().execute(sender, command, args);
+           for (Command command : commands) {
+               if(command.getConfiguration().hasAlias(args[0])){
+                   if(command instanceof ObjectCommand){
+                       ((ObjectCommand<T>)command).execute(sender, (T) object,Arrays.copyOfRange(args,1,args.length));
+                   }else command.execute(sender, args);
                    return;
                }
            }
        }
-       notFoundHandler.execute(sender,args[0],Arrays.copyOfRange(args,1,args.length));
+       notFoundHandler.handle(sender,args[0],Arrays.copyOfRange(args,1,args.length));
     }
 
     public abstract T getObject(String name);

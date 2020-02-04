@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 12.07.19 11:37
+ * @since 23.12.19, 12:58
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,35 @@
  * under the License.
  */
 
-package net.prematic.libraries.message;
+package net.prematic.libraries.message.bml.module;
 
-public class MessageModule {
+import net.prematic.libraries.message.bml.variable.VariableSet;
 
-    private final int id;
-    private final String name, key;
+public class PrimitiveModule implements Module{
 
-    public MessageModule(int id, String name, String key) {
-        this.id = id;
-        this.name = name;
-        this.key = key;
+    private final Object value;
+
+    public PrimitiveModule(Object value) {
+        this.value = value;
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public void setNext(Module next) {
+        throw new IllegalArgumentException("Does not support next elements");
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public void pushParameter(Module module) {
+
     }
 
-    public String getKey() {
-        return key;
+    @Override
+    public Object process(VariableSet variables) {
+        return value;
+    }
+
+    @Override
+    public void process(StringBuilder builder, VariableSet variables) {
+        throw new IllegalArgumentException("Does not support next elements");
     }
 }

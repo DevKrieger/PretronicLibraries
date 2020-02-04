@@ -149,7 +149,7 @@ public class YamlDocumentWriter implements DocumentWriter {
                 }
             }
             output.write(data);
-        }
+        }else output.write("null");
     }
 
     public void writeKey(Writer output, String key) throws IOException {

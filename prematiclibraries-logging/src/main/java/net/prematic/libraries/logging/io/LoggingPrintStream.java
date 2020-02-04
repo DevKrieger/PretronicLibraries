@@ -181,7 +181,7 @@ public class LoggingPrintStream extends PrintStream {
     }
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
+    protected Object clone() {
         return new LoggingPrintStream(this.logger);
     }
 

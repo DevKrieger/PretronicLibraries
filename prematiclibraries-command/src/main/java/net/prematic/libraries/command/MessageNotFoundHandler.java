@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 18.11.19, 19:13
+ * @since 01.02.20, 18:13
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
  * under the License.
  */
 
-package net.prematic.libraries.command.notfound;
+package net.prematic.libraries.command;
 
-import net.prematic.libraries.command.command.CommandExecutor;
+import net.prematic.libraries.command.command.NotFoundHandler;
 import net.prematic.libraries.command.sender.CommandSender;
 
-public class MessageNotFoundHandler implements CommandExecutor {
+public class MessageNotFoundHandler implements NotFoundHandler {
 
     private static MessageNotFoundHandler DEFAULT = new MessageNotFoundHandler("The command %command% was not found.");
 
@@ -33,7 +33,7 @@ public class MessageNotFoundHandler implements CommandExecutor {
     }
 
     @Override
-    public void execute(CommandSender sender, String command, String[] args) {
+    public void handle(CommandSender sender, String command, String[] args) {
         sender.sendMessage(message.replace("%command%",command));
     }
 

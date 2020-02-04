@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 12.07.19 11:38
+ * @since 21.01.20, 20:08
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,68 +21,41 @@ package net.prematic.libraries.message;
 
 import net.prematic.libraries.document.Document;
 
-import java.io.File;
-import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MessagePack {
 
-    private final int id;
-    private final String name, author;
-    private final boolean enabled;
-    private final MessageModule module;
-    private final Language language;
+    private final MessagePackMeta meta;
     private final Map<String,String> messages;
 
-    public MessagePack(int id, String name, String author, boolean enabled, MessageModule module, Language language, Map<String, String> messages) {
-        this.id = id;
-        this.name = name;
-        this.author = author;
-        this.enabled = enabled;
-        this.module = module;
-        this.language = language;
+    public MessagePack(MessagePackMeta meta){
+        this(meta,new HashMap<>());
+    }
+
+    public MessagePack(MessagePackMeta meta, Map<String, String> messages) {
+        this.meta = meta;
         this.messages = messages;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public MessageModule getModule() {
-        return module;
-    }
-
-    public Language getLanguage() {
-        return language;
+    public MessagePackMeta getMeta() {
+        return meta;
     }
 
     public Map<String, String> getMessages() {
         return messages;
     }
 
-    public String getMessage(String key) {
-        return getMessages().get(key);
+    public String getMessage(String key){
+        return messages.get(key);
     }
 
-    public static MessagePack load(File source) {
-        Document document = Document.read(source);
-        return document.getAsObject(MessagePack.class);
+    public Document toDocument(){
+        return Document.newDocument(this);
     }
 
-    public static MessagePack load(String type, InputStream inputStream) {
-        Document document = Document.read(type, inputStream);
+
+    public static MessagePack fromDocument(Document document){
         return document.getAsObject(MessagePack.class);
     }
 }

@@ -1,8 +1,8 @@
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
- * @author Philipp Elvin Friedhoff
- * @since 08.02.19 16:17
+ * @author Davide Wietlisbach
+ * @since 22.12.19, 22:10
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,30 @@
  * under the License.
  */
 
-package net.prematic.libraries.message;
+package net.prematic.libraries.message.bml.parser;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.Collection;
+import net.prematic.libraries.message.bml.module.Module;
 
-public interface MessageManager {
+public class MessageSequence {
 
-    Collection<MessagePack> getPacks();
+    private final Module root;
 
-    Collection<MessagePack> getPacksByLanguage(Language language);
+    public MessageSequence(Module root) {
+        this.root = root;
+    }
 
-    Collection<String> getMessages(Language language);
+    public Module getRoot() {
+        return root;
+    }
 
-    String getMessage(String key);
+    public void pushParameter(Module parameter){
 
-    String getMessage(LanguageAble object, String key);
+    }
 
-    String getMessage(Language language, String key);
+    public void pushInline(Module module){
 
-    void addPack(MessagePack pack);
+    }
 
-    void importPack(File source);
 
-    void importPack(String type, InputStream inputStream);
-
-    void loadMessages();
 
 }

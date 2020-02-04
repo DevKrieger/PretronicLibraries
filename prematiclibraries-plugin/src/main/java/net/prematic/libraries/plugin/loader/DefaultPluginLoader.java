@@ -131,13 +131,13 @@ public class DefaultPluginLoader implements PluginLoader {
                     && stateEvent.getClass().isAssignableFrom(method.getParameterTypes()[0])){
                 try{
                     method.invoke(instance,(method.getParameterTypes()[0]).cast(stateEvent));
-                    this.pluginManager.executeLifecycleStateListener(state,stateEvent,instance);
                 }catch (Exception exception) {
                     pluginManager.getLogger().error("Could not execute lifecycle state {} for plugin {}",state,description.getName());
-                    pluginManager.getLogger().error(exception);
+                    exception.printStackTrace();
                 }
             }
         }
+        this.pluginManager.executeLifecycleStateListener(state,stateEvent,instance);
     }
 
     @Override
@@ -182,12 +182,6 @@ public class DefaultPluginLoader implements PluginLoader {
         Type type = pluginClass.getGenericSuperclass();
         if(!(type instanceof Class)) {
             ParameterizedType parameterized = (ParameterizedType)type;
-
-            //@Todo fix with parameterized types
-            System.out.println(parameterized.getActualTypeArguments()[0]);
-
-            System.out.println(((Class<?>)parameterized.getActualTypeArguments()[0]));
-
             if(!(((Class<?>) parameterized.getActualTypeArguments()[0]).isAssignableFrom(this.environment.getInstance().getClass()))){
                 throw new IllegalArgumentException("Invalid runtime type at plugin class ("+parameterized.getActualTypeArguments()[0]+" is not assignable by "+this.environment.getInstance().getClass()+").");
             }

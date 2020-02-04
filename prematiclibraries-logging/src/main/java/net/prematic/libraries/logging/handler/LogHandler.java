@@ -2,6 +2,8 @@ package net.prematic.libraries.logging.handler;
 
 import net.prematic.libraries.logging.LogRecord;
 
+import java.io.IOException;
+
 /*
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
@@ -41,7 +43,7 @@ public interface LogHandler {
      * @param record The log record which should be handled.
      * @param formattedMessage The formatted message of this record.
      */
-    void handleLog(LogRecord record, String formattedMessage);
+    void handleLog(LogRecord record, String formattedMessage) throws IOException;
 
     /**
      * Shut this log handler down.

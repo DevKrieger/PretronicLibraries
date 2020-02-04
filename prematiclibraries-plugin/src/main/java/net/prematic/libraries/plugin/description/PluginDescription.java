@@ -42,12 +42,17 @@ public interface PluginDescription{
 
     PluginVersion getVersion();
 
+    PluginVersion getLatestVersion();
+
+    void setLatestVersion(PluginVersion version);
+
+    String getMessageModule();
+
     MainClass getMain();
 
     Collection<Dependency> getDependencies();
 
     Collection<String> getProviders();
-
 
     Document getProperties();
 }

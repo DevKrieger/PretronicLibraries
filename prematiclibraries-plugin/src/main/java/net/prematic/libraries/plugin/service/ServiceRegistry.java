@@ -22,6 +22,7 @@ package net.prematic.libraries.plugin.service;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Collection;
+import java.util.function.Supplier;
 
 public interface ServiceRegistry {
 
@@ -30,6 +31,10 @@ public interface ServiceRegistry {
     <T> Collection<T> getServices(Class<T> serviceClass);
 
     <T> T getService(Class<T> serviceClass);
+
+    <T> T getServiceOrDefault(Class<T> serviceClass);
+
+    <T> T getServiceOrDefault(Class<T> serviceClass, Supplier<T> consumer);
 
     default <T> void registerService(ObjectOwner owner, Class<T> serviceClass, T service){
         registerService(owner,serviceClass,service, ServicePriority.NORMAL);

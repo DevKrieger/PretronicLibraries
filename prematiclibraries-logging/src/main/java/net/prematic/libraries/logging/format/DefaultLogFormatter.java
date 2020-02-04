@@ -29,15 +29,15 @@ import java.text.SimpleDateFormat;
  *
  * <p>[DateTime] Level: (Service/Id) message</p>
  */
-public class SimpleLogFormatter implements LogFormatter {
+public class DefaultLogFormatter implements LogFormatter {
 
     private final SimpleDateFormat dateFormat;
 
-    public SimpleLogFormatter() {
+    public DefaultLogFormatter() {
         this(new SimpleDateFormat("HH:mm:ss"));
     }
 
-    public SimpleLogFormatter(SimpleDateFormat dateFormat) {
+    public DefaultLogFormatter(SimpleDateFormat dateFormat) {
         this.dateFormat = dateFormat;
     }
 

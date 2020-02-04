@@ -34,7 +34,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${plugin.maven.compiler.version}</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
@@ -51,13 +51,16 @@
         <dependency>
             <groupId>net.prematic.libraries</groupId>
             <artifactId>prematiclibraries-utility</artifactId>
-            <version>1.0.0</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test dependencies -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>${dependency.test.junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 

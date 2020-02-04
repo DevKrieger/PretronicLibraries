@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public final class DefaultPluginManager implements PluginManager{
 
@@ -119,13 +120,27 @@ public final class DefaultPluginManager implements PluginManager{
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getService(Class<T> serviceClass) {
+        T result = getServiceOrDefault(serviceClass,null);
+        if(result == null) throw new UnsupportedOperationException("Service is not available.");
+        return result;
+    }
+
+    @Override
+    public <T> T getServiceOrDefault(Class<T> serviceClass) {
+        return getServiceOrDefault(serviceClass,null);
+    }
+
+    @Override
+    public <T> T getServiceOrDefault(Class<T> serviceClass, Supplier<T> consumer) {
         List<ServiceEntry> services = Iterators.filter(this.services, entry -> entry.serviceClass.equals(serviceClass));
         services.sort((o1, o2) -> {
             if(o1.priority < o2.priority) return -1;
             else if(o1.priority > o2.priority) return 1;
             return 0;
         });
-        return (T) services.get(0).service;
+        if(services.size() > 0) return  (T) services.get(0).service;
+        else if(consumer != null) return consumer.get();
+        return null;
     }
 
     @Override

@@ -120,6 +120,8 @@ public interface ParserState {
                 sequence.setCurrentState(DOCUMENT_VALUE_OBJECT);
             }else if(current == '-' || current == '+' || Character.isDigit(current)){
                 sequence.setCurrentState(new DocumentNumber(parser.charIndex()));
+            }else if(current == ']' && sequence.isArray()){
+                sequence.setCurrentState(DOCUMENT_FINISHED);
             }else if(!isIgnoredChar(current)) parser.throwException("Invalid character");
         }
     }

@@ -19,29 +19,12 @@
 
 package net.prematic.libraries.command.command;
 
-import net.prematic.libraries.command.manager.CommandManager;
+import net.prematic.libraries.command.command.configuration.CommandConfiguration;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.Collection;
-
-public interface Command extends CommandExecutor{
-
-    String getName();
-
-    String getDescription();
-
-    String getPermission();
-
-    String getPrefix();
+public interface Command extends CommandExecutor {
 
     ObjectOwner getOwner();
 
-    Collection<String> getAliases();
-
-    boolean hasAlias(String command);
-
-    void setPrefix(String prefix);
-
-    void init(CommandManager manager,ObjectOwner owner);
-
+    CommandConfiguration getConfiguration();
 }

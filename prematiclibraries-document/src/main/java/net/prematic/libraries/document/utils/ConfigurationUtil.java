@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 public class ConfigurationUtil {
-
+    
     public static void loadConfigurationClass(Class<?> clazz, Document data){
         loadConfigurationClass(clazz, data,true);
     }

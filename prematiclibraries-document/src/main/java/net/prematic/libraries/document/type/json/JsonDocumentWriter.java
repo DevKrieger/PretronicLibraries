@@ -43,7 +43,11 @@ public class JsonDocumentWriter implements DocumentWriter {
     @Override
     public void write(Writer output, Document document, boolean pretty) {
         try {
-            writeObjectValue(output,document,pretty ? 0 : Integer.MIN_VALUE);
+            if(document.isArray()){
+                writeArrayValue(output,document.toArray(),pretty ? 0 : Integer.MIN_VALUE);
+            }else{
+                writeObjectValue(output,document,pretty ? 0 : Integer.MIN_VALUE);
+            }
         } catch (IOException exception) {
             throw new IORuntimeException(exception);
         }

@@ -2,7 +2,7 @@
  * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 31.03.19 18:28
+ * @since 27.12.19, 14:23
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,35 @@
  * under the License.
  */
 
-package net.prematic.libraries.command;
+package net.prematic.libraries.message.bml.module;
 
-import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.utility.interfaces.ObjectOwner;
+import net.prematic.libraries.message.bml.variable.VariableSet;
 
-public class CommandEntry {
+public class RootModule implements Module{
 
-    private final ObjectOwner owner;
-    private final Command command;
+    private Module next;
 
-    public CommandEntry(ObjectOwner owner, Command command) {
-        this.owner = owner;
-        this.command = command;
+    public Module getNext() {
+        return next;
     }
 
-    public ObjectOwner getOwner() {
-        return owner;
+    @Override
+    public void setNext(Module next) {
+        this.next = next;
     }
 
-    public Command getCommand() {
-        return command;
+    @Override
+    public void pushParameter(Module module) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object process(VariableSet variables) {
+        return next.process(variables);
+    }
+
+    @Override
+    public void process(StringBuilder builder, VariableSet variables) {
+        next.process(builder,variables);
     }
 }

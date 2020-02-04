@@ -346,6 +346,7 @@ public interface ParserState {
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(parser.isLineFinished()){
                 String value = parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()+1).trim();
+                if(value.startsWith("'") && value.endsWith("'")) value = value.substring(1,value.length()-1);
                 yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),value));
                 yaml.setState(DOCUMENT_ARRAY_ADVANCED_NEXT);
             }

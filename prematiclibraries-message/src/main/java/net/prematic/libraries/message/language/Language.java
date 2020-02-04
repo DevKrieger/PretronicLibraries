@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
- * @author Philipp Elvin Friedhoff
- * @since 08.02.19 16:17
+ * @author Davide Wietlisbach
+ * @since 20.01.20, 19:18
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.prematic.libraries.message;
+package net.prematic.libraries.message.language;
 
 import net.prematic.libraries.utility.Iterators;
 
