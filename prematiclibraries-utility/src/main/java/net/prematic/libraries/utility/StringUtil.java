@@ -33,7 +33,7 @@ public final class StringUtil {
 
     public static String getRandomString(final int size,char[] subset){
         char[] chars = new char[size];
-        for(int i=0;i<chars.length;i++) chars[i] = subset[GeneralUtil.RANDOM.nextInt(subset.length)];
+        for(int i=0;i<chars.length;i++) chars[i] = subset[GeneralUtil.getDefaultRandom().nextInt(subset.length)];
         return new String(chars);
     }
 
