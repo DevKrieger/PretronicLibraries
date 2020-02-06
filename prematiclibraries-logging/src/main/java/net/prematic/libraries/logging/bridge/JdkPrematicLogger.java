@@ -76,6 +76,10 @@ public class JdkPrematicLogger implements PrematicLogger {
     @Override
     public void addHandler(LogHandler handler) {
         this.handlers.add(handler);
+        if(translateHandler == null){
+            this.translateHandler = new TranslateHandler();
+            this.logger.addHandler(this.translateHandler);
+        }
     }
 
     @Override
@@ -96,20 +100,6 @@ public class JdkPrematicLogger implements PrematicLogger {
     @Override
     public void setFormatter(LogFormatter formatter) {
         throw new UnsupportedOperationException("This logger is managed by another logging service.");
-    }
-
-    @Override
-    public void registerHandler(LogHandler handler) {
-        this.handlers.add(handler);
-        if(translateHandler == null){
-            this.translateHandler = new TranslateHandler();
-            this.logger.addHandler(this.translateHandler);
-        }
-    }
-
-    @Override
-    public void unregisterHandler(LogHandler handler) {
-        this.handlers.remove(handler);
     }
 
     @Override
