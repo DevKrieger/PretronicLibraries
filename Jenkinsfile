@@ -16,6 +16,7 @@ pipeline {
             steps {
                 sh 'mvn install'
             }
+        }    
         stage('Archive') {
             steps {
                 archiveArtifacts artifacts: '**/target/*.jar'
