@@ -15,9 +15,6 @@ rtUpload (
     }''',
     failNoOp: true,
 )
-rtPublishBuildInfo (
-    serverId: 'pretronic-opensource',
-)
 pipeline {
     agent {
         docker {
