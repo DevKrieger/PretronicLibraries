@@ -29,10 +29,10 @@
     <version>1.0.0</version>
 
     <distributionManagement>
-        <snapshotRepository>
+        <repository>
             <id>pretronic-opensource</id>
             <url>http://deyna.ch:8081/repository/pretronic-opensource/</url>
-        </snapshotRepository>
+        </repository>
     </distributionManagement>
 
     <properties>
