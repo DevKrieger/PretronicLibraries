@@ -28,11 +28,6 @@ pipeline {
                     sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
                 }
             }
-            steps {
-                withMaven(mavenSettingsConfig: '02bdb066-9ce4-4ef4-8989-5ef34886855d') {
-                    sh 'mvn deploy'
-                }
-            }
         }
     }
 }
