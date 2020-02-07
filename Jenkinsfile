@@ -2,7 +2,6 @@ rtServer (
     id: 'pretronic-opensource',
     url: 'http://deyna.ch:8081',
     credentialsId: '02bdb066-9ce4-4ef4-8989-5ef34886855d'
-    timeout = 300
 )
 rtUpload (
     serverId: 'pretronic-opensource',
