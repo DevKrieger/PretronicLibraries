@@ -42,10 +42,6 @@ pipeline {
                 archiveArtifacts artifacts: '**/target/*.jar'
             }
         }
-        stage('deploy') {
-            steps {
-               
-            }
-        }
+       
     }
 }
