@@ -28,6 +28,13 @@
     <packaging>pom</packaging>
     <version>1.0.0</version>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>pretronic-opensource</id>
+            <url>http://deyna.ch:8081/repository/pretronic-opensource/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
