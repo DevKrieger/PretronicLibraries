@@ -30,8 +30,8 @@
 
     <distributionManagement>
         <repository>
-            <id>pretronic-opensource</id>
-            <url>http://deyna.ch:8081/repository/pretronic-opensource/</url>
+            <id>pretronic</id>
+            <url>https://repository.prematic.net/repository/pretronic/</url>
         </repository>
     </distributionManagement>
 
