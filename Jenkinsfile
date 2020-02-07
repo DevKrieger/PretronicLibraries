@@ -1,14 +1,3 @@
-node {
-
-    env.PATH = "${tool 'M3'}/bin:${env.PATH}"
-
-    configFileProvider(
-        [configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_SETTINGS')]) {
-        sh 'mvn -s $MAVEN_SETTINGS clean package'
-    }
-
-}
-
 pipeline {
     agent {
         docker {
@@ -34,6 +23,11 @@ pipeline {
             }
         }
         stage('Deploy') {
+            steps {
+             configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
+                    sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
+                }   
+            }
              steps {
                 withMaven(mavenSettingsConfig: '02bdb066-9ce4-4ef4-8989-5ef34886855d') {
                 sh 'mvn deploy'
