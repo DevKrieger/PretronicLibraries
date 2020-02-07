@@ -1,3 +1,24 @@
+rtServer (
+    id: 'pretronic-opensource',
+    url: 'http://deyna.ch:8081',
+    credentialsId: 'archiva-admin'
+    timeout = 300
+)
+rtUpload (
+    serverId: 'pretronic-opensource',
+    spec: '''{
+          "files": [
+            {
+              "pattern": "~.m2/net/prematic/libraries/**",
+              "target": "pretronic-opensource/"
+            }
+         ]
+    }''',
+    failNoOp: true,
+)
+rtPublishBuildInfo (
+    serverId: 'pretronic-opensource',
+)
 pipeline {
     agent {
         docker {
@@ -9,7 +30,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'mvn -B -DskipTests clean package' 
+                sh 'mvn -B -DskipTests clean install' 
             }
         }
         stage('Install') {
@@ -20,6 +41,11 @@ pipeline {
         stage('Archive') {
             steps {
                 archiveArtifacts artifacts: '**/target/*.jar'
+            }
+        }
+        stage('deploy') {
+            steps {
+               
             }
         }
     }
