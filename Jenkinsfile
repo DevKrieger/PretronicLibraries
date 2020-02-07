@@ -1,20 +1,4 @@
-rtServer (
-    id: 'pretronic-opensource',
-    url: 'http://deyna.ch:8081',
-    credentialsId: '02bdb066-9ce4-4ef4-8989-5ef34886855d'
-)
-rtUpload (
-    serverId: 'pretronic-opensource',
-    spec: '''{
-          "files": [
-            {
-              "pattern": "~.m2/net/prematic/libraries/**",
-              "target": "pretronic-opensource/"
-            }
-         ]
-    }''',
-    failNoOp: true,
-)
+
 pipeline {
     agent {
         docker {
@@ -39,6 +23,12 @@ pipeline {
                 archiveArtifacts artifacts: '**/target/*.jar'
             }
         }
-       
+        stage('Deploy') {
+             steps {
+                withMaven(mavenSettingsConfig: '02bdb066-9ce4-4ef4-8989-5ef34886855d') {
+                sh 'mvn deploy'
+             }
+            }
+        }
     }
 }
