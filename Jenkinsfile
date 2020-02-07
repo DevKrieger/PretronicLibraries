@@ -1,4 +1,13 @@
+node {
 
+    env.PATH = "${tool 'M3'}/bin:${env.PATH}"
+
+    configFileProvider(
+        [configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_SETTINGS')]) {
+        sh 'mvn -s $MAVEN_SETTINGS clean package'
+    }
+
+}
 
 pipeline {
     agent {
