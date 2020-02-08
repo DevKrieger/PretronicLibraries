@@ -64,15 +64,20 @@ pipeline {
                         int patchVersion = patch.toInteger()
                         patchVersion++;
                         VERSION = major+"."+minor+"."+patchVersion+"-SNAPSHOT"
-                        sh "mvn versions:set -DnewVersion=${VERSION}"
-                        sh "git add *"
-                        sh "git commit -m \"Jenkins version change\"\n"
-                        sh "git push origin development"
+
                     } else if(BRANCH.equalsIgnoreCase("master")) {
 
                     }
                 }
+                sh "mvn versions:set -DnewVersion=${VERSION}"
+                withCredentials([sshUserPrivateKey(credentialsId: '1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae', keyFileVariable: 'SSH_KEY')]) {
 
+                    sh "git add ."
+                    sh "git commit -m \"Jenkins version change\"\n"
+                    sh "git push origin development"
+                    //sh "git push origin <local-branch>:<remote-branch>"
+
+                }
             }
         }
     }
