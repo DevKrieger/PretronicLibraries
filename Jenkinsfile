@@ -70,20 +70,17 @@ pipeline {
                     }
                 }
                 sh "mvn versions:set -DnewVersion=${VERSION}"
-                withCredentials([sshUserPrivateKey(credentialsId: '1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae', keyFileVariable: 'SSH_KEY')]) {
-                    sh """
-                        GIT_SSH_COMMAND = "ssh -i $SSH_KEY"
-                        git add .
-                        git commit -m \\"Jenkins version change\\"\\n
-                        git push origin development
-                    """
-
-                    //sh "git add ."
-                    //sh "git commit -m \"Jenkins version change\"\n"
-                    //sh "git push origin development"
-                    //sh "git push origin <local-branch>:<remote-branch>"
-
+                sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                    sh "git add ."
+                    sh "git commit -m \"Jenkins version change\"\n"
+                    sh "git push origin development"
                 }
+                /*withCredentials([sshUserPrivateKey(credentialsId: '1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae', keyFileVariable: 'SSH_KEY')]) {
+                    sh "git add ."
+                    sh "git commit -m \"Jenkins version change\"\n"
+                    sh "git push origin development"
+                    //sh "git push origin <local-branch>:<remote-branch>"
+                }*/
             }
         }
     }
