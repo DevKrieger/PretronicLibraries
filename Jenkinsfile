@@ -76,6 +76,8 @@ pipeline {
                 sh "git push origin origin/development"*/
 
                 withCredentials([sshUserPrivateKey(credentialsId: '1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae', keyFileVariable: 'SSH_KEY')]) {
+                    git config --global user.email "jenkinsci@pretronic.net"
+                    git config --global user.name "JenkinsCI"
                     sh "git add ."
                     sh "git commit -m \"Jenkins version change\"\n"
                     sh "git push origin origin/development"
