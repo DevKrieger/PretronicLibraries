@@ -18,7 +18,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                    sh "git fetch"
                     sh "git checkout " + BRANCH
                 }
             }
@@ -33,13 +32,6 @@ pipeline {
                sh "mvn versions:set -DnewVersion=${VERSION}"
            }
        }
-        stage('DEBUG') {
-            steps {
-                echo 'Test DEV2'
-                sh 'printenv'
-                echo 'Pulling...' + env.GIT_BRANCH
-            }
-        }
         stage('Build') {
             steps {
                 sh 'mvn -B clean install'
