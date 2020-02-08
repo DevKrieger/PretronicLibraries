@@ -15,13 +15,14 @@ pipeline {
                 }
             }
         }
-        /*stage('Checkout') {
+        stage('Checkout') {
             steps {
                 sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                    sh "git fetch"
                     sh "git checkout " + BRANCH
                 }
             }
-        }*/
+        }
         stage('Mark as Snapshot') {
            steps {
                script {
@@ -81,9 +82,9 @@ pipeline {
                 sh "git add ."
                 sh "git commit -m 'TEST'"
                 sh "git push origin origin/development"*/
-                git url: "git@github.com:DevKrieger/PrematicLibraries.git",
+                /*git url: "git@github.com:DevKrieger/PrematicLibraries.git",
                         credentialsId: '1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae',
-                        branch: 'development'
+                        branch: 'development'*/
 
                 sh "git config --global user.email 'jenkinsci@pretronic.net'"
                 sh "git config --global user.name 'JenkinsCI'"
