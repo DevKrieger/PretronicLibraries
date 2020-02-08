@@ -76,13 +76,13 @@ pipeline {
                 sh "mvn versions:set -DnewVersion=${VERSION}"
 
                 /*sh "git config --global user.email 'jenkinsci@pretronic.net'"
-                sh "git config --global user.name 'JenkinsCI'"
+                sh "git config --global user.name 'JenkinsCI'"TEST
 
                 sh "git add ."
                 sh "git commit -m 'TEST'"
                 sh "git push origin origin/development"*/
 
-                withCredentials([sshUserPrivateKey(credentialsId: '1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae', keyFileVariable: 'SSH_KEY')]) {
+                //withCredentials([sshUserPrivateKey(credentialsId: '1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae', keyFileVariable: 'SSH_KEY')]) {
                     sh "git config --global user.email 'jenkinsci@pretronic.net'"
                     sh "git config --global user.name 'JenkinsCI'"
                     sh "git add ."
@@ -92,7 +92,7 @@ pipeline {
                     }
                     //sh "git push origin origin/development"
                     //sh "git push origin <local-branch>:<remote-branch>"
-                }
+                //}
             }
         }
     }
