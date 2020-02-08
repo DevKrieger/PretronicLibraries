@@ -44,13 +44,13 @@ pipeline {
                 sh 'mvn -B clean install'
             }
         }
-        stage('Deploy') {
+        /*stage('Deploy') {
             steps {
                 configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
                     sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
                 }
             }
-        }
+        }*/
         stage('Archive') {
             steps {
                 archiveArtifacts artifacts: '**/target/*.jar'
