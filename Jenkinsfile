@@ -7,11 +7,13 @@ pipeline {
         }
     }
     stages {
+        stage('Print') {
+            echo 'Test'
+            sh 'printenv'
+            echo 'Pulling...' + env.BRANCH_NAME
+        }
         stage('Build') {
             steps {
-                echo 'Test'
-                sh 'printenv'
-                echo 'Pulling...' + env.BRANCH_NAME
                 sh 'mvn -B -DskipTests clean install'
             }
         }
