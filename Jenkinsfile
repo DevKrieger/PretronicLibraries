@@ -10,7 +10,9 @@ pipeline {
     stages {
         stage('Read version') {
             steps {
-                VERSION = readMavenPom().getVersion();
+                script {
+                    VERSION = readMavenPom().getVersion();
+                }
             }
         }
         stage('Mark as Snapshot') {
