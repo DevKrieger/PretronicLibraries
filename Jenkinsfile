@@ -1,13 +1,6 @@
 String VERSION = "UNDEFINED"
 String BRANCH = "UNDEFINED"
 pipeline {
-    /*agent {
-        docker {
-            label 'docker'
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }*/
     tools {
         maven 'Maven'
         jdk 'Java8'
