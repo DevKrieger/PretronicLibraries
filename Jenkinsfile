@@ -58,7 +58,7 @@ pipeline {
                     String patch = versionSplit[2]
                     int patchVersion = patch.toInteger()
                     patchVersion++;
-                    VERSION = major+minor+patchVersion+"-SNAPSHOT"
+                    VERSION = major+"."+minor+"."+patchVersion+"-SNAPSHOT"
                 }
                 sh "mvn versions:set -DnewVersion=${VERSION}"
             }
