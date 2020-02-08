@@ -1,3 +1,4 @@
+def VERSION = "UNDEFINED";
 pipeline {
     agent {
         docker {
@@ -7,7 +8,22 @@ pipeline {
         }
     }
     stages {
-        stage('Print') {
+        stage('Read version') {
+            steps {
+                VERSION = readMavenPom().getVersion();
+            }
+        }
+        stage('Mark as Snapshot') {
+           steps {
+               script {
+                   if(!VERSION.endsWith("-SNAPSHOT")) {
+                       VERSION = VERSION+'-SNAPSHOT'
+                   }
+               }
+               sh "mvn versions:set -DnewVersion=${VERSION}"
+           }
+       }
+        stage('DEBUG') {
             steps {
                 echo 'Test DEV2'
                 sh 'printenv'
@@ -16,17 +32,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'mvn -B -DskipTests clean install'
-            }
-        }
-        stage('Install') {
-            steps {
-                sh 'mvn install'
-            }
-        }
-        stage('Archive') {
-            steps {
-                archiveArtifacts artifacts: '**/target/*.jar'
+                sh 'mvn -B clean install'
             }
         }
         stage('Deploy') {
@@ -34,6 +40,25 @@ pipeline {
                 configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
                     sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
                 }
+            }
+        }
+        stage('Archive') {
+            steps {
+                archiveArtifacts artifacts: '**/target/*.jar'
+            }
+        }
+        stage('Increment PatchVersion') {
+            steps {
+                script {
+                    String[] versionSplit = VERSION.split("[-.]")
+                    String major = versionSplit[0]
+                    String minor = versionSplit[1]
+                    String patch = versionSplit[2]
+                    int patchVersion = patch.toInteger()
+                    patchVersion++;
+                    VERSION = major+minor+patchVersion+"-SNAPSHOT"
+                }
+                sh "mvn versions:set -DnewVersion=${VERSION}"
             }
         }
     }
