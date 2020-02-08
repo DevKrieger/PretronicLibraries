@@ -1,6 +1,7 @@
 String VERSION = "UNDEFINED"
 String BRANCH = "UNDEFINED"
 pipeline {
+    agent any
     tools {
         maven 'Maven3'
         jdk 'Java8'
