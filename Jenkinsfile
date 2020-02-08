@@ -1,4 +1,5 @@
-def VERSION = "UNDEFINED";
+String VERSION = "UNDEFINED"
+String BRANCH = "UNDEFINED"
 pipeline {
     agent {
         docker {
@@ -8,10 +9,13 @@ pipeline {
         }
     }
     stages {
-        stage('Read version') {
+        stage('Read informations') {
             steps {
                 script {
-                    VERSION = readMavenPom().getVersion();
+                    VERSION = readMavenPom().getVersion()
+                    String branchFullName = env.GIT_BRANCH
+                    String[] branchSplit = branchFullName.split("/")
+                    BRANCH = branchSplit[1]
                 }
             }
         }
@@ -49,18 +53,26 @@ pipeline {
                 archiveArtifacts artifacts: '**/target/*.jar'
             }
         }
-        stage('Increment PatchVersion') {
+        stage('Manage Versions') {
             steps {
                 script {
-                    String[] versionSplit = VERSION.split("[-.]")
-                    String major = versionSplit[0]
-                    String minor = versionSplit[1]
-                    String patch = versionSplit[2]
-                    int patchVersion = patch.toInteger()
-                    patchVersion++;
-                    VERSION = major+"."+minor+"."+patchVersion+"-SNAPSHOT"
+                    if(BRANCH.equalsIgnoreCase("development")) {
+                        String[] versionSplit = VERSION.split("[-.]")
+                        String major = versionSplit[0]
+                        String minor = versionSplit[1]
+                        String patch = versionSplit[2]
+                        int patchVersion = patch.toInteger()
+                        patchVersion++;
+                        VERSION = major+"."+minor+"."+patchVersion+"-SNAPSHOT"
+                        sh "mvn versions:set -DnewVersion=${VERSION}"
+                        sh "git add *"
+                        sh "git commit -m \"Jenkins version change\"\n"
+                        sh "git push origin development"
+                    } else if(BRANCH.equalsIgnoreCase("master")) {
+
+                    }
                 }
-                sh "mvn versions:set -DnewVersion=${VERSION}"
+
             }
         }
     }
