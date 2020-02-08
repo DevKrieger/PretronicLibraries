@@ -8,9 +8,11 @@ pipeline {
     }
     stages {
         stage('Print') {
-            echo 'Test'
-            sh 'printenv'
-            echo 'Pulling...' + env.BRANCH_NAME
+            steps {
+                echo 'Test'
+                sh 'printenv'
+                echo 'Pulling...' + env.GIT_BRANCH
+            }
         }
         stage('Build') {
             steps {
