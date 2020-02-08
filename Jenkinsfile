@@ -2,7 +2,7 @@ String VERSION = "UNDEFINED"
 String BRANCH = "UNDEFINED"
 pipeline {
     tools {
-        maven 'Maven'
+        maven 'Maven3'
         jdk 'Java8'
     }
     stages {
