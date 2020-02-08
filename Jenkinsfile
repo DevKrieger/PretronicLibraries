@@ -11,7 +11,7 @@ pipeline {
             steps {
                 echo 'Test'
                 sh 'printenv'
-                echo 'Pulling...' + env.BRANCH_NAME
+                echo 'Pulling...' + env.GIT_BRANCH
             }
         }
         stage('Build') {
