@@ -115,15 +115,8 @@ pipeline {
                             sh """
                             mkdir tempDevelopment
                             cd tempDevelopment/
-                            
-                            """
-                            String test = sh script: "pwd", returnStdout: true
-                            echo test
-
-                            sh "git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git"
-
-
-                            sh """
+                            git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git
+                      
                             
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version-SNAPSHOT
                             git add . -v
