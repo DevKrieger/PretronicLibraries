@@ -38,6 +38,9 @@ pipeline {
                 script {
                     VERSION = readMavenPom().getVersion()
                     BRANCH = env.GIT_BRANCH
+
+                    String branches = sh script: "git branch -vv", returnStdout: true
+                    echo branches
                 }
             }
         }
@@ -122,8 +125,7 @@ pipeline {
                     if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                             echo 'CHECKOUT MASTER'
-                            String branches = sh script: "git branch -vv", returnStdout: true
-                            echo branches
+
                             //sh "git reset --hard"
                             sh "git checkout " + BRANCH_MASTER
                             sh "git pull origin " + BRANCH_MASTER
