@@ -101,6 +101,7 @@ pipeline {
                         sh "git push origin HEAD:development -v"
                     }
                 } else if (BRANCH == BRANCH_MASTER) {
+                    //
                     //Folder für development, checkout, pull, änderung, push
                 }
             }
