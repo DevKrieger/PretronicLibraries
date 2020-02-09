@@ -113,8 +113,10 @@ pipeline {
                             cd tempDevelopment/
                             
                             """
-                            echo "pwd"
-                            sh "git clone --single-branch --branch $BRANCH_DEVELOPMENT https://github.com/DevKrieger/PrematicLibraries.git"
+                            String test = sh script: "pwd", returnStdout: true
+                            echo test
+
+                            sh "git clone --single-branch --branch $BRANCH_DEVELOPMENT git@github.com:DevKrieger/PrematicLibraries.git"
 
 
                             sh """
