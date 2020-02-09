@@ -113,7 +113,10 @@ pipeline {
                             cd tempDevelopment/
                             
                             """
+                            echo "pwd"
                             sh "git clone --single-branch --branch $BRANCH_DEVELOPMENT https://github.com/DevKrieger/PrematicLibraries.git"
+
+
                             sh """
                             
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
