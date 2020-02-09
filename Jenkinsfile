@@ -45,6 +45,7 @@ pipeline {
             when { equals expected: false, actual: SKIP }
             steps {
                 script {
+                    sh "git reset --hard"
                     //if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
                     sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                         //change to branch
