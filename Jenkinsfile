@@ -111,6 +111,7 @@ pipeline {
                             sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
                             sh "git add . -v"
                             sh "git commit -m 'Jenkins version change $version' -v"
+                            sh "git push"
 
                             sh """
                             mkdir tempDevelopment
