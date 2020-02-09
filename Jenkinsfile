@@ -111,7 +111,7 @@ pipeline {
                     sh "mvn versions:set -DnewVersion=$VERSION-SNAPSHOT"
 
                     sh "git add . -v"
-                    sh "git commit -m 'Jenkins version change' -v"
+                    sh "git commit -m 'Jenkins version change $VERSION' -v"
 
                     sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                         sh "git push origin HEAD:development -v"
@@ -120,15 +120,15 @@ pipeline {
                     //MASTER PUSH
                     if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                            sh "git reset --hard"
+                            echo 'CHECKOUT MASTER'
+                            //sh "git reset --hard"
                             sh "git checkout " + BRANCH_MASTER
                             sh "git pull origin " + BRANCH_MASTER
                         }
-                        VERSION = major + "." + minorVersion + "." + patchVersion
                         sh "mvn versions:set -DnewVersion=$VERSION"
 
                         sh "git add . -v"
-                        sh "git commit -m 'Jenkins version change' -v"
+                        sh "git commit -m 'Jenkins version change $VERSION' -v"
 
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                             sh "git push origin HEAD:development -v"
