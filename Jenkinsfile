@@ -114,7 +114,7 @@ pipeline {
                             sh "git push origin HEAD:master -v"
 
                             sh """
-                            if [ -d "tempDevelopment" ]; then rm -Rf $WORKING_DIR; fi
+                            if [ -d "tempDevelopment" ]; then rm -Rf tempDevelopment; fi
                             mkdir tempDevelopment
                             cd tempDevelopment/
                             git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git
