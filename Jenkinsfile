@@ -145,7 +145,7 @@ pipeline {
             script {
                 if(SKIP) {
                     //deleteBuild(buildName: env.JOB_NAME)
-                    //jobsToDelete = [env.JOB_NAME]
+                    //jobsToDelete = [env.JOB_NAME
                     //Hudson.instance.items.each { item -> if (item.name == "${env.JOB_NAME}") { item.delete() } }
                 }
             }
