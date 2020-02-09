@@ -53,11 +53,10 @@ pipeline {
                     //if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
                     sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                         //change to branch
-                        sh "git fetch origin"
 
                         sh "git reset --hard"
 
-                        sh "git checkout " + BRANCH_DEVELOPMENT
+                        sh "git checkout -f " + BRANCH_DEVELOPMENT
                         sh "git pull origin " + BRANCH_DEVELOPMENT
                     }
                     //}
@@ -132,7 +131,7 @@ pipeline {
                             echo 'CHECKOUT MASTER'
 
                             //sh "git reset --hard"
-                            sh "git checkout " + BRANCH_MASTER
+                            sh "git checkout -f " + BRANCH_MASTER
                             sh "git pull origin " + BRANCH_MASTER
                         }
                         sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
