@@ -120,8 +120,9 @@ pipeline {
                     //MASTER PUSH
                     if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                            sh "git reset --hard"
                             sh "git checkout " + BRANCH_MASTER
-                            //sh "git pull origin " + BRANCH_MASTER
+                            sh "git pull origin " + BRANCH_MASTER
                         }
                         VERSION = major + "." + minorVersion + "." + patchVersion
                         sh "mvn versions:set -DnewVersion=$VERSION"
