@@ -50,6 +50,8 @@ pipeline {
                 script {
                     sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
 
+                        sh "git fetch --all"
+                        sh "git reset --hard origin/master"
                         sh "git reset --hard HEAD"
                         sh "git clean -n -f -d"
                         sh "git checkout -f " + BRANCH_DEVELOPMENT
