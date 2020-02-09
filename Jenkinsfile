@@ -64,7 +64,7 @@ pipeline {
             when { equals expected: false, actual: SKIP }
             steps {
                 configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-                    sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
+                    //sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
                 }
             }
         }
@@ -116,7 +116,7 @@ pipeline {
                             String test = sh script: "pwd", returnStdout: true
                             echo test
 
-                            sh "git clone --single-branch --branch $BRANCH_DEVELOPMENT git@github.com:DevKrieger/PrematicLibraries.git"
+                            sh "git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git"
 
 
                             sh """
