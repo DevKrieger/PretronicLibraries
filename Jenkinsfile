@@ -26,7 +26,7 @@ pipeline {
                 script {
                     String name = sh script: 'git log -1 --pretty=format:\"%an\"', returnStdout: true
                     String email = sh script: 'git log -1 --pretty=format:\"%ae\"', returnStdout: true
-                    if(name == CI_NAME && email == CI_EMAIL) {
+                    if (name == CI_NAME && email == CI_EMAIL) {
                         SKIP = true;
                     }
                 }
@@ -41,27 +41,13 @@ pipeline {
                 }
             }
         }
-        stage('Checkout') {
-            when { equals expected: false, actual: SKIP }
-            steps {
-                script {
-                    //if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
-                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                        //change to branch
-                        sh "git checkout " + BRANCH_DEVELOPMENT
-                        sh "git pull origin " + BRANCH_DEVELOPMENT
-                    }
-                    //}
-                }
-            }
-        }
         stage('Snapshot') {
             when { equals expected: false, actual: SKIP }
             steps {
                 script {
-                    if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
-                        if(!VERSION.endsWith("-SNAPSHOT")) {
-                            VERSION = VERSION+'-SNAPSHOT'
+                    if (BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
+                        if (!VERSION.endsWith("-SNAPSHOT")) {
+                            VERSION = VERSION + '-SNAPSHOT'
                         }
                         sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${VERSION}"
                     }
@@ -88,65 +74,49 @@ pipeline {
                 archiveArtifacts artifacts: '**/target/*.jar'
             }
         }
-        stage('Push Development') {
-            when { equals expected: false, actual: SKIP }
-            steps {
-                script {
-                    sh "git config --global user.name '$CI_NAME' -v"
-                    sh "git config --global user.email '$CI_EMAIL' -v"
+    }
+    post {
+        success {
+            script {
+                sh "git config --global user.name '$CI_NAME' -v"
+                sh "git config --global user.email '$CI_EMAIL' -v"
 
-                    String[] versionSplit = VERSION.split("[-.]")
 
-                    String major = versionSplit[0]
-                    int minorVersion = versionSplit[1].toInteger()
-                    int patchVersion = versionSplit[2].toInteger()
+                String[] versionSplit = VERSION.split("[-.]")
 
-                    if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
-                        patchVersion++
-                    } else if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
-                        minorVersion++
-                        patchVersion = 0
-                    }
-                    VERSION = major+"."+minorVersion+"."+patchVersion
-                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION-SNAPSHOT"
+                String major = versionSplit[0]
+                int minorVersion = versionSplit[1].toInteger()
+                int patchVersion = versionSplit[2].toInteger()
 
+                if (BRANCH == BRANCH_DEVELOPMENT) {
+                    patchVersion++
+
+                    String version = major + "." + minorVersion + "." + patchVersion + "-SNAPSHOT"
+                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
                     sh "git add . -v"
                     sh "git commit -m 'Jenkins version change $VERSION-SNAPSHOT' -v"
 
                     sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                         sh "git push origin HEAD:development -v"
                     }
+                } else if (BRANCH == BRANCH_MASTER) {
+                    //
+                    //Folder für development, checkout, pull, änderung, push
+                    minorVersion++
+                    patchVersion = 0
+                    String version = major + "." + minorVersion + "." + patchVersion
 
-                    //MASTER PUSH
-                    if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
-                        sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                            echo 'CHECKOUT MASTER'
-                            String branches = sh script: "git branch -vv", returnStdout: true
-                            echo branches
-                            //sh "git reset --hard"
-                            sh "git checkout " + BRANCH_MASTER
-                            sh "git pull origin " + BRANCH_MASTER
-                        }
-                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
-
-                        sh "git add . -v"
-                        sh "git commit -m 'Jenkins version change $VERSION' -v"
-
-                        sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                            sh "git push origin HEAD:master -v"
-                        }
+                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                        sh """
+                            mkdir tempDevelopment
+                            cd tempDevelopment/
+                            git clone --single-branch --branch $BRANCH_DEVELOPMENT https://github.com/DevKrieger/PrematicLibraries.git
+                            mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
+                            git add . -v
+                            git commit -m 'Jenkins version change $VERSION-SNAPSHOT' -v
+                            git push origin HEAD:development -v
+                        """
                     }
-                }
-            }
-        }
-    }
-    post {
-        success {
-            script {
-                if(SKIP) {
-                    //deleteBuild(buildName: env.JOB_NAME)
-                    //jobsToDelete = [env.JOB_NAME]
-                    //Hudson.instance.items.each { item -> if (item.name == "${env.JOB_NAME}") { item.delete() } }
                 }
             }
         }
