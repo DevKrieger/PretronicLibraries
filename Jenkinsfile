@@ -46,7 +46,7 @@ pipeline {
         }
         stage('Checkout') {
             when { equals expected: false, actual: SKIP }
-            steps {
+            /*steps {
                 script {
                     /*sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
 
@@ -60,9 +60,9 @@ pipeline {
                         '''
                         sh "git pull -f origin " + BRANCH_DEVELOPMENT
                     }
-                }*/
+                }*
                 }
-            }
+            }*/
         }
         stage('Snapshot') {
             when { equals expected: false, actual: SKIP }
@@ -99,11 +99,11 @@ pipeline {
         }
         stage('Push Development') {
             when { equals expected: false, actual: SKIP }
-            steps {
+            /*steps {
                 script {
 
 
-                    /*if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
+                    if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
 
                 } else if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
                     minorVersion++
@@ -126,9 +126,9 @@ pipeline {
                     sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                         sh "git push origin HEAD:master -v"
                     }
-                }*/
                 }
-            }
+                }
+            }*/
         }
     }
     post {
@@ -157,7 +157,7 @@ pipeline {
                         sh "git push origin HEAD:development -v"
                     }
                 } else if (BRANCH == BRANCH_MASTER) {
-
+                    //Folder für development, checkout, pull, änderung, push
                 }
             }
         }
