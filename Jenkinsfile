@@ -111,19 +111,13 @@ pipeline {
                             sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
                             sh "git add . -v"
                             sh "git commit -m 'Jenkins version change $version' -v"
+                            sh "git push"
 
                             sh """
                             mkdir tempDevelopment
                             cd tempDevelopment/
-                            
-                            """
-                            String test = sh script: "pwd", returnStdout: true
-                            echo test
-
-                            sh "git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git"
-
-
-                            sh """
+                            git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git
+                      
                             
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version-SNAPSHOT
                             git add . -v
