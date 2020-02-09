@@ -102,7 +102,7 @@ pipeline {
                         }
                     } else if (BRANCH == BRANCH_MASTER) {
                         //
-                        //Folder für development, checkout, pull, änderung, push
+                        //Folder für development, checkout, pull, änderung, pushdg
                         minorVersion++
                         patchVersion = 0
                         String version = major + "." + minorVersion + "." + patchVersion
