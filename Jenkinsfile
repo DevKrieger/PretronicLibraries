@@ -130,35 +130,33 @@ pipeline {
                 }
             }
         }
+    }
+    post {
+        success {
+            script {
+                sh "git config --global user.name '$CI_NAME' -v"
+                sh "git config --global user.email '$CI_EMAIL' -v"
 
-        post {
-            success {
-                script {
-                    sh "git config --global user.name '$CI_NAME' -v"
-                    sh "git config --global user.email '$CI_EMAIL' -v"
 
+                String[] versionSplit = VERSION.split("[-.]")
 
-                    String[] versionSplit = VERSION.split("[-.]")
+                String major = versionSplit[0]
+                int minorVersion = versionSplit[1].toInteger()
+                int patchVersion = versionSplit[2].toInteger()
 
-                    String major = versionSplit[0]
-                    int minorVersion = versionSplit[1].toInteger()
-                    int patchVersion = versionSplit[2].toInteger()
+                if (BRANCH == BRANCH_DEVELOPMENT) {
+                    patchVersion++
 
-                    if (BRANCH == BRANCH_DEVELOPMENT) {
-                        patchVersion++
+                    VERSION = major + "." + minorVersion + "." + patchVersion
+                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION-SNAPSHOT"
 
-                        VERSION = major + "." + minorVersion + "." + patchVersion
-                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION-SNAPSHOT"
+                    sh "git add . -v"
+                    sh "git commit -m 'Jenkins version change $VERSION-SNAPSHOT' -v"
 
-                        sh "git add . -v"
-                        sh "git commit -m 'Jenkins version change $VERSION-SNAPSHOT' -v"
-
-                        sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                            sh "git push origin HEAD:development -v"
-                        }
-                    } else if (BRANCH == BRANCH_MASTER) {
-
+                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                        sh "git push origin HEAD:development -v"
                     }
+                } else if (BRANCH == BRANCH_MASTER) {
 
                 }
             }
