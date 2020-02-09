@@ -91,9 +91,8 @@ pipeline {
                 if (BRANCH == BRANCH_DEVELOPMENT) {
                     patchVersion++
 
-                    VERSION = major + "." + minorVersion + "." + patchVersion
-                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION-SNAPSHOT"
-
+                    String version = major + "." + minorVersion + "." + patchVersion + "-SNAPSHOT"
+                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
                     sh "git add . -v"
                     sh "git commit -m 'Jenkins version change $VERSION-SNAPSHOT' -v"
 
@@ -103,6 +102,21 @@ pipeline {
                 } else if (BRANCH == BRANCH_MASTER) {
                     //
                     //Folder für development, checkout, pull, änderung, push
+                    minorVersion++
+                    patchVersion = 0
+                    String version = major + "." + minorVersion + "." + patchVersion
+
+                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                        sh """
+                            mkdir tempDevelopment
+                            cd tempDevelopment/
+                            git clone --single-branch --branch $BRANCH_DEVELOPMENT https://github.com/DevKrieger/PrematicLibraries.git
+                            mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
+                            git add . -v
+                            git commit -m 'Jenkins version change $VERSION-SNAPSHOT' -v
+                            git push origin HEAD:development -v
+                        """
+                    }
                 }
             }
         }
