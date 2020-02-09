@@ -132,7 +132,7 @@ pipeline {
 
                             //sh "git reset --hard"
                             sh "git checkout -f " + BRANCH_MASTER
-                            sh "git pull origin " + BRANCH_MASTER
+                            sh "git pull -f origin " + BRANCH_MASTER
                         }
                         sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
 
