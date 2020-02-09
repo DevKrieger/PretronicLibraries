@@ -78,44 +78,50 @@ pipeline {
     post {
         success {
             script {
-                sh "git config --global user.name '$CI_NAME' -v"
-                sh "git config --global user.email '$CI_EMAIL' -v"
+                if(!SKIP) {
+                    sh "git config --global user.name '$CI_NAME' -v"
+                    sh "git config --global user.email '$CI_EMAIL' -v"
 
 
-                String[] versionSplit = VERSION.split("[-.]")
+                    String[] versionSplit = VERSION.split("[-.]")
 
-                String major = versionSplit[0]
-                int minorVersion = versionSplit[1].toInteger()
-                int patchVersion = versionSplit[2].toInteger()
+                    String major = versionSplit[0]
+                    int minorVersion = versionSplit[1].toInteger()
+                    int patchVersion = versionSplit[2].toInteger()
 
-                if (BRANCH == BRANCH_DEVELOPMENT) {
-                    patchVersion++
+                    if (BRANCH == BRANCH_DEVELOPMENT) {
+                        patchVersion++
 
-                    String version = major + "." + minorVersion + "." + patchVersion + "-SNAPSHOT"
-                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
-                    sh "git add . -v"
-                    sh "git commit -m 'Jenkins version change $VERSION-SNAPSHOT' -v"
+                        String version = major + "." + minorVersion + "." + patchVersion + "-SNAPSHOT"
+                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
+                        sh "git add . -v"
+                        sh "git commit -m 'Jenkins version change $version' -v"
 
-                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                        sh "git push origin HEAD:development -v"
-                    }
-                } else if (BRANCH == BRANCH_MASTER) {
-                    //
-                    //Folder für development, checkout, pull, änderung, push
-                    minorVersion++
-                    patchVersion = 0
-                    String version = major + "." + minorVersion + "." + patchVersion
+                        sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                            sh "git push origin HEAD:development -v"
+                        }
+                    } else if (BRANCH == BRANCH_MASTER) {
+                        //
+                        //Folder für development, checkout, pull, änderung, push
+                        minorVersion++
+                        patchVersion = 0
+                        String version = major + "." + minorVersion + "." + patchVersion
 
-                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                        sh """
+                        sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                            sh """
                             mkdir tempDevelopment
                             cd tempDevelopment/
-                            git clone --single-branch --branch $BRANCH_DEVELOPMENT https://github.com/DevKrieger/PrematicLibraries.git
+                            
+                            """
+                            sh "git clone --single-branch --branch $BRANCH_DEVELOPMENT https://github.com/DevKrieger/PrematicLibraries.git"
+                            sh """
+                            
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
                             git add . -v
-                            git commit -m 'Jenkins version change $VERSION-SNAPSHOT' -v
+                            git commit -m 'Jenkins version change $version-SNAPSHOT' -v
                             git push origin HEAD:development -v
-                        """
+                            """
+                        }
                     }
                 }
             }
