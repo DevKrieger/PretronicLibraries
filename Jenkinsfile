@@ -118,8 +118,9 @@ pipeline {
                             cd tempDevelopment/
                             git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git
                       
-                            
+                            cd PrematicLibraries/
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version-SNAPSHOT
+
                             git add . -v
                             git commit -m 'Jenkins version change $version-SNAPSHOT' -v
                             git push origin HEAD:development -v
