@@ -63,73 +63,74 @@ pipeline {
                 }*/
                 }
             }
-            stage('Snapshot') {
-                when { equals expected: false, actual: SKIP }
-                steps {
-                    script {
-                        if (BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
-                            if (!VERSION.endsWith("-SNAPSHOT")) {
-                                VERSION = VERSION + '-SNAPSHOT'
-                            }
-                            sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${VERSION}"
+        }
+        stage('Snapshot') {
+            when { equals expected: false, actual: SKIP }
+            steps {
+                script {
+                    if (BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
+                        if (!VERSION.endsWith("-SNAPSHOT")) {
+                            VERSION = VERSION + '-SNAPSHOT'
                         }
-                    }
-                }
-            }
-            stage('Build') {
-                when { equals expected: false, actual: SKIP }
-                steps {
-                    sh 'mvn -B clean install'
-                }
-            }
-            stage('Deploy') {
-                when { equals expected: false, actual: SKIP }
-                steps {
-                    configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-                        sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
-                    }
-                }
-            }
-            stage('Archive') {
-                when { equals expected: false, actual: SKIP }
-                steps {
-                    archiveArtifacts artifacts: '**/target/*.jar'
-                }
-            }
-            stage('Push Development') {
-                when { equals expected: false, actual: SKIP }
-                steps {
-                    script {
-
-
-                        /*if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
-
-                    } else if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
-                        minorVersion++
-                        patchVersion = 0
-                    }
-
-
-                    //MASTER PUSH
-                    if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
-                        sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-
-                            sh "git checkout -f " + BRANCH_MASTER
-                            sh "git pull -f origin " + BRANCH_MASTER
-                        }
-                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
-
-                        sh "git add . -v"
-                        sh "git commit -m 'Jenkins version change $VERSION' -v"
-
-                        sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                            sh "git push origin HEAD:master -v"
-                        }
-                    }*/
+                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${VERSION}"
                     }
                 }
             }
         }
+        stage('Build') {
+            when { equals expected: false, actual: SKIP }
+            steps {
+                sh 'mvn -B clean install'
+            }
+        }
+        stage('Deploy') {
+            when { equals expected: false, actual: SKIP }
+            steps {
+                configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
+                    sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
+                }
+            }
+        }
+        stage('Archive') {
+            when { equals expected: false, actual: SKIP }
+            steps {
+                archiveArtifacts artifacts: '**/target/*.jar'
+            }
+        }
+        stage('Push Development') {
+            when { equals expected: false, actual: SKIP }
+            steps {
+                script {
+
+
+                    /*if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
+
+                } else if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
+                    minorVersion++
+                    patchVersion = 0
+                }
+
+
+                //MASTER PUSH
+                if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
+                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+
+                        sh "git checkout -f " + BRANCH_MASTER
+                        sh "git pull -f origin " + BRANCH_MASTER
+                    }
+                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
+
+                    sh "git add . -v"
+                    sh "git commit -m 'Jenkins version change $VERSION' -v"
+
+                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                        sh "git push origin HEAD:master -v"
+                    }
+                }*/
+                }
+            }
+        }
+
         post {
             success {
                 script {
