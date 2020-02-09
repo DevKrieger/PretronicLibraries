@@ -121,6 +121,8 @@ pipeline {
                     if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                             echo 'CHECKOUT MASTER'
+                            String branches = sh script: "git branch -vv", returnStdout: true
+                            echo branches
                             //sh "git reset --hard"
                             sh "git checkout " + BRANCH_MASTER
                             sh "git pull origin " + BRANCH_MASTER
@@ -131,7 +133,7 @@ pipeline {
                         sh "git commit -m 'Jenkins version change $VERSION' -v"
 
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                            sh "git push origin HEAD:development -v"
+                            sh "git push origin HEAD:master -v"
                         }
                     }
                 }
