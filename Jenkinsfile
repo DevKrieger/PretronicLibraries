@@ -108,6 +108,10 @@ pipeline {
                         String version = major + "." + minorVersion + "." + patchVersion
 
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
+                            sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
+                            sh "git add . -v"
+                            sh "git commit -m 'Jenkins version change $version' -v"
+
                             sh """
                             mkdir tempDevelopment
                             cd tempDevelopment/
@@ -121,7 +125,7 @@ pipeline {
 
                             sh """
                             
-                            mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
+                            mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version-SNAPSHOT
                             git add . -v
                             git commit -m 'Jenkins version change $version-SNAPSHOT' -v
                             git push origin HEAD:development -v
