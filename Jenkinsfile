@@ -38,31 +38,8 @@ pipeline {
                 script {
                     VERSION = readMavenPom().getVersion()
                     BRANCH = env.GIT_BRANCH
-
-                    String branches = sh script: "git branch -vv", returnStdout: true
-                    echo branches
                 }
             }
-        }
-        stage('Checkout') {
-            when { equals expected: false, actual: SKIP }
-            /*steps {
-                script {
-                    /*sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-
-                        sh "git reset --hard origin/master"
-                        sh "git reset --hard HEAD"
-                        sh "git clean -n -f -d"
-                        //sh "git checkout -f " + BRANCH_DEVELOPMENT
-                        sh '''
-                            git clone https://github.com/DevKrieger/PrematicLibraries development/
-                            git checkout -f $BRANCH_DEVELOPMENT
-                        '''
-                        sh "git pull -f origin " + BRANCH_DEVELOPMENT
-                    }
-                }*
-                }
-            }*/
         }
         stage('Snapshot') {
             when { equals expected: false, actual: SKIP }
@@ -96,39 +73,6 @@ pipeline {
             steps {
                 archiveArtifacts artifacts: '**/target/*.jar'
             }
-        }
-        stage('Push Development') {
-            when { equals expected: false, actual: SKIP }
-            /*steps {
-                script {
-
-
-                    if(BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
-
-                } else if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
-                    minorVersion++
-                    patchVersion = 0
-                }
-
-
-                //MASTER PUSH
-                if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
-                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-
-                        sh "git checkout -f " + BRANCH_MASTER
-                        sh "git pull -f origin " + BRANCH_MASTER
-                    }
-                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
-
-                    sh "git add . -v"
-                    sh "git commit -m 'Jenkins version change $VERSION' -v"
-
-                    sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                        sh "git push origin HEAD:master -v"
-                    }
-                }
-                }
-            }*/
         }
     }
     post {
