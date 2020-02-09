@@ -63,7 +63,7 @@ pipeline {
                         if(!VERSION.endsWith("-SNAPSHOT")) {
                             VERSION = VERSION+'-SNAPSHOT'
                         }
-                        sh "mvn versions:set -DnewVersion=${VERSION}"
+                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${VERSION}"
                     }
                 }
             }
@@ -108,7 +108,7 @@ pipeline {
                         patchVersion = 0
                     }
                     VERSION = major+"."+minorVersion+"."+patchVersion
-                    sh "mvn versions:set -DnewVersion=$VERSION-SNAPSHOT"
+                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION-SNAPSHOT"
 
                     sh "git add . -v"
                     sh "git commit -m 'Jenkins version change $VERSION' -v"
@@ -125,7 +125,7 @@ pipeline {
                             sh "git checkout " + BRANCH_MASTER
                             sh "git pull origin " + BRANCH_MASTER
                         }
-                        sh "mvn versions:set -DnewVersion=$VERSION"
+                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
 
                         sh "git add . -v"
                         sh "git commit -m 'Jenkins version change $VERSION' -v"
