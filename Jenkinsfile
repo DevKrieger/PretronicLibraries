@@ -126,7 +126,7 @@ pipeline {
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version-SNAPSHOT
 
                             git add . -v
-                            git commit -m '$commitMessage' -v
+                            git commit -m '$commitMessage-SNAPSHOT' -v
                             git push origin HEAD:development -v
                             cd ..
                             cd ..
