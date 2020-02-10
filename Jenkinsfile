@@ -1,14 +1,13 @@
-import hudson.model.*
-
-String CI_NAME = "PretronicCI"
-String CI_EMAIL = "ci@pretronic.net"
-
-String VERSION = "UNDEFINED"
-String BRANCH = "UNDEFINED"
+final String CI_NAME = "PretronicCI"
+final String CI_EMAIL = "ci@pretronic.net"
+final String COMMIT_MESSAGE = "Jenkins version change %version%"
 
 final String BRANCH_DEVELOPMENT = "origin/development"
 final String BRANCH_MASTER = "origin/master"
 
+
+String VERSION = "UNDEFINED"
+String BRANCH = "UNDEFINED"
 boolean SKIP = false
 
 pipeline {
@@ -38,6 +37,7 @@ pipeline {
                 script {
                     VERSION = readMavenPom().getVersion()
                     BRANCH = env.GIT_BRANCH
+                    echo env.CHANGE_ID
                 }
             }
         }
@@ -49,7 +49,7 @@ pipeline {
                         if (!VERSION.endsWith("-SNAPSHOT")) {
                             VERSION = VERSION + '-SNAPSHOT'
                         }
-                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${VERSION}"
+                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
                     }
                 }
             }
@@ -64,7 +64,7 @@ pipeline {
             when { equals expected: false, actual: SKIP }
             steps {
                 configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-                    //sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
+                    sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
                 }
             }
         }
@@ -79,9 +79,10 @@ pipeline {
         success {
             script {
                 if(!SKIP) {
-                    sh "git config --global user.name '$CI_NAME' -v"
-                    sh "git config --global user.email '$CI_EMAIL' -v"
-
+                    sh """
+                    git config --global user.name '$CI_NAME' -v
+                    git config --global user.email '$CI_EMAIL' -v
+                    """
 
                     String[] versionSplit = VERSION.split("[-.]")
 
@@ -93,28 +94,29 @@ pipeline {
                         patchVersion++
 
                         String version = major + "." + minorVersion + "." + patchVersion + "-SNAPSHOT"
-                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
-                        sh "git add . -v"
-                        sh "git commit -m 'Jenkins version change $version' -v"
+                        String commitMessage = COMMIT_MESSAGE.replace("%version%", version)
+                        sh """
+                        mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
+                        git add . -v
+                        git commit -m '$commitMessage' -v
+                        """
 
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
                             sh "git push origin HEAD:development -v"
                         }
                     } else if (BRANCH == BRANCH_MASTER) {
-                        echo "BRANCH MASTER"
-                        //
-                        //Folder für development, checkout, pull, änderung, pushdg
                         minorVersion++
                         patchVersion = 0
                         String version = major + "." + minorVersion + "." + patchVersion
+                        String commitMessage = COMMIT_MESSAGE.replace("%version%", version)
 
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                            sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version"
-                            sh "git add . -v"
-                            sh "git commit -m 'Jenkins version change $version' -v"
-                            sh "git push origin HEAD:master -v"
-
                             sh """
+                            mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
+                            git add . -v
+                            git commit -m 'Jenkins version change $version' -v
+                            git push origin HEAD:master -v
+
                             if [ -d "tempDevelopment" ]; then rm -Rf tempDevelopment; fi
                             mkdir tempDevelopment
                             cd tempDevelopment/
@@ -124,7 +126,7 @@ pipeline {
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version-SNAPSHOT
 
                             git add . -v
-                            git commit -m 'Jenkins version change $version-SNAPSHOT' -v
+                            git commit -m '$commitMessage' -v
                             git push origin HEAD:development -v
                             cd ..
                             cd ..
