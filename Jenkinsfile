@@ -1,6 +1,6 @@
 final String CI_NAME = "PretronicCI"
 final String CI_EMAIL = "ci@pretronic.net"
-final String COMMIT_MESSAGE = "Jenkins version change %version%"
+final String COMMIT_MESSAGE = "Version change %version%"
 
 final String BRANCH_DEVELOPMENT = "origin/development"
 final String BRANCH_MASTER = "origin/master"
@@ -41,16 +41,24 @@ pipeline {
                 }
             }
         }
-        stage('Snapshot') {
+        stage('Version change') {
             when { equals expected: false, actual: SKIP }
             steps {
                 script {
-                    if (BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
+                    String[] versionSplit = VERSION.split("[-.]")
+
+                    String major = versionSplit[0]
+                    int minorVersion = versionSplit[1].toInteger()
+                    int patchVersion = versionSplit[2].toInteger()
+
+                    if(BRANCH.equalsIgnoreCase(BRANCH_MASTER)) {
+                        VERSION = major + "." + minorVersion + "." + patchVersion
+                    } else if (BRANCH.equalsIgnoreCase(BRANCH_DEVELOPMENT)) {
                         if (!VERSION.endsWith("-SNAPSHOT")) {
                             VERSION = VERSION + '-SNAPSHOT'
                         }
-                        sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
                     }
+                    sh "mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION"
                 }
             }
         }
@@ -108,20 +116,23 @@ pipeline {
                         minorVersion++
                         patchVersion = 0
                         String version = major + "." + minorVersion + "." + patchVersion
-                        String commitMessage = COMMIT_MESSAGE.replace("%version%", version)
 
+                        String commitMessage = COMMIT_MESSAGE.replace("%version%", VERSION)
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
-                            sh """
-                            mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
-                            git add . -v
-                            git commit -m 'Jenkins version change $version' -v
-                            git push origin HEAD:master -v
 
+                            sh """
+                            mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$VERSION
+                            git add . -v
+                            git commit -m 'Jenkins version change $VERSION' -v
+                            git push origin HEAD:master -v
+                            """
+                            commitMessage = COMMIT_MESSAGE.replace("%version%", version)
+                            sh """
                             if [ -d "tempDevelopment" ]; then rm -Rf tempDevelopment; fi
                             mkdir tempDevelopment
                             cd tempDevelopment/
                             git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git
-                      
+                            
                             cd PrematicLibraries/
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version-SNAPSHOT
 
