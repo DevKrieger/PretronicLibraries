@@ -126,6 +126,9 @@ pipeline {
                             git add . -v
                             git commit -m 'Jenkins version change $version-SNAPSHOT' -v
                             git push origin HEAD:development -v
+                            cd ..
+                            cd ..
+                            if [ -d "tempDevelopment" ]; then rm -Rf tempDevelopment; fi
                             """
                         }
                     }
