@@ -101,6 +101,7 @@ pipeline {
                             sh "git push origin HEAD:development -v"
                         }
                     } else if (BRANCH == BRANCH_MASTER) {
+                        echo "BRANCH MASTER"
                         //
                         //Folder für development, checkout, pull, änderung, pushdg
                         minorVersion++
