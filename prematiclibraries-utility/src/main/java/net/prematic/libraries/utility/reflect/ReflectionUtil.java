@@ -21,6 +21,9 @@ package net.prematic.libraries.utility.reflect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -149,5 +152,20 @@ public class ReflectionUtil {
             }
         }
         return classes;
+    }
+
+    public static void grantFinalPrivileges(Field field){
+        try{
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+
+            AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                modifiersField.setAccessible(true);
+                return null;
+            });
+
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        }catch (NoSuchFieldException | IllegalAccessException e){
+            throw new ReflectException(e);
+        }
     }
 }
