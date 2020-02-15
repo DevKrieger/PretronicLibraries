@@ -47,6 +47,20 @@ public class ReflectionUtil {
         } catch (Exception exception) {throw new ReflectException("Field "+fieldName+" in class "+clazz+" not found.",exception);}
     }
 
+    public static Field findFieldByType(Class<?> clazz, Class<?> type){
+        for (Field declaredField : clazz.getDeclaredFields()) {
+            if(declaredField.getType().equals(type)) return declaredField;
+        }
+        throw new ReflectException("No field with type "+type+" in "+clazz+" found");
+    }
+
+    public static Field findTypeBySimpleName(Class<?> clazz, String name){
+        for (Field declaredField : clazz.getDeclaredFields()) {
+            if(declaredField.getType().getSimpleName().equals(name)) return declaredField;
+        }
+        throw new ReflectException("No field with type name"+name+" in "+clazz+" found");
+    }
+
     public static Object getFieldValue(Class<?> clazz, String fieldName){
         return getFieldValue(clazz,fieldName,Object.class);
     }
