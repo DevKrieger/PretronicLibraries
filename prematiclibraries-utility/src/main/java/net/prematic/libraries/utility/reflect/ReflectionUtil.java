@@ -54,7 +54,12 @@ public class ReflectionUtil {
         throw new ReflectException("No field with type "+type+" in "+clazz+" found");
     }
 
+    @Deprecated
     public static Field findTypeBySimpleName(Class<?> clazz, String name){
+        return findFieldBySimpleName(clazz, name);
+    }
+
+    public static Field findFieldBySimpleName(Class<?> clazz, String name){
         for (Field declaredField : clazz.getDeclaredFields()) {
             if(declaredField.getType().getSimpleName().equals(name)) return declaredField;
         }
