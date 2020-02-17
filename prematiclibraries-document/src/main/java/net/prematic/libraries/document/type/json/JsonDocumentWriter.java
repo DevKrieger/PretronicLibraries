@@ -62,7 +62,7 @@ public class JsonDocumentWriter implements DocumentWriter {
 
             if(attributes) writeAttributeData(output,document.getAttributes(),indent);
 
-            indent = writeObjectEntries(output,document,indent,!attributes, true,true);
+            indent = writeObjectEntries(output,document,indent,!attributes, true,true,true);
             writeNewLine(output, --indent);
             output.write("}");
         }
@@ -91,15 +91,16 @@ public class JsonDocumentWriter implements DocumentWriter {
         if(multipleLines) writeNewLine(output, ++indent);
 
 
-        indent = writeObjectEntries(output,document,indent,true,false,multipleLines);
+        indent = writeObjectEntries(output,document,indent,true,false,multipleLines,false);
 
         if(multipleLines) writeNewLine(output, --indent);
         output.write("]");
         return indent;
     }
 
-    private int writeObjectEntries(Writer output, DocumentNode document, int indent, boolean first, boolean key, boolean multipleLines) throws IOException {
+    private int writeObjectEntries(Writer output, DocumentNode document, int indent, boolean first, boolean key, boolean multipleLines,boolean skipNull) throws IOException {
         for (DocumentEntry entry : document) {
+            if(skipNull && entry.isPrimitive() && entry.toPrimitive().isNull()) continue;
             if(first) first = false;
             else{
                 output.write(',');
@@ -154,7 +155,7 @@ public class JsonDocumentWriter implements DocumentWriter {
         output.write("{");
         writeNewLine(output, ++indent);
 
-        indent = writeObjectEntries(output,attributes,indent,true,true,true);
+        indent = writeObjectEntries(output,attributes,indent,true,true,true,true);
 
         writeNewLine(output, --indent);
         output.write("}");
