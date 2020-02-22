@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+  ~ (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
   ~
   ~ @author Davide Wietlisbach
-  ~ @since 08.02.19 16:17
+  ~ @since 22.02.20, 14:42
   ~
   ~ The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>prematiclibraries-caching</artifactId>
+    <artifactId>prematiclibraries-synchronisation</artifactId>
     <build>
         <plugins>
             <plugin>
@@ -40,37 +40,16 @@
                     <target>8</target>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
     <dependencies>
-
-        <!-- Internal project dependencies -->
-
         <dependency>
             <groupId>net.prematic.libraries</groupId>
-            <artifactId>prematiclibraries-utility</artifactId>
+            <artifactId>prematiclibraries-document</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
-
-        <dependency>
-            <groupId>net.prematic.libraries</groupId>
-            <artifactId>prematiclibraries-synchronisation</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Test dependencies -->
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${dependency.test.junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
 </project>

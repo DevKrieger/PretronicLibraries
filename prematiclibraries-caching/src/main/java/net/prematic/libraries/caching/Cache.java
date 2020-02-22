@@ -70,6 +70,8 @@ public interface Cache<O> {
      */
     O get(String queryName,Object... identifiers);
 
+    O get(CacheQuery<O> query,Object... identifiers);
+
     /**
      * Get a object with a direct query.
      *
@@ -91,12 +93,14 @@ public interface Cache<O> {
      */
     O get(Predicate<O> query, Supplier<O> loader);
 
+
     CompletableFuture<O> getAsync(String queryName, Object... identifiers);
+
+    CompletableFuture<O> getAsync(CacheQuery<O> query, Object... identifiers);
 
     CompletableFuture<O> getAsync(Predicate<O> query);
 
     CompletableFuture<O> getAsync(Predicate<O> query, Supplier<O> loader);
-
 
     /**
      * Insert a object in the cache.
@@ -117,6 +121,8 @@ public interface Cache<O> {
      */
     O remove(String queryName,Object... identifiers);
 
+    O remove(CacheQuery<O> query,Object... identifiers);
+
     /**
      * Remove a object with a direct query.
      *
@@ -136,6 +142,8 @@ public interface Cache<O> {
     boolean remove(O cachedObject);
 
     CompletableFuture<O> removeAsync(String queryName,Object... identifiers);
+
+    CompletableFuture<O> removeAsync(CacheQuery<O> query,Object... identifiers);
 
     CompletableFuture<O> removeAsync(Predicate<O> query);
 

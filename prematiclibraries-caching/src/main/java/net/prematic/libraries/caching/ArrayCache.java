@@ -111,6 +111,11 @@ public class ArrayCache<O> implements Cache<O>{
         Objects.requireNonNull(identifiers,"Identifiers are null");
         CacheQuery<O> query = queries.get(queryName.toLowerCase());
         if(query == null) throw new IllegalArgumentException(queryName+" not found.");
+        return get(query,identifiers);
+    }
+
+    @Override
+    public O get(CacheQuery<O> query, Object... identifiers) {
         query.validate(identifiers);
         for(int i = 0; i < size; i++) {
             if(query.check((O) this.entries[i].value,identifiers)){
@@ -157,6 +162,11 @@ public class ArrayCache<O> implements Cache<O>{
     }
 
     @Override
+    public CompletableFuture<O> getAsync(CacheQuery<O> query, Object... identifiers) {
+        return doAsync(() -> ArrayCache.this.get(query, identifiers));
+    }
+
+    @Override
     public CompletableFuture<O> getAsync(Predicate<O> query) {
         return getAsync(query,null);
     }
@@ -190,6 +200,11 @@ public class ArrayCache<O> implements Cache<O>{
         Objects.requireNonNull(identifiers,"Identifiers are null");
         CacheQuery<O> query = queries.get(queryName.toLowerCase());
         if(query == null) throw new IllegalArgumentException(queryName+" not found.");
+        return get(query,identifiers);
+    }
+
+    @Override
+    public O remove(CacheQuery<O> query, Object... identifiers) {
         query.validate(identifiers);
         for(int i = 0; i < size; i++) {
             O value = (O)this.entries[i].value;
@@ -232,6 +247,11 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public CompletableFuture<O> removeAsync(String queryName, Object... identifiers) {
         return doAsync(() -> remove(queryName, identifiers));
+    }
+
+    @Override
+    public CompletableFuture<O> removeAsync(CacheQuery<O> query, Object... identifiers) {
+        return doAsync(() -> remove(query, identifiers));
     }
 
     @Override

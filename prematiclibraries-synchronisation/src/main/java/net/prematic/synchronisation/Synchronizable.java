@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 19.01.20, 18:27
+ * @since 22.02.20, 14:45
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,12 @@
  * under the License.
  */
 
-package net.prematic.libraries.utility.observer;
+package net.prematic.synchronisation;
 
-import java.util.List;
+import net.prematic.libraries.document.Document;
 
-public interface Observable<O extends Observable<O,T>,T> {
+public interface Synchronizable {
 
-    List<ObserveCallback<O,T>> getObservers();
-
-    void subscribeObserver(ObserveCallback<O,T> callback);
-
-    void unsubscribeObserver(ObserveCallback<O,T> callback);
+    void onUpdate(Document data);
 
 }

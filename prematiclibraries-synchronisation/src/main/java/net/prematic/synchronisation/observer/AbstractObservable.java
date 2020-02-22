@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.prematic.libraries.utility.observer;
+package net.prematic.synchronisation.observer;
 
 import java.util.ArrayList;
 import java.util.List;
