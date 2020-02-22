@@ -35,6 +35,11 @@ public class EmptyCache<O> implements Cache<O> {
     }
 
     @Override
+    public O get(CacheQuery<O> query, Object... identifiers) {
+        return null;//Unused
+    }
+
+    @Override
     public O get(Predicate<O> query) {
         return null;//Unused
     }
@@ -46,6 +51,11 @@ public class EmptyCache<O> implements Cache<O> {
 
     @Override
     public CompletableFuture<O> getAsync(String queryName, Object... identifiers) {
+        return null;//Unused
+    }
+
+    @Override
+    public CompletableFuture<O> getAsync(CacheQuery<O> query, Object... identifiers) {
         return null;//Unused
     }
 
@@ -75,6 +85,11 @@ public class EmptyCache<O> implements Cache<O> {
     }
 
     @Override
+    public O remove(CacheQuery<O> query, Object... identifiers) {
+        return null;//Unused
+    }
+
+    @Override
     public O remove(Predicate<O> query) {
         return null;//Unused
     }
@@ -86,6 +101,11 @@ public class EmptyCache<O> implements Cache<O> {
 
     @Override
     public CompletableFuture<O> removeAsync(String queryName, Object... identifiers) {
+        return null;//Unused
+    }
+
+    @Override
+    public CompletableFuture<O> removeAsync(CacheQuery<O> query, Object... identifiers) {
         return null;//Unused
     }
 
