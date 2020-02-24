@@ -97,5 +97,7 @@ public interface EventBus {
         return future;
     }
 
+    Class<?> getMappedClass(Class<?> original);
+
     void registerMappedClass(Class<?> original, Class<?> mapped);
 }

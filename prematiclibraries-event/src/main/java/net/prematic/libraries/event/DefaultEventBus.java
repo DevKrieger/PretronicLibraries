@@ -165,6 +165,11 @@ public class DefaultEventBus implements EventBus {
     }
 
     @Override
+    public Class<?> getMappedClass(Class<?> original) {
+        return this.mappedClasses.get(original);
+    }
+
+    @Override
     public void registerMappedClass(Class<?> original, Class<?> mapped) {
         this.mappedClasses.put(original,mapped);
     }
