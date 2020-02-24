@@ -109,7 +109,8 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             return;
         }
         if(notFoundHandler != null){
-            notFoundHandler.handle(sender,args[0],Arrays.copyOfRange(args,1,args.length));
+            notFoundHandler.handle(sender, args.length == 0 ? "" : args[0],
+                    args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length));
         }
     }
 
