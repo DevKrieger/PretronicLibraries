@@ -107,6 +107,9 @@ public class MainCommand extends BasicCommand implements CommandManager {
                 }
             }
         }
-        if(notFoundHandler != null) notFoundHandler.handle(sender,name,Arrays.copyOfRange(args, 1, args.length));
+        if(notFoundHandler != null){
+            notFoundHandler.handle(sender, args.length == 0 ? "" : args[0],
+                    args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length));
+        }
     }
 }
