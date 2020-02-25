@@ -106,4 +106,12 @@ public class GeneralUtil {
         return map.entrySet().stream().sorted(Map.Entry.<U,Integer>comparingByValue().reversed()).limit(1).map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
+    public static <T extends Enum<T>> T valueOfEnumOrNUll(Class<T> clazz,String value){
+        try{
+            return Enum.valueOf(clazz,value);
+        }catch (IllegalArgumentException ignore){}
+        return null;
+    }
+
+
 }
