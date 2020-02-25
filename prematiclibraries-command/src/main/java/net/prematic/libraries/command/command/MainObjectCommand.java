@@ -104,6 +104,8 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             else{
                 if(objectNotFoundHandler != null){
                     objectNotFoundHandler.handle(sender, name, Arrays.copyOfRange(args,1,args.length));
+                } else if(notFoundHandler != null) {
+                    notFoundHandler.handle(sender, name, Arrays.copyOfRange(args,1,args.length));
                 }
             }
             return;
