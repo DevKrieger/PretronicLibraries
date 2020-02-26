@@ -83,7 +83,6 @@ public class PropertiesDocumentReader implements DocumentReader {
             }
         }
         PrimitiveEntry entry = Document.factory().newPrimitiveEntry(entryKey,null);
-        System.out.println(current);
         current.addEntry(entry);
         return entry;
     }

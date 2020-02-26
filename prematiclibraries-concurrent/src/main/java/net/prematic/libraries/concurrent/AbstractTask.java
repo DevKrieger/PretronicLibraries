@@ -126,7 +126,6 @@ public abstract class AbstractTask implements Task{
     @Override
     public void start() {
         TaskDestroyedException.validate(this);
-        System.out.println("start");
         if(state != TaskState.STOPPED) throw new IllegalArgumentException("Task "+name+" is already running.");
         scheduler.executeTask(this);
     }
