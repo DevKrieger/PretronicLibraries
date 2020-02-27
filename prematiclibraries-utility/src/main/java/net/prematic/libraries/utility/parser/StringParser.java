@@ -380,11 +380,17 @@ public class StringParser {
     }
 
     public String get(int fromLine, int fromChar, int toLine, int toChar){
+        return get(fromLine, fromChar, toLine, toChar,0);
+    }
+
+    public String get(int fromLine, int fromChar, int toLine, int toChar, int skip){
         if(fromLine == toLine) return get(fromLine,fromChar,toChar);
         StringBuilder builder = new StringBuilder();
 
         for(int i = fromLine;i<=toLine;i++){
-            for(int e = (i==fromLine?fromChar:0);e<this.lines[i].length;e++){
+            int start = i==fromLine?fromChar:skip;
+
+            for(int e = start;e<this.lines[i].length;e++){
                 if(i == toLine){
                     if(e >= toChar) break;
                     else builder.append(this.lines[i][e]);

@@ -169,7 +169,7 @@ public interface ParserState {
         public void parse(YamlParser yaml, StringParser parser, char current) {
             parser.previousChar();
             if(current == endCharacter && parser.currentChar() != '\\'){
-                String value = parser.get(yaml.getLineMark(),yaml.getCharacterMark(),parser.lineIndex(),parser.charIndex()+1);
+                String value = parser.get(yaml.getLineMark(),yaml.getCharacterMark(),parser.lineIndex(),parser.charIndex()+1,yaml.getSequence().getIndent());
                 yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),value));
                 yaml.mark(parser);
                 yaml.setState(yaml.getSequence().isArray() ? DOCUMENT_ARRAY_VALUE_ENDING : DOCUMENT_NEXT_SAME);
