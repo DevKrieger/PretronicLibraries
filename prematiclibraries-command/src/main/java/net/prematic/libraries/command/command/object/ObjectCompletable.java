@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 01.02.20, 18:13
+ * @since 28.02.20, 22:13
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,14 @@
  * under the License.
  */
 
-package net.prematic.libraries.command;
+package net.prematic.libraries.command.command.object;
 
 import net.prematic.libraries.command.sender.CommandSender;
 
-public class MessageNotFoundHandler implements NotFoundHandler {
+import java.util.Collection;
 
-    private static MessageNotFoundHandler DEFAULT = new MessageNotFoundHandler("The command %command% was not found.");
+public interface ObjectCompletable {
 
-    private final String message;
+    Collection<String> complete(CommandSender sender, String name);
 
-    public MessageNotFoundHandler(String message) {
-        this.message = message;
-    }
-
-    @Override
-    public void handle(CommandSender sender, String command, String[] args) {
-        sender.sendMessage(message.replace("%command%",command));
-    }
-
-    public static MessageNotFoundHandler newDefaultHandler(){
-        return DEFAULT;
-    }
 }

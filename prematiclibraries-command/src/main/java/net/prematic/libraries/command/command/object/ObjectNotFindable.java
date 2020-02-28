@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 01.02.20, 17:18
+ * @since 28.02.20, 20:29
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@
  * under the License.
  */
 
-package net.prematic.libraries.command.command;
+package net.prematic.libraries.command.command.object;
 
 import net.prematic.libraries.command.sender.CommandSender;
 
-public interface NotFoundHandler {
+public interface ObjectNotFindable {
 
-    void handle(CommandSender sender,String command, String[] args);
-
+    void objectNotFound(CommandSender sender, String name, String[] args);
 }

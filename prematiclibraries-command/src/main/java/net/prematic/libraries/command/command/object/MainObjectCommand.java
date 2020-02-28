@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 17.11.19, 17:46
+ * @since 28.02.20, 20:29
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,36 @@
  * under the License.
  */
 
-package net.prematic.libraries.command.command;
+package net.prematic.libraries.command.command.object;
 
+import net.prematic.libraries.command.Completable;
+import net.prematic.libraries.command.NotFindable;
+import net.prematic.libraries.command.NotFoundHandler;
+import net.prematic.libraries.command.command.Command;
 import net.prematic.libraries.command.command.configuration.CommandConfiguration;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements CommandManager {
+public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements CommandManager, Completable {
 
     private final List<Command> commands;
-    private NotFoundHandler notFoundHandler, objectNotFoundHandler;
+    private final Collection<String> internalTabComplete;
+    private NotFoundHandler notFoundHandler;
+    private ObjectNotFindable objectNotFoundHandler;
+    private ObjectCompletable objectCompletable;
 
     public MainObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner, configuration);
-        commands = new ArrayList<>();
+        this.commands = new ArrayList<>();
+        this.internalTabComplete = new ArrayList<>();
+
+        if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
+        if(this instanceof ObjectNotFindable) setObjectNotFoundHandler((ObjectNotFindable) this);
+        if(this instanceof ObjectCompletable) setObjectCompletableHandler((ObjectCompletable) this);
     }
 
     @Override
@@ -54,8 +64,12 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         this.notFoundHandler = handler;
     }
 
-    public void setObjectNotFoundHandler(NotFoundHandler executor){
-        this.objectNotFoundHandler = executor;
+    public void setObjectNotFoundHandler(ObjectNotFindable handler){
+        this.objectNotFoundHandler = handler;
+    }
+
+    public void setObjectCompletableHandler(ObjectCompletable completable){
+        this.objectCompletable = completable;
     }
 
     @Override
@@ -71,22 +85,29 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
 
     @Override
     public void registerCommand(Command command) {
+        if(getCommand(command.getConfiguration().getName()) != null){
+            throw new IllegalArgumentException("A command with the name "+command.getConfiguration().getName()+" is already registered as sub command.");
+        }
         this.commands.add(command);
+        this.internalTabComplete.add(command.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(String command) {
-        Iterators.removeOne(this.commands, entry -> entry.getConfiguration().getName().equalsIgnoreCase(command));
+        Command result = Iterators.removeOne(this.commands, entry -> entry.getConfiguration().getName().equalsIgnoreCase(command));
+        if(result != null) this.internalTabComplete.remove(result.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(Command command) {
-        Iterators.removeOne(this.commands, entry -> entry.equals(command));
+        Command result = Iterators.removeOne(this.commands, entry -> entry.equals(command));
+        if(result != null) this.internalTabComplete.remove(result.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(ObjectOwner owner) {
-        Iterators.removeOne(this.commands, entry -> entry.getOwner().equals(owner));
+        List<Command> result = Iterators.remove(this.commands, entry -> entry.getOwner().equals(owner));
+        for (Command command : result) this.internalTabComplete.remove(command.getConfiguration().getName());
     }
 
     @Override
@@ -103,7 +124,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             if(object != null) execute(sender, object,Arrays.copyOfRange(args,1,args.length));
             else{
                 if(objectNotFoundHandler != null){
-                    objectNotFoundHandler.handle(sender, name, Arrays.copyOfRange(args,1,args.length));
+                    objectNotFoundHandler.objectNotFound(sender, name, Arrays.copyOfRange(args,1,args.length));
                 } else if(notFoundHandler != null) {
                     notFoundHandler.handle(sender, name, Arrays.copyOfRange(args,1,args.length));
                 }
@@ -133,6 +154,25 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
            notFoundHandler.handle(sender, args.length == 0 ? "" : args[0],
                    args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length));
        }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender sender, String[] args) {
+        if(args.length <= 1){
+            ObjectCompletable completable = objectCompletable;
+            if(completable != null){
+                return completable.complete(sender,args.length == 0 ? "" : args[0]);
+            }else{
+                return Collections.emptyList();
+            }
+        } else if(args.length == 2){
+            return internalTabComplete;
+        }else{
+            String subCommand = args[1];
+            Command command = getCommand(subCommand);
+            if(command instanceof Completable) return ((Completable) command).complete(sender,Arrays.copyOfRange(args,1,args.length));
+            else return Collections.emptyList();
+        }
     }
 
     public abstract T getObject(String name);

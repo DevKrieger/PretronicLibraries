@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 31.03.19 17:56
+ * @since 28.02.20, 20:29
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@
  * under the License.
  */
 
-package net.prematic.libraries.command.command;
+package net.prematic.libraries.command.command.object;
 
+import net.prematic.libraries.command.command.BasicCommand;
 import net.prematic.libraries.command.command.configuration.CommandConfiguration;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;

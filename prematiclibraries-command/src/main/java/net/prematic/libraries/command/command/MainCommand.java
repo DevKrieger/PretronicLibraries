@@ -19,24 +19,29 @@
 
 package net.prematic.libraries.command.command;
 
+import net.prematic.libraries.command.Completable;
+import net.prematic.libraries.command.NotFindable;
+import net.prematic.libraries.command.NotFoundHandler;
 import net.prematic.libraries.command.command.configuration.CommandConfiguration;
 import net.prematic.libraries.command.manager.CommandManager;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class MainCommand extends BasicCommand implements CommandManager {
+public class MainCommand extends BasicCommand implements CommandManager, Completable {
 
     private final List<Command> subCommands;
+    private final Collection<String> internalTabComplete;
     private NotFoundHandler notFoundHandler;
 
     public MainCommand(ObjectOwner owner,CommandConfiguration configuration) {
         super(owner,configuration);
-        subCommands = new ArrayList<>();
+        this.subCommands = new ArrayList<>();
+        this.internalTabComplete = new ArrayList<>();
+
+        if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
     }
 
     @Override
@@ -68,22 +73,25 @@ public class MainCommand extends BasicCommand implements CommandManager {
             throw new IllegalArgumentException("A command with the name "+command.getConfiguration().getName()+" is already registered as sub command.");
         }
         this.subCommands.add(command);
+        this.internalTabComplete.add(command.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(String command) {
-        Command cmd = getCommand(command);
-        if(cmd != null) unregisterCommand(cmd);
+        Command result = Iterators.removeOne(this.subCommands, entry -> entry.getConfiguration().getName().equalsIgnoreCase(command));
+        if(result != null) this.internalTabComplete.remove(result.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(Command command) {
-        Iterators.removeOne(this.subCommands, entry -> entry.equals(command));
+        Command result = Iterators.removeOne(this.subCommands, entry -> entry.equals(command));
+        if(result != null) this.internalTabComplete.remove(result.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(ObjectOwner owner) {
-        Iterators.removeSilent(this.subCommands, entry -> entry.getOwner().equals(owner));
+        Collection<Command> result = Iterators.remove(this.subCommands, entry -> entry.getOwner().equals(owner));
+        for (Command command : result) this.internalTabComplete.remove(command.getConfiguration().getName());
     }
 
     @Override
@@ -97,9 +105,7 @@ public class MainCommand extends BasicCommand implements CommandManager {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        String name = null;
         if(args.length > 0) {
-            name = args[0];
             for (Command command : subCommands) {
                 if (command.getConfiguration().hasAlias(args[0])) {
                     command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
@@ -110,6 +116,17 @@ public class MainCommand extends BasicCommand implements CommandManager {
         if(notFoundHandler != null){
             notFoundHandler.handle(sender, args.length == 0 ? "" : args[0],
                     args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length));
+        }
+    }
+
+    @Override
+    public Collection<String> complete(CommandSender sender, String[] args) {
+        if(args.length <= 0) return internalTabComplete;
+        else{
+            String subCommand = args[0];
+            Command command = getCommand(subCommand);
+            if(command instanceof Completable) return ((Completable) command).complete(sender,Arrays.copyOfRange(args,1,args.length));
+            else return Collections.emptyList();
         }
     }
 }

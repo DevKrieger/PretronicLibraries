@@ -19,8 +19,8 @@
 
 package net.prematic.libraries.command.manager;
 
+import net.prematic.libraries.command.NotFoundHandler;
 import net.prematic.libraries.command.command.Command;
-import net.prematic.libraries.command.command.NotFoundHandler;
 import net.prematic.libraries.command.sender.CommandSender;
 import net.prematic.libraries.utility.Iterators;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
