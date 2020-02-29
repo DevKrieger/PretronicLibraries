@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -136,6 +137,11 @@ public class EmptyCache<O> implements Cache<O> {
 
     @Override
     public Cache<O> setExpireAfterAccess(long expireTime, TimeUnit unit) {
+        return this;//Unused
+    }
+
+    @Override
+    public Cache<O> setInsertListener(Consumer<O> onInsert) {
         return this;//Unused
     }
 

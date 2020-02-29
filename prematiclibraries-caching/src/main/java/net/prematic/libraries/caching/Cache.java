@@ -22,6 +22,7 @@ package net.prematic.libraries.caching;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -192,6 +193,16 @@ public interface Cache<O> {
      * @return The current cache
      */
     Cache<O> setExpireAfterAccess(long expireTime, TimeUnit unit);
+
+    /**
+     * Set a insert listener.
+     *
+     * <p>This listener will be called after every insertion.</p>
+     *
+     * @param onInsert The insert listener
+     * @return The current cache
+     */
+    Cache<O> setInsertListener(Consumer<O> onInsert);
 
     /**
      * Set a remove listener.

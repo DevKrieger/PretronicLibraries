@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -41,6 +42,7 @@ public class ArrayCache<O> implements Cache<O>{
     private final Map<String,CacheQuery<O>> queries;
     private final ExecutorService executor;
     private CacheEntry[] entries;
+    private Consumer<O> insertListener;
     private Predicate<O> removeListener;
     private CacheTask task;
     private long refreshTime, expireTime, expireTimeAfterAccess;
@@ -187,6 +189,7 @@ public class ArrayCache<O> implements Cache<O>{
             this.entries[size] = new CacheEntry(value);
             size++;
         }
+        insertListener.accept(value);
     }
 
     @Override
@@ -296,6 +299,12 @@ public class ArrayCache<O> implements Cache<O>{
     public Cache<O> setExpireAfterAccess(long expireTime, TimeUnit unit) {
         this.expireTimeAfterAccess = unit.toMillis(expireTime);
         createTask();
+        return this;
+    }
+
+    @Override
+    public Cache<O> setInsertListener(Consumer<O> onInsert) {
+        this.insertListener = onInsert;
         return this;
     }
 
