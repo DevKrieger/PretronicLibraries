@@ -103,7 +103,12 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public Collection<O> getCachedObjects() {
         ArrayList<O> values = new ArrayList<>();
-        for(CacheEntry entry : entries) values.add((O) entry.value);
+        int index = 0;
+        for(CacheEntry entry : entries){
+            if(index >= size) return values;
+            values.add((O) entry.value);
+            index++;
+        }
         return values;
     }
 
