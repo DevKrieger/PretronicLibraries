@@ -22,6 +22,7 @@ package net.prematic.libraries.utility;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This small convert library helps you to convert any object in a specified primitive type.
@@ -246,4 +247,20 @@ public class Convert {
         else if(input instanceof Long) return new Date((long) input);
         throw new IllegalArgumentException("Can not be converted to date " + input);
     }
+
+    public static TimeUnit toTimeUnit(Object input) {
+        if(input == null) return null;
+        else if(input instanceof TimeUnit) return (TimeUnit) input;
+        else{
+            String rawUnit = input.toString();
+            TimeUnit unit = GeneralUtil.valueOfEnumOrNull(TimeUnit.class, rawUnit.toUpperCase());
+            if(unit != null) return unit;
+            if(StringUtil.equalsOne(rawUnit,"day","d")) return TimeUnit.DAYS;
+            else if(StringUtil.equalsOne(rawUnit,"hour","h")) return TimeUnit.HOURS;
+            else if(StringUtil.equalsOne(rawUnit,"minute","m")) return TimeUnit.MINUTES;
+            else if(StringUtil.equalsOne(rawUnit,"second","s")) return TimeUnit.SECONDS;
+            throw new IllegalArgumentException("Can not be converted to TimeUnit " + input);
+        }
+    }
+
 }
