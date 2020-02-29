@@ -189,7 +189,9 @@ public class ArrayCache<O> implements Cache<O>{
             this.entries[size] = new CacheEntry(value);
             size++;
         }
-        insertListener.accept(value);
+        if(insertListener != null) {
+            insertListener.accept(value);
+        }
     }
 
     @Override
