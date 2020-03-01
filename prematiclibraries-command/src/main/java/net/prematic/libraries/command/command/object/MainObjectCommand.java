@@ -116,24 +116,25 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     }
 
     @Override
-    public void execute(CommandSender sender,  String[] args) {
-        String name = null;//perms object <xy> delete
-        if(args.length > 1){
-            name = args[0];
+    public void execute(CommandSender sender, String[] args) {
+        if(args.length > 0){
+            String name = args[0];
             T object = getObject(name);
-            if(object != null) execute(sender, object,Arrays.copyOfRange(args,1,args.length));
-            else{
-                if(objectNotFoundHandler != null){
-                    objectNotFoundHandler.objectNotFound(sender, name, Arrays.copyOfRange(args,1,args.length));
-                } else if(notFoundHandler != null) {
-                    notFoundHandler.handle(sender, name, Arrays.copyOfRange(args,1,args.length));
+            if(object == null) {
+                if(objectNotFoundHandler != null) {
+                    objectNotFoundHandler.objectNotFound(sender, name, Arrays.copyOfRange(args, 1, args.length));
+                }
+            } else if(args.length > 1) {
+                execute(sender, object,Arrays.copyOfRange(args,1,args.length));
+            } else {
+                if(notFoundHandler != null){
+                    notFoundHandler.handle(sender, args[0], Arrays.copyOfRange(args,1,args.length));
                 }
             }
-            return;
-        }
-        if(notFoundHandler != null){
-            notFoundHandler.handle(sender, args.length == 0 ? "" : args[0],
-                    args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length));
+        } else {
+            if(notFoundHandler != null){
+                notFoundHandler.handle(sender, args[0], Arrays.copyOfRange(args,1,args.length));
+            }
         }
     }
 
