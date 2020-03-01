@@ -133,7 +133,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             }
         } else {
             if(notFoundHandler != null){
-                notFoundHandler.handle(sender, null, Arrays.copyOfRange(args,1,args.length));
+                notFoundHandler.handle(sender, null, args);
             }
         }
     }
