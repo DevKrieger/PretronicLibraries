@@ -44,17 +44,17 @@ public interface PluginLoader {
 
     void executeLifeCycleState(String state);
 
-    void executeLifeCycleState(String state, LifecycleState stateEvent);
+    void executeLifeCycleState(String state, LifecycleState<?> stateEvent);
 
 
-    Plugin getInstance();
+    Plugin<?> getInstance();
 
-    Plugin enable();//Complete loading process
+    Plugin<?> enable();//Complete loading process
 
     void disable();
 
 
-    Plugin construct();
+    Plugin<?> construct();
 
     void initialize();
 

@@ -47,24 +47,24 @@ import java.util.function.Supplier;
 public final class DefaultPluginManager implements PluginManager{
 
     private final PrematicLogger logger;
-    private final RuntimeEnvironment environment;
+    private final RuntimeEnvironment<?> environment;
     private final String descriptionName;
 
-    private final Map<String, BiConsumer<Plugin,LifecycleState>> stateListeners;
+    private final Map<String, BiConsumer<Plugin<?>,LifecycleState<?>>> stateListeners;
 
     private final Collection<PluginLoader> loaders;
-    private final Collection<Plugin> plugins;
+    private final Collection<Plugin<?>> plugins;
     private final Collection<ServiceEntry> services;
 
-    public DefaultPluginManager(RuntimeEnvironment environment) {
+    public DefaultPluginManager(RuntimeEnvironment<?> environment) {
         this(PrematicLoggerFactory.getLogger(PluginManager.class),environment);
     }
 
-    public DefaultPluginManager(PrematicLogger logger, RuntimeEnvironment environment){
+    public DefaultPluginManager(PrematicLogger logger, RuntimeEnvironment<?> environment){
         this(logger,environment,"manifest.json");
     }
 
-    public DefaultPluginManager(PrematicLogger logger, RuntimeEnvironment environment,String descriptionName) {
+    public DefaultPluginManager(PrematicLogger logger, RuntimeEnvironment<?> environment,String descriptionName) {
         this.logger = logger;
         this.environment = environment;
         this.descriptionName = descriptionName;
@@ -81,23 +81,23 @@ public final class DefaultPluginManager implements PluginManager{
     }
 
     @Override
-    public Collection<Plugin> getPlugins() {
+    public Collection<Plugin<?>> getPlugins() {
         return plugins;
     }
 
     @Override
-    public Plugin getPlugin(String name) {
+    public Plugin<?> getPlugin(String name) {
         return Iterators.findOne(this.plugins, plugin -> plugin.getName().equalsIgnoreCase(name));
     }
 
     @Override
-    public Plugin getPlugin(UUID id) {
+    public Plugin<?> getPlugin(UUID id) {
         return Iterators.findOne(this.plugins, plugin -> plugin.getDescription().getId().equals(id));
     }
 
     @Override
     public boolean isPluginEnabled(String name) {
-        Plugin plugin = getPlugin(name);
+        Plugin<?> plugin = getPlugin(name);
         return plugin != null && plugin.getLoader().isEnabled();
     }
 
@@ -214,24 +214,24 @@ public final class DefaultPluginManager implements PluginManager{
     }
 
     @Override
-    public void setLifecycleStateListener(String state, BiConsumer<Plugin,LifecycleState> listener) {
+    public void setLifecycleStateListener(String state, BiConsumer<Plugin<?>,LifecycleState<?>> listener) {
         this.stateListeners.put(state,listener);
     }
 
     @Internal
     @Override
-    public void executeLifecycleStateListener(String state, LifecycleState stateEvent, Plugin plugin) {
+    public void executeLifecycleStateListener(String state, LifecycleState<?> stateEvent, Plugin<?> plugin) {
         if(state.equals(LifecycleState.CONSTRUCTION)) this.plugins.add(plugin);
         else if(state.equals(LifecycleState.UNLOAD)) this.plugins.remove(plugin);
 
-        BiConsumer<Plugin,LifecycleState> listener = this.stateListeners.get(state);
+        BiConsumer<Plugin<?>,LifecycleState<?>> listener = this.stateListeners.get(state);
         if(listener != null) listener.accept(plugin,stateEvent);
     }
 
     @Override
-    public Collection<Plugin> enablePlugins(File directory) {
+    public Collection<Plugin<?>> enablePlugins(File directory) {
         List<PluginLoader> loaders = findLoaders(directory);
-        List<Plugin> plugins = new ArrayList<>();
+        List<Plugin<?>> plugins = new ArrayList<>();
 
         loaders.sort((o1, o2) -> {
             for (Dependency dependency : o1.getDescription().getDependencies()) {
