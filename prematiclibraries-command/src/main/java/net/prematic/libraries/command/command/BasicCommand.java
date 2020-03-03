@@ -41,4 +41,10 @@ public abstract class BasicCommand implements Command {
     public CommandConfiguration getConfiguration() {
         return configuration;
     }
+
+
+    @SuppressWarnings("unchecked")
+    protected <C> C as(Object object){
+        return (C) object;
+    }
 }
