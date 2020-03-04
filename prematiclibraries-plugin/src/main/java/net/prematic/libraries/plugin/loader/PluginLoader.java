@@ -40,6 +40,8 @@ public interface PluginLoader {
 
     boolean isInstanceAvailable();
 
+    boolean isMainClassAvailable();
+
     boolean isEnabled();
 
     void executeLifeCycleState(String state);

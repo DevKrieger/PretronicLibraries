@@ -109,6 +109,16 @@ public class DefaultPluginLoader implements PluginLoader {
     }
 
     @Override
+    public boolean isMainClassAvailable() {
+        String className = description.getMain().getMainClass(this.environment.getName());
+        if(className == null) return false;
+        Class<?> clazz = null;
+        try {clazz = classLoader.loadClass(className);
+        } catch (ClassNotFoundException ignored) {}
+        return clazz != null && Plugin.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean isEnabled() {
         return this.enabled;
     }
