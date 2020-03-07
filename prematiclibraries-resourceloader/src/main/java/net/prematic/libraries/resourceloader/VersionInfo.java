@@ -28,18 +28,24 @@ import java.util.Objects;
  */
 public class VersionInfo {
 
-    public static VersionInfo UNKNOWN = new VersionInfo("Unknown",-1);
+    public static VersionInfo UNKNOWN = new VersionInfo("Unknown","Unknown",-1);
 
     private final String name;
-    private int build;
+    private final String qualifier;
+    private final int build;
 
-    public VersionInfo(String name, int build) {
+    public VersionInfo(String name, String qualifier, int build) {
         this.name = name;
+        this.qualifier = qualifier;
         this.build = build;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getQualifier() {
+        return qualifier;
     }
 
     public int getBuild() {
@@ -48,7 +54,11 @@ public class VersionInfo {
 
     @Override
     public String toString() {
-        return name+"#"+build;
+        return "VersionInfo{" +
+                "name='" + name + '\'' +
+                ", qualifier='" + qualifier + '\'' +
+                ", build=" + build +
+                '}';
     }
 
     @Override
@@ -66,8 +76,8 @@ public class VersionInfo {
 
     static VersionInfo parse(String versionString){
         try{
-            String[] versions = versionString.split("#");
-            return new VersionInfo(versions[0],Integer.parseInt(versions[1]));
+            String[] versions = versionString.split(";");
+            return new VersionInfo(versions[0],versions[2],Integer.parseInt(versions[1]));
         }catch (Exception exception){
             throw new IllegalArgumentException(versionString+" is not a valid version string.");
         }

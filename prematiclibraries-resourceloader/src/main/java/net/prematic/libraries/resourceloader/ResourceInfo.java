@@ -28,11 +28,15 @@ import java.io.File;
  */
 public final class ResourceInfo {
 
-    private final String name;
-    private final String downloadUrl;
-    private final String versionUrl;
-    private final File location;
-    private final ResourceAuthenticator authenticator;
+    private String name;
+    private String downloadUrl;
+    private String versionUrl;
+    private File location;
+    private ResourceAuthenticator authenticator;
+
+    public ResourceInfo(String name, File location){
+        this(name,null,null,location);
+    }
 
     public ResourceInfo(String name, String downloadUrl, String versionUrl, File location){
         this(name,downloadUrl,versionUrl,location,null);
@@ -50,19 +54,39 @@ public final class ResourceInfo {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDownloadUrl() {
         return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     public String getVersionUrl() {
         return versionUrl;
     }
 
+    public void setVersionUrl(String versionUrl) {
+        this.versionUrl = versionUrl;
+    }
+
     public File getLocation() {
         return location;
     }
 
+    public void setLocation(File location) {
+        this.location = location;
+    }
+
     public ResourceAuthenticator getAuthenticator() {
         return authenticator;
+    }
+
+    public void setAuthenticator(ResourceAuthenticator authenticator) {
+        this.authenticator = authenticator;
     }
 }
