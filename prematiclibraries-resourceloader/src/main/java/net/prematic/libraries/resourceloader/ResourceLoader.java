@@ -93,7 +93,7 @@ public class ResourceLoader {
                     currentVersion =  VersionInfo.parse(readFirstLine(new FileInputStream(file)));
                 } catch (IOException exception) {
                     exception.printStackTrace();
-                    throw new ResourceException("Could not read version info file",exception);
+                    throw new ResourceException("Could not read version info file ("+exception.getMessage()+")",exception);
                 }
             }else currentVersion = VersionInfo.UNKNOWN;
         }
@@ -124,7 +124,8 @@ public class ResourceLoader {
             if(version != currentVersion) changeCurrentVersion(version);
             return file;
         } catch (IOException exception) {
-            throw new ResourceException("Could not download version "+version.getName()+"#"+version.getBuild(),exception);
+            exception.printStackTrace();
+            throw new ResourceException("Could not download version "+version.getName()+"#"+version.getBuild()+" ("+exception.getMessage()+")",exception);
         }
     }
 
