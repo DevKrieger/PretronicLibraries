@@ -191,8 +191,8 @@ public class ResourceLoader {
         this.currentVersion = version;
         File file = new File(info.getLocation(),VERSION_INFO_FILE_NAME);
         try {
-            BufferedWriter writer = new BufferedWriter( new FileWriter(file));
-            writer.write(version.toString());
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.write(version.toPlainText());
             writer.close();
         } catch (IOException exception) {
             throw new ResourceException("Could not update current version");

@@ -52,6 +52,10 @@ public class VersionInfo {
         return build;
     }
 
+    public String toPlainText(){
+        return name+";"+build+";"+qualifier;
+    }
+
     @Override
     public String toString() {
         return "VersionInfo{" +
@@ -60,7 +64,6 @@ public class VersionInfo {
                 ", build=" + build +
                 '}';
     }
-
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
