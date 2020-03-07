@@ -36,7 +36,7 @@ import java.nio.file.LinkOption;
  */
 public class ResourceLoader {
 
-    private final static String VERSION_INFO_FILE_NAME = "version.txt";
+    private final static String VERSION_INFO_FILE_NAME = "version.dat";
     private final static Method METHOD_ADD_URL;
 
     static {
