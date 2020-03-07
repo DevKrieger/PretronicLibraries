@@ -70,7 +70,8 @@ public class ResourceLoader {
                 latestVersion = VersionInfo.parse(readFirstLine(input));
                 input.close();
             } catch (IOException exception) {
-                throw new IllegalArgumentException("Could not check latest version",exception);
+                exception.printStackTrace();
+                throw new ResourceException("Could not get latest version",exception);
             }
         }
         return latestVersion;
