@@ -71,7 +71,7 @@ public class ResourceLoader {
                 input.close();
             } catch (IOException exception) {
                 exception.printStackTrace();
-                throw new ResourceException("Could not get latest version",exception);
+                throw new ResourceException("Could not get latest version ("+exception.getMessage()+")",exception);
             }
         }
         return latestVersion;
@@ -92,6 +92,7 @@ public class ResourceLoader {
                 try {
                     currentVersion =  VersionInfo.parse(readFirstLine(new FileInputStream(file)));
                 } catch (IOException exception) {
+                    exception.printStackTrace();
                     throw new ResourceException("Could not read version info file",exception);
                 }
             }else currentVersion = VersionInfo.UNKNOWN;
