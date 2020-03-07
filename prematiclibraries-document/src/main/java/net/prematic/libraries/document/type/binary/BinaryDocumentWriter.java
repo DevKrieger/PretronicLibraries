@@ -77,6 +77,9 @@ public class BinaryDocumentWriter implements DocumentWriter {
     @Override
     public void write(File location, Charset charset, Document document, boolean pretty) {
         try {
+            if(!location.exists()){
+                if(!location.createNewFile()) throw new IllegalArgumentException("Could not create "+location.getName());
+            }
             FileOutputStream output = new FileOutputStream(location);
             write(output,Charset.defaultCharset(), document, pretty);
             output.close();
