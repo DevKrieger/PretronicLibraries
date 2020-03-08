@@ -26,6 +26,7 @@ import net.prematic.libraries.message.language.LanguageAble;
 import net.prematic.libraries.message.repository.MessageRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface MessageProvider {
 
@@ -46,13 +47,16 @@ public interface MessageProvider {
 
     Collection<MessagePack> getPacks(Language language);
 
+
+    MessagePack importPack(Document pack);
+
     MessagePack getPack(String name);
 
     void addPack(MessagePack pack);
 
     MessagePack addPack(Document pack);
 
-    void loadPacks(String namespace);
+    List<MessagePack> loadPacks(String namespace);
 
 
     String getMessage(String key);

@@ -19,11 +19,17 @@
 
 package net.prematic.libraries.plugin.loader.classloader;
 
+import net.prematic.libraries.utility.io.IORuntimeException;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 
 public interface PluginClassLoader {
 
@@ -35,6 +41,7 @@ public interface PluginClassLoader {
 
     Class<?> loadClass(String name) throws ClassNotFoundException;
 
+
     URL getResource(String name);
 
     InputStream getResourceAsStream(String name);
@@ -43,4 +50,23 @@ public interface PluginClassLoader {
 
     ClassLoader asJVMLoader();
 
+    default boolean hasResource(String name){
+        return getResourceAsStream(name) != null;
+    }
+
+    default List<String> getResourceFiles(String path){
+        List<String> filenames = new ArrayList<>();
+
+        try (InputStream in = getResourceAsStream(path);BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+            String resource;
+
+            while ((resource = br.readLine()) != null) {
+                filenames.add(resource);
+            }
+        } catch (IOException e) {
+            throw new IORuntimeException(e);
+        }
+
+        return filenames;
+    }
 }
