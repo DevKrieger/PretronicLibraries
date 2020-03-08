@@ -76,6 +76,8 @@ public class SerialisationUtil {
                     try{
                         field.setAccessible(true);
                         if(field.getAnnotation(DocumentIgnored.class) == null){
+                            Object fieldValue = field.get(value);
+                            if(fieldValue == null) continue;
                             DocumentKey name = field.getAnnotation(DocumentKey.class);
                             String endName = name!=null?name.value():field.getName();
 
@@ -93,7 +95,7 @@ public class SerialisationUtil {
                                 endName = keys[keys.length-1];
                             }
 
-                            current.entries().add(serialize(context,endName,field.get(value)));
+                            current.entries().add(serialize(context,endName,fieldValue));
                         }
                     }catch (Exception ignored){}
                 }
