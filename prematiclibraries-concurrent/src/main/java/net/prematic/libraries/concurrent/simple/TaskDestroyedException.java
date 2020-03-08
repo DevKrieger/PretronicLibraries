@@ -27,7 +27,7 @@ import net.prematic.libraries.concurrent.TaskState;
  */
 public class TaskDestroyedException extends RuntimeException{
 
-    public TaskDestroyedException() {
+    protected TaskDestroyedException() {
     }
 
     public TaskDestroyedException(String message) {

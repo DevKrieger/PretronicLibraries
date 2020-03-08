@@ -32,7 +32,6 @@ public class EventPriority {
 
     public final static byte NORMAL = 50;
 
-
     public final static byte LOW = 0;
 
     public final static byte EXTREM_LOW = -127;

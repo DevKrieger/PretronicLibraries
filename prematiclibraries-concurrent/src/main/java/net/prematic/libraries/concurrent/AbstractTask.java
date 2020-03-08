@@ -20,6 +20,7 @@
 package net.prematic.libraries.concurrent;
 
 import net.prematic.libraries.concurrent.simple.TaskDestroyedException;
+import net.prematic.libraries.utility.Validate;
 import net.prematic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.Collection;
@@ -44,8 +45,8 @@ public abstract class AbstractTask implements Task{
 
     protected Collection<Consumer<TaskFuture>> listeners;
 
-    public AbstractTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async) {
-        if(owner == null || scheduler == null) throw new NullPointerException("Owner or scheduler null.");
+    protected AbstractTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async) {
+        Validate.notNull(owner,scheduler);
         this.scheduler = scheduler;
         this.owner = owner;
         this.id = id;
@@ -140,46 +141,60 @@ public abstract class AbstractTask implements Task{
 
         invokeListeners(null);
 
+        if(delayTask()) return;
+
+        while(state == TaskState.RUNNING && !Thread.interrupted()){
+            execute();
+            if(repeatTask()) return;
+        }
+        if(state != TaskState.STOPPED) stopInternal(null);
+    }
+
+    private void execute() {
+        try{
+            if(this.async) call();
+            else{
+                synchronized(this) {
+                    call();
+                }
+            }
+            state = TaskState.COMPLETED;
+            invokeListeners(null);
+        }catch (Throwable thrown){
+            state = TaskState.FAILED;
+            invokeListeners(thrown);
+        }
+    }
+
+    private boolean delayTask() {
         if(this.delay > 0){
             try {
                 Thread.sleep(this.delay);
             }catch(InterruptedException exception) {
                 Thread.currentThread().interrupt();
-                if(state == TaskState.STOPPED) return;
+                if(state == TaskState.STOPPED) return true;
                 state = TaskState.INTERRUPTED;
                 stopInternal(exception);
-                return;
+                return true;
             }
         }
+        return false;
+    }
 
-        while(state == TaskState.RUNNING && !Thread.interrupted()){
-            try{
-                if(this.async) call();
-                else{
-                    synchronized(this) {
-                        call();
-                    }
-                }
-                state = TaskState.COMPLETED;
-                invokeListeners(null);
-            }catch (Throwable thrown){
-               state = TaskState.FAILED;
-               invokeListeners(thrown);
+    private boolean repeatTask() {
+        if(this.period > 0L){
+            state = TaskState.RUNNING;
+            try {
+                Thread.sleep(this.period);
+                if(state != TaskState.RUNNING) return true;
+            }catch(InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                state = TaskState.INTERRUPTED;
+                stopInternal(exception);
+                return true;
             }
-            if(this.period > 0L){
-                state = TaskState.RUNNING;
-                try {
-                    Thread.sleep(this.period);
-                    if(state != TaskState.RUNNING) return;
-                }catch(InterruptedException exception) {
-                    Thread.currentThread().interrupt();
-                    state = TaskState.INTERRUPTED;
-                    stopInternal(exception);
-                    return;
-                }
-            }else stopInternal(null);
-        }
-        if(state != TaskState.STOPPED) stopInternal(null);
+        }else stopInternal(null);
+        return false;
     }
 
     @Override
@@ -210,7 +225,7 @@ public abstract class AbstractTask implements Task{
         runningThread = null;
     }
 
-    public class DefaultTaskFuture implements TaskFuture {
+    private static class DefaultTaskFuture implements TaskFuture {
 
         private final TaskState state;
         private final Throwable thrown;

@@ -45,8 +45,12 @@ public class ArrayCache<O> implements Cache<O>{
     private Consumer<O> insertListener;
     private Predicate<O> removeListener;
     private CacheTask task;
-    private long refreshTime, expireTime, expireTimeAfterAccess;
-    private int maxSize, size, buffer;
+    private long refreshTime;
+    private long expireTime;
+    private long expireTimeAfterAccess;
+    private int maxSize;
+    private int size;
+    private int buffer;
 
     public ArrayCache() {
         this(DEFAULT_MAX_SIZE);
@@ -388,7 +392,8 @@ public class ArrayCache<O> implements Cache<O>{
 
     private static class CacheEntry {
 
-        private long entered, lastUsed;
+        private long entered;
+        private long lastUsed;
         private Object value;
 
         public CacheEntry(Object value) {

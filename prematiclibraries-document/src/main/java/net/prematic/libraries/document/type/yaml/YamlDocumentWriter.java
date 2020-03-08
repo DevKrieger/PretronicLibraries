@@ -72,13 +72,11 @@ public class YamlDocumentWriter implements DocumentWriter {
                 else writeNewLine(output, indent);
                 writeKey(output,entry.getKey());
                 writeArrayValue(output,entry.toArray(),indent+1);
-            }else if(entry.isObject()){
-                if(!entry.toDocument().isEmpty()){
-                    if(first) first = false;
-                    else writeNewLine(output, indent);
-                    writeKey(output,entry.getKey());
-                    writeObjectValue(output,entry.toDocument(),indent+1,false);
-                }
+            }else if(entry.isObject() && !entry.toDocument().isEmpty()){
+                if(first) first = false;
+                else writeNewLine(output, indent);
+                writeKey(output,entry.getKey());
+                writeObjectValue(output,entry.toDocument(),indent+1,false);
             }
         }
     }
@@ -140,13 +138,15 @@ public class YamlDocumentWriter implements DocumentWriter {
     private void writePrimitiveData(Writer output, PrimitiveEntry entry) throws IOException {
         if(!entry.isNull()){
             String data = entry.getAsString();
-            if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character){
-                if(!(data.equalsIgnoreCase("false") || data.equalsIgnoreCase("true") || GeneralUtil.isNumber(data))){
-                    output.write('\'');
-                    output.write(entry.getAsString());
-                    output.write('\'');
-                    return;
-                }
+            if(entry.getAsObject() instanceof String
+                    || entry.getAsObject() instanceof Character
+                    && !(data.equalsIgnoreCase("false")
+                    || data.equalsIgnoreCase("true")
+                    || GeneralUtil.isNumber(data))){
+                output.write('\'');
+                output.write(entry.getAsString());
+                output.write('\'');
+                return;
             }
             output.write(data);
         }else output.write("null");

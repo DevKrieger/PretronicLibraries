@@ -91,13 +91,15 @@ public class Pom {
         return dependencies;
     }
 
-    private String replaceProperties(String content, Map<String, String> properties){
-        if(content != null){
+    private String replaceProperties(String input, Map<String, String> properties){
+        if(input != null){
+            String output = input;
             for (Map.Entry<String, String> entry : properties.entrySet()) {
-                content = content.replace(entry.getKey(),entry.getValue());
+                output = output.replace(entry.getKey(),entry.getValue());
             }
+            return output;
         }
-        return content;
+        return input;
     }
 
     public Set<String> findRepositories(){

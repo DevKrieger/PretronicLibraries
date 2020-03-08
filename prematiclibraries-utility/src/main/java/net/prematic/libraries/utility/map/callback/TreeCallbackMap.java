@@ -71,7 +71,7 @@ public class TreeCallbackMap<K,V> extends TreeMap<K,V> implements CallbackMap<K,
     @Override
     public V putIfAbsent(K key, V value) {
         V result = super.putIfAbsent(key, value);
-        if(result != value) onPut(key,value);
+        if(result != null && !result.equals(value)) onPut(key,value);
         return result;
     }
 

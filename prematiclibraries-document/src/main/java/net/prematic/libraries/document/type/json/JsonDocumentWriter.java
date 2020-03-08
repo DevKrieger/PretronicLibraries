@@ -150,7 +150,8 @@ public class JsonDocumentWriter implements DocumentWriter {
         return indent;
     }
 
-    private int writeAttributeData(Writer output, DocumentAttributes attributes, int indent) throws IOException {
+    private int writeAttributeData(Writer output, DocumentAttributes attributes, int indent0) throws IOException {
+        int indent = indent0;
         writeKey(output,"_attributes",isPretty(indent));
         output.write("{");
         writeNewLine(output, ++indent);

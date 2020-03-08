@@ -352,7 +352,7 @@ public class EmptyDocument implements Document {
 
     @Override
     public void setKey(String key) {
-
+        //Unused
     }
 
     @Override

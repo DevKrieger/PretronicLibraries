@@ -81,8 +81,8 @@ public class ConcurrentHashSynchronizableMap<K,V> extends ConcurrentHashMap<K,V>
     @Override
     public void onDelete(K identifier, Document data) {
         V result = remove(identifier);
-        if(result != null){
-            if(updateListener != null) deleteListener.accept(result,data);
+        if(result != null && updateListener != null){
+            deleteListener.accept(result,data);
         }
     }
 

@@ -1,5 +1,7 @@
 package net.prematic.libraries.utility.io;
 
+import net.prematic.libraries.utility.Validate;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -134,7 +136,7 @@ public final class FileUtil {
                 }
             }
         }catch (IOException exception){
-            throw new RuntimeException(exception);
+            throw new IORuntimeException(exception);
         }
     }
 
@@ -172,7 +174,7 @@ public final class FileUtil {
      * @param destinationFile The destination file
      */
     public static void copyFile(File sourceFile,File destinationFile){
-        if(sourceFile == null || destinationFile == null) throw new NullPointerException("source file or destination file is null.");
+        Validate.notNull(sourceFile,destinationFile,"source file or destination file is null.");
 
         if(!sourceFile.exists()) throw new IORuntimeException("Source file does not exist.");
         else if(!sourceFile.isFile()) throw new IORuntimeException("Source file is not a file.");
@@ -194,7 +196,7 @@ public final class FileUtil {
      * @param destinationDirectory The destination directory
      */
     public static void copyFileToDirectory(File sourceFile, File destinationDirectory) {
-        if(destinationDirectory == null || sourceFile == null) throw new NullPointerException("source file or destination directory is null.");
+        Validate.notNull(sourceFile,destinationDirectory,"source file or destination directory is null.");
 
         if(!sourceFile.exists()) throw new IORuntimeException("Source file does not exist.");
         else if(!sourceFile.isFile()) throw new IORuntimeException("Source file is not a file.");
@@ -227,7 +229,7 @@ public final class FileUtil {
      * @param destinationDirectory The destination directory.
      */
     public static void copyFilesFromDirectoryToDirectory(File sourceDirectory, File destinationDirectory) {
-        if(destinationDirectory == null || sourceDirectory == null) throw new NullPointerException("source directory or destination directory is null.");
+        Validate.notNull(sourceDirectory,destinationDirectory,"source directory or destination directory is null.");
 
         if(!sourceDirectory.exists()) throw new IORuntimeException("Source directory does not exist.");
         else if(!sourceDirectory.isDirectory()) throw new IORuntimeException("Source directory is not a directory.");

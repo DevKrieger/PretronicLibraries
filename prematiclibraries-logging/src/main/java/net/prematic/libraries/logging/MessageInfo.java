@@ -25,7 +25,8 @@ package net.prematic.libraries.logging;
 public class MessageInfo {
 
     private final int id;
-    private final String description, helpUrl;
+    private final String description;
+    private final String helpUrl;
     private final LoggableService service;
 
     public MessageInfo(int id) {

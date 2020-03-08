@@ -35,7 +35,8 @@ public class StringParser {
     private static final char[] EMPTY_LINE = new char[]{' ',' '};
 
     private final char[][] lines;
-    private int lineIndex, charIndex;
+    private int lineIndex;
+    private int charIndex;
 
     //Constructor
 
@@ -454,7 +455,8 @@ public class StringParser {
         return copyOf(fromLine, fromIndex,this.lineIndex,this.charIndex);
     }
 
-    public StringParser copyOf(int fromLine, int fromIndex,int toLine, int toIndex){
+    public StringParser copyOf(int fromLine0, int fromIndex,int toLine, int toIndex){
+        int fromLine = fromLine0;
         if(fromIndex > this.lines[fromLine].length) fromLine++;
 
         char[][] lines = Arrays.copyOfRange(this.lines,fromLine,toLine+1);

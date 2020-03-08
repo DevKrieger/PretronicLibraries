@@ -46,8 +46,8 @@ public interface DocumentWriter {
 
     default void write(File location, Document document, boolean pretty){
         try {
-            if(!location.exists()){
-                if(!location.createNewFile()) throw new IllegalArgumentException("Could not create "+location.getName());
+            if(!location.exists() && !location.createNewFile()){
+                throw new IllegalArgumentException("Could not create "+location.getName());
             }
             write(new FileOutputStream(location),document,pretty);
         } catch (IOException exception) {

@@ -23,6 +23,7 @@ import net.prematic.libraries.logging.level.DebugLevel;
 import net.prematic.libraries.plugin.loader.PluginLoader;
 import net.prematic.libraries.plugin.manager.PluginManager;
 import net.prematic.libraries.utility.Iterators;
+import net.prematic.libraries.utility.Validate;
 import net.prematic.libraries.utility.io.FileUtil;
 
 import java.io.File;
@@ -36,14 +37,16 @@ public class URLPluginClassLoader extends URLClassLoader implements PluginClassL
     private final PluginManager pluginManager;
     private final Collection<Class<?>> loadedClasses;
 
-    public URLPluginClassLoader( PluginManager pluginManager,URL[] urls, ClassLoader parent) {
+    public URLPluginClassLoader(PluginManager pluginManager,URL[] urls, ClassLoader parent) {
         super(urls, parent);
+        Validate.notNull(pluginManager);
         this.pluginManager = pluginManager;
         this.loadedClasses = ConcurrentHashMap.newKeySet();
     }
 
-    public URLPluginClassLoader( PluginManager pluginManager,URL[] urls) {
+    public URLPluginClassLoader(PluginManager pluginManager,URL[] urls) {
         super(urls);
+        Validate.notNull(pluginManager);
         this.pluginManager = pluginManager;
         this.loadedClasses = ConcurrentHashMap.newKeySet();
     }
@@ -71,7 +74,7 @@ public class URLPluginClassLoader extends URLClassLoader implements PluginClassL
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        Class result = getLoadedClass(name);
+        Class<?> result = getLoadedClass(name);
         if(result == null){
             if(this.pluginManager != null){
                 for(PluginLoader loader : this.pluginManager.getLoaders()){
@@ -82,7 +85,9 @@ public class URLPluginClassLoader extends URLClassLoader implements PluginClassL
             if(result == null){
                 result = super.loadClass(name,resolve);
                 this.loadedClasses.add(result);
-                if(this.pluginManager.getLogger().canDebug(DebugLevel.HEIGHT)) this.pluginManager.getLogger().debug(DebugLevel.HEIGHT,"Loaded class {}",name);
+                if(this.pluginManager.getLogger().canDebug(DebugLevel.HEIGHT)){
+                    this.pluginManager.getLogger().debug(DebugLevel.HEIGHT,"Loaded class {}",name);
+                }
             }
         }
         if(result == null) throw new ClassNotFoundException(name);

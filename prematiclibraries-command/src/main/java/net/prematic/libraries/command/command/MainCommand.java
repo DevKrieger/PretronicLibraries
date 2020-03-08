@@ -60,8 +60,8 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
     }
 
     @Override
-    public void dispatchCommand(CommandSender sender, String name) {
-        name = name.trim();
+    public void dispatchCommand(CommandSender sender, String name0) {
+        String name = name0.trim();
         int index = name.indexOf(" ");
         String[] args = index==-1?new String[0]:name.substring(index+1).split(" ");
         execute(sender,args);

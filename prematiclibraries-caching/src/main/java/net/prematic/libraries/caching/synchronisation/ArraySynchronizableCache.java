@@ -39,8 +39,7 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     private BiConsumer<O, Document> updateListener;
     private BiFunction<I, Document, O> createHandler;
 
-    public ArraySynchronizableCache() {
-    }
+    public ArraySynchronizableCache() {}
 
     public ArraySynchronizableCache(int maxSize) {
         super(maxSize);
@@ -71,8 +70,8 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     @Override
     public void onDelete(I identifier, Document data) {
         O result = remove(identifierQuery,identifier);
-        if(result != null){
-            if(updateListener != null) deleteListener.accept(result,data);
+        if(result != null && updateListener != null){
+            deleteListener.accept(result,data);
         }
     }
 

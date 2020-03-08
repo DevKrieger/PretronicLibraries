@@ -69,7 +69,7 @@ public class ConcurrentCallbackMap<K,V> extends ConcurrentHashMap<K,V> implement
     @Override
     public V putIfAbsent(K key, V value) {
         V result = super.putIfAbsent(key, value);
-        if(result != value) onPut(key,value);
+        if(result != null && !result.equals(value)) onPut(key,value);
         return result;
     }
 

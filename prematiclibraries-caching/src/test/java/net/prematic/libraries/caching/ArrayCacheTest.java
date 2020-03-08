@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ArrayCacheTest {
 
     @Test
-    void size() {
+    protected void size() {
         int expected = 3;
 
         Cache<TestObject> cache = new ArrayCache<>();
@@ -40,7 +40,7 @@ class ArrayCacheTest {
     }
 
     @Test
-    void clear() {
+    protected void clear() {
         int expected = 0;
 
         Cache<TestObject> cache = new ArrayCache<>();
@@ -55,7 +55,7 @@ class ArrayCacheTest {
     }
 
     @Test
-    void getWithQuery() {
+    protected void getWithQuery() {
         TestObject expected = new TestObject("Test",10);
 
         Cache<TestObject> cache = new ArrayCache<>();
@@ -72,7 +72,7 @@ class ArrayCacheTest {
     }
 
     @Test
-    void getWithPredicate() {
+    protected void getWithPredicate() {
         TestObject expected = new TestObject("Test",10);
 
         Cache<TestObject> cache = new ArrayCache<>();
@@ -87,7 +87,7 @@ class ArrayCacheTest {
     }
 
     @Test
-    void setMaxSize() {
+    protected void setMaxSize() {
         int expected = 4;
 
         Cache<TestObject> cache = new ArrayCache<>();
@@ -105,7 +105,7 @@ class ArrayCacheTest {
     }
 
 
-    private class TestObject {
+    private static class TestObject {
 
         private String name;
         private int age;

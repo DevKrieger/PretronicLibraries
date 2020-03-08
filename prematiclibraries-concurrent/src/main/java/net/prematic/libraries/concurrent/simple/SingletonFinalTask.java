@@ -37,7 +37,7 @@ public class SingletonFinalTask extends AbstractTask {
 
     private final Runnable runnable;
 
-    public SingletonFinalTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async, Runnable runnable) {
+    protected SingletonFinalTask(TaskScheduler scheduler, ObjectOwner owner, int id, String name, long delay, long period, boolean async, Runnable runnable) {
         super(scheduler, owner, id, name, delay, period, async);
         this.runnable = runnable;
     }

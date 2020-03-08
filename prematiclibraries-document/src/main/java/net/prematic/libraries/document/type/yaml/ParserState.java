@@ -312,11 +312,12 @@ public interface ParserState {
 
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
-            if(parser.isLineFinished()){
-            }else if(!isSpaceChar(current)){
-                yaml.mark(parser);
-                yaml.setState(DOCUMENT_ARRAY_ADVANCED_KEY);
-            }else yaml.setTempIndent(yaml.getTempIndent()+1);
+            if(!parser.isLineFinished()){
+                if(!isSpaceChar(current)){
+                    yaml.mark(parser);
+                    yaml.setState(DOCUMENT_ARRAY_ADVANCED_KEY);
+                }else yaml.setTempIndent(yaml.getTempIndent()+1);
+            }
         }
     }
 

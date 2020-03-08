@@ -34,7 +34,8 @@ public class FileHandler implements LogHandler {
 
     public static SimpleDateFormat LOG_FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
-    protected final File location, latest;
+    protected final File location;
+    protected final File latest;
     protected final LogLevel level;
     protected final String fileEnding;
     protected FileWriter fileWriter;

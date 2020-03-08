@@ -23,4 +23,9 @@ public interface CopyAdapter<T> {
 
     T copy(T object);
 
+    @SuppressWarnings("unchecked")
+    default T invoke(Object object){
+        return copy((T) object);
+    }
+
 }

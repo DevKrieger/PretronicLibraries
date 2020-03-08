@@ -60,8 +60,8 @@ public abstract class AbstractSynchronizableMap<K,V> implements SynchronizableMa
     @Override
     public void onDelete(K identifier, Document data) {
         V result = remove(identifier);
-        if(result != null){
-            if(updateListener != null) deleteListener.accept(result,data);
+        if(result != null && updateListener != null){
+            deleteListener.accept(result,data);
         }
     }
 

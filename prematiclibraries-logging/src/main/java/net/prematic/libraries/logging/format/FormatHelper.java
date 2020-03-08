@@ -94,40 +94,52 @@ public final class FormatHelper {
             used.add(throwable);
             if(previousTrace != null) builder.append(prefix);
             builder.append(caption);
-            if(throwable instanceof InfoAbleException && ((InfoAbleException) throwable).getInfo() != null){
-                boolean has = false;
-                if(((InfoAbleException) throwable).getInfo().getService() != null){
-                    has = true;
-                    builder.append('(').append(((InfoAbleException) throwable).getInfo().getService().getName());
-                }
-                if(((InfoAbleException) throwable).getInfo().getId() > 0){
-                    builder.append(has?'/':'(');
-                    builder.append(((InfoAbleException) throwable).getInfo().getId());
-                    builder.append(") ");
-                }else if(has) builder.append(") ");
-            }
+
+            buildServiceInfo(builder, throwable);
+
             builder.append(throwable).append(lineSeparator);
 
-            StackTraceElement[] trace = throwable.getStackTrace();
-            
-            int traceLength = trace.length-1;
-            int previousLength = previousTrace!=null?previousTrace.length-1:-1;
+            buildStackTrace(builder, throwable, previousTrace, prefix, lineSeparator);
 
-            while (previousLength >=0 && traceLength >= 0 && trace[traceLength].equals(previousTrace[previousLength])) {
-                traceLength--; previousLength--;
+            for(Throwable subThrowable : throwable.getSuppressed()){
+                buildSubStackTrace(builder, subThrowable,throwable.getStackTrace(),SUPPRESSED_CAPTION, prefix,lineSeparator, used);
             }
-
-            for(int i = 0;i<=traceLength;i++) builder.append(prefix).append("\tat ").append(trace[i]).append(lineSeparator);
-
-            if(previousTrace != null){
-                int more = trace.length-1 - traceLength;
-                if(more > 0)  builder.append(prefix).append("\t... ").append(more).append(" more").append(lineSeparator);
-            }
-
-            for(Throwable subThrowable : throwable.getSuppressed()) buildSubStackTrace(builder, subThrowable,throwable.getStackTrace(),SUPPRESSED_CAPTION, prefix,lineSeparator, used);
 
             Throwable cause = throwable.getCause();
             if(cause != null) buildSubStackTrace(builder, cause, throwable.getStackTrace(),CAUSE_CAPTION, prefix,lineSeparator, used);
+        }
+    }
+
+    private static void buildStackTrace(StringBuilder builder, Throwable throwable, StackTraceElement[] previousTrace, String prefix, String lineSeparator) {
+        StackTraceElement[] trace = throwable.getStackTrace();
+
+        int traceLength = trace.length-1;
+        int previousLength = previousTrace!=null?previousTrace.length-1:-1;
+
+        while (previousLength >=0 && traceLength >= 0 && trace[traceLength].equals(previousTrace[previousLength])) {
+            traceLength--; previousLength--;
+        }
+
+        for(int i = 0;i<=traceLength;i++) builder.append(prefix).append("\tat ").append(trace[i]).append(lineSeparator);
+
+        if(previousTrace != null){
+            int more = trace.length-1 - traceLength;
+            if(more > 0)  builder.append(prefix).append("\t... ").append(more).append(" more").append(lineSeparator);
+        }
+    }
+
+    private static void buildServiceInfo(StringBuilder builder, Throwable throwable) {
+        if(throwable instanceof InfoAbleException && ((InfoAbleException) throwable).getInfo() != null){
+            boolean has = false;
+            if(((InfoAbleException) throwable).getInfo().getService() != null){
+                has = true;
+                builder.append('(').append(((InfoAbleException) throwable).getInfo().getService().getName());
+            }
+            if(((InfoAbleException) throwable).getInfo().getId() > 0){
+                builder.append(has?'/':'(');
+                builder.append(((InfoAbleException) throwable).getInfo().getId());
+                builder.append(") ");
+            }else if(has) builder.append(") ");
         }
     }
 }

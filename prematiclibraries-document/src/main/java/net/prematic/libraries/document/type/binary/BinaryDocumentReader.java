@@ -118,11 +118,11 @@ public class BinaryDocumentReader implements DocumentReader {
 
     private Document readObject(DataInputStream stream, Charset charset, String key) throws IOException{
         Document document = DocumentRegistry.getFactory().newDocument(key);
-        if(stream.available() > 0){
-            if(stream.readByte() == TYPE_ATTRIBUTE_IN){
-                document.setAttributes(readAttributes(stream,charset));
-            }
+
+        if(stream.available() > 0 && stream.readByte() == TYPE_ATTRIBUTE_IN){
+            document.setAttributes(readAttributes(stream,charset));
         }
+
         while(stream.available() > 0){
             DocumentEntry entry = next(stream,charset,true);
             if(entry == null) break;

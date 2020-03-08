@@ -53,8 +53,8 @@ public class DefaultCommandManager implements CommandManager {
     }
 
     @Override
-    public void dispatchCommand(CommandSender sender, String name) {
-        name = name.trim();
+    public void dispatchCommand(CommandSender sender, String name0) {
+        String name = name0.trim();
         int index = name.indexOf(" ");
         String command;
         if(index == -1) command = name;

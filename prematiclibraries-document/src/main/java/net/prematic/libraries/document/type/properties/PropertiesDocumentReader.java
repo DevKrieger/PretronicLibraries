@@ -61,12 +61,12 @@ public class PropertiesDocumentReader implements DocumentReader {
         String[] parts = key.split("\\.");
         for (int i = 0; i < parts.length-1; i++) {
             String part = parts[i];
-            if(part.equals("_attributes")){
+            if("_attributes".equals(part)){
                 current = current.toDocument().getAttributes();
                 break;
             }else{
                 DocumentEntry temp = current.getEntry(part);
-                if(entryKey.equals("_value")){
+                if("_value".equals(entryKey)){
                     PrimitiveEntry entry = Document.factory().newPrimitiveEntry(part,null);
                     if(temp != null){
                         current.removeEntry(temp);

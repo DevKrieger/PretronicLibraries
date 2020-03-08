@@ -22,7 +22,8 @@ package net.prematic.libraries.utility.parser;
 public class ParserException extends RuntimeException {
 
     private final StringParser parser;
-    private final int line, index;
+    private final int line;
+    private final int index;
 
     public ParserException(StringParser parser, int line, int index, String message) {
         super(message);

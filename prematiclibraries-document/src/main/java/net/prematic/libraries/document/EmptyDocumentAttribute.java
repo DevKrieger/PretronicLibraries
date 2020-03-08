@@ -142,7 +142,7 @@ public class EmptyDocumentAttribute implements DocumentAttributes {
 
     @Override
     public void setEntries(List<DocumentEntry> entries) {
-
+        //Unused
     }
 
     @Override

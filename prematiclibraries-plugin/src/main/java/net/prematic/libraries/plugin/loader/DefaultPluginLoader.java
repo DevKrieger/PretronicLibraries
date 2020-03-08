@@ -36,8 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.*;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultPluginLoader implements PluginLoader {
 
@@ -51,7 +49,6 @@ public class DefaultPluginLoader implements PluginLoader {
     private final PluginDescription description;
     private final boolean lifecycleLogging;
 
-    private final Collection<Class<?>> loadedClasses;
     private final LifecycleState defaultState;
 
     private Plugin instance;
@@ -77,9 +74,8 @@ public class DefaultPluginLoader implements PluginLoader {
         this.location = location;
         this.lifecycleLogging = lifecycleLogging;
 
-        this.description = description!=null?description:loadDescription();;
+        this.description = description!=null?description:loadDescription();
 
-        this.loadedClasses = ConcurrentHashMap.newKeySet();
         this.defaultState = new LifecycleState<>(this.description,this,this.environment);
     }
 
@@ -178,7 +174,9 @@ public class DefaultPluginLoader implements PluginLoader {
             Class<? extends Plugin> mainClass = loadMainClass();
             this.instance = mainClass.getDeclaredConstructor().newInstance();
             executeLifeCycleState(LifecycleState.CONSTRUCTION);
-            if(lifecycleLogging) if(pluginManager.getLogger().isDebugging()) pluginManager.getLogger().debug("Created instance for {} v{}",description.getName(),description.getVersion().getName());
+            if(lifecycleLogging && pluginManager.getLogger().isDebugging()){
+                pluginManager.getLogger().debug("Created instance for {} v{}",description.getName(),description.getVersion().getName());
+            }
             return this.instance;
         }catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException exception){
             throw new PluginLoadException("Could not create plugin instance for plugin "+description.getName()+" ("+exception.getMessage()+")",exception);

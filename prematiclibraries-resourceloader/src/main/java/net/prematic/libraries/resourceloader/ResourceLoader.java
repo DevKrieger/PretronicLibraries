@@ -121,7 +121,7 @@ public class ResourceLoader {
             if(file.exists()) return file;
             InputStream input = openHttpConnection(prepareUrl(info.getDownloadUrl(),version));
             Files.copy(input,file.toPath());
-            if(version != currentVersion) changeCurrentVersion(version);
+            if(!version.equals(currentVersion)) changeCurrentVersion(version);
             return file;
         } catch (IOException exception) {
             exception.printStackTrace();

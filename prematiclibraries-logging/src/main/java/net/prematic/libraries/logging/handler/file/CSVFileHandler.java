@@ -63,33 +63,46 @@ public class CSVFileHandler extends FileHandler {
     public void handleLog(LogRecord record, String formattedMessage) {
         try{
             if(level != null && !level.canLog(level)) return;
-            StringBuilder csvFormatter = new StringBuilder()
-                    .append(record.getTimeStamp())
-                    .append(separator)
-                    .append(record.getLogLevel()!=null?record.getLogLevel().getName():"null")
-                    .append(separator)
-                    .append(record.getDebugLevel()!=null?record.getDebugLevel().getName():"null")
-                    .append(separator)
-                    .append(record.getThread()!=null?record.getThread().getId():"-1")
-                    .append(separator)
-                    .append(record.getThread()!=null?record.getThread().getName():"Unknown")
-                    .append(separator);
+            StringBuilder csvFormatter = new StringBuilder();
 
-            if(record.getInfo() != null){
-                csvFormatter.append(record.getInfo().getId()).append(separator)
-                        .append(record.getInfo().getService()!=null?record.getInfo().getService().getName():"Unknown").append(separator);
-            }else csvFormatter.append("null").append(separator).append("null").append(separator);
+            appendBaseInformation(record, csvFormatter);
+            appendMessageInformation(record, csvFormatter);
+            csvFormatter.append(getMessage(record)).append(separator);
 
-            csvFormatter.append(record.getMessage()!=null?record.getMessage():(record.getThrown()!=null?record.getThrown().getMessage():"null"))
-                    .append(separator);
-
-            if(record.getThrown() != null) FormatHelper.buildStackTrace(csvFormatter,record.getThread(),record.getThrown(),"","</>");
+            if(record.getThrown() != null){
+                FormatHelper.buildStackTrace(csvFormatter,record.getThread(),record.getThrown(),"","</>");
+            }
 
             csvFormatter.append(System.lineSeparator());
-
             write(csvFormatter.toString());
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void appendBaseInformation(LogRecord record, StringBuilder csvFormatter) {
+        csvFormatter.append(record.getTimeStamp())
+                .append(separator)
+                .append(record.getLogLevel()!=null?record.getLogLevel().getName():"null")
+                .append(separator)
+                .append(record.getDebugLevel()!=null?record.getDebugLevel().getName():"null")
+                .append(separator)
+                .append(record.getThread()!=null?record.getThread().getId():"-1")
+                .append(separator)
+                .append(record.getThread()!=null?record.getThread().getName():"Unknown")
+                .append(separator);
+    }
+
+    private void appendMessageInformation(LogRecord record, StringBuilder csvFormatter) {
+        if(record.getInfo() != null){
+            csvFormatter.append(record.getInfo().getId()).append(separator)
+                    .append(record.getInfo().getService()!=null?record.getInfo().getService().getName():"Unknown").append(separator);
+        }else{
+            csvFormatter.append("null").append(separator).append("null").append(separator);
+        }
+    }
+
+    private String getMessage(LogRecord record) {
+        return record.getMessage()!=null?record.getMessage():(record.getThrown()!=null?record.getThrown().getMessage():"null");
     }
 }

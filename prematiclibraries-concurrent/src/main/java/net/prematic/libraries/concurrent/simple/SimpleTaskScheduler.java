@@ -136,7 +136,8 @@ public class SimpleTaskScheduler implements TaskScheduler {
         private final ObjectOwner owner;
 
         private String name;
-        private long interval, delay;
+        private long interval;
+        private long delay;
         private boolean async;
 
         SimpleTaskBuilder(int id, ObjectOwner owner) {

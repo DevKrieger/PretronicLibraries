@@ -1,10 +1,12 @@
 package net.prematic.libraries.jarsignature;
 
 import net.prematic.libraries.jarsignature.certificate.Certificate;
+import net.prematic.libraries.utility.exception.OperationFailedException;
 import net.prematic.libraries.utility.io.archive.ZipArchive;
 
 import java.io.File;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
@@ -76,8 +78,8 @@ public class JarSigner {
             archive.compress();
 
             return signature;
-        }catch (Exception exception){
-            throw new RuntimeException(exception);
+        }catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException exception){
+            throw new OperationFailedException(exception);
         }
     }
 

@@ -73,7 +73,7 @@ public class LinkedHashCallbackMap<K,V> extends LinkedHashMap<K,V> implements Ca
     @Override
     public V putIfAbsent(K key, V value) {
         V result = super.putIfAbsent(key, value);
-        if(result != value) onPut(key,value);
+        if(result != null && !result.equals(value)) onPut(key,value);
         return result;
     }
 

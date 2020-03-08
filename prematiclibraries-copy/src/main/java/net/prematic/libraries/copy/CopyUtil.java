@@ -73,17 +73,18 @@ public class CopyUtil {
         return copy(object,Arrays.asList(options));
     }
 
+    @SuppressWarnings("unchecked")
     public static <O> O copy(O object, Collection<CopyOption> options){
         if(object == null) return null;
         Class<?> clazz = object.getClass();
         if(Primitives.isPrimitive(clazz)) return object;
         else if(object instanceof DeepCopyable){
-            return (O) ((DeepCopyable) object).copyDeep();
+            return (O) ((DeepCopyable<?>) object).copyDeep();
         }else if(object instanceof Copyable){
-            return (O) ((Copyable) object).copy();
+            return (O) ((Copyable<?>) object).copy();
         }
-        CopyAdapter adapter = findAdapter(new TypeReference<>(clazz));
-        if(adapter != null) return (O) adapter.copy(object);
+        CopyAdapter<?> adapter = findAdapter(new TypeReference<>(clazz));
+        if(adapter != null) return (O) adapter.invoke(object);
 
         try{
             if(clazz.isArray()){
@@ -94,37 +95,43 @@ public class CopyUtil {
             }
             Object copy = UnsafeInstanceCreator.newInstance(clazz);
 
-            for(Field field : clazz.getDeclaredFields()){
-                if(!Modifier.isStatic(field.getModifiers())){
-                    field.setAccessible(true);
-                    Object value = field.get(object);
-                    if(value == null) return null;
-                    if(options.contains(CopyOption.DEEP_NOTHING) || Primitives.isPrimitive(field.getType())){
-                        field.set(copy,value);
-                    }else{
-                        if(Primitives.isPrimitive(value.getClass())){
-                            field.set(copy,value);
-                        }else if(field.getAnnotation(ObjectDeepCopyable.class) != null){
-                            field.set(copy,copy(value,options));
-                        }else if(field.getAnnotation(ObjectCopyable.class) != null){
-                            field.set(copy,copy(value));
-                        }else if(field.getAnnotation(CopyNull.class) != null){
-                            field.set(copy,null);
-                        }else if(options.contains(CopyOption.DEEP_ALL)){
-                            if(field.getAnnotation(ForbidCopy.class) != null && !options.contains(CopyOption.IGNORE_FORBIDDEN)){
-                                field.set(copy,copyDeep(value));
-                            }else field.set(copy,copy(value,options));
-                        }else field.set(copy,value);
-                    }
-
-                }
-            }
+            if (copyMembers(object, options, clazz, copy)) return null;
             return (O)copy;
         }catch (Exception exception) {
             throw new CopyException("Could not copy "+object.toString()+" / "+object.getClass().getName(),exception);
         }
     }
 
+    private static <O> boolean copyMembers(O object, Collection<CopyOption> options, Class<?> clazz, Object copy) throws IllegalAccessException {
+        for(Field field : clazz.getDeclaredFields()){
+            if(!Modifier.isStatic(field.getModifiers())){
+                field.setAccessible(true);
+                Object value = field.get(object);
+                if(value == null) return true;
+                if(options.contains(CopyOption.DEEP_NOTHING) || Primitives.isPrimitive(field.getType())){
+                    field.set(copy,value);
+                }else{
+                    if(Primitives.isPrimitive(value.getClass())){
+                        field.set(copy,value);
+                    }else if(field.getAnnotation(ObjectDeepCopyable.class) != null){
+                        field.set(copy,copy(value,options));
+                    }else if(field.getAnnotation(ObjectCopyable.class) != null){
+                        field.set(copy,copy(value));
+                    }else if(field.getAnnotation(CopyNull.class) != null){
+                        field.set(copy,null);
+                    }else if(options.contains(CopyOption.DEEP_ALL)){
+                        if(field.getAnnotation(ForbidCopy.class) != null && !options.contains(CopyOption.IGNORE_FORBIDDEN)){
+                            field.set(copy,copyDeep(value));
+                        }else field.set(copy,copy(value,options));
+                    }else field.set(copy,value);
+                }
+
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
     public static <T> CopyAdapter<T> findAdapter(TypeReference<T> reference){
         CopyAdapter<T>  adapter = ADAPTERS.get(reference.getRawType());
         if(adapter != null) return adapter;
