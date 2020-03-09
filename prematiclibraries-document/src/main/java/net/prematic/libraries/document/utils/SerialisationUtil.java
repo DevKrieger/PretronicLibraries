@@ -85,6 +85,10 @@ public class SerialisationUtil {
                                 else if(valueNumber instanceof Byte && valueNumber.byteValue() == 0) continue;
                                 else if(valueNumber instanceof Short && valueNumber.shortValue() == 0) continue;
                             }
+                            if(field.isAnnotationPresent(DocumentIgnoreBooleanValue.class) && fieldValue instanceof Boolean) {
+                                DocumentIgnoreBooleanValue ignoreBooleanValue = field.getAnnotation(DocumentIgnoreBooleanValue.class);
+                                if(ignoreBooleanValue.ignore() == (boolean) fieldValue) continue;
+                            }
                             DocumentKey name = field.getAnnotation(DocumentKey.class);
                             String endName = name!=null?name.value():field.getName();
 
