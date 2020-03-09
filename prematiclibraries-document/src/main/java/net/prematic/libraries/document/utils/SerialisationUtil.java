@@ -23,10 +23,7 @@ import net.prematic.libraries.document.Document;
 import net.prematic.libraries.document.DocumentContext;
 import net.prematic.libraries.document.DocumentRegistry;
 import net.prematic.libraries.document.adapter.DocumentAdapter;
-import net.prematic.libraries.document.annotations.DocumentAttribute;
-import net.prematic.libraries.document.annotations.DocumentIgnored;
-import net.prematic.libraries.document.annotations.DocumentKey;
-import net.prematic.libraries.document.annotations.DocumentRequired;
+import net.prematic.libraries.document.annotations.*;
 import net.prematic.libraries.document.entry.ArrayEntry;
 import net.prematic.libraries.document.entry.DocumentBase;
 import net.prematic.libraries.document.entry.DocumentEntry;
@@ -78,6 +75,16 @@ public class SerialisationUtil {
                         if(field.getAnnotation(DocumentIgnored.class) == null){
                             Object fieldValue = field.get(value);
                             if(fieldValue == null) continue;
+                            if(field.isAnnotationPresent(DocumentIgnoreZeroValue.class)
+                                    && fieldValue instanceof Number) {
+                                Number valueNumber = (Number) fieldValue;
+                                if(valueNumber instanceof Integer && valueNumber.intValue() == 0) continue;
+                                else if(valueNumber instanceof Long && valueNumber.longValue() == 0) continue;
+                                else if(valueNumber instanceof Double && valueNumber.doubleValue() == 0) continue;
+                                else if(valueNumber instanceof Float && valueNumber.floatValue() == 0) continue;
+                                else if(valueNumber instanceof Byte && valueNumber.byteValue() == 0) continue;
+                                else if(valueNumber instanceof Short && valueNumber.shortValue() == 0) continue;
+                            }
                             DocumentKey name = field.getAnnotation(DocumentKey.class);
                             String endName = name!=null?name.value():field.getName();
 
