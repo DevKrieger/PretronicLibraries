@@ -17,9 +17,7 @@
  * under the License.
  */
 
-package net.prematic.libraries.message.bml.functions;
-
-import net.prematic.libraries.message.bml.Function;
+package net.prematic.libraries.message.bml.function;
 
 public class SubstringFunction implements Function {
 

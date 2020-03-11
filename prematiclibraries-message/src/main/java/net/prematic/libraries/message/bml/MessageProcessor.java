@@ -19,11 +19,34 @@
 
 package net.prematic.libraries.message.bml;
 
+import net.prematic.libraries.message.bml.function.Function;
+import net.prematic.libraries.message.bml.indicate.Indicate;
+import net.prematic.libraries.message.bml.moduleV2.VariableModule;
+
 public interface MessageProcessor {
+
+    Indicate getIndicate(char prefix);
+
+    char[] getVariables();
 
     Function getFunction(String name);
 
     void registerFunction(String name, Function function);
+
+
+    void registerVariable(char prefix,char start, char end);
+
+    VariableModule createVariable(char prefix);//!{test}   @if[test,test]   $[test|test|test]  [color=red](Hallo du) &7
+
+    /*
+
+    #[${myembid.header}|Hallo|Hallo]    ![url] **_**
+
+
+
+
+
+     */
 
 
 

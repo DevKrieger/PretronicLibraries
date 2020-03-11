@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.12.19, 22:04
+ * @since 03.03.20, 19:53
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,74 +19,79 @@
 
 package net.prematic.libraries.message.bml.parser;
 
+import net.prematic.libraries.message.bml.MessageProcessor;
+import net.prematic.libraries.message.bml.indicate.Indicate;
 import net.prematic.libraries.message.bml.module.TextModule;
-import net.prematic.libraries.message.bml.module.VariableModule;
 
 public interface ParserState {
 
-    ParserState START = new StartState();
-    //ParserState TEXT = new TextState();
-    ParserState VARIABLE = new VariableState();
-    ParserState FUNCTION = new FunctionState();
-    ParserState FUNCTION_PARAMETER = new ParameterState();
-
-    void parse(MessageParser parser, char current);
+    void parse(MessageProcessor processor, MessageParser parser, char current);
 
     static boolean isSpace(char current){
         return current == ' ' || current == '\t' || current == '\r';
     }
 
-    class StartState implements ParserState {
+    class UndefinedState implements ParserState {
 
         @Override
-        public void parse(MessageParser parser, char current) {
-            if(current == '@'){
-                parser.getSequence().pushInline(new TextModule(parser.getString()));
-                //to function
-            }else if(current == '%'){
-                parser.getSequence().pushInline(new TextModule(parser.getString()));
-                //to variable
-            }
-        }
-    }
+        public void parse(MessageProcessor processor,MessageParser parser, char current) {
+            Indicate indicate = processor.getIndicate(current);
+            if(indicate != null){
+                parser.mark();
+                parser.setIndicate(indicate);
+                if(indicate.hasPrefix()){
 
-    class VariableState implements ParserState{
-
-        @Override
-        public void parse(MessageParser parser, char current) {
-            if(current == '%'){
-                parser.getSequence().pushInline(new VariableModule(parser.getString()));
-            }else if(parser.getParser().isLineFinished() || !(Character.isLetter(current) || Character.isDigit(current))){
-                parser.getSequence().pushInline(new TextModule(parser.getString()));
-                parser.markNext();
-                if(current == '@'){
-                    //function
                 }else{
-                    //satte
+
                 }
             }
         }
     }
 
-    class FunctionState implements ParserState {
+    class PrefixedIndicateState implements ParserState {
 
         @Override
-        public void parse(MessageParser parser, char current) {
-            if(current == '('){
+        public void parse(MessageProcessor processor,MessageParser parser, char current) {
+            if(current == parser.getIndicate().getStart()){
+                if(parser.getIndicate().isParametrized()){
 
+                }else{
+
+                }
+
+            }else {
+                Indicate indicate = processor.getIndicate(current);
+                if(indicate != null){
+                    //
+                }
             }
         }
     }
 
-    class ParameterState implements ParserState {
+    class ParametrizedIndicateState implements ParserState {
+        @Override
+        public void parse(MessageProcessor processor,MessageParser parser, char current) {
+
+        }
+    }
+
+
+    class IndicateState implements ParserState {
 
         @Override
-        public void parse(MessageParser parser, char current) {
-            if(current == ','){
+        public void parse(MessageProcessor processor,MessageParser parser, char current) {
+            if(current == parser.getIndicate().getStart()){
 
-            }else if(current == ')'){
-
+                //to function
+            }else if(current == '%'){
+                parser.getSequence().pushInline(new TextModule(parser.getString()));
+                parser.mark();
+                //to variable
             }
         }
     }
+
+
+
+
 }

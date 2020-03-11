@@ -1,8 +1,8 @@
 /*
- * (C) Copyright 2019 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2020 The PrematicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.12.19, 21:45
+ * @since 03.03.20, 19:27
  *
  * The PrematicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@
  * under the License.
  */
 
-package net.prematic.libraries.message.bml;
+package net.prematic.libraries.message.bml.moduleV2;
 
-public interface Function {
-
-    Object execute(Object[] parameters);
+public interface FuctionModule {
 
 }

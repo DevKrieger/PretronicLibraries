@@ -19,7 +19,7 @@
 
 package net.prematic.libraries.message.bml;
 
-import net.prematic.libraries.message.bml.functions.RandomTextFunction;
+import net.prematic.libraries.message.bml.function.RandomTextFunction;
 import net.prematic.libraries.message.bml.module.Module;
 import net.prematic.libraries.message.bml.module.*;
 import net.prematic.libraries.message.bml.variable.HashVariableSet;

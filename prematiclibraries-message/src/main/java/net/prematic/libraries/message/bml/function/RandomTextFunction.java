@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package net.prematic.libraries.message.bml.functions;
+package net.prematic.libraries.message.bml.function;
 
-import net.prematic.libraries.message.bml.Function;
 import net.prematic.libraries.utility.StringUtil;
 
 public class RandomTextFunction implements Function {

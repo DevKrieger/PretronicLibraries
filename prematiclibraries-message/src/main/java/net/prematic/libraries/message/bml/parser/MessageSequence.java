@@ -21,9 +21,14 @@ package net.prematic.libraries.message.bml.parser;
 
 import net.prematic.libraries.message.bml.module.Module;
 
+import java.util.List;
+
 public class MessageSequence {
 
     private final Module root;
+
+    private List<Module> parameters;
+    private MessageSequence previous;
 
     public MessageSequence(Module root) {
         this.root = root;

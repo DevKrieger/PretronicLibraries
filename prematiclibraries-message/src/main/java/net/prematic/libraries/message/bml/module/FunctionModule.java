@@ -19,7 +19,7 @@
 
 package net.prematic.libraries.message.bml.module;
 
-import net.prematic.libraries.message.bml.Function;
+import net.prematic.libraries.message.bml.function.Function;
 import net.prematic.libraries.message.bml.variable.VariableSet;
 
 import java.util.ArrayList;
