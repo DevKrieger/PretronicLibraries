@@ -131,9 +131,9 @@ pipeline {
                             if [ -d "tempDevelopment" ]; then rm -Rf tempDevelopment; fi
                             mkdir tempDevelopment
                             cd tempDevelopment/
-                            git clone --single-branch --branch development git@github.com:DevKrieger/PrematicLibraries.git
+                            git clone --single-branch --branch development git@github.com:DevKrieger/PretronicLibraries.git
                             
-                            cd PrematicLibraries/
+                            cd PretronicLibraries/
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version-SNAPSHOT
 
                             git add . -v

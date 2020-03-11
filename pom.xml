@@ -23,10 +23,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.prematic.libraries</groupId>
-    <artifactId>PrematicLibraries</artifactId>
+    <groupId>net.pretronic.libraries</groupId>
+    <artifactId>PretronicLibraries</artifactId>
     <packaging>pom</packaging>
     <version>1.0.32-SNAPSHOT</version>
+
+    <developers>
+        <developer>
+            <name>Davide Wietlisbach</name>
+            <organization>Pretronic</organization>
+            <organizationUrl>https://pretronic.net</organizationUrl>
+        </developer>
+        <developer>
+            <name>Philipp Elvin Friedhoff</name>
+            <organization>Pretronic</organization>
+            <organizationUrl>https://pretronic.net</organizationUrl>
+        </developer>
+    </developers>
 
     <distributionManagement>
         <repository>
@@ -46,36 +59,25 @@
         <dependency.test.junit.jupiter.version>5.5.2</dependency.test.junit.jupiter.version>
 
         <plugin.maven.compiler.version>3.8.1</plugin.maven.compiler.version>
-        <plugin.maven.source.version>3.1.0</plugin.maven.source.version>
+        <plugin.maven.source.version>3.2.1</plugin.maven.source.version>
     </properties>
 
-    <developers>
-        <developer>
-            <name>Davide Wietlisbach</name>
-            <organization>Prematic</organization>
-        </developer>
-        <developer>
-            <name>Philipp Elvin Friedhoff</name>
-            <organization>Prematic</organization>
-        </developer>
-    </developers>
-
     <modules>
-        <module>prematiclibraries-command</module>
-        <module>prematiclibraries-plugin</module>
-        <module>prematiclibraries-logging</module>
-        <module>prematiclibraries-event</module>
-        <module>prematiclibraries-concurrent</module>
-        <module>prematiclibraries-utility</module>
-        <module>prematiclibraries-caching</module>
-        <module>prematiclibraries-message</module>
-        <module>prematiclibraries-dependency</module>
-        <module>prematiclibraries-console</module>
-        <module>prematiclibraries-jarsignature</module>
-        <module>prematiclibraries-document</module>
-        <module>prematiclibraries-copy</module>
-        <module>prematiclibraries-resourceloader</module>
-        <module>prematiclibraries-synchronisation</module>
+        <module>pretroniclibraries-command</module>
+        <module>pretroniclibraries-plugin</module>
+        <module>pretroniclibraries-logging</module>
+        <module>pretroniclibraries-event</module>
+        <module>pretroniclibraries-concurrent</module>
+        <module>pretroniclibraries-utility</module>
+        <module>pretroniclibraries-caching</module>
+        <module>pretroniclibraries-message</module>
+        <module>pretroniclibraries-dependency</module>
+        <module>pretroniclibraries-console</module>
+        <module>pretroniclibraries-jarsignature</module>
+        <module>pretroniclibraries-document</module>
+        <module>pretroniclibraries-copy</module>
+        <module>pretroniclibraries-resourceloader</module>
+        <module>pretroniclibraries-synchronisation</module>
     </modules>
 
 </project>
