@@ -23,12 +23,6 @@ import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.entry.DocumentEntry;
 import net.pretronic.libraries.utility.parser.StringParser;
 
-/*
-@Todo
-Multi Array
-Multi Text
-Attribute
- */
 public interface ParserState {
 
     ParserState DOCUMENT_START = new DocumentStart();
