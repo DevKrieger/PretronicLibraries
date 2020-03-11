@@ -28,7 +28,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>PretronicLibraries-message</artifactId>
+    <artifactId>pretroniclibraries-message</artifactId>
 
     <build>
         <plugins>
@@ -63,13 +63,13 @@
 
         <dependency>
             <groupId>net.pretronic.libraries</groupId>
-            <artifactId>PretronicLibraries-utility</artifactId>
+            <artifactId>pretroniclibraries-utility</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.pretronic.libraries</groupId>
-            <artifactId>PretronicLibraries-document</artifactId>
+            <artifactId>pretroniclibraries-document</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

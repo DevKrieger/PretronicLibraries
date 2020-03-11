@@ -28,7 +28,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>PretronicLibraries-caching</artifactId>
+    <artifactId>pretroniclibraries-caching</artifactId>
     <build>
         <plugins>
             <plugin>
@@ -62,14 +62,14 @@
 
         <dependency>
             <groupId>net.pretronic.libraries</groupId>
-            <artifactId>PretronicLibraries-utility</artifactId>
+            <artifactId>pretroniclibraries-utility</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.pretronic.libraries</groupId>
-            <artifactId>PretronicLibraries-synchronisation</artifactId>
+            <artifactId>pretroniclibraries-synchronisation</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

@@ -28,7 +28,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>PretronicLibraries-concurrent</artifactId>
+    <artifactId>pretroniclibraries-concurrent</artifactId>
 
     <build>
         <plugins>
@@ -62,7 +62,7 @@
         <!-- Internal project dependencies -->
         <dependency>
             <groupId>net.pretronic.libraries</groupId>
-            <artifactId>PretronicLibraries-utility</artifactId>
+            <artifactId>pretroniclibraries-utility</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
