@@ -22,7 +22,7 @@ package net.pretronic.libraries.caching.synchronisation;
 import net.pretronic.libraries.caching.Cache;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.document.Document;
-import net.pretronic.synchronisation.SynchronisationHandler;
+import net.pretronic.libraries.synchronisation.SynchronisationHandler;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;

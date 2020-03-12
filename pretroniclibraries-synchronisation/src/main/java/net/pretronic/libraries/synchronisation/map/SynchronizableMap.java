@@ -17,10 +17,10 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation.map;
+package net.pretronic.libraries.synchronisation.map;
 
 import net.pretronic.libraries.document.Document;
-import net.pretronic.synchronisation.SynchronisationHandler;
+import net.pretronic.libraries.synchronisation.SynchronisationHandler;
 
 import java.util.Map;
 import java.util.function.BiConsumer;

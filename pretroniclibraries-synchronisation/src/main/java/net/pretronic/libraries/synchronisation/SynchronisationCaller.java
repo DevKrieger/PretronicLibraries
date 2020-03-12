@@ -17,16 +17,16 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation.observer;
+package net.pretronic.libraries.synchronisation;
 
-import java.util.List;
+import net.pretronic.libraries.document.Document;
 
-public interface Observable<O extends Observable<O,T>,T> {
+public interface SynchronisationCaller<I> {
 
-    List<ObserveCallback<O,T>> getObservers();
+    void update(I identifier, Document data);
 
-    void subscribeObserver(ObserveCallback<O,T> callback);
+    void create(I identifier, Document data);
 
-    void unsubscribeObserver(ObserveCallback<O,T> callback);
+    void delete(I identifier, Document data);
 
 }

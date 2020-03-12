@@ -17,16 +17,12 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation;
+package net.pretronic.libraries.synchronisation;
 
 import net.pretronic.libraries.document.Document;
 
-public interface SynchronisationCaller<I> {
+public interface Synchronizable {
 
-    void update(I identifier, Document data);
-
-    void create(I identifier, Document data);
-
-    void delete(I identifier, Document data);
+    void onUpdate(Document data);
 
 }

@@ -17,22 +17,43 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation.map;
+package net.pretronic.libraries.synchronisation.map;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.Validate;
-import net.pretronic.synchronisation.SynchronisationCaller;
-import net.pretronic.synchronisation.Synchronizable;
+import net.pretronic.libraries.synchronisation.SynchronisationCaller;
+import net.pretronic.libraries.synchronisation.Synchronizable;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public abstract class AbstractSynchronizableMap<K,V> implements SynchronizableMap<K,V> {
+public class LinkedSynchronizableMap<K,V> extends LinkedHashMap<K,V> implements SynchronizableMap<K,V> {
 
     private SynchronisationCaller<K> caller;
     private BiConsumer<V, Document> deleteListener;
     private BiConsumer<V, Document> updateListener;
     private BiFunction<K, Document, V> createHandler;
+
+    public LinkedSynchronizableMap(int initialCapacity, float loadFactor) {
+        super(initialCapacity, loadFactor);
+    }
+
+    public LinkedSynchronizableMap(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    public LinkedSynchronizableMap() {
+    }
+
+    public LinkedSynchronizableMap(Map<? extends K, ? extends V> m) {
+        super(m);
+    }
+
+    public LinkedSynchronizableMap(int initialCapacity, float loadFactor, boolean accessOrder) {
+        super(initialCapacity, loadFactor, accessOrder);
+    }
 
     @Override
     public void setDeleteListener(BiConsumer<V, Document> listener) {

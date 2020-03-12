@@ -17,12 +17,10 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation;
+package net.pretronic.libraries.synchronisation.observer;
 
-import net.pretronic.libraries.document.Document;
+public interface ObserveCallback<O extends Observable<O,T>,T> {
 
-public interface Synchronizable {
-
-    void onUpdate(Document data);
+    void callback(O observable,T object);
 
 }

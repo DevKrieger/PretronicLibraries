@@ -17,42 +17,38 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation.map;
+package net.pretronic.libraries.synchronisation.map;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.Validate;
-import net.pretronic.synchronisation.SynchronisationCaller;
-import net.pretronic.synchronisation.Synchronizable;
+import net.pretronic.libraries.synchronisation.SynchronisationCaller;
+import net.pretronic.libraries.synchronisation.Synchronizable;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public class ConcurrentHashSynchronizableMap<K,V> extends ConcurrentHashMap<K,V> implements SynchronizableMap<K,V> {
+public class HashSynchronizableMap<K,V> extends HashMap<K,V> implements SynchronizableMap<K,V> {
 
     private SynchronisationCaller<K> caller;
     private BiConsumer<V, Document> deleteListener;
     private BiConsumer<V, Document> updateListener;
     private BiFunction<K, Document, V> createHandler;
 
-    public ConcurrentHashSynchronizableMap() {
-    }
-
-    public ConcurrentHashSynchronizableMap(int initialCapacity) {
-        super(initialCapacity);
-    }
-
-    public ConcurrentHashSynchronizableMap(Map<? extends K, ? extends V> m) {
-        super(m);
-    }
-
-    public ConcurrentHashSynchronizableMap(int initialCapacity, float loadFactor) {
+    public HashSynchronizableMap(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);
     }
 
-    public ConcurrentHashSynchronizableMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
-        super(initialCapacity, loadFactor, concurrencyLevel);
+    public HashSynchronizableMap(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    public HashSynchronizableMap() {
+    }
+
+    public HashSynchronizableMap(Map<? extends K, ? extends V> m) {
+        super(m);
     }
 
     @Override

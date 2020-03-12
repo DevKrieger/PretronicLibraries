@@ -17,10 +17,36 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation.observer;
+package net.pretronic.libraries.synchronisation;
 
-public interface ObserveCallback<O extends Observable<O,T>,T> {
+import net.pretronic.libraries.document.Document;
 
-    void callback(O observable,T object);
+public interface SynchronisationHandler<O,I> extends SynchronisationCaller<I> {
+
+    SynchronisationCaller<I> getCaller();
+
+
+    void onDelete(I identifier, Document data);
+
+    void onCreate(I identifier, Document data);
+
+    void onUpdate(I identifier, Document data);
+
+
+    void init(SynchronisationCaller<I> caller);
+
+
+
+    default void update(I identifier, Document data){
+        getCaller().update(identifier, data);
+    }
+
+    default void create(I identifier, Document data){
+        getCaller().create(identifier, data);
+    }
+
+    default void delete(I identifier, Document data){
+        getCaller().delete(identifier, data);
+    }
 
 }

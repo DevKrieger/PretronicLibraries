@@ -17,39 +17,22 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation.map;
+package net.pretronic.libraries.synchronisation.map;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.Validate;
-import net.pretronic.synchronisation.SynchronisationCaller;
-import net.pretronic.synchronisation.Synchronizable;
+import net.pretronic.libraries.synchronisation.SynchronisationCaller;
+import net.pretronic.libraries.synchronisation.Synchronizable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public class HashSynchronizableMap<K,V> extends HashMap<K,V> implements SynchronizableMap<K,V> {
+public abstract class AbstractSynchronizableMap<K,V> implements SynchronizableMap<K,V> {
 
     private SynchronisationCaller<K> caller;
     private BiConsumer<V, Document> deleteListener;
     private BiConsumer<V, Document> updateListener;
     private BiFunction<K, Document, V> createHandler;
-
-    public HashSynchronizableMap(int initialCapacity, float loadFactor) {
-        super(initialCapacity, loadFactor);
-    }
-
-    public HashSynchronizableMap(int initialCapacity) {
-        super(initialCapacity);
-    }
-
-    public HashSynchronizableMap() {
-    }
-
-    public HashSynchronizableMap(Map<? extends K, ? extends V> m) {
-        super(m);
-    }
 
     @Override
     public void setDeleteListener(BiConsumer<V, Document> listener) {

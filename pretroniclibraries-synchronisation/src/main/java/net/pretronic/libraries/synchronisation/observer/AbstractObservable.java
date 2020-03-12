@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.pretronic.synchronisation.observer;
+package net.pretronic.libraries.synchronisation.observer;
 
 import java.util.ArrayList;
 import java.util.List;
