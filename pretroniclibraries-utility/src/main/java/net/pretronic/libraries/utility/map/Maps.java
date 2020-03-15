@@ -12,7 +12,7 @@ public final class Maps {
     }
 
     @SafeVarargs
-    public static <K, V> Map<K, V> of(Pair<K, V>... values) {
+    public static <K, V> Map<K, V> ofValues(Pair<K, V>... values) {
         Map<K, V> map = new HashMap<>();
         for (Pair<K, V> value : values) {
             map.put(value.getKey(), value.getValue());
