@@ -96,7 +96,7 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
 
     @Override
     public void init(SynchronisationCaller<I> caller) {
-        if(caller != null) throw new IllegalArgumentException("Caller is already initialized");
+        if(this.caller != null) throw new IllegalArgumentException("Caller is already initialized");
         this.caller = caller;
     }
 
