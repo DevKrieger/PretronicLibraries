@@ -19,41 +19,19 @@
 
 package net.pretronic.libraries.utility;
 
-import com.sun.management.OperatingSystemMXBean;
+import net.pretronic.libraries.utility.annonations.Internal;
 
-import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public final class SystemUtil {
 
-    @Deprecated
-    public static void sleepUnInterrupt(long time, TimeUnit unit){
-       sleepUnInterrupt(unit.toNanos(time));
+    public static void sleepUninterruptible(long time, TimeUnit unit){
+        sleepUninterruptible(unit.toMillis(time));
     }
 
-    @Deprecated
-    public static void sleepUnInterrupt(long millis){
-        try{
-            Thread.sleep(millis);
-        }catch (Exception exception){}
-    }
-
-    @Deprecated
-    public static void sleepUnInterrupt(int nanos){
-        try{ Thread.sleep(0,nanos); }catch (Exception exception){}
-    }
-
-
-
-    public static void sleepUninterruptibly(long time, TimeUnit unit){
-        sleepUninterruptibly(unit.toMillis(time));
-    }
-
-
-    public static void sleepUninterruptibly(long millis){
-        try{
-            Thread.sleep(millis);
+    public static void sleepUninterruptible(long millis){
+        try{ Thread.sleep(millis);
         }catch (Exception ignored){}
     }
 
@@ -67,47 +45,27 @@ public final class SystemUtil {
 
     public static void sleepAsLong(Supplier<Boolean> finished){
         while(finished.get()){
-            try {
-                Thread.sleep(0,250000);
+            try { Thread.sleep(0,250000);
             } catch (InterruptedException ignored) {}
         }
     }
 
-
-
-
-
-
-
-
-
-
-    public static double getCpuUsage() {
-        return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getSystemCpuLoad()*100;
+    public static String getJavaVersion(){
+        return System.getProperty("java.version");
     }
 
-    public static double getProcessCpuUsage() {
-        return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad()*100;
+    public static int getJavaVersionNumber(){
+        return Integer.parseInt(getJavaVersion().replace(".",""));
     }
 
-    public static long getProcessMaxMemory(){
-        return Runtime.getRuntime().maxMemory()/(1024*1024);
-    }
-
-    public static long getProccessUsedMemory(){
-        return ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed()/(1024*1024);
-    }
-
-    public static long getSystemMemory() {
-        return Runtime.getRuntime().totalMemory()/(1024*1024);
-    }
-
-    public static long getFreeSystemMemory() {
-        return Runtime.getRuntime().freeMemory()/(1024*1024);
-    }
-
-    public static long getUsedSystemMemory() {
-        return getSystemMemory()-getFreeSystemMemory();
+    private static int getJavaBaseVersion() {
+        String version = getJavaVersion();
+        if(version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            int dot = version.indexOf(".");
+            if(dot != -1) { version = version.substring(0, dot); }
+        } return Integer.parseInt(version);
     }
 
 }
