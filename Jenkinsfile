@@ -9,7 +9,6 @@ String VERSION = "UNDEFINED"
 String BRANCH = "UNDEFINED"
 boolean SKIP = false
 
-
 pipeline {
     agent any
     tools {
