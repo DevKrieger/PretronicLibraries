@@ -5,7 +5,6 @@ final String COMMIT_MESSAGE = "Version change %version%"
 final String BRANCH_DEVELOPMENT = "origin/development"
 final String BRANCH_MASTER = "origin/master"
 
-
 String VERSION = "UNDEFINED"
 String BRANCH = "UNDEFINED"
 boolean SKIP = false
