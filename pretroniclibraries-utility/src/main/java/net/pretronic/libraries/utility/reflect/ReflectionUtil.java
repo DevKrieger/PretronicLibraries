@@ -40,7 +40,7 @@ public class ReflectionUtil {
 
     static {
         ReflectVersioned versioned;
-        if(SystemUtil.getJavaVersionNumber() >= 9){
+        if(SystemUtil.getJavaBaseVersion() >= 9){
             versioned = new JDK9ReflectVersioned();
         }else{
             versioned = new LegacyReflectVersioned();
