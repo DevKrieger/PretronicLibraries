@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +20,7 @@
 
 package net.pretronic.libraries.message.bml;
 
-import net.pretronic.libraries.message.bml.module.Module;
-import net.pretronic.libraries.message.bml.parser.MessageParser;
-import net.pretronic.libraries.message.bml.variable.HashVariableSet;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
-import net.pretronic.libraries.utility.parser.StringParser;
 
 public class Message {
 
@@ -33,32 +30,20 @@ public class Message {
         this.root = root;
     }
 
-    public String build(VariableSet variables){
+    public String build(Object argument,VariableSet variables){
         StringBuilder builder = new StringBuilder();
-        build(builder,variables);
+        build(argument,builder,variables);
         return builder.toString();
     }
 
-    public void build(StringBuilder builder, VariableSet variables){
-        root.process(builder,variables);
+    public void build(Object argument,StringBuilder builder, VariableSet variables) {
+        if(root != null){
+            root.process(argument,builder,variables);
+        }
     }
 
-    public static Message parse(String content){
-        return parse(new StringParser(content));
-    }
-
-    public static Message parse(StringParser parser0){
-        return new MessageParser(parser0).parse();
-    }
-
-    //"Hallo %player%, du bist %age% Jahre tes alt!%"
-    public static void main(String[] args) {
-        VariableSet variables = new HashVariableSet();
-        variables.add("player","Hans");
-        variables.add("age",10);
-        variables.add("stats",1);
-
-        Message message = parse("Hallo %player%, du bist %age% Jahre alt! Random -> @RandomText()!");
-        System.out.println(message.build(variables));
+    @Override
+    public String toString() {
+        return build(null,VariableSet.newEmptySet());
     }
 }

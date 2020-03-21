@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,35 +20,50 @@
 
 package net.pretronic.libraries.message.bml;
 
+import net.pretronic.libraries.message.bml.builder.MessageBuilderFactory;
 import net.pretronic.libraries.message.bml.function.Function;
 import net.pretronic.libraries.message.bml.indicate.Indicate;
-import net.pretronic.libraries.message.bml.moduleV2.VariableModule;
+import net.pretronic.libraries.utility.interfaces.ObjectOwner;
+
+import java.util.Collection;
 
 public interface MessageProcessor {
 
+    Collection<Indicate> getIndicates();
+
     Indicate getIndicate(char prefix);
 
-    char[] getVariables();
+    void registerIndicate(ObjectOwner owner,Indicate indicate);
+
+    void unregisterIndicate(Indicate indicate);
+
+    void unregisterIndicates(ObjectOwner owner);
+
+    MessageBuilderFactory getTextBuilderFactory();
+
+    void setTextBuilderFactory(MessageBuilderFactory builder);
+
+
+    Collection<Function> getFunctions();
 
     Function getFunction(String name);
 
-    void registerFunction(String name, Function function);
+    void registerFunction(ObjectOwner owner,String name,Function function);
+
+    void unregisterFunction(Function function);
+
+    void unregisterFunction(String name);
+
+    void unregisterFunctions(ObjectOwner owner);
 
 
-    void registerVariable(char prefix,char start, char end);
+    boolean isIgnoredChar(char char0);
 
-    VariableModule createVariable(char prefix);//!{test}   @if[test,test]   $[test|test|test]  [color=red](Hallo du) &7
+    void addIgnoredChar(char char0);
 
-    /*
-
-    #[${myembid.header}|Hallo|Hallo]    ![url] **_**
+    void removeIgnoredChar(char char0);
 
 
-
-
-
-     */
-
-
+    Message parse(String input);
 
 }

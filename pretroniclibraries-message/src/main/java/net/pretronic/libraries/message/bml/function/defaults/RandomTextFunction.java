@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +18,23 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.generator;
+package net.pretronic.libraries.message.bml.function.defaults;
 
-public interface MessageGenerator {
+import net.pretronic.libraries.message.bml.function.Function;
+import net.pretronic.libraries.utility.StringUtil;
 
+public class RandomTextFunction implements Function {
 
+    private static final int DEFAULT_SIZE = 5;
 
+    @Override
+    public Object execute(Object[] parameters) {
+        int size = DEFAULT_SIZE;
+        if(parameters.length == 1 && parameters[0] instanceof Integer){
+            size = (int) parameters[0];
+        }else if(parameters.length > 1){
+            throw new IllegalArgumentException("Invalid parameter length");
+        }
+        return StringUtil.getRandomString(size);
+    }
 }

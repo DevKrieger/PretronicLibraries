@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,8 @@
 package net.pretronic.libraries.message;
 
 import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.message.bml.Message;
+import net.pretronic.libraries.message.bml.MessageProcessor;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.language.Language;
 import net.pretronic.libraries.message.language.LanguageAble;
@@ -29,6 +32,8 @@ import java.util.Collection;
 import java.util.List;
 
 public interface MessageProvider {
+
+    MessageProcessor getProcessor();
 
     Language getDefaultLanguage();
 
@@ -59,11 +64,11 @@ public interface MessageProvider {
     List<MessagePack> loadPacks(String namespace);
 
 
-    String getMessage(String key);
+    Message getMessage(String key);
 
-    String getMessage(String key, Language language);
+    Message getMessage(String key, Language language);
 
-    String getMessage(String key, LanguageAble object);
+    Message getMessage(String key, LanguageAble object);
 
 
     String buildMessage(String key, VariableSet variables);

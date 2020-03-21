@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +18,21 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.function;
+package net.pretronic.libraries.message.bml.function.defaults;
 
-import net.pretronic.libraries.utility.StringUtil;
+import net.pretronic.libraries.message.bml.function.Function;
 
-public class RandomTextFunction implements Function {
-
-    private static final int DEFAULT_SIZE = 5;
-
+public class TestFunction implements Function {
     @Override
     public Object execute(Object[] parameters) {
-        int size = DEFAULT_SIZE;
-        if(parameters.length == 1 && parameters[0] instanceof Integer){
-            size = (int) parameters[0];
-        }else if(parameters.length > 1){
-            throw new IllegalArgumentException("Invalid parameter length");
+        StringBuilder out = new StringBuilder();
+        out.append("F(");
+        for (Object parameter : parameters) {
+            out.append(parameter);
+            out.append("|");
         }
-        return StringUtil.getRandomString(size);
+        out.setLength(out.length()-1);
+        out.append(")F");
+        return out.toString();
     }
 }

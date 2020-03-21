@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,35 +18,28 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.module;
+package net.pretronic.libraries.message.bml.builder;
 
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 
-public class RootModule implements Module {
+public class StaticTextMessageBuilder implements MessageBuilder{
 
-    private Module next;
+    private final String text;
 
-    public Module getNext() {
-        return next;
+    public StaticTextMessageBuilder(String text) {
+        this.text = text;
     }
 
     @Override
-    public void setNext(Module next) {
-        this.next = next;
+    public Object build(Object argument,String name, Object[] parameters, String extension, VariableSet variables) {
+        return text;
     }
 
-    @Override
-    public void pushParameter(Module module) {
-        throw new UnsupportedOperationException();
-    }
+    public static class Factory implements MessageBuilderFactory {
 
-    @Override
-    public Object process(VariableSet variables) {
-        return next.process(variables);
-    }
-
-    @Override
-    public void process(StringBuilder builder, VariableSet variables) {
-        next.process(builder,variables);
+        @Override
+        public MessageBuilder create(String name) {
+            return new StaticTextMessageBuilder(name);
+        }
     }
 }

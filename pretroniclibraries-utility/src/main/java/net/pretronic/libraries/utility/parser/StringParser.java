@@ -148,7 +148,7 @@ public class StringParser {
     }
 
     public boolean isEmpty(){
-        return this.lines.length == 0;
+        return this.lines.length == 0 || this.lines[0].length == 0;
     }
 
 

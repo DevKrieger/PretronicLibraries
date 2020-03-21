@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +18,22 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.moduleV2;
+package net.pretronic.libraries.message.bml.builder;
 
-public interface ActionTextModule {
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+
+public class InputVariableMessageBuilder implements MessageBuilder{
+
+    private static InputVariableMessageBuilder DEFAULT = new InputVariableMessageBuilder();
+
+    private InputVariableMessageBuilder(){}
+
+    @Override
+    public Object build(Object argument,String name, Object[] parameters, String extension, VariableSet variables) {
+        return parameters.length > 0 ? variables.getValue((String) parameters[0]) : "[VAR NOT FOUND]";
+    }
+
+    public static InputVariableMessageBuilder newBuilder(){
+        return DEFAULT;
+    }
 }

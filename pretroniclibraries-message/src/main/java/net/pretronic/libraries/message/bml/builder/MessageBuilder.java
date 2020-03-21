@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,43 +18,12 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.module;
+package net.pretronic.libraries.message.bml.builder;
 
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.utility.annonations.Nullable;
 
-public class TextModule implements Module{
+public interface MessageBuilder {
 
-    private final String text;
-    private Module next;
-
-    public TextModule(String text) {
-        this.text = text;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    @Override
-    public void setNext(Module next) {
-        this.next = next;
-    }
-
-    @Override
-    public void pushParameter(Module module) {
-
-    }
-
-    @Override
-    public Object process(VariableSet variables) {
-        return text;
-    }
-
-    @Override
-    public void process(StringBuilder builder, VariableSet variables) {
-        builder.append(text);
-        if(next != null) next.process(builder, variables);
-    }
-
-
+    Object build(Object argument, @Nullable String name, Object[] parameters, @Nullable String extension, VariableSet variables);
 }

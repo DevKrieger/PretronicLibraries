@@ -58,7 +58,7 @@ public final class SystemUtil {
         return Integer.parseInt(getJavaVersion().replace(".",""));
     }
 
-    private static int getJavaBaseVersion() {
+    public static int getJavaBaseVersion() {
         String version = getJavaVersion();
         if(version.startsWith("1.")) {
             version = version.substring(2, 3);

@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,33 +20,53 @@
 
 package net.pretronic.libraries.message.bml.parser;
 
-import net.pretronic.libraries.message.bml.module.Module;
-
-import java.util.List;
+import net.pretronic.libraries.message.bml.MessageProcessor;
+import net.pretronic.libraries.message.bml.Module;
+import net.pretronic.libraries.message.bml.builder.MessageBuilder;
+import net.pretronic.libraries.message.bml.builder.StaticTextMessageBuilder;
+import net.pretronic.libraries.message.bml.indicate.Indicate;
 
 public class MessageSequence {
 
-    private final Module root;
+    private final MessageSequence parent;
+    private final Indicate indicate;
+    private final Module module;
 
-    private List<Module> parameters;
-    private MessageSequence previous;
+    private Module current;
 
-    public MessageSequence(Module root) {
-        this.root = root;
+    public MessageSequence(MessageSequence parent, Indicate indicate, Module module) {
+        this.parent = parent;
+        this.indicate = indicate;
+        this.module = module;
     }
 
-    public Module getRoot() {
-        return root;
+    public MessageSequence getParent() {
+        return parent;
     }
 
-    public void pushParameter(Module parameter){
-
+    public Indicate getIndicate() {
+        return indicate;
     }
 
-    public void pushInline(Module module){
-
+    public void pushModule(Module module){
+        if(current == null){
+            this.module.addParameter(module);
+        }else{
+            this.current.setNext(module);
+        }
+        this.current = module;
     }
 
+    public void nextParameter(){
+        current = null;
+    }
 
+    public void setName(String name){
+        this.module.setName(name);
+        this.module.setBuilder(indicate.getFactory().create(name));
+    }
 
+    public void setExtension(String extension){
+        this.module.setExtension(extension);
+    }
 }
