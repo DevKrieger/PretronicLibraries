@@ -22,8 +22,9 @@ package net.pretronic.libraries.message.bml.builder;
 
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.language.Language;
+import net.pretronic.libraries.utility.interfaces.Castable;
 
-public abstract class BuildContext {
+public abstract class BuildContext implements Castable<BuildContext> {
 
     private final Language language;
     private final VariableSet variables;

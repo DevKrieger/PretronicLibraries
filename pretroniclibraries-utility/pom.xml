@@ -38,7 +38,7 @@
                 <version>${plugin.maven.compiler.version}</version>
                 <configuration>
                     <source>9</source>
-                    <target>9</target>
+                    <target>8</target>
                 </configuration>
             </plugin>
             <plugin>
