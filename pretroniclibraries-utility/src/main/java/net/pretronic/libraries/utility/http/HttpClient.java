@@ -22,12 +22,17 @@ package net.pretronic.libraries.utility.http;
 import net.pretronic.libraries.utility.io.FileUtil;
 import net.pretronic.libraries.utility.io.IORuntimeException;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 public class HttpClient {
@@ -50,6 +55,7 @@ public class HttpClient {
     private int timeOut;
     private String requestMethod, content;
     private boolean saveCookies;
+    private String tlsVersion;
 
     private final Map<String,List<String>> properties;
     private final Map<String,String> parameters;
@@ -166,12 +172,27 @@ public class HttpClient {
         this.parameters.put(key,value.toString());
     }
 
+    public HttpClient setTLSVersion(String tlsVersion) {
+        this.tlsVersion = tlsVersion;
+        return this;
+    }
+
     public HttpResult connect(){
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            if(this.tlsVersion != null) {
+                HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
+                SSLContext context = SSLContext.getInstance(this.tlsVersion);
+                context.init(null, null, new SecureRandom());
+                httpsConnection.setSSLSocketFactory(context.getSocketFactory());
+            }
+
             connection.setRequestMethod(this.requestMethod);
             connection.setConnectTimeout(this.timeOut);
             connection.setReadTimeout(this.timeOut);
+
+
 
             for(Map.Entry<String, List<String>> entry : this.properties.entrySet()) {
                 entry.getValue().forEach(value -> connection.setRequestProperty(entry.getKey(),value));
@@ -187,12 +208,13 @@ public class HttpClient {
             }
 
             //if(saveCookies) this.properties.put("Cookie",connection.getHeaderFields().get(PROPERTY_COOKIE_SET));
-
             connection.disconnect();
             return new HttpResult(connection.getResponseCode(),connection.getHeaderFields()
                     ,connection.getResponseCode()==200?connection.getInputStream():connection.getErrorStream());
         } catch (IOException exception) {
             throw new IORuntimeException(exception);
+        } catch (NoSuchAlgorithmException | KeyManagementException exception) {
+            throw new RuntimeException(exception);
         }
     }
 
