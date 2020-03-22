@@ -177,7 +177,7 @@ public class HttpClient {
                 entry.getValue().forEach(value -> connection.setRequestProperty(entry.getKey(),value));
             }
 
-            if(content != null && (!this.parameters.isEmpty())){
+            if(content != null || !this.parameters.isEmpty()){
                 connection.setDoOutput(true);
                 DataOutputStream output = new DataOutputStream(connection.getOutputStream());
                 if(content != null) output.writeBytes(content);
