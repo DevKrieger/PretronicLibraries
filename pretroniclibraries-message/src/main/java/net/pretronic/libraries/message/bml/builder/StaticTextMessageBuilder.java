@@ -20,8 +20,6 @@
 
 package net.pretronic.libraries.message.bml.builder;
 
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-
 public class StaticTextMessageBuilder implements MessageBuilder{
 
     private final String text;
@@ -31,7 +29,7 @@ public class StaticTextMessageBuilder implements MessageBuilder{
     }
 
     @Override
-    public Object build(Object argument,String name, Object[] parameters, String extension, VariableSet variables) {
+    public Object build(BuildContext context, String name, Object[] parameters, String extension) {
         return text;
     }
 

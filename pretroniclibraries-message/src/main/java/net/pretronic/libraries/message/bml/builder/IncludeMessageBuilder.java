@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 22.03.20, 12:25
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -20,9 +20,24 @@
 
 package net.pretronic.libraries.message.bml.builder;
 
-import net.pretronic.libraries.utility.annonations.Nullable;
+import net.pretronic.libraries.message.MessageProvider;
+import net.pretronic.libraries.message.bml.Message;
 
-public interface MessageBuilder {
+public class IncludeMessageBuilder implements MessageBuilder {
 
-    Object build(BuildContext context,@Nullable String name, Object[] parameters, @Nullable String extension);
+    private final MessageProvider provider;
+    private Message message;
+
+    public IncludeMessageBuilder(MessageProvider provider) {
+        this.provider = provider;
+    }
+
+    @Override
+    public Object build(BuildContext context, String name, Object[] parameters, String extension) {
+        if(message == null){
+            message = provider.getMessage((String)parameters[0],context.getLanguage());
+            if(message == null) message = Message.ofStaticText("{MESSAGE NOT FOUND}");
+        }
+        return message.build(context);
+    }
 }

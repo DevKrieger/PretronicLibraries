@@ -20,12 +20,12 @@
 
 package net.pretronic.libraries.message.bml;
 
+import net.pretronic.libraries.message.bml.builder.BuildContext;
 import net.pretronic.libraries.message.bml.builder.MessageBuilder;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
 
 import java.util.Arrays;
 
-public class Module {// @|name|{|parameters|param2|}[|extension]] -> next -> @|name|{|parameters|}[|extension]]
+public class Module {
 
     private String name;
     private Module[] parameters;
@@ -93,29 +93,29 @@ public class Module {// @|name|{|parameters|param2|}[|extension]] -> next -> @|n
         return builder;
     }
 
-    public Object build(Object argument,VariableSet variables){
-        Object result = buildInternal(argument,variables);
+    public Object build(BuildContext context){
+        Object result = buildInternal(context);
         if(next != null){
             StringBuilder builder = new StringBuilder();
             builder.append(result);
-            process(argument,builder,variables);
+            process(context,builder);
             return builder.toString();
         }
         else return result;
     }
 
-    public void process(Object argument,StringBuilder builder, VariableSet variables){
-        builder.append(buildInternal(argument,variables));
-        if(next != null) next.process(argument,builder,variables);
+    public void process(BuildContext context, StringBuilder builder){
+        builder.append(buildInternal(context));
+        if(next != null) next.process(context,builder);
     }
 
-    private Object buildInternal(Object argument,VariableSet variables) {
+    private Object buildInternal(BuildContext context) {
         Object[] parameters = new Object[this.parameters.length];
         int index = 0;
         for (Module parameter : this.parameters) {
-            parameters[index] = parameter.build(argument,variables);
+            parameters[index] = parameter.build(context);
             index++;
         }
-        return builder.build(argument,name,parameters,extension,variables);
+        return builder.build(context,name,parameters,extension);
     }
 }

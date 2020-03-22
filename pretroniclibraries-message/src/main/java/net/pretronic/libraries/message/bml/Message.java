@@ -20,7 +20,8 @@
 
 package net.pretronic.libraries.message.bml;
 
-import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.bml.builder.BuildContext;
+import net.pretronic.libraries.message.bml.builder.StaticTextMessageBuilder;
 
 public class Message {
 
@@ -30,20 +31,19 @@ public class Message {
         this.root = root;
     }
 
-    public String build(Object argument,VariableSet variables){
+    public String build(BuildContext context){
         StringBuilder builder = new StringBuilder();
-        build(argument,builder,variables);
+        build(context,builder);
         return builder.toString();
     }
 
-    public void build(Object argument,StringBuilder builder, VariableSet variables) {
+    public void build(BuildContext context, StringBuilder builder) {
         if(root != null){
-            root.process(argument,builder,variables);
+            root.process(context,builder);
         }
     }
 
-    @Override
-    public String toString() {
-        return build(null,VariableSet.newEmptySet());
+    public static Message ofStaticText(String text){
+        return new Message(new Module(null,new StaticTextMessageBuilder(text)));
     }
 }

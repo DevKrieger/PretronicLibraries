@@ -20,8 +20,6 @@
 
 package net.pretronic.libraries.message.bml.builder;
 
-import net.pretronic.libraries.message.bml.variable.VariableSet;
-
 public class InputVariableMessageBuilder implements MessageBuilder{
 
     private static InputVariableMessageBuilder DEFAULT = new InputVariableMessageBuilder();
@@ -29,8 +27,8 @@ public class InputVariableMessageBuilder implements MessageBuilder{
     private InputVariableMessageBuilder(){}
 
     @Override
-    public Object build(Object argument,String name, Object[] parameters, String extension, VariableSet variables) {
-        return parameters.length > 0 ? variables.getValue((String) parameters[0]) : "[VAR NOT FOUND]";
+    public Object build(BuildContext context, String name, Object[] parameters, String extension) {
+        return parameters.length > 0 ? context.getVariables().getValue((String) parameters[0]) : "[VAR NOT FOUND]";
     }
 
     public static InputVariableMessageBuilder newBuilder(){

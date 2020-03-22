@@ -21,10 +21,10 @@
 package net.pretronic.libraries.message.bml.function;
 
 import net.pretronic.libraries.message.bml.MessageProcessor;
+import net.pretronic.libraries.message.bml.builder.BuildContext;
 import net.pretronic.libraries.message.bml.builder.MessageBuilder;
 import net.pretronic.libraries.message.bml.builder.MessageBuilderFactory;
 import net.pretronic.libraries.message.bml.builder.StaticTextMessageBuilder;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
 
 public class FunctionFactory implements MessageBuilderFactory {
 
@@ -37,7 +37,7 @@ public class FunctionFactory implements MessageBuilderFactory {
     @Override
     public MessageBuilder create(String name) {
         Function function = processor.getFunction(name);
-        if(function == null) return new StaticTextMessageBuilder("{Function not found;"+name+"}");
+        if(function == null) return new StaticTextMessageBuilder("{FUNCTION NOT FOUND;"+name+"}");
         return new Builder(function);
     }
 
@@ -50,16 +50,8 @@ public class FunctionFactory implements MessageBuilderFactory {
         }
 
         @Override
-        public Object build(Object argument,String name, Object[] parameters, String extension, VariableSet variables) {
+        public Object build(BuildContext context, String name, Object[] parameters, String extension) {
             return function.execute(parameters);
-        }
-    }
-
-    public static class NotFound implements MessageBuilder {
-
-        @Override
-        public Object build(Object argument,String name, Object[] parameters, String extension, VariableSet variables) {
-            return null;
         }
     }
 }

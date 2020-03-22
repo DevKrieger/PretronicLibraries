@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 22.03.20, 13:02
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -20,9 +20,24 @@
 
 package net.pretronic.libraries.message.bml.builder;
 
-import net.pretronic.libraries.utility.annonations.Nullable;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.language.Language;
 
-public interface MessageBuilder {
+public abstract class BuildContext {
 
-    Object build(BuildContext context,@Nullable String name, Object[] parameters, @Nullable String extension);
+    private final Language language;
+    private final VariableSet variables;
+
+    public BuildContext(Language language, VariableSet variables) {
+        this.language = language;
+        this.variables = variables;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public VariableSet getVariables() {
+        return variables;
+    }
 }
