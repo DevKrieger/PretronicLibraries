@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 11.03.20, 18:40
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,20 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.generator;
+package net.pretronic.libraries.command.command.object;
 
-public interface MessageGenerator {
+import net.pretronic.libraries.command.Completable;
+import net.pretronic.libraries.command.NotFindable;
+import net.pretronic.libraries.command.sender.CommandSender;
 
+import java.util.Collection;
 
+public interface DefinedNotFindable<T> extends NotFindable {
 
+    void commandNotFound(CommandSender sender,T object, String command, String[] args);
+
+    @Override
+    default void commandNotFound(CommandSender sender, String command, String[] args) {
+        commandNotFound(sender,null,command,args);
+    }
 }

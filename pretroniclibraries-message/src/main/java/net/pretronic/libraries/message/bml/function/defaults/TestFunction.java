@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +18,21 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.indicate;
+package net.pretronic.libraries.message.bml.function.defaults;
 
-public enum IndicateType {
+import net.pretronic.libraries.message.bml.function.Function;
 
-    ACTION(),
-    FUNCTION(),
-    TEXT()
-
+public class TestFunction implements Function {
+    @Override
+    public Object execute(Object[] parameters) {
+        StringBuilder out = new StringBuilder();
+        out.append("F(");
+        for (Object parameter : parameters) {
+            out.append(parameter);
+            out.append("|");
+        }
+        out.setLength(out.length()-1);
+        out.append(")F");
+        return out.toString();
+    }
 }

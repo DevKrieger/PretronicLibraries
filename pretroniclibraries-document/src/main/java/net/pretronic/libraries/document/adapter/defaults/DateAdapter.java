@@ -31,7 +31,9 @@ public class DateAdapter implements DocumentAdapter<Date> {
 
     @Override
     public Date read(DocumentBase entry, TypeReference<Date> type) {
-        if(entry.isPrimitive()) return new Date(entry.toPrimitive().getAsLong());
+        if(entry.isPrimitive()){
+            return new Date(entry.toPrimitive().getAsLong());
+        }
         throw new IllegalArgumentException("Can't convert a object to a date.");
     }
 

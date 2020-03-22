@@ -115,11 +115,12 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         this.commands.clear();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0){
             String name = args[0];
-            T object = getObject(name);
+            T object = getObject(sender,name);
             if(object == null) {
                 if(objectNotFoundHandler != null) {
                     objectNotFoundHandler.objectNotFound(sender, name, Arrays.copyOfRange(args, 1, args.length));
@@ -128,7 +129,11 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
                 execute(sender, object,Arrays.copyOfRange(args,1,args.length));
             } else {
                 if(notFoundHandler != null){
-                    notFoundHandler.handle(sender, args[0], Arrays.copyOfRange(args,1,args.length));
+                    if(notFoundHandler instanceof DefinedNotFindable){
+                        ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, null, new String[0]);
+                    }else{
+                        notFoundHandler.handle(sender, null, new String[0]);
+                    };
                 }
             }
         } else {
@@ -152,8 +157,13 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
            }
        }
        if(notFoundHandler != null){
-           notFoundHandler.handle(sender, args.length == 0 ? "" : args[0],
-                   args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length));
+           String command =  args.length == 0 ? "" : args[0];
+           String[] args0 = args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length);
+           if(notFoundHandler instanceof DefinedNotFindable){
+               ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, command, args0);
+           }else{
+               notFoundHandler.handle(sender, command, args0);
+           }
        }
     }
 
@@ -173,7 +183,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             String subCommand = args[1];
             Command command = getCommand(subCommand);
             if(command instanceof DefinedCompletable){
-                T object = getObject(args[0]);
+                T object = getObject(sender,args[0]);
                 if(object == null) return Collections.emptyList();
                 return ((DefinedCompletable<T>) command).complete(sender, object,Arrays.copyOfRange(args,2,args.length));
             }else if(command instanceof Completable){
@@ -182,5 +192,5 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         }
     }
 
-    public abstract T getObject(String name);
+    public abstract T getObject(CommandSender sender, String name);
 }

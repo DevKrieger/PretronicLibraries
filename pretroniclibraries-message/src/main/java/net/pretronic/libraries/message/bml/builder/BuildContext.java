@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 22.03.20, 13:02
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,43 +18,27 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.module;
+package net.pretronic.libraries.message.bml.builder;
 
 import net.pretronic.libraries.message.bml.variable.VariableSet;
+import net.pretronic.libraries.message.language.Language;
+import net.pretronic.libraries.utility.interfaces.Castable;
 
-public class TextModule implements Module{
+public abstract class BuildContext implements Castable<BuildContext> {
 
-    private final String text;
-    private Module next;
+    private final Language language;
+    private final VariableSet variables;
 
-    public TextModule(String text) {
-        this.text = text;
+    public BuildContext(Language language, VariableSet variables) {
+        this.language = language;
+        this.variables = variables;
     }
 
-    public String getText() {
-        return text;
+    public Language getLanguage() {
+        return language;
     }
 
-    @Override
-    public void setNext(Module next) {
-        this.next = next;
+    public VariableSet getVariables() {
+        return variables;
     }
-
-    @Override
-    public void pushParameter(Module module) {
-
-    }
-
-    @Override
-    public Object process(VariableSet variables) {
-        return text;
-    }
-
-    @Override
-    public void process(StringBuilder builder, VariableSet variables) {
-        builder.append(text);
-        if(next != null) next.process(builder, variables);
-    }
-
-
 }
