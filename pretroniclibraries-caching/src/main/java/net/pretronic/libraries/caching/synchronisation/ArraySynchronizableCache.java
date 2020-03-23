@@ -30,6 +30,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
+/**
+ * The @{@link ArraySynchronizableCache} is based on the @{@link ArrayCache} and implements
+ * the {@link SynchronizableCache} which provides additional functionalities for synchronising different
+ * caches in a cluster network.
+ *
+ * @param <O> The object to cache.
+ * @param <I> The main identifier which is used for the synchronisation
+ */
 public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements SynchronizableCache<O,I> {
 
     private SynchronisationCaller<I> caller;

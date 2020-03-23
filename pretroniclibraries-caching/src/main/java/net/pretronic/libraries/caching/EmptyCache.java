@@ -27,6 +27,10 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+/**
+ * This implementation represents an always empty cache.
+ * @param <O>
+ */
 public class EmptyCache<O> implements Cache<O> {
 
     public static final Cache EMPTY = new EmptyCache(false);
@@ -189,12 +193,12 @@ public class EmptyCache<O> implements Cache<O> {
         //Unused
     }
 
-    @SuppressWarnings("uncechked")
+    @SuppressWarnings("unchecked")
     public static <R> Cache<R> newEmptyCache(){
         return EMPTY;
     }
 
-    @SuppressWarnings("uncechked")
+    @SuppressWarnings("unchecked")
     public static <R> Cache<R> newEmptyExceptedCache(){
         return EMPTY_EXCEPTED;
     }

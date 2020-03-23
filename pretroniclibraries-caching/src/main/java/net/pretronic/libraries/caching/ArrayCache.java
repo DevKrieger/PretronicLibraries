@@ -31,6 +31,8 @@ import java.util.function.Supplier;
 /**
  * An array cached is based on a dynamic growing array.
  *
+ * Todo: Integrate @{@link CacheStateAble}
+ *
  * @param <O> The object to cache.
  */
 public class ArrayCache<O> implements Cache<O>{

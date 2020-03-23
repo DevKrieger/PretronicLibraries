@@ -27,6 +27,11 @@ import net.pretronic.libraries.synchronisation.SynchronisationHandler;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
+/**
+ * The {@link SynchronizableCache} is an integrated cache into the Pretronic synchronisation libraries.
+ * It provides additional functionalities for synchronizing objects in a cluster network. Read more about
+ * the synchronisation in the corresponding module.
+ */
 public interface SynchronizableCache<O,I> extends Cache<O>, SynchronisationHandler<O,I> {
 
     void setIdentifierQuery(CacheQuery<O> query);

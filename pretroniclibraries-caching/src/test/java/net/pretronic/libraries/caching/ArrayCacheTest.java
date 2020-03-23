@@ -107,8 +107,8 @@ class ArrayCacheTest {
 
     private static class TestObject {
 
-        private String name;
-        private int age;
+        private final String name;
+        private final int age;
 
         private TestObject(String name, int age) {
             this.name = name;
