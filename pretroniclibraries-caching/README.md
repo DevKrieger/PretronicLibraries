@@ -10,7 +10,9 @@ The cache manages also the lifetime, expiry, refresh and loading of objects.
 #### Gradle
 
 ```groovy
-//Repository
+maven {
+    url "https://repository.pretronic.net/repository/pretronic/"
+}
 
 compile group: 'net.pretronic.libraries', name: 'PretronicLibraries', version: '1.0.0'
 ```
@@ -18,7 +20,10 @@ compile group: 'net.pretronic.libraries', name: 'PretronicLibraries', version: '
 #### Maven
 
 ```xml
- <!-- Repository -->
+<repository>
+    <id>pretronic</id>
+    <url>https://repository.pretronic.net/repository/pretronic/</url>
+</repository>
 
 <dependency>
     <groupId>net.pretronic.libraries</groupId>
@@ -51,8 +56,10 @@ public class Example {
         employees.insert(new Employee("Frederick Hooper","frederick.hooper@example.com","+ 1 000 000 00 00"));
         employees.insert(new Employee("Huma Norris","huma.norris@example.com","+ 1 000 000 00 00"));
 
+
         /* Query by predicate */
         Employee result = employees.get(employee -> employee.getName().equalsIgnoreCase("Frederick Hooper"));
+
 
         /* Query by a cache query */
         Employee result2 = employees.get(QUERY_BY_NAME,"Aidan Macleod");
