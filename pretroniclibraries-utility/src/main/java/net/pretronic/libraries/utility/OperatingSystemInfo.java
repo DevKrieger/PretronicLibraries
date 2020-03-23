@@ -19,6 +19,10 @@
 
 package net.pretronic.libraries.utility;
 
+/**
+ * Deprecated, use {@link SystemInfo}
+ */
+@Deprecated
 public class OperatingSystemInfo {
 
     private final String name, version, architecture, javaVersion;
