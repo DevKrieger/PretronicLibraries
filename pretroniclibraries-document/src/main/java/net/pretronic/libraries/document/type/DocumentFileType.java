@@ -49,7 +49,6 @@ public class DocumentFileType {
 
     public static final DocumentFileType PROPERTIES = new DocumentFileType("PROPERTIES", "properties", new PropertiesDocumentWriter(), new PropertiesDocumentReader());
 
-
     private final String name, ending;
     private final DocumentWriter writer;
     private final DocumentReader reader;

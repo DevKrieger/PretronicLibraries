@@ -21,8 +21,12 @@ package net.pretronic.libraries.document.type.xml;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.io.DocumentReader;
+import net.pretronic.libraries.document.type.yaml.YamlDocumentReader;
 import net.pretronic.libraries.utility.parser.StringParser;
 
+/**
+ * The @{@link XmlDocumentReader} reads the document structure from the xml (https://www.w3.org/TR/xml/) file format.
+ */
 public class XmlDocumentReader implements DocumentReader {
 
     @Override

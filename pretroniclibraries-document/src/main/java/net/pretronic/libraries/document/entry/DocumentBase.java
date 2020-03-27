@@ -45,6 +45,11 @@ public interface DocumentBase {
     boolean isNode();
 
 
+    /**
+     * Copy this base with the included data.
+     *
+     * @return The new entry
+     */
     DocumentBase copy();
 
 }

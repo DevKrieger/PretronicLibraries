@@ -24,7 +24,7 @@ import net.pretronic.libraries.logging.LogRecord;
 import java.io.IOException;
 
 /**
- * This object is for additionally handling a log record.
+ * This object is for handling and printing records.
  *
  * <p>A log record must be register by the logger and should only be used in one logger.</p>
  */

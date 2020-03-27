@@ -35,7 +35,7 @@ public class YamlSequence {
     private final boolean array;
     private final List<DocumentEntry> entries;
 
-    public YamlSequence(String key, int indent, YamlSequence parent, boolean array) {
+    protected YamlSequence(String key, int indent, YamlSequence parent, boolean array) {
         this.key = key;
         this.indent = indent;
         this.parent = parent;

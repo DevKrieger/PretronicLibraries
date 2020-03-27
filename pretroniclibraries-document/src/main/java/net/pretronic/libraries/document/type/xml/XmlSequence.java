@@ -40,7 +40,7 @@ public class XmlSequence {
     private String tempKey;
     private XmlSequence nextSequence;
 
-    public XmlSequence(ParserState currentState) {
+    protected XmlSequence(ParserState currentState) {
         this.currentState = currentState;
         this.entries =  new ArrayList<>();
     }

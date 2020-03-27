@@ -41,7 +41,7 @@ public class JsonSequence {
     private int lineMark;
     private JsonSequence nextSequence;
 
-    public JsonSequence(String key,boolean array,ParserState currentState) {
+    protected JsonSequence(String key,boolean array,ParserState currentState) {
         this.key = key;
         this.array = array;
         this.currentState = currentState;

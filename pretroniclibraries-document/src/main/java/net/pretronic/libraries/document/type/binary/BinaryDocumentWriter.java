@@ -30,6 +30,10 @@ import net.pretronic.libraries.utility.io.IORuntimeException;
 import java.io.*;
 import java.nio.charset.Charset;
 
+/**
+ * The @{@link BinaryDocumentWriter} writes the document structure into the fast and compact
+ * binary format which is developed by pretronic.
+ */
 public class BinaryDocumentWriter implements DocumentWriter {
 
     public static final byte TYPE_BOOLEAN = 20;

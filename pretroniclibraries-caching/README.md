@@ -14,7 +14,7 @@ maven {
     url "https://repository.pretronic.net/repository/pretronic/"
 }
 
-compile group: 'net.pretronic.libraries', name: 'PretronicLibraries', version: '1.0.0'
+compile group: 'net.pretronic.libraries', name: 'pretroniclibraries-caching', version: '1.0.0'
 ```
 
 #### Maven
@@ -27,7 +27,7 @@ compile group: 'net.pretronic.libraries', name: 'PretronicLibraries', version: '
 
 <dependency>
     <groupId>net.pretronic.libraries</groupId>
-    <artifactId>PretronicLibraries</artifactId>
+    <artifactId>pretroniclibraries-caching</artifactId>
     <version>${version}</version>
     <scope>compile</scope>
 </dependency>

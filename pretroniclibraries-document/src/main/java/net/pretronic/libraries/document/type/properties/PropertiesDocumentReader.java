@@ -26,8 +26,14 @@ import net.pretronic.libraries.document.entry.PrimitiveEntry;
 import net.pretronic.libraries.document.io.DocumentReader;
 import net.pretronic.libraries.utility.parser.StringParser;
 
-/*
-@Todo implement attributes
+/**
+ * The {@link PropertiesDocumentWriter} writes the document structure into the famous.properties format
+ * which is often used in java applications.
+ *
+ * <p>Structure</p>
+ * <p>Key=Value</p>
+ * <p>Key2=Value2</p>
+ * <p>Key3=Value2</p>
  */
 public class PropertiesDocumentReader implements DocumentReader {
 

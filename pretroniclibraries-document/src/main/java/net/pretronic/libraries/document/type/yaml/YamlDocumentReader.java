@@ -23,6 +23,9 @@ import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.io.DocumentReader;
 import net.pretronic.libraries.utility.parser.StringParser;
 
+/**
+ * The @{@link YamlDocumentReader} reads the document structure from the yaml (https://yaml.org/spec/) file format.
+ */
 public class YamlDocumentReader implements DocumentReader {
 
     @Override

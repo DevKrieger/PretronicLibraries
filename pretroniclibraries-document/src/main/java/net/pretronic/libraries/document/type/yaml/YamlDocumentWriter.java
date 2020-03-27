@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
+/**
+ * The @{@link YamlDocumentReader} writes the document structure into the yaml (https://yaml.org/spec/) file format.
+ */
 public class YamlDocumentWriter implements DocumentWriter {
 
     @Override
