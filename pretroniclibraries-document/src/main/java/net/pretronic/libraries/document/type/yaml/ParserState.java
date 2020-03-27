@@ -135,6 +135,7 @@ public interface ParserState {
             }else if(!isSpaceChar(current)){
                 yaml.mark(parser);
                 yaml.setState(DOCUMENT_VALUE_UNDEFINED);
+                parser.previousChar();
             }
         }
     }
@@ -162,13 +163,30 @@ public interface ParserState {
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
             parser.previousChar();
-            if(current == endCharacter && parser.currentChar() != '\\'){
-                String value = parser.get(yaml.getLineMark(),yaml.getCharacterMark(),parser.lineIndex(),parser.charIndex()+1,yaml.getSequence().getIndent());
+            char prev = parser.currentChar();
+            parser.skipChar();
+            char next = 255;
+            if(parser.hasNextChar()){
+                parser.skipChar();
+                next = parser.currentChar();
+                parser.previousChar();
+            }
+
+            if(current == endCharacter && next == endCharacter){
+                parser.skipChar();
+                return;
+            }
+
+            if(current == endCharacter && prev != '\\'){
+                String value = parser.get(yaml.getLineMark(),yaml.getCharacterMark(),parser.lineIndex(),parser.charIndex(),yaml.getSequence().getIndent());
+                if(value != null){
+                    value = value.replace(endCharacter+""+endCharacter,String.valueOf(endCharacter));
+                    value = value.replace(String.valueOf('\\'+endCharacter),String.valueOf(endCharacter));
+                }
                 yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),value));
                 yaml.mark(parser);
                 yaml.setState(yaml.getSequence().isArray() ? DOCUMENT_ARRAY_VALUE_ENDING : DOCUMENT_NEXT_SAME);
             }
-            parser.skipChar();
         }
     }
 
@@ -258,13 +276,14 @@ public interface ParserState {
             }else if(current == '\''){
                 yaml.setState(DOCUMENT_VALUE_DEFINED_TEXT2);
                 yaml.markNext(parser);
-            }else if(!isSpaceChar(current)){
-                yaml.setState(DOCUMENT_ARRAY_VALUE);
-                yaml.mark(parser);
             }else if(current == ']'){
                 DocumentEntry entry = yaml.getSequence().getEntry();
                 yaml.setSequence(yaml.getSequence().getParent());
                 yaml.getSequence().pushEntry(entry);
+                yaml.setState(DOCUMENT_NEXT_SAME);
+            }else if(!isSpaceChar(current)){
+                yaml.setState(DOCUMENT_ARRAY_VALUE);
+                yaml.mark(parser);
             }
         }
     }
