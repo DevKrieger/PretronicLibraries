@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 27.03.20, 19:06
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -20,18 +20,13 @@
 
 package net.pretronic.libraries.message.bml.builder;
 
-public class InputMessageBuilder implements MessageBuilder{
+public interface BasicMessageBuilder extends PreparedMessageBuilder{
 
-    private static InputMessageBuilder DEFAULT = new InputMessageBuilder();
-
-    private InputMessageBuilder(){}
+    Object build(BuildContext context, boolean requiresString,Object[] parameters, Object next);
 
     @Override
-    public Object build(BuildContext context,String name, Object[] parameters, String extension) {
-        return parameters.length > 0 ? parameters[0] : "";
-    }
-
-    public static InputMessageBuilder newBuilder(){
-        return DEFAULT;
+    default Object build(BuildContext context, boolean requiresString, String name, Object leftOperator, String operation
+            , Object rightOperator, Object[] parameters, Object extension, Object next) {
+        return build(context,requiresString,parameters,next);
     }
 }

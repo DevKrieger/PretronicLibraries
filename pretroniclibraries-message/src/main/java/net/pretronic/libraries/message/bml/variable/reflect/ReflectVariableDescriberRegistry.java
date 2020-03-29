@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 28.03.20, 18:47
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,28 +18,25 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml;
+package net.pretronic.libraries.message.bml.variable.reflect;
 
-import net.pretronic.libraries.message.bml.builder.BuildContext;
-import net.pretronic.libraries.message.bml.builder.StaticTextMessageBuilder;
+import net.pretronic.libraries.utility.Validate;
 
-public class Message {
+import java.util.HashMap;
+import java.util.Map;
 
-    private final Module root;
+public final class ReflectVariableDescriberRegistry {
 
-    public Message(Module root) {
-        this.root = root;
+    private final static Map<Class<?>,ReflectVariableDescriber> DESCRIBERS = new HashMap<>();
+
+    public static void registerDescriber(Class<?> clazz, ReflectVariableDescriber describer){
+        Validate.notNull(clazz,describer);
+        DESCRIBERS.put(clazz,describer);
     }
 
-    public Object build(BuildContext context){
-        return root.build(context);
+    public static ReflectVariableDescriber getDescriber(Class<?> clazz){
+        Validate.notNull(clazz);
+        return DESCRIBERS.get(clazz);
     }
 
-    public String buildToString(BuildContext context) {
-        return build(context).toString();
-    }
-
-    public static Message ofStaticText(String text){
-        return new Message(new Module(null,new StaticTextMessageBuilder(text)));
-    }
 }

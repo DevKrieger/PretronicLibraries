@@ -23,18 +23,19 @@ package net.pretronic.libraries.message.bml.parser;
 import net.pretronic.libraries.message.bml.Message;
 import net.pretronic.libraries.message.bml.MessageProcessor;
 import net.pretronic.libraries.message.bml.Module;
-import net.pretronic.libraries.message.bml.builder.InputMessageBuilder;
 import net.pretronic.libraries.message.bml.builder.MessageBuilder;
-import net.pretronic.libraries.message.bml.builder.StaticTextMessageBuilder;
 import net.pretronic.libraries.message.bml.indicate.Indicate;
 import net.pretronic.libraries.utility.parser.StringParser;
 
+
+//@if(test in test;test,${test})
 public class MessageParser {
 
     private final MessageProcessor processor;
     private final StringParser parser;
     private final Module root;
 
+    private Module current;
     private ParserState state;
     private MessageSequence sequence;
 
@@ -48,10 +49,10 @@ public class MessageParser {
     public MessageParser(MessageProcessor processor,StringParser parser){
         this.processor = processor;
         this.parser = parser;
-        this.state = new ParserState.IndicateState();
+        this.state = new ParserState.OutlineState();
 
         this.root = new Module(null, null);
-        this.sequence = new MessageSequence(null,Indicate.DUMMY_START,root);
+        this.current = this.root;
 
         if(!parser.isEmpty()){
             parser.nextChar();
@@ -62,10 +63,6 @@ public class MessageParser {
 
     public StringParser getParser() {
         return parser;
-    }
-
-    public ParserState getState() {
-        return state;
     }
 
     public void setState(ParserState state) {
@@ -107,32 +104,46 @@ public class MessageParser {
     public void extractStringAndPush(int added){
         String text = extractString(added);
 
-        MessageBuilder builder;
-        if(getSequence().getParent() != null) builder = new StaticTextMessageBuilder(text);
-        else builder = processor.getTextBuilderFactory().create(text);
-
-        Module module = new Module(null,builder);
-        if(text != null) getSequence().pushModule(module);
+        if(text != null){
+            MessageBuilder builder = processor.getTextBuilderFactory().create(text);
+            Module module = new Module(null,builder);
+            nextModule(module);
+        }
     }
 
     public void extractStringAndPush(){
         extractStringAndPush(0);
     }
 
-    public void nextSequence(String name, Indicate indicate){
-        Module module = new Module(name,indicate.hasName() ? null : indicate.getFactory().create(name));
-        this.sequence.pushModule(module);
-        this.sequence = new MessageSequence(this.sequence,indicate,module);
+    public void nextSequence(String name, Indicate indicate,ParserState start){
+        Module module = new Module(name,indicate != null ? (indicate.hasName() ? null : indicate.getFactory().create(name)) : null);
+        nextModule(module);
+
+        this.sequence = new MessageSequence(this.sequence,indicate,module,start);
         markNext();
+    }
+
+    public void nextModule(Module module){
+        if(this.sequence != null){
+            if(this.sequence.getState() instanceof ParserState.LeftOperationState){
+                this.sequence.getModule().setLeftOperation(module);
+            }else if(this.sequence.getState() instanceof ParserState.RightOperationState){
+                this.sequence.getModule().setRightOperation(module);
+            }else if(this.sequence.getState() instanceof ParserState.ExtensionIndicateState){
+                this.sequence.getModule().setExtension(module);
+            }else{
+                this.sequence.pushModule(module);
+            }
+        }else{
+            this.current.setNext(module);
+            this.current = module;
+        }
     }
 
     public void finishSequence(){
         this.sequence = this.sequence.getParent();
-    }
-
-    public void finishSequenceAndSwitchState(){
-        finishSequence();
         markNext();
+        System.out.println("FINISH SEQUENCE");
     }
 
     public Message parse(){
@@ -141,7 +152,7 @@ public class MessageParser {
             this.state.parse(processor,this,parser.nextChar());
         }
         extractStringAndPush(1);
-        return new Message(root.getParameters()[0]);
+        return new Message(root.getNext());
     }
 }
 

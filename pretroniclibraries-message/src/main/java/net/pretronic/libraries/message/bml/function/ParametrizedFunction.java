@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 23.03.20, 19:42
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,28 +18,23 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml;
+package net.pretronic.libraries.message.bml.function;
 
+import net.pretronic.libraries.message.bml.Module;
 import net.pretronic.libraries.message.bml.builder.BuildContext;
-import net.pretronic.libraries.message.bml.builder.StaticTextMessageBuilder;
 
-public class Message {
+public interface ParametrizedFunction extends Function {
 
-    private final Module root;
+    Object execute(BuildContext context,Object[] parameters);
 
-    public Message(Module root) {
-        this.root = root;
-    }
-
-    public Object build(BuildContext context){
-        return root.build(context);
-    }
-
-    public String buildToString(BuildContext context) {
-        return build(context).toString();
-    }
-
-    public static Message ofStaticText(String text){
-        return new Message(new Module(null,new StaticTextMessageBuilder(text)));
+    @Override
+    default Object execute(BuildContext context, Module leftOperator, String operation, Module rightOperation, Module[] parameters0) {
+        Object[] parameters;
+        if(leftOperator != null){
+            parameters = new Object[parameters0.length+1];
+            parameters[0] = leftOperator;
+            System.arraycopy(parameters0,0,parameters,1,parameters0.length);
+        }else parameters = parameters0;
+        return execute(context,parameters);
     }
 }

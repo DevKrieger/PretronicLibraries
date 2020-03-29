@@ -20,18 +20,24 @@
 
 package net.pretronic.libraries.message.bml.function.defaults;
 
-import net.pretronic.libraries.message.bml.function.Function;
+import net.pretronic.libraries.message.bml.builder.BuildContext;
+import net.pretronic.libraries.message.bml.function.ParametrizedFunction;
+import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.StringUtil;
 
-public class RandomTextFunction implements Function {
+public class RandomTextFunction implements ParametrizedFunction {
 
     private static final int DEFAULT_SIZE = 5;
 
     @Override
-    public Object execute(Object[] parameters) {
+    public Object execute(BuildContext context, Object[] parameters) {
         int size = DEFAULT_SIZE;
-        if(parameters.length == 1 && parameters[0] instanceof Integer){
-            size = (int) parameters[0];
+        if(parameters.length == 1){
+            if(parameters[0] instanceof Integer){
+                size = (int) parameters[0];
+            }else if(GeneralUtil.isNaturalNumber((String) parameters[0])){
+                size = Integer.parseInt((String) parameters[0]);
+            }
         }else if(parameters.length > 1){
             throw new IllegalArgumentException("Invalid parameter length");
         }

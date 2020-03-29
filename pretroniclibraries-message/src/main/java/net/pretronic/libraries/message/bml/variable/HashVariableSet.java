@@ -44,6 +44,16 @@ public class HashVariableSet extends HashSet<Variable> implements VariableSet{
     }
 
     @Override
+    public Variable getOrCreate(String name) {
+        Variable variable = get(name);
+        if(variable == null){
+            variable = new Variable(name,null);
+            add(variable);
+        }
+        return variable;
+    }
+
+    @Override
     public Object getValue(String name) {
         Variable variable = get(name);
         return variable != null ? variable.getObject() : null;

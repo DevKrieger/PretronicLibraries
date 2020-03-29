@@ -24,9 +24,6 @@ import net.pretronic.libraries.message.bml.builder.MessageBuilderFactory;
 
 public class Indicate {
 
-    public static final Indicate DUMMY_START = new Indicate((char) 255,(char) 255,(char) 255,(char) 255,(char) 255
-            ,(char) 255,false, false,false,false,true,null);
-
     private final char prefix;
     private final char start;
     private final char end;
@@ -39,12 +36,15 @@ public class Indicate {
     private final boolean hasName;
     private final boolean hasParameters;
     private final boolean hasExtension;
+    private final boolean hasOperation;
     private final boolean isSubIndicateAble;
+    private final boolean isExtensionSubIndicateAble;
 
     private final MessageBuilderFactory factory;
 
-    public Indicate(char prefix, char start, char end, char parameter, char extensionStart, char extensionEnd, boolean hasPrefix
-            , boolean hasName, boolean hasParameters, boolean hasExtension, boolean isSubIndicateAble, MessageBuilderFactory factory) {
+    public Indicate(char prefix, char start, char end, char parameter, char extensionStart, char extensionEnd
+            , boolean hasPrefix, boolean hasName, boolean hasParameters, boolean hasExtension, boolean hasOperation
+            , boolean isSubIndicateAble, boolean isExtensionSubIndicateAble, MessageBuilderFactory factory) {
         this.prefix = prefix;
         this.start = start;
         this.end = end;
@@ -55,7 +55,9 @@ public class Indicate {
         this.hasName = hasName;
         this.hasParameters = hasParameters;
         this.hasExtension = hasExtension;
+        this.hasOperation = hasOperation;
         this.isSubIndicateAble = isSubIndicateAble;
+        this.isExtensionSubIndicateAble = isExtensionSubIndicateAble;
         this.factory = factory;
     }
 
@@ -103,13 +105,21 @@ public class Indicate {
         return isSubIndicateAble;
     }
 
+    public boolean isExtensionSubIndicateAble() {
+        return isExtensionSubIndicateAble;
+    }
+
     public boolean hasExtension() {
         return hasExtension;
     }
 
+    public boolean hasOperation() {
+        return hasOperation;
+    }
+
     @Override
     public String toString() {
-        return "Indicate{" +
+        return "Indicate {" +
                 "prefix=" + prefix +
                 ", start=" + start +
                 ", end=" + end +
@@ -120,7 +130,9 @@ public class Indicate {
                 ", hasName=" + hasName +
                 ", hasParameters=" + hasParameters +
                 ", hasExtension=" + hasExtension +
+                ", hasOperation=" + hasOperation +
                 ", isSubIndicateAble=" + isSubIndicateAble +
+                ", factory=" + factory +
                 '}';
     }
 }

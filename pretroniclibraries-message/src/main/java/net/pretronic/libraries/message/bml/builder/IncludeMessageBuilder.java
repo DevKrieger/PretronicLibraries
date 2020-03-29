@@ -23,7 +23,7 @@ package net.pretronic.libraries.message.bml.builder;
 import net.pretronic.libraries.message.MessageProvider;
 import net.pretronic.libraries.message.bml.Message;
 
-public class IncludeMessageBuilder implements MessageBuilder {
+public class IncludeMessageBuilder implements BasicMessageBuilder {
 
     private final MessageProvider provider;
     private Message message;
@@ -33,11 +33,18 @@ public class IncludeMessageBuilder implements MessageBuilder {
     }
 
     @Override
-    public Object build(BuildContext context, String name, Object[] parameters, String extension) {
+    public boolean isUnformattedResultRequired() {
+        return true;
+    }
+
+    @Override
+    public Object build(BuildContext context, boolean requiresString, Object[] parameters, Object next) {
         if(message == null){
             message = provider.getMessage((String)parameters[0],context.getLanguage());
             if(message == null) message = Message.ofStaticText("{MESSAGE NOT FOUND}");
         }
-        return message.build(context);
+        Object result =  message.build(context);
+        if(next != null) return result+next.toString();
+        else return result;
     }
 }

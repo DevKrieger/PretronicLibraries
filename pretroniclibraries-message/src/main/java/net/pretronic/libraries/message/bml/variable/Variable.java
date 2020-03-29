@@ -23,7 +23,7 @@ package net.pretronic.libraries.message.bml.variable;
 public class Variable {
 
     private final String name;
-    private final Object object;
+    private Object object;
 
     public Variable(String name, Object object) {
         this.name = name;
@@ -36,5 +36,9 @@ public class Variable {
 
     public Object getObject() {
         return object;
+    }
+
+    public void setObject(Object object) {
+        this.object = object;
     }
 }

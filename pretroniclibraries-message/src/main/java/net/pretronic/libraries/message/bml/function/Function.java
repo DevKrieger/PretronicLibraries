@@ -20,8 +20,11 @@
 
 package net.pretronic.libraries.message.bml.function;
 
+import net.pretronic.libraries.message.bml.Module;
+import net.pretronic.libraries.message.bml.builder.BuildContext;
+
 public interface Function {
 
-    Object execute(Object[] parameters);
+    Object execute(BuildContext context, Module leftOperator, String operation, Module rightOperation, Module[] parameters);
 
 }

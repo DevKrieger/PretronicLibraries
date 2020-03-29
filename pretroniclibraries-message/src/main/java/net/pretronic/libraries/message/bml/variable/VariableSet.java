@@ -30,6 +30,8 @@ public interface VariableSet extends Set<Variable> {
 
     Variable get(String name);
 
+    Variable getOrCreate(String name);
+
     Object getValue(String name);
 
     VariableSet add(String name, Object source);

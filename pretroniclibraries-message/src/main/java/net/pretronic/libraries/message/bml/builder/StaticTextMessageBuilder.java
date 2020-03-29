@@ -20,7 +20,7 @@
 
 package net.pretronic.libraries.message.bml.builder;
 
-public class StaticTextMessageBuilder implements MessageBuilder{
+public class StaticTextMessageBuilder implements BasicMessageBuilder{
 
     private final String text;
 
@@ -29,8 +29,14 @@ public class StaticTextMessageBuilder implements MessageBuilder{
     }
 
     @Override
-    public Object build(BuildContext context, String name, Object[] parameters, String extension) {
-        return text;
+    public boolean isUnformattedResultRequired() {
+        return true;
+    }
+
+    @Override
+    public Object build(BuildContext context, boolean requiresString, Object[] parameters, Object next) {
+        if(next != null) return text+next.toString();
+        else return text;
     }
 
     public static class Factory implements MessageBuilderFactory {

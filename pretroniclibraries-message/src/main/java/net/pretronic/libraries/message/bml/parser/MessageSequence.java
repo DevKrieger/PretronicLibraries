@@ -20,10 +20,7 @@
 
 package net.pretronic.libraries.message.bml.parser;
 
-import net.pretronic.libraries.message.bml.MessageProcessor;
 import net.pretronic.libraries.message.bml.Module;
-import net.pretronic.libraries.message.bml.builder.MessageBuilder;
-import net.pretronic.libraries.message.bml.builder.StaticTextMessageBuilder;
 import net.pretronic.libraries.message.bml.indicate.Indicate;
 
 public class MessageSequence {
@@ -32,12 +29,19 @@ public class MessageSequence {
     private final Indicate indicate;
     private final Module module;
 
+    private ParserState state;
     private Module current;
 
-    public MessageSequence(MessageSequence parent, Indicate indicate, Module module) {
+    public MessageSequence(MessageSequence parent, Indicate indicate, Module module,ParserState state) {
         this.parent = parent;
         this.indicate = indicate;
         this.module = module;
+
+        this.state = state;
+    }
+
+    public Module getModule() {
+        return module;
     }
 
     public MessageSequence getParent() {
@@ -46,6 +50,14 @@ public class MessageSequence {
 
     public Indicate getIndicate() {
         return indicate;
+    }
+
+    public ParserState getState() {
+        return state;
+    }
+
+    public void setState(ParserState state) {
+        this.state = state;
     }
 
     public void pushModule(Module module){
@@ -66,7 +78,11 @@ public class MessageSequence {
         this.module.setBuilder(indicate.getFactory().create(name));
     }
 
-    public void setExtension(String extension){
+    public void setExtension(Module extension){
         this.module.setExtension(extension);
+    }
+
+    public void setOperator(String operator){
+        this.module.setOperation(operator);
     }
 }

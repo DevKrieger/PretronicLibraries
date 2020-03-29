@@ -21,6 +21,7 @@
 package net.pretronic.libraries.message.bml.function;
 
 import net.pretronic.libraries.message.bml.MessageProcessor;
+import net.pretronic.libraries.message.bml.Module;
 import net.pretronic.libraries.message.bml.builder.BuildContext;
 import net.pretronic.libraries.message.bml.builder.MessageBuilder;
 import net.pretronic.libraries.message.bml.builder.MessageBuilderFactory;
@@ -50,8 +51,15 @@ public class FunctionFactory implements MessageBuilderFactory {
         }
 
         @Override
-        public Object build(BuildContext context, String name, Object[] parameters, String extension) {
-            return function.execute(parameters);
+        public Object build(BuildContext context, boolean requiresString, String name, Module leftOperator, String operation
+                , Module rightOperator, Module[] parameters, Module extension, Module next0) {
+
+            Object result = function.execute(context,leftOperator,operation,rightOperator,parameters);
+            if(next0 != null){
+                Object next = Module.build(next0,context,requiresString);
+                if(next != null) return result+next.toString();
+                else return result;
+            }else return result;
         }
     }
 }

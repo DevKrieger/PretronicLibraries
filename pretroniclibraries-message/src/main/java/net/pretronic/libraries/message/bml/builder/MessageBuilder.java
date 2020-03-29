@@ -20,9 +20,16 @@
 
 package net.pretronic.libraries.message.bml.builder;
 
+import net.pretronic.libraries.message.bml.Module;
 import net.pretronic.libraries.utility.annonations.Nullable;
 
 public interface MessageBuilder {
 
-    Object build(BuildContext context,@Nullable String name, Object[] parameters, @Nullable String extension);
+    Object build(BuildContext context, boolean requiresString, @Nullable String name
+            , Module leftOperator, String operation, Module rightOperator
+            , Module[] parameters, @Nullable Module extension, Module next);
+
+    default Object buildModule(Module module,BuildContext context,boolean formatted){
+        return Module.build(module, context, formatted);
+    }
 }

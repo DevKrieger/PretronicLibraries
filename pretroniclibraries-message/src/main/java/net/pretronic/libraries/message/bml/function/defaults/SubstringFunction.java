@@ -20,12 +20,13 @@
 
 package net.pretronic.libraries.message.bml.function.defaults;
 
-import net.pretronic.libraries.message.bml.function.Function;
+import net.pretronic.libraries.message.bml.builder.BuildContext;
+import net.pretronic.libraries.message.bml.function.ParametrizedFunction;
 
-public class SubstringFunction implements Function {
+public class SubstringFunction implements ParametrizedFunction {
 
     @Override
-    public Object execute(Object[] parameters) {
+    public Object execute(BuildContext context, Object[] parameters) {
         if(parameters.length >= 2){
             if(parameters[0] instanceof String && parameters[1] instanceof Integer){
                 String content = (String) parameters[0];

@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 27.03.20, 20:46
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,28 +18,25 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml;
+package net.pretronic.libraries.message.bml.function.defaults;
 
 import net.pretronic.libraries.message.bml.builder.BuildContext;
-import net.pretronic.libraries.message.bml.builder.StaticTextMessageBuilder;
+import net.pretronic.libraries.message.bml.function.ParametrizedFunction;
+import net.pretronic.libraries.utility.Convert;
+import net.pretronic.libraries.utility.GeneralUtil;
 
-public class Message {
+public class RandomNumberFunction implements ParametrizedFunction {
 
-    private final Module root;
-
-    public Message(Module root) {
-        this.root = root;
-    }
-
-    public Object build(BuildContext context){
-        return root.build(context);
-    }
-
-    public String buildToString(BuildContext context) {
-        return build(context).toString();
-    }
-
-    public static Message ofStaticText(String text){
-        return new Message(new Module(null,new StaticTextMessageBuilder(text)));
+    @Override
+    public Object execute(BuildContext context, Object[] parameters) {
+        int start;
+        int end;
+        if(parameters.length >= 1){
+            start = Convert.toInteger(parameters[0]);
+        }else start = 0;
+        if(parameters.length >= 2){
+            end = Convert.toInteger(parameters[1]);
+        }else end = Integer.MAX_VALUE;
+        return GeneralUtil.getDefaultRandom().nextInt(end-start)+start;
     }
 }

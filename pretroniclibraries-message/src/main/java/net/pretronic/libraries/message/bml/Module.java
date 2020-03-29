@@ -29,7 +29,11 @@ public class Module {
 
     private String name;
     private Module[] parameters;
-    private String extension;
+    private Module rightOperation;
+    private Module leftOperation;
+    private String operation;
+
+    private Module extension;
     private Module next;
 
     private MessageBuilder builder;
@@ -40,7 +44,7 @@ public class Module {
         this.parameters = new Module[0];
     }
 
-    public Module(String name, Module[] parameters, String extension, Module next, MessageBuilder builder) {
+    public Module(String name, Module[] parameters, Module extension, Module next, MessageBuilder builder) {
         this.name = name;
         this.parameters = parameters;
         this.extension = extension;
@@ -73,12 +77,36 @@ public class Module {
         this.parameters = parameters;
     }
 
-    public String getExtension() {
+    public Module getExtension() {
         return extension;
     }
 
-    public void setExtension(String extension) {
+    public void setExtension(Module extension) {
         this.extension = extension;
+    }
+
+    public Module getRightOperation() {
+        return rightOperation;
+    }
+
+    public void setRightOperation(Module rightOperation) {
+        this.rightOperation = rightOperation;
+    }
+
+    public Module getLeftOperation() {
+        return leftOperation;
+    }
+
+    public void setLeftOperation(Module leftOperation) {
+        this.leftOperation = leftOperation;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
     }
 
     public Module getNext() {
@@ -94,28 +122,46 @@ public class Module {
     }
 
     public Object build(BuildContext context){
-        Object result = buildInternal(context);
-        if(next != null){
-            StringBuilder builder = new StringBuilder();
-            builder.append(result);
-            process(context,builder);
-            return builder.toString();
+        return build(context,false);
+    }
+
+    public Object build(BuildContext context,boolean stringResult){
+        if(builder == null){
+            if(parameters.length > 0){
+                return parameters[0].build(context, stringResult);
+            }
+            return next != null ? next.build(context, stringResult) : null;
         }
-        else return result;
-    }
 
-    public void process(BuildContext context, StringBuilder builder){
-        builder.append(buildInternal(context));
-        if(next != null) next.process(context,builder);
-    }
+        //boolean formatted = builder.isUnformattedResultRequired();
 
-    private Object buildInternal(BuildContext context) {
+        return builder.build(context,stringResult,name
+                ,leftOperation,operation,rightOperation
+                ,parameters,extension,next);
+
+/*
         Object[] parameters = new Object[this.parameters.length];
         int index = 0;
         for (Module parameter : this.parameters) {
-            parameters[index] = parameter.build(context);
+            parameters[index] = parameter.build(context,formatted);
             index++;
         }
-        return builder.build(context,name,parameters,extension);
+        Object next = null;
+        if(this.next != null) next = this.next.build(context,stringResult);
+
+        Object leftOperator = this.leftOperation != null ? leftOperation.build(context, formatted) : null;
+        Object rightOperator = this.rightOperation != null ? rightOperation.build(context, formatted) : null;
+
+        String extension = this.extension != null ? this.extension.build(context, formatted).toString() : "";
+
+        return builder.build(context,stringResult,name
+                ,leftOperator,operation,rightOperator
+                ,parameters,extension,next);
+ */
+    }
+
+    public static Object build(Module module,BuildContext context,boolean requiresUnformatted){
+        if(module == null) return null;
+        else return module.build(context,requiresUnformatted);
     }
 }

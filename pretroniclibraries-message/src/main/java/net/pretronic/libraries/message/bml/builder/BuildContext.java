@@ -24,7 +24,7 @@ import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.message.language.Language;
 import net.pretronic.libraries.utility.interfaces.Castable;
 
-public abstract class BuildContext implements Castable<BuildContext> {
+public class BuildContext implements Castable<BuildContext> {
 
     private final Language language;
     private final VariableSet variables;
@@ -40,5 +40,11 @@ public abstract class BuildContext implements Castable<BuildContext> {
 
     public VariableSet getVariables() {
         return variables;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <N extends BuildContext> N getAs(Class<N> castedClass) {
+        return (N) this;
     }
 }

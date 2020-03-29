@@ -37,7 +37,9 @@ public class IndicateBuilder {
     private boolean hasName;
     private boolean hasParameters;
     private boolean hasExtension;
+    private boolean hasOperation;
     private boolean isSubIndicateAble;
+    private boolean isExtensionSubIndicateAble;
 
     private MessageBuilderFactory factory;
 
@@ -86,15 +88,26 @@ public class IndicateBuilder {
         return this;
     }
 
+    public IndicateBuilder hasOperation() {
+        this.hasOperation = true;
+        return this;
+    }
+
     public IndicateBuilder isSubIndicateAble() {
         this.isSubIndicateAble = true;
+        return this;
+    }
+
+    public IndicateBuilder isExtensionSubIndicateAble() {
+        this.isExtensionSubIndicateAble = true;
         return this;
     }
 
     public Indicate create() {
         if(factory == null) throw new IllegalArgumentException("No factory is not defined");
         if(hasName && !hasPrefix) throw new IllegalArgumentException("HasName requires a prefix");
-        return new Indicate(prefix, start, end, parameter, extensionStart,extensionEnd,hasPrefix, hasName, hasParameters,hasExtension,isSubIndicateAble,factory);
+        return new Indicate(prefix, start, end, parameter, extensionStart,extensionEnd,hasPrefix
+                ,hasName,hasParameters,hasExtension,hasOperation,isSubIndicateAble,isExtensionSubIndicateAble,factory);
     }
 
     public static IndicateBuilder newBuilder(){

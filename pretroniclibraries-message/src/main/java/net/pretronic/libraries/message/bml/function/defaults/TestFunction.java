@@ -20,11 +20,13 @@
 
 package net.pretronic.libraries.message.bml.function.defaults;
 
-import net.pretronic.libraries.message.bml.function.Function;
+import net.pretronic.libraries.message.bml.builder.BuildContext;
+import net.pretronic.libraries.message.bml.function.ParametrizedFunction;
 
-public class TestFunction implements Function {
+public class TestFunction implements ParametrizedFunction {
+
     @Override
-    public Object execute(Object[] parameters) {
+    public Object execute(BuildContext context, Object[] parameters) {
         StringBuilder out = new StringBuilder();
         out.append("F(");
         for (Object parameter : parameters) {
