@@ -23,6 +23,7 @@ import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.annotations.DocumentIgnored;
 import net.pretronic.libraries.document.annotations.DocumentKey;
 import net.pretronic.libraries.document.annotations.OnDocumentConfigurationLoad;
+import net.pretronic.libraries.utility.exception.OperationFailedException;
 import net.pretronic.libraries.utility.reflect.ReflectException;
 import net.pretronic.libraries.utility.reflect.ReflectionUtil;
 
@@ -43,13 +44,19 @@ public class ConfigurationUtil {
                 if(Modifier.isStatic(field.getModifiers()) && field.getAnnotation(DocumentIgnored.class) == null && !Modifier.isTransient(field.getModifiers())){
                     field.setAccessible(true);
                     ReflectionUtil.grantFinalPrivileges(field);
+
                     DocumentKey key = field.getAnnotation(DocumentKey.class);
                     String name = key != null ? key.value() : field.getName().toLowerCase().replace('_','.');
                     Object result = data.getObject(name,field.getGenericType());
-                    if(result != null) field.set(null,result);
-                    else if(appendMissing){
-                        Object defaultValue = field.get(null);
-                        if(defaultValue != null) data.set(name,defaultValue);
+
+                    try{
+                        if(result != null) field.set(null,result);
+                        else if(appendMissing){
+                            Object defaultValue = field.get(null);
+                            if(defaultValue != null) data.set(name,defaultValue);
+                        }
+                    }catch (Exception exception){
+                        throw new OperationFailedException("Failed initializing field "+field.getName()+" is configuration class "+clazz,exception);
                     }
                 }
             }

@@ -141,13 +141,12 @@ public class YamlDocumentWriter implements DocumentWriter {
     private void writePrimitiveData(Writer output, PrimitiveEntry entry) throws IOException {
         if(!entry.isNull()){
             String data = entry.getAsString();
-            if(entry.getAsObject() instanceof String
-                    || entry.getAsObject() instanceof Character
+            if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character
                     && !(data.equalsIgnoreCase("false")
                     || data.equalsIgnoreCase("true")
-                    || GeneralUtil.isNumber(data))){
+                    || GeneralUtil.isNaturalNumber(data))){
                 output.write('\'');
-                output.write(entry.getAsString());
+                output.write(entry.getAsString().replace("'","''"));
                 output.write('\'');
                 return;
             }
