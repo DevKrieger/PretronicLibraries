@@ -26,6 +26,7 @@ import net.pretronic.libraries.utility.reflect.versioned.ReflectVersioned;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -183,6 +184,8 @@ public class ReflectionUtil {
     }
 
     public static void grantFinalPrivileges(Field field){
-        VERSIONED.grantFinalPrivileges(field);
+        if(Modifier.isFinal(field.getModifiers())){
+            VERSIONED.grantFinalPrivileges(field);
+        }
     }
 }

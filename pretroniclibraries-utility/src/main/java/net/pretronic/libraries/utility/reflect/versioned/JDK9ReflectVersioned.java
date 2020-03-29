@@ -16,9 +16,7 @@ public class JDK9ReflectVersioned implements ReflectVersioned{
             VarHandle modifiers = lookup.findVarHandle(Field.class, "modifiers", int.class);
 
             int mods = field.getModifiers();
-            if (Modifier.isFinal(mods)) {
-                modifiers.set(field, mods & ~Modifier.FINAL);
-            }
+            modifiers.set(field, mods & ~Modifier.FINAL);
         }catch (Exception exception){
             throw new ReflectException(exception);
         }
