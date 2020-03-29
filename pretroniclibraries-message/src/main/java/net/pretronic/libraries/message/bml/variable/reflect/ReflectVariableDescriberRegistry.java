@@ -34,6 +34,12 @@ public final class ReflectVariableDescriberRegistry {
         DESCRIBERS.put(clazz,describer);
     }
 
+    public static void registerDescriber(Class<?> clazz){
+        Validate.notNull(clazz);
+        registerDescriber(clazz,ReflectVariableDescriber.of(clazz));
+    }
+
+
     public static ReflectVariableDescriber getDescriber(Class<?> clazz){
         Validate.notNull(clazz);
         return DESCRIBERS.get(clazz);

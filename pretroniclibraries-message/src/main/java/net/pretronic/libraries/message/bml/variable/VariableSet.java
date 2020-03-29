@@ -20,6 +20,8 @@
 
 package net.pretronic.libraries.message.bml.variable;
 
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
@@ -64,8 +66,16 @@ public interface VariableSet extends Set<Variable> {
         return new HashVariableSet();
     }
 
-    static VariableSet newEmptySet(){
+    static VariableSet createEmpty(){
+        return new ReflectVariableSet();
+    }
+
+    static VariableSet createReflected(){
         return EmptyVariableSet.newEmptySet();
+    }
+
+    static VariableSet newEmptySet(){
+        return createReflected();
     }
 
     static String replace(String text, VariableSet variables){
