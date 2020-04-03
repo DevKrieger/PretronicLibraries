@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 03.04.20, 19:49
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,29 +18,26 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.function.defaults;
+package net.pretronic.libraries.message.bml.function.defaults.math;
 
 import net.pretronic.libraries.message.bml.builder.BuildContext;
 import net.pretronic.libraries.message.bml.function.ParametrizedFunction;
 import net.pretronic.libraries.utility.GeneralUtil;
-import net.pretronic.libraries.utility.StringUtil;
 
-public class RandomTextFunction implements ParametrizedFunction {
-
-    private static final int DEFAULT_SIZE = 5;
+public class SumFunction implements ParametrizedFunction {
 
     @Override
     public Object execute(BuildContext context, Object[] parameters) {
-        int size = DEFAULT_SIZE;
-        if(parameters.length == 1){
-            if(parameters[0] instanceof Integer){
-                size = (int) parameters[0];
-            }else if(GeneralUtil.isNaturalNumber((String) parameters[0])){
-                size = Integer.parseInt((String) parameters[0]);
+        double result = 0;
+        for (Object parameter : parameters) {
+            if(parameter instanceof Number) result += ((Number)parameter).doubleValue();
+            else{
+                String number = parameter.toString();
+                if(GeneralUtil.isNumber(number)){
+                    result += Double.parseDouble(number);
+                }
             }
-        }else if(parameters.length > 1){
-            throw new IllegalArgumentException("Invalid parameter length");
         }
-        return StringUtil.getRandomString(size);
+        return result;
     }
 }

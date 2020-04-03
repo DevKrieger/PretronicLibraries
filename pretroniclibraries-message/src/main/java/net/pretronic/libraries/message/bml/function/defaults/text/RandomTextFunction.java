@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 03.04.20, 19:48
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,29 +18,29 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.function.defaults;
+package net.pretronic.libraries.message.bml.function.defaults.text;
 
 import net.pretronic.libraries.message.bml.builder.BuildContext;
 import net.pretronic.libraries.message.bml.function.ParametrizedFunction;
+import net.pretronic.libraries.utility.GeneralUtil;
+import net.pretronic.libraries.utility.StringUtil;
 
-public class SubstringFunction implements ParametrizedFunction {
+public class RandomTextFunction implements ParametrizedFunction {
+
+    private static final int DEFAULT_SIZE = 5;
 
     @Override
     public Object execute(BuildContext context, Object[] parameters) {
-        if(parameters.length >= 2){
-            if(parameters[0] instanceof String && parameters[1] instanceof Integer){
-                String content = (String) parameters[0];
-                int start = (int) parameters[1];
-                int end = 0;
-                if(parameters.length == 3){
-                    if(parameters[2] instanceof Integer){
-                        end = (int) parameters[2];
-                    }else throw new IllegalArgumentException("Invalid parameter type");
-                }else{
-                    end = content.length();
-                }
-                return content.substring(start,end);
-            }else throw new IllegalArgumentException("Invalid parameter type");
-        }else throw new IllegalArgumentException("Invalid parameter length");
+        int size = DEFAULT_SIZE;
+        if(parameters.length == 1){
+            if(parameters[0] instanceof Integer){
+                size = (int) parameters[0];
+            }else if(GeneralUtil.isNaturalNumber((String) parameters[0])){
+                size = Integer.parseInt((String) parameters[0]);
+            }
+        }else if(parameters.length > 1){
+            throw new IllegalArgumentException("Invalid parameter length");
+        }
+        return StringUtil.getRandomString(size);
     }
 }

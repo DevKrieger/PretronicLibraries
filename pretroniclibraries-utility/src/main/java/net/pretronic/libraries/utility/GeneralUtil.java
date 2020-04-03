@@ -59,7 +59,12 @@ public class GeneralUtil {
      */
     public static boolean isNumber(String value){
         boolean dot = false;
+        boolean start = true;
         for(char c : value.toCharArray()){
+            if(start){
+                if(c == '-' || c == '+') continue;
+                start = false;
+            }
             if(!Character.isDigit(c)){
                 if(c == '.' && !dot) dot = true;
                 else return false;

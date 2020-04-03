@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.03.20, 19:56
+ * @since 03.04.20, 19:48
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,7 +18,7 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.function.defaults;
+package net.pretronic.libraries.message.bml.function.defaults.operation;
 
 public class ConditionFunction {
 

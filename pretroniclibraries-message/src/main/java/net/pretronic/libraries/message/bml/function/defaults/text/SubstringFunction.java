@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 21.03.20, 17:04
+ * @since 03.04.20, 19:48
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,23 +18,29 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.function.defaults;
+package net.pretronic.libraries.message.bml.function.defaults.text;
 
 import net.pretronic.libraries.message.bml.builder.BuildContext;
 import net.pretronic.libraries.message.bml.function.ParametrizedFunction;
 
-public class TestFunction implements ParametrizedFunction {
+public class SubstringFunction implements ParametrizedFunction {
 
     @Override
     public Object execute(BuildContext context, Object[] parameters) {
-        StringBuilder out = new StringBuilder();
-        out.append("F(");
-        for (Object parameter : parameters) {
-            out.append(parameter);
-            out.append("|");
-        }
-        out.setLength(out.length()-1);
-        out.append(")F");
-        return out.toString();
+        if(parameters.length >= 2){
+            if(parameters[0] instanceof String && parameters[1] instanceof Integer){
+                String content = (String) parameters[0];
+                int start = (int) parameters[1];
+                int end = 0;
+                if(parameters.length == 3){
+                    if(parameters[2] instanceof Integer){
+                        end = (int) parameters[2];
+                    }else throw new IllegalArgumentException("Invalid parameter type");
+                }else{
+                    end = content.length();
+                }
+                return content.substring(start,end);
+            }else throw new IllegalArgumentException("Invalid parameter type");
+        }else throw new IllegalArgumentException("Invalid parameter length");
     }
 }
