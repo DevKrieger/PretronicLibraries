@@ -132,6 +132,10 @@ public interface ParserState {
             }else if(current == '\''){
                 yaml.setState(DOCUMENT_VALUE_DEFINED_TEXT2);
                 yaml.markNext(parser);
+            }else if(current == '~'){
+                yaml.getSequence().pushEntry(Document.factory().newDocument(yaml.getTempKey()));
+                yaml.setState(DOCUMENT_NEXT_SAME);
+                yaml.markNext(parser);
             }else if(!isSpaceChar(current)){
                 yaml.mark(parser);
                 yaml.setState(DOCUMENT_VALUE_UNDEFINED);
@@ -225,8 +229,8 @@ public interface ParserState {
                         yaml.setTempIndent(1);
                         yaml.setState(DOCUMENT_ARRAY_ADVANCED);
                         return;
-                    }else{
-                        yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),null));
+                    }else{//Changed null entries to document, maybe search for a better solution
+                        yaml.getSequence().pushEntry(Document.factory().newDocument(yaml.getTempKey()));
                     }
                 }else if(indent > yaml.getSequence().getIndent()){
                     if(current == '-'){
