@@ -41,7 +41,7 @@ public final class ReflectVariableDescriber {
         Method method = this.methods.get(name);
         if(method != null){
             try {
-                return method.invoke(value);
+                return method.invoke(method.getDeclaringClass().cast(value));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new ReflectException(e);
             }
@@ -97,8 +97,13 @@ public final class ReflectVariableDescriber {
                 }
             }
         }
-        if(superClass && !clazz.getSuperclass().equals(Object.class)){
-            of(describer,clazz.getSuperclass(),true);
+        if(superClass){
+            if(clazz.getSuperclass() != null && clazz.getSuperclass().equals(Object.class)){
+                of(describer,clazz.getSuperclass(),true);
+            }
+            for (Class<?> sub : clazz.getInterfaces()) {
+                of(describer,sub,true);
+            }
         }
     }
 
