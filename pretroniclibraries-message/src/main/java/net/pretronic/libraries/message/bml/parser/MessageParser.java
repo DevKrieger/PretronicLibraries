@@ -143,7 +143,6 @@ public class MessageParser {
     public void finishSequence(){
         this.sequence = this.sequence.getParent();
         markNext();
-        System.out.println("FINISH SEQUENCE");
     }
 
     public Message parse(){

@@ -233,6 +233,7 @@ public class StringParser {
         if(lineIndex >= 0 && this.lines[this.lineIndex].length > charIndex+1) charIndex++;
         else{
             lineIndex++;
+            while (lines[lineIndex].length == 0) lineIndex++;
             charIndex = 0;
         }
         return this.lines[this.lineIndex][this.charIndex];
@@ -489,18 +490,37 @@ public class StringParser {
     }
 
     public void buildExceptionContent(int line, int index, StringBuilder builder, String prefix){
+        buildExceptionContent(line,index,builder,builder,prefix);
+    }
+
+    public void buildExceptionContent(int line, int index, StringBuilder first,StringBuilder second, String prefix){
         int start = index>10?index-18:0;
         int end = index+18;
 
         while(end > lines[line].length) end--;
 
-        if(prefix != null) builder.append(prefix);
-        builder.append(get(line,start,end));
-        builder.append(System.lineSeparator());
-        if(prefix != null) builder.append(prefix);
-        for(int i = 0;i<index-start;i++) builder.append(" ");
-        builder.append("^");
+        if(prefix != null) first.append(prefix);
+        first.append(get(line,start,end));
+        if(first == second) first.append(System.lineSeparator());
+        if(prefix != null) second.append(prefix);
+        for(int i = 0;i<index-start;i++) second.append(" ");
+        second.append("^");
     }
+
+    public String[] buildExceptionContent(int line, int index){
+        return buildExceptionContent(line,index, (String) null);
+    }
+
+    public String[] buildExceptionContent(int line, int index,String prefix){
+        String[] result = new String[2];
+        StringBuilder first = new StringBuilder();
+        StringBuilder second = new StringBuilder();
+        buildExceptionContent(line,index,first,second,prefix);
+        result[0] = first.toString();
+        result[1] = second.toString();
+        return result;
+    }
+
 
     public void throwException(String message){
         throw new ParserException(this,lineIndex,charIndex,"Exception at "+(lineIndex+1)+":"+(charIndex+1)+" -> "+message);
