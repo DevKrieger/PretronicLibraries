@@ -27,7 +27,7 @@ public class ReflectVariableSet extends HashVariableSet {
 
     @Override
     public Object getValue(String name) {
-
+        Object result;
         if(name.contains(".")){
             String[] parts = name.split("\\.");
             Variable variable = get(parts[0]);
@@ -37,13 +37,16 @@ public class ReflectVariableSet extends HashVariableSet {
                 if(object == null) break;
                 String part = parts[i];
                 ReflectVariableDescriber describer = ReflectVariableDescriberRegistry.getDescriber(object.getClass());
-                if(describer != null) object = describer.getValue(part,part);
+                if(describer != null) object = describer.getValue(part,object);
                 else throw new IllegalArgumentException("No variable describer for "+object.getClass()+" found");
             }
-            return object;
+            result =  object;
         }else{
             Variable variable = get(name);
-            return variable != null ? variable.getObject() : null;
+            if(variable != null) result = variable.getObject();
+            else return null;
         }
+        if(result instanceof ReflectVariableObjectToString) return ((ReflectVariableObjectToString) result).toStringVariable();
+        else return result;
     }
 }

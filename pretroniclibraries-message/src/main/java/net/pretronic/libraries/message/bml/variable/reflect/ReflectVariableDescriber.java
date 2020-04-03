@@ -75,16 +75,31 @@ public final class ReflectVariableDescriber {
         return new ReflectVariableDescriber();
     }
 
+    public static ReflectVariableDescriber ofSuper(Class<?> clazz){
+        return of(clazz,true);
+    }
+
     public static ReflectVariableDescriber of(Class<?> clazz){
+        return of(clazz,false);
+    }
+
+    public static ReflectVariableDescriber of(Class<?> clazz, boolean superClass){
         ReflectVariableDescriber describer = new ReflectVariableDescriber();
+        of(describer,clazz,superClass);
+        return describer;
+    }
+
+    public static void of(ReflectVariableDescriber describer,Class<?> clazz, boolean superClass){
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
             if(!Modifier.isStatic(declaredMethod.getModifiers()) && Modifier.isPublic(declaredMethod.getModifiers())){
                 if(declaredMethod.getName().startsWith("get")){
-                    describer.register(declaredMethod.getName().substring(4),declaredMethod);
+                    describer.register(declaredMethod.getName().substring(3),declaredMethod);
                 }
             }
         }
-        return describer;
+        if(superClass && !clazz.getSuperclass().equals(Object.class)){
+            of(describer,clazz.getSuperclass(),true);
+        }
     }
 
 
