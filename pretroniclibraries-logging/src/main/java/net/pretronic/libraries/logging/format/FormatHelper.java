@@ -39,7 +39,7 @@ public final class FormatHelper {
     /**
      * Append the objects to the message. Adds sequentially the objects to the message by every {}.
      *
-     * <p>{} -> Object</p>
+     * <p>{} - Object</p>
      *
      * @param message The message which should be formatted.
      * @param objects The objects for the formation.

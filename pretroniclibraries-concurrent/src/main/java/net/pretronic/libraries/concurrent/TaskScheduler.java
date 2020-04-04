@@ -39,6 +39,7 @@ public interface TaskScheduler {
     /**
      * Get all registered tasks with a specified name.
      *
+     * @param name of the searched task
      * @return All tasks with the same name in a collection
      */
     Collection<Task> getTasks(String name);

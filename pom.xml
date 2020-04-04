@@ -26,7 +26,7 @@
     <groupId>net.pretronic.libraries</groupId>
     <artifactId>PretronicLibraries</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.59-SNAPSHOT</version>
+    <version>1.0.61.34-SNAPSHOT</version>
 
     <developers>
         <developer>
@@ -60,6 +60,9 @@
 
         <plugin.maven.compiler.version>3.8.1</plugin.maven.compiler.version>
         <plugin.maven.source.version>3.2.1</plugin.maven.source.version>
+        <plugin.maven.javadoc.version>3.2.0</plugin.maven.javadoc.version>
+        <plugin.maven.site.version>3.9.0</plugin.maven.site.version>
+        <plugin.maven.project.info.reports.version>3.0.0</plugin.maven.project.info.reports.version>
     </properties>
 
     <modules>
@@ -79,8 +82,6 @@
         <module>pretroniclibraries-resourceloader</module>
         <module>pretroniclibraries-synchronisation</module>
     </modules>
-
-  
 </project>
 
 

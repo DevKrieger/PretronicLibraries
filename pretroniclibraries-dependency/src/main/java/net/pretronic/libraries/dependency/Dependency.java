@@ -141,6 +141,7 @@ public class Dependency {
     /**
      * Load the dependency with a parent loader, a new class loader will be created.
      *
+     * @param parent Parent classloader
      * @return The new class laoder
      */
     public ClassLoader load(ClassLoader parent){

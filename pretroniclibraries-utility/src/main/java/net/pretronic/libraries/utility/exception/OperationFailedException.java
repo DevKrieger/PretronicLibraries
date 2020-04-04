@@ -22,7 +22,7 @@ package net.pretronic.libraries.utility.exception;
 
 /**
  The {@link OperationFailedException} is a general runtime exception, which is thrown if any type of operation failed.
- It can also be used for forwarding exceptions (exception -> runtime exception)
+ It can also be used for forwarding exceptions (runtime exception)
  */
 public class OperationFailedException extends RuntimeException{
 
