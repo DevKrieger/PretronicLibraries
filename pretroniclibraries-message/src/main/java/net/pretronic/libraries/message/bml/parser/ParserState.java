@@ -92,10 +92,10 @@ public interface ParserState {
             }else{
                 parser.getSequence().setState(new TextExtensionIndicateState());
             }
-            parser.markNext();
         }else{
             parser.finishSequence();
         }
+        parser.markNext();
     }
 
     static void findIndicate(MessageProcessor processor, MessageParser parser, char current,boolean push,ParserState nextState){

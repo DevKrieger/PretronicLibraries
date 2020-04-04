@@ -29,27 +29,15 @@ import net.pretronic.libraries.utility.GeneralUtil;
 import java.util.Collection;
 import java.util.Iterator;
 
-/*
-@for('object' in {objects},hi {object} @func()}
-
-@for('1' to '10','-1')
-
-
- */
 public class LoopFunction implements Function {
 
     @Override
-    public Object execute(BuildContext context, Module leftOperator, String operation, Module rightOperation0, Module[] parameters) {
+    public Object execute(BuildContext context, Module leftOperator, String operation, Module rightOperation, Module[] parameters) {
         if(operation != null){
             if("in".equalsIgnoreCase(operation)){
-                return inLoop(context, leftOperator, rightOperation0, parameters);
+                return inLoop(context, leftOperator, rightOperation, parameters);
             }else if("to".equalsIgnoreCase(operation)){
-                int right = getNumber(context, rightOperation0);
-                int left = getNumber(context, leftOperator);
-                Variable indexVar = context.getVariables().getOrCreate("index");
-                int nextStep;
-
-                throw new UnsupportedOperationException("Currently not supported");
+                return toLoop(context, leftOperator, rightOperation, parameters);
             }else throw new IllegalArgumentException(operation+" is not a supported operation in a loop function");
         }
         throw new IllegalArgumentException("Invalid operator");
@@ -86,6 +74,65 @@ public class LoopFunction implements Function {
             return result;
         }else throw new IllegalArgumentException("Object is not iterable");
     }
+
+    private Object toLoop(BuildContext context, Module leftOperator, Module rightOperation, Module[] parameters) {
+        int right = getNumber(context, rightOperation);
+        int left = getNumber(context, leftOperator);
+        Variable indexVar = context.getVariables().getOrCreate("index");
+
+        String separator = null;
+        if(parameters.length > 1) separator = parameters[1].build(context,true).toString();
+
+        if(left == right) return new Object[]{};
+        else if(left < right){
+            int size = getSize(left, right, separator);
+
+            Object[] result = new Object[size];
+            int index = left;
+            int arrayIndex = 0;
+            boolean first = true;
+            while (index < right){
+                indexVar.setObject(index);
+
+                if(separator != null){
+                    if(first) first = false;
+                    else result[arrayIndex++] = separator;
+                }
+                result[arrayIndex] = parameters[0].build(context,false);
+
+                index++;
+                arrayIndex++;
+            }
+            return result;
+        } else {
+            int size = getSize(right, left, separator);
+
+            Object[] result = new Object[size];
+            int index = left;
+            int arrayIndex = 0;
+            boolean first = true;
+            while (index > right){
+                indexVar.setObject(index);
+
+                if(separator != null){
+                    if(first) first = false;
+                    else result[arrayIndex++] = separator;
+                }
+                result[arrayIndex] = parameters[0].build(context,false);
+
+                index--;
+                arrayIndex++;
+            }
+            return result;
+        }
+    }
+
+    private int getSize(int right, int left, String separator) {
+        int size = (left - right);
+        if (separator != null) size = ((size) * 2) - 1;
+        return size;
+    }
+
 
     private int getNumber(BuildContext context, Module operator) {
         int right = 0;

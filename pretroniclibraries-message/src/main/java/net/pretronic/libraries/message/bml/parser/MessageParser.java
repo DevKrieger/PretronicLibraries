@@ -87,7 +87,10 @@ public class MessageParser {
             parser.nextChar();
             mark();
             parser.previousChar();
-        }else mark();
+        }else{
+            mark();
+            markedIndex++;
+        }
     }
 
     public String extractString(){
@@ -95,7 +98,7 @@ public class MessageParser {
     }
 
     public String extractString(int added){
-        if(parser.lineIndex() > markedLine || parser.charIndex() > markedIndex ){
+        if(parser.lineIndex() >= markedLine || parser.charIndex() >= markedIndex ){
             return parser.get(markedLine,markedIndex,parser.lineIndex(),parser.charIndex()+added);
         }
         return null;
