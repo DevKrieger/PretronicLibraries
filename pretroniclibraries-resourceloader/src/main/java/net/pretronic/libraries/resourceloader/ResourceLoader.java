@@ -37,6 +37,7 @@ import java.nio.file.LinkOption;
 public class ResourceLoader {
 
     private final static String VERSION_INFO_FILE_NAME = "version.dat";
+    private final static String UPDATE_CONFIGURATION_FILE_NAME = "update.dat";
     private final static Method METHOD_ADD_URL;
 
     static {
@@ -52,10 +53,28 @@ public class ResourceLoader {
 
     private VersionInfo currentVersion;
     private VersionInfo latestVersion;
+    private UpdateConfiguration updateConfiguration;
 
     public ResourceLoader(ResourceInfo info) {
         this.info = info;
         info.getLocation().mkdirs();
+    }
+
+    public UpdateConfiguration getUpdateConfiguration(){
+        if (updateConfiguration != null) {
+            File file = new File(info.getLocation(), UPDATE_CONFIGURATION_FILE_NAME);
+            try {
+                Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+            } catch (IOException ignored) {}
+            if (file.exists()) {
+                try {
+                    updateConfiguration = UpdateConfiguration.parse(readFirstLine(new FileInputStream(file)));
+                } catch (IOException exception) {
+                    throw new ResourceException("Could not load update configuration (" + exception.getMessage() + ")", exception);
+                }
+            }
+        }
+        return UpdateConfiguration.DEFAULT;
     }
 
     /**
@@ -70,7 +89,6 @@ public class ResourceLoader {
                 latestVersion = VersionInfo.parse(readFirstLine(input));
                 input.close();
             } catch (IOException exception) {
-                exception.printStackTrace();
                 throw new ResourceException("Could not get latest version ("+exception.getMessage()+")",exception);
             }
         }
@@ -92,7 +110,6 @@ public class ResourceLoader {
                 try {
                     currentVersion =  VersionInfo.parse(readFirstLine(new FileInputStream(file)));
                 } catch (IOException exception) {
-                    exception.printStackTrace();
                     throw new ResourceException("Could not read version info file ("+exception.getMessage()+")",exception);
                 }
             }else currentVersion = VersionInfo.UNKNOWN;
@@ -124,7 +141,6 @@ public class ResourceLoader {
             if(!version.equals(currentVersion)) changeCurrentVersion(version);
             return file;
         } catch (IOException exception) {
-            exception.printStackTrace();
             throw new ResourceException("Could not download version "+version.getName()+"#"+version.getBuild()+" ("+exception.getMessage()+")",exception);
         }
     }
@@ -206,8 +222,9 @@ public class ResourceLoader {
     }
 
     private File getLocalFile(VersionInfo version){
-        return new File(info.getLocation(),(info.getName()+"-"+version.getName()+"-"+ version.getBuild()+".jar").toLowerCase());
+        return new File(info.getLocation(),(info.getName()+"-"+version.getName()+".jar").toLowerCase());
     }
+
     private InputStream openHttpConnection(String rawUrl) throws IOException{
         HttpURLConnection connection = (HttpURLConnection) new URL(rawUrl).openConnection();
         connection.setRequestMethod("GET");
