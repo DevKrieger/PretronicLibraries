@@ -25,7 +25,6 @@ public interface SynchronisationHandler<O,I> extends SynchronisationCaller<I> {
 
     SynchronisationCaller<I> getCaller();
 
-
     void onDelete(I identifier, Document data);
 
     void onCreate(I identifier, Document data);
@@ -34,7 +33,6 @@ public interface SynchronisationHandler<O,I> extends SynchronisationCaller<I> {
 
 
     void init(SynchronisationCaller<I> caller);
-
 
 
     default void update(I identifier, Document data){
@@ -48,5 +46,11 @@ public interface SynchronisationHandler<O,I> extends SynchronisationCaller<I> {
     default void delete(I identifier, Document data){
         getCaller().delete(identifier, data);
     }
+
+
+    default  boolean isConnected(){
+        return getCaller().isConnected();
+    }
+
 
 }

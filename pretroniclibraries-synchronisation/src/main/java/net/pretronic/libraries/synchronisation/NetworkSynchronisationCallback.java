@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:46
+ * @since 04.04.20, 19:22
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +20,10 @@
 
 package net.pretronic.libraries.synchronisation;
 
-import net.pretronic.libraries.document.Document;
+public interface NetworkSynchronisationCallback {
 
-public interface SynchronisationCaller<I> {
+    void onConnect();
 
-    boolean isConnected();
-
-    void update(I identifier, Document data);
-
-    void create(I identifier, Document data);
-
-    void delete(I identifier, Document data);
+    void onDisconnect();
 
 }
