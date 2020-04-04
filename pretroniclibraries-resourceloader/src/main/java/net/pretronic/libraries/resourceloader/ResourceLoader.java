@@ -85,7 +85,7 @@ public class ResourceLoader {
     public VersionInfo getLatestVersion(){
         if(latestVersion == null){
             try {
-                InputStream input = openHttpConnection(info.getVersionUrl());
+                InputStream input = openHttpConnection(prepareUrl(info.getVersionUrl(),null));
                 latestVersion = VersionInfo.parse(readFirstLine(input));
                 input.close();
             } catch (IOException exception) {
@@ -216,9 +216,13 @@ public class ResourceLoader {
     }
 
     private String prepareUrl(String url, VersionInfo version){
-        if(version == null) version = getCurrentVersion();
-        if(version != null) return url.replace("$version",version.getName()).replace("$build",String.valueOf(version.getBuild()));
-        throw new ResourceException("Could not get latest resource version");
+        url = url.replace("{qualifier}",getUpdateConfiguration().getQualifier());
+        if(version != null){
+            url = url.replace("{version}",version.getName())
+                    .replace("{qualifier}",getUpdateConfiguration().getQualifier())
+                    .replace("{build}",String.valueOf(version.getBuild()));
+        }
+        return url;
     }
 
     private File getLocalFile(VersionInfo version){
