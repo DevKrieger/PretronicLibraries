@@ -22,7 +22,7 @@ package net.pretronic.libraries.resourceloader;
 
 public class UpdateConfiguration {
 
-    protected static UpdateConfiguration DEFAULT = new UpdateConfiguration(false,"RELEASE");
+    protected static UpdateConfiguration DEFAULT = new UpdateConfiguration(true,"RELEASE");
 
     private final boolean enabled;
     private final String qualifier;
