@@ -92,19 +92,19 @@ public class YamlDocumentWriter implements DocumentWriter {
             writeKey(output,"_value");
         }
         if(array.isEmpty() || (array.isPrimitiveArray() && array.size() <= 4)){
-            writeSimpleArray(output, array);
+            writeSimpleArray(output, array,indent);
         }else{
             writeAdvancedArray(output, array, indent);
         }
     }
 
-    public void writeSimpleArray(Writer output, ArrayEntry array) throws IOException{
+    public void writeSimpleArray(Writer output, ArrayEntry array,int indent) throws IOException{
         output.write("[");
         boolean first = true;
         for (DocumentEntry entry : array) {
             if(first) first = false;
             else output.write(",");
-            writePrimitiveData(output,entry.toPrimitive());
+            writePrimitiveData(output,entry.toPrimitive(),indent);
         }
         output.write("]");
     }
@@ -135,10 +135,10 @@ public class YamlDocumentWriter implements DocumentWriter {
             writeNewLine(output,indent);
             writeKey(output,"_value");
         }
-        writePrimitiveData(output, entry);
+        writePrimitiveData(output, entry,indent);
     }
 
-    private void writePrimitiveData(Writer output, PrimitiveEntry entry) throws IOException {
+    private void writePrimitiveData(Writer output, PrimitiveEntry entry, int indent) throws IOException {
         if(!entry.isNull()){
             String data = entry.getAsString();
             if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character
@@ -146,7 +146,16 @@ public class YamlDocumentWriter implements DocumentWriter {
                     || data.equalsIgnoreCase("true")
                     || GeneralUtil.isNaturalNumber(data))){
                 output.write('\'');
-                output.write(entry.getAsString().replace("'","''"));
+
+                String result = entry.getAsString().replace("'","''");
+                String[] parts = result.split("\n");
+                output.write(parts[0]);
+                if(parts.length > 1){
+                    for (int i = 1; i < parts.length; i++) {
+                        writeNewLine(output,indent-1);
+                        output.write(parts[i]);
+                    }
+                }
                 output.write('\'');
                 return;
             }
