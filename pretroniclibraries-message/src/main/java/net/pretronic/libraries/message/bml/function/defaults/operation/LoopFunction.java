@@ -52,6 +52,7 @@ public class LoopFunction implements Function {
             int size = ((Collection<?>) rightOperation).size();
             String var = leftOperator.build(context,true).toString();
             Variable indexVar = context.getVariables().getOrCreate("index");
+            Variable positionVar = context.getVariables().getOrCreate("position");
             Variable objectVar = context.getVariables().getOrCreate(var);
             String separator = null;
             if(parameters.length > 1){
@@ -63,6 +64,7 @@ public class LoopFunction implements Function {
             while (iterator.hasNext()){
                 Object item = iterator.next();
                 indexVar.setObject(index);
+                positionVar.setObject(index+1);
                 objectVar.setObject(item);
                 if(separator != null){
                     if(first) first = false;
