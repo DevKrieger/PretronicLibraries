@@ -95,7 +95,7 @@ public interface DocumentContext {
     /**
      * Register a new hierarchy adapter.
      *
-     * <p>Example: {@link Collection} -> {@link java.util.List} / {@link java.util.HashSet}</p>
+     * <p>Example: {@link Collection} - {@link java.util.List} / {@link java.util.HashSet}</p>
      * <p>If you register a hierarchy adapter for the Collection interface, the registered
      * adapter is also made available to the subclasses.</p>
      *

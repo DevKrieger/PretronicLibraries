@@ -101,7 +101,7 @@ public final class LogRecord {
      *
      * <p>Only used by errors.</p>
      *
-     * @return
+     * @return throwable
      */
     public Throwable getThrown() {
         return thrown;

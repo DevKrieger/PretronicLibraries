@@ -42,6 +42,7 @@ public interface LogHandler {
      *
      * @param record The log record which should be handled.
      * @param formattedMessage The formatted message of this record.
+     * @throws IOException exception
      */
     void handleLog(LogRecord record, String formattedMessage) throws IOException;
 

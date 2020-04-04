@@ -43,6 +43,7 @@ public class YamlParser {
     }
 
     public void setState(ParserState state) {
+        System.out.println("SET STATE " + state + "|" + getLineMark() + ":" + getCharacterMark());
         this.state = state;
     }
 
