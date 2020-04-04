@@ -28,42 +28,53 @@ import java.util.Objects;
  */
 public class VersionInfo {
 
-    public static VersionInfo UNKNOWN = new VersionInfo("Unknown","Unknown",-1);
+    public static VersionInfo UNKNOWN = new VersionInfo("Unknown",0,0,0,0,"Unknown");
 
     private final String name;
-    private final String qualifier;
+    private final int major;
+    private final int minor;
+    private final int patch;
     private final int build;
+    private final String qualifier;
 
-    public VersionInfo(String name, String qualifier, int build) {
+    public VersionInfo(String name, int major, int minor, int patch, int build, String qualifier) {
         this.name = name;
-        this.qualifier = qualifier;
+        this.major = major;
+        this.minor = minor;
+        this.patch = patch;
         this.build = build;
+        this.qualifier = qualifier;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getQualifier() {
-        return qualifier;
+    public int getMajor() {
+        return major;
+    }
+
+    public int getMinor() {
+        return minor;
+    }
+
+    public int getPatch() {
+        return patch;
     }
 
     public int getBuild() {
         return build;
     }
 
-    public String toPlainText(){
-        return name+";"+build+";"+qualifier;
+    public String getQualifier() {
+        return qualifier;
     }
 
     @Override
     public String toString() {
-        return "VersionInfo{" +
-                "name='" + name + '\'' +
-                ", qualifier='" + qualifier + '\'' +
-                ", build=" + build +
-                '}';
+        return name;
     }
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -77,12 +88,27 @@ public class VersionInfo {
         return Objects.hash(name, build);
     }
 
-    static VersionInfo parse(String versionString){
-        try{
-            String[] versions = versionString.split(";");
-            return new VersionInfo(versions[0],versions[2],Integer.parseInt(versions[1]));
-        }catch (Exception exception){
-            throw new IllegalArgumentException(versionString+" is not a valid version string.");
-        }
+    public static VersionInfo parse(String version0){
+        String version = version0;
+        int index = version0.indexOf(',');
+        if(index != -1) version = version0.substring(0,index);
+
+        String[] versionAndQualifier = version.split("-");
+
+        String[] parts = versionAndQualifier[0].split("\\.");
+        int major = parts.length >= 1 && isNaturalNumber(parts[0]) ? Integer.parseInt(parts[0]) :0;
+        int minor = parts.length >= 2 && isNaturalNumber(parts[1]) ? Integer.parseInt(parts[1]) :0;
+        int patch = parts.length >= 3 && isNaturalNumber(parts[2]) ? Integer.parseInt(parts[2]) :0;
+        int build = parts.length >= 4 && isNaturalNumber(parts[3]) ? Integer.parseInt(parts[3]) :0;
+        String qualifier = versionAndQualifier.length > 1 ? versionAndQualifier[1] : "RELEASE";
+
+        return new VersionInfo(version,major,minor,patch,build,qualifier);
     }
+
+    private static boolean isNaturalNumber(String value){
+        for(char c : value.toCharArray()) if(!Character.isDigit(c)) return false;
+        return true;
+    }
+
 }
+

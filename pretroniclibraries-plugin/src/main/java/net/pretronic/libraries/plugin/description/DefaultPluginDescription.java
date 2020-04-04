@@ -21,6 +21,7 @@ package net.pretronic.libraries.plugin.description;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.DocumentContext;
+import net.pretronic.libraries.document.DocumentRegistry;
 import net.pretronic.libraries.plugin.description.dependency.Dependency;
 import net.pretronic.libraries.plugin.description.dependency.DependencyAdapter;
 import net.pretronic.libraries.plugin.description.dependency.PluginDependency;
@@ -40,6 +41,7 @@ public class DefaultPluginDescription implements PluginDescription{
 
     static {
         DEPENDENCY_FACTORIES.put("plugin",new PluginDependency.Factory());
+        DocumentRegistry.getDefaultContext().registerAdapter(PluginVersion.class,new PluginVersionAdapter());
     }
 
     private final String name;
