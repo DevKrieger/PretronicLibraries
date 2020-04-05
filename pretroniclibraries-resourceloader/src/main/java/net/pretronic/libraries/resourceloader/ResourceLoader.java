@@ -219,8 +219,12 @@ public class ResourceLoader {
         url = url.replace("{qualifier}",getUpdateConfiguration().getQualifier());
         if(version != null){
             url = url.replace("{version}",version.getName())
-                    .replace("{qualifier}",getUpdateConfiguration().getQualifier())
-                    .replace("{build}",String.valueOf(version.getBuild()));
+                    .replace("{version.build}",String.valueOf(version.getBuild()))
+                    .replace("{version.minor}",String.valueOf(version.getMinor()))
+                    .replace("{version.major}",String.valueOf(version.getMajor()))
+                    .replace("{version.patch}",String.valueOf(version.getPatch()))
+                    .replace("{version.qualifier}",version.getQualifier())
+                    .replace("{qualifier}",getUpdateConfiguration().getQualifier());
         }
         return url;
     }
