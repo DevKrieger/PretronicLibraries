@@ -22,6 +22,7 @@ package net.pretronic.libraries.caching.synchronisation;
 import net.pretronic.libraries.caching.Cache;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.document.Document;
+import net.pretronic.libraries.synchronisation.NetworkSynchronisationCallback;
 import net.pretronic.libraries.synchronisation.SynchronisationHandler;
 
 import java.util.function.BiConsumer;
@@ -32,7 +33,12 @@ import java.util.function.BiFunction;
  * It provides additional functionalities for synchronizing objects in a cluster network. Read more about
  * the synchronisation in the corresponding module.
  */
-public interface SynchronizableCache<O,I> extends Cache<O>, SynchronisationHandler<O,I> {
+public interface SynchronizableCache<O,I> extends Cache<O>, SynchronisationHandler<O,I>, NetworkSynchronisationCallback {
+
+    void setClearOnDisconnect(boolean enabled);
+
+    void setSkipOnDisconnect(boolean enabled);
+
 
     void setIdentifierQuery(CacheQuery<O> query);
 
