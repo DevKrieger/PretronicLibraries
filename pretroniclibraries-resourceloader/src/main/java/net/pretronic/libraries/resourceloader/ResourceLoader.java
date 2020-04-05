@@ -61,7 +61,7 @@ public class ResourceLoader {
     }
 
     public UpdateConfiguration getUpdateConfiguration(){
-        if (updateConfiguration != null) {
+        if (updateConfiguration == null) {
             File file = new File(info.getLocation(), UPDATE_CONFIGURATION_FILE_NAME);
             if (file.exists()) {
                 try {
@@ -74,6 +74,10 @@ public class ResourceLoader {
             }
         }
         return UpdateConfiguration.DEFAULT;
+    }
+
+    public void setUpdateConfiguration(UpdateConfiguration updateConfiguration) {
+        this.updateConfiguration = updateConfiguration;
     }
 
     /**
