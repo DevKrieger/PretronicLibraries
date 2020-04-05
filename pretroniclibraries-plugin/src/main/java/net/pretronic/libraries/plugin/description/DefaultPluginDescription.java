@@ -41,7 +41,6 @@ public class DefaultPluginDescription implements PluginDescription{
 
     static {
         DEPENDENCY_FACTORIES.put("plugin",new PluginDependency.Factory());
-        DocumentRegistry.getDefaultContext().registerAdapter(PluginVersion.class,new PluginVersionAdapter());
     }
 
     private final String name;
@@ -150,6 +149,7 @@ public class DefaultPluginDescription implements PluginDescription{
         DocumentContext context = Document.factory().newContext();
         context.registerAdapter(Dependency.class,new DependencyAdapter(manager,DEPENDENCY_FACTORIES));
         context.registerAdapter(MainClass.class,new MainClassAdapter());
+        context.registerAdapter(PluginVersion.class,new PluginVersionAdapter());
         document.setContext(context);
         return document.getAsObject(DefaultPluginDescription.class);
     }
