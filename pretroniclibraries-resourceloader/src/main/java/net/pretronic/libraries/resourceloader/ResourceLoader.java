@@ -211,7 +211,8 @@ public class ResourceLoader {
             writer.write(version.getName());
             writer.close();
         } catch (IOException exception) {
-            throw new ResourceException("Could not update current version");
+            exception.printStackTrace();
+            throw new ResourceException("Could not update current version ("+exception.getMessage()+")");
         }
     }
 
