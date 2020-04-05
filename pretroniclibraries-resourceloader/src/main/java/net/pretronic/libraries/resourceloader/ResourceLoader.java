@@ -63,9 +63,6 @@ public class ResourceLoader {
     public UpdateConfiguration getUpdateConfiguration(){
         if (updateConfiguration != null) {
             File file = new File(info.getLocation(), UPDATE_CONFIGURATION_FILE_NAME);
-            try {
-                Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-            } catch (IOException ignored) {}
             if (file.exists()) {
                 try {
                     InputStream input = new FileInputStream(file);
@@ -105,9 +102,6 @@ public class ResourceLoader {
     public VersionInfo getCurrentVersion(){
         if(currentVersion == null){
             File file = new File(info.getLocation(),VERSION_INFO_FILE_NAME);
-            try {
-                Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-            } catch (IOException ignored) {}
             if(file.exists()){
                 try {
                     InputStream input = new FileInputStream(file);
