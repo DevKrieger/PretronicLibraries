@@ -68,7 +68,9 @@ public class ResourceLoader {
             } catch (IOException ignored) {}
             if (file.exists()) {
                 try {
-                    updateConfiguration = UpdateConfiguration.parse(readFirstLine(new FileInputStream(file)));
+                    InputStream input = new FileInputStream(file);
+                    updateConfiguration = UpdateConfiguration.parse(readFirstLine(input));
+                    input.close();
                 } catch (IOException exception) {
                     throw new ResourceException("Could not load update configuration (" + exception.getMessage() + ")", exception);
                 }
@@ -108,7 +110,9 @@ public class ResourceLoader {
             } catch (IOException ignored) {}
             if(file.exists()){
                 try {
-                    currentVersion =  VersionInfo.parse(readFirstLine(new FileInputStream(file)));
+                    InputStream input = new FileInputStream(file);
+                    currentVersion =  VersionInfo.parse(readFirstLine(input));
+                    input.close();
                 } catch (IOException exception) {
                     throw new ResourceException("Could not read version info file ("+exception.getMessage()+")",exception);
                 }
