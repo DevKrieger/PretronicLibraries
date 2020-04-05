@@ -35,7 +35,7 @@ public class SLF4JStaticBridge {
     public static void trySetLogger(PretronicLogger logger){
        try{
            setLogger(logger);
-       }catch (Exception ignored){}
+       }catch (Throwable ignored){}
     }
 
     private static LoggerSetter detectSetter(){

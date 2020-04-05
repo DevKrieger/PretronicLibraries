@@ -192,7 +192,7 @@ public class ResourceLoader {
         if(file.exists() && file.isFile()){
             try {
                 METHOD_ADD_URL.invoke(loader, file.toURI().toURL());
-            } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {}
+            } catch (IllegalAccessException | InvocationTargetException | MalformedURLException ignored) {}
         }else throw new ResourceException(file.getAbsolutePath()+" is not a valid resource (jar) file");
     }
 
@@ -205,9 +205,11 @@ public class ResourceLoader {
         this.currentVersion = version;
         File file = new File(info.getLocation(),VERSION_INFO_FILE_NAME);
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            FileWriter fileWriter = new FileWriter(file);
+            BufferedWriter writer = new BufferedWriter(fileWriter);
             writer.write(version.getName());
             writer.close();
+            fileWriter.close();
         } catch (IOException exception) {
             exception.printStackTrace();
             throw new ResourceException("Could not update current version ("+exception.getMessage()+")");
@@ -245,8 +247,11 @@ public class ResourceLoader {
     }
 
     private static String readFirstLine(InputStream input) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
-            return reader.readLine();
+        InputStreamReader inputStream = new InputStreamReader(input);
+        try (BufferedReader reader = new BufferedReader(inputStream)) {
+            String result =  reader.readLine();
+            inputStream.close();
+            return result;
         }
     }
 
