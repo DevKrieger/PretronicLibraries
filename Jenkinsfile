@@ -109,8 +109,8 @@ pipeline {
                     } else if (BRANCH == BRANCH_MASTER) {
                         minorVersion++
                         patchVersion = 0
-                        String version = major + "." + minorVersion + "." + patchVersion + "." + BUILD_NUMBER
 
+                        String version = major + "." + minorVersion + "." + patchVersion + "." + BUILD_NUMBER
                         String commitMessage = COMMIT_MESSAGE.replace("%version%", version)
                         sshagent(['1c1bd183-26c9-48aa-94ab-3fe4f0bb39ae']) {
 

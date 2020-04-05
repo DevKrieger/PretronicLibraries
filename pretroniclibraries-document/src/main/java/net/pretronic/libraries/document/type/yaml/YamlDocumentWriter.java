@@ -141,7 +141,7 @@ public class YamlDocumentWriter implements DocumentWriter {
     private void writePrimitiveData(Writer output, PrimitiveEntry entry, int indent) throws IOException {
         if(!entry.isNull()){
             String data = entry.getAsString();
-            if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character
+            if((entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character)
                     && !(data.equalsIgnoreCase("false")
                     || data.equalsIgnoreCase("true")
                     || GeneralUtil.isNaturalNumber(data))){

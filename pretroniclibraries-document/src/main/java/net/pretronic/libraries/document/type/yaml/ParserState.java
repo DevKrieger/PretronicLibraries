@@ -226,7 +226,9 @@ public interface ParserState {
                 int indent = parser.charIndex()-yaml.getCharacterMark();
                 if(indent == yaml.getSequence().getIndent()){
                     if(current == '-'){
-                        yaml.setTempIndent(1);
+                        if(!yaml.getSequence().isArray()){
+                            yaml.setSequence(new YamlSequence(yaml.getTempKey(),indent,yaml.getSequence(),true));
+                        }
                         yaml.setState(DOCUMENT_ARRAY_ADVANCED);
                         return;
                     }else{//Changed null entries to document, maybe search for a better solution
@@ -235,7 +237,6 @@ public interface ParserState {
                 }else if(indent > yaml.getSequence().getIndent()){
                     if(current == '-'){
                         yaml.setSequence(new YamlSequence(yaml.getTempKey(),indent,yaml.getSequence(),true));
-                        yaml.setTempIndent(1);
                         yaml.setState(DOCUMENT_ARRAY_ADVANCED);
                         return;
                     }else{
