@@ -104,7 +104,6 @@ public interface ParserState {
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(current == ':'){
-                System.out.println(current + ":" + parser.lineIndex() + ":" + parser.charIndex());
                 yaml.setTempKey(parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()).trim());
                 yaml.setState(DOCUMENT_VALUE_PRE);
             }
@@ -116,7 +115,6 @@ public interface ParserState {
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(yaml.getLineMark() != parser.lineIndex()){
-                System.out.println("next");
                 yaml.mark(parser);
                 yaml.setState(DOCUMENT_NEXT);
                 parser.previousChar();
@@ -140,8 +138,6 @@ public interface ParserState {
                 yaml.markNext(parser);
             }else if(!isSpaceChar(current)){
                 yaml.mark(parser);
-                parser.previousChar();
-                //if(isSpaceChar(parser.currentChar())) parser.nextChar();
                 yaml.setState(DOCUMENT_VALUE_UNDEFINED);
                 parser.previousChar();
             }

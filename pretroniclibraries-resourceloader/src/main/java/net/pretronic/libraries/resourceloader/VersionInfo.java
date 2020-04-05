@@ -80,7 +80,7 @@ public class VersionInfo {
         if(this == o) return true;
         if(!(o instanceof VersionInfo)) return false;
         VersionInfo info = (VersionInfo) o;
-        return build == info.build;
+        return name.equalsIgnoreCase(info.getName());
     }
 
     @Override
@@ -109,6 +109,5 @@ public class VersionInfo {
         for(char c : value.toCharArray()) if(!Character.isDigit(c)) return false;
         return true;
     }
-
 }
 
