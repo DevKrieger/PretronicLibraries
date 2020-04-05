@@ -29,6 +29,8 @@ import net.pretronic.libraries.synchronisation.Synchronizable;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * The @{@link ArraySynchronizableCache} is based on the @{@link ArrayCache} and implements
@@ -46,6 +48,11 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     private BiConsumer<O, Document> deleteListener;
     private BiConsumer<O, Document> updateListener;
     private BiFunction<I, Document, O> createHandler;
+
+    private boolean clearOnDisconnect;
+    private boolean skipOnDisconnect;
+
+    private boolean connected;
 
     public ArraySynchronizableCache() {}
 
@@ -106,6 +113,7 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     public void init(SynchronisationCaller<I> caller) {
         if(this.caller != null) throw new IllegalArgumentException("Caller is already initialized");
         this.caller = caller;
+        this.connected = caller.isConnected();
     }
 
     @Override
@@ -132,5 +140,41 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
         this.createHandler = handler;
     }
 
+    @Override
+    public void setClearOnDisconnect(boolean enabled) {
+        this.clearOnDisconnect = enabled;
+        if(clearOnDisconnect) clear();
+    }
 
+    @Override
+    public void setSkipOnDisconnect(boolean enabled) {
+        this.skipOnDisconnect = enabled;
+        if(clearOnDisconnect) clear();
+    }
+
+    @Override
+    public void onConnect() {
+        this.connected = true;
+    }
+
+    @Override
+    public void onDisconnect() {
+        this.connected = false;
+    }
+
+    @Override
+    public O get(CacheQuery<O> query, Object... identifiers) {
+        if(!connected && skipOnDisconnect){
+            return query.load(identifiers);
+        }
+        return super.get(query, identifiers);
+    }
+
+    @Override
+    public O get(Predicate<O> query, Supplier<O> loader) {
+        if(!connected && skipOnDisconnect){
+            return loader != null ? loader.get() : null;
+        }
+        return super.get(query, loader);
+    }
 }
