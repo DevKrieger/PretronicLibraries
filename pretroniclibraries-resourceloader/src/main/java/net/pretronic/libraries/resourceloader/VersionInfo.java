@@ -90,7 +90,7 @@ public class VersionInfo {
 
     public static VersionInfo parse(String version0){
         String version = version0;
-        int index = version0.indexOf(',');
+        int index = version0.indexOf(';');
         if(index != -1) version = version0.substring(0,index);
 
         String[] versionAndQualifier = version.split("-");
