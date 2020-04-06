@@ -51,6 +51,11 @@ public class DefaultCommandConfigurationBuilder {
         return this;
     }
 
+    public DefaultCommandConfigurationBuilder enabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
     public DefaultCommandConfigurationBuilder disabled() {
         this.enabled = false;
         return this;
