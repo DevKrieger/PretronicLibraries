@@ -69,6 +69,7 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
 
     @Override
     public void registerCommand(Command command) {
+        if(!command.getConfiguration().isEnabled()) return;
         if(getCommand(command.getConfiguration().getName()) != null){
             throw new IllegalArgumentException("A command with the name "+command.getConfiguration().getName()+" is already registered as sub command.");
         }

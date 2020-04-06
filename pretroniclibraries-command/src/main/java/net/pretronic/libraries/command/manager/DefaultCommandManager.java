@@ -67,6 +67,7 @@ public class DefaultCommandManager implements CommandManager {
 
     @Override
     public void registerCommand(Command command) {
+        if(!command.getConfiguration().isEnabled()) return;
         if(getCommand(command.getConfiguration().getName()) != null){
             throw new IllegalArgumentException("There is already a commend with the name "+command.getConfiguration().getName()+" registered.");
         }

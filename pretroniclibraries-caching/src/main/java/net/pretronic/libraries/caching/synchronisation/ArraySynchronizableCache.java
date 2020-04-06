@@ -166,6 +166,7 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     public O get(CacheQuery<O> query, Object... identifiers) {
         if(!connected && skipOnDisconnect){
             System.out.println("[Debug] SKIP CACHE, NOT CONNECTED");
+            query.validate(identifiers);
             return query.load(identifiers);
         }
         return super.get(query, identifiers);
