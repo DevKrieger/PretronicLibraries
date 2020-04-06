@@ -58,7 +58,10 @@ public class PropertiesDocumentReader implements DocumentReader {
         String entryKey = keyIndex == -1 ? key : key.substring(keyIndex+1);
         PrimitiveEntry entry = prepareEntry(parser,root,key,entryKey);
         if(!parser.isLineFinished()){
+            parser.skipChar();
             entry.setValue(readValue(parser));
+        } else {
+            entry.setValue(null);
         }
     }
 
@@ -102,7 +105,7 @@ public class PropertiesDocumentReader implements DocumentReader {
         }
         if(startLine != parser.lineIndex()) parser.throwException("Invalid key");
         String key = parser.getOnLine(start,parser.charIndex());
-        parser.skipChar();
+        //parser.skipChar();
         return key;
     }
 

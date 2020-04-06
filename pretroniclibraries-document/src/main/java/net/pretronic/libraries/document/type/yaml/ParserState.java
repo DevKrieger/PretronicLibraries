@@ -345,7 +345,7 @@ public interface ParserState {
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(current == ':'){
                 yaml.setTempKey(parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()).trim());
-                int indent = yaml.getSequence().getIndent()+yaml.getTempIndent();
+                int indent = yaml.getSequence().getIndent()+yaml.getTempIndent()+1;
                 if(indent != yaml.getSequence().getIndent()){
                     yaml.setSequence(new YamlSequence("value",indent,yaml.getSequence(),false));
                 }
@@ -390,7 +390,7 @@ public interface ParserState {
                     findParent(yaml, parser, indent);
                     if(current == '-'){
                         yaml.setState(DOCUMENT_ARRAY_ADVANCED);
-                        yaml.setTempIndent(1);
+                        yaml.setTempIndent(0);
                     }else{
                         yaml.setState(DOCUMENT_KEY);
                         yaml.mark(parser);
