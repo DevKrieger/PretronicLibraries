@@ -22,6 +22,7 @@ package net.pretronic.libraries.command.command.object;
 import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.NotFoundHandler;
+import net.pretronic.libraries.command.ObjectCommandPrecondition;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.manager.CommandManager;
@@ -38,6 +39,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     private NotFoundHandler notFoundHandler;
     private ObjectNotFindable objectNotFoundHandler;
     private ObjectCompletable objectCompletable;
+    private ObjectCommandPrecondition objectCommandPrecondition;
 
     public MainObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner, configuration);
@@ -47,6 +49,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
         if(this instanceof ObjectNotFindable) setObjectNotFoundHandler((ObjectNotFindable) this);
         if(this instanceof ObjectCompletable) setObjectCompletableHandler((ObjectCompletable) this);
+        if(this instanceof ObjectCommandPrecondition) setObjectCommandPrecondition((ObjectCommandPrecondition) this);
     }
 
     @Override
@@ -70,6 +73,10 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
 
     public void setObjectCompletableHandler(ObjectCompletable completable){
         this.objectCompletable = completable;
+    }
+
+    public void setObjectCommandPrecondition(ObjectCommandPrecondition precondition) {
+        this.objectCommandPrecondition = precondition;
     }
 
     @Override
@@ -147,6 +154,9 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     @SuppressWarnings("unchecked")
     @Override
     public void execute(CommandSender sender, Object object, String[] args) {
+        if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) {
+            return;
+        }
        if(args.length > 0){
            for (Command command : commands) {
                if(command.getConfiguration().hasAlias(args[0])){
