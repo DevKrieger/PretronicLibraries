@@ -62,7 +62,7 @@ public class ResourceLoader {
 
     public UpdateConfiguration getUpdateConfiguration(){
         if (updateConfiguration == null) {
-            File file = new File(info.getLocation(), UPDATE_CONFIGURATION_FILE_NAME);
+            File file = new File(info.getLocation(),UPDATE_CONFIGURATION_FILE_NAME);
             if (file.exists()) {
                 try {
                     InputStream input = new FileInputStream(file);
@@ -73,6 +73,7 @@ public class ResourceLoader {
                 }
             }
         }
+        if(updateConfiguration != null) return updateConfiguration;
         return UpdateConfiguration.DEFAULT;
     }
 
