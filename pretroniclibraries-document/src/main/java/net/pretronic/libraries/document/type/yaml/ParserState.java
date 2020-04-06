@@ -344,8 +344,10 @@ public interface ParserState {
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(current == ':'){
+                System.out.println("Current "+(parser.getOnLine(yaml.getCharacterMark(),parser.charIndex())));
                 yaml.setTempKey(parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()).trim());
-                int indent = yaml.getSequence().getIndent()+yaml.getTempIndent();
+                int indent = yaml.getSequence().getIndent()+yaml.getTempIndent()+1;
+                System.out.println("indent " + indent);
                 if(indent != yaml.getSequence().getIndent()){
                     yaml.setSequence(new YamlSequence("value",indent,yaml.getSequence(),false));
                 }
@@ -380,6 +382,7 @@ public interface ParserState {
                 yaml.mark(parser);
             }
             if(!isSpaceChar(current)){
+                System.out.println("array next");
                 int indent = parser.charIndex()-yaml.getCharacterMark();
                 if(indent == yaml.getSequence().getIndent()){
                     yaml.setState(DOCUMENT_ARRAY_ADVANCED_SUB_KEY);
@@ -389,8 +392,9 @@ public interface ParserState {
                 }else{
                     findParent(yaml, parser, indent);
                     if(current == '-'){
+                        System.out.println("- current");
                         yaml.setState(DOCUMENT_ARRAY_ADVANCED);
-                        yaml.setTempIndent(1);
+                        yaml.setTempIndent(0);
                     }else{
                         yaml.setState(DOCUMENT_KEY);
                         yaml.mark(parser);
@@ -404,6 +408,7 @@ public interface ParserState {
 
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
+            System.out.println("sub key");
             if(current == ':'){
                 yaml.setTempKey(parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()).trim());
                 yaml.setState(DOCUMENT_ARRAY_ADVANCED_VALUE);
