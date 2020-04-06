@@ -85,7 +85,7 @@ public class BinaryDocumentWriter implements DocumentWriter {
                 throw new IllegalArgumentException("Could not create "+location.getName());
             }
             FileOutputStream output = new FileOutputStream(location);
-            write(output,Charset.defaultCharset(), document, pretty);
+            write(output,charset, document, pretty);
             output.close();
         } catch (IOException exception) {
             throw new IORuntimeException(exception);

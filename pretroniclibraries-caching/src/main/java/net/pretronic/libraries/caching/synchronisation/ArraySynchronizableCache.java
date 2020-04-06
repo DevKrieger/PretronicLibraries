@@ -84,6 +84,7 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
 
     @Override
     public void onDelete(I identifier, Document data) {
+        if(identifierQuery == null) throw new IllegalArgumentException("Identifier query is not set");
         O result = remove(identifierQuery,identifier);
         if(result != null && updateListener != null){
             deleteListener.accept(result,data);
@@ -100,6 +101,7 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
 
     @Override
     public void onUpdate(I identifier, Document data) {
+        if(identifierQuery == null) throw new IllegalArgumentException("Identifier query is not set");
         O object = get(identifierQuery,identifier);
         if(object != null){
             if(object instanceof Synchronizable){
@@ -143,23 +145,23 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     @Override
     public void setClearOnDisconnect(boolean enabled) {
         this.clearOnDisconnect = enabled;
-        if(clearOnDisconnect) clear();
     }
 
     @Override
     public void setSkipOnDisconnect(boolean enabled) {
         this.skipOnDisconnect = enabled;
-        if(clearOnDisconnect) clear();
     }
 
     @Override
     public void onConnect() {
         this.connected = true;
+        if(clearOnDisconnect) clear();
     }
 
     @Override
     public void onDisconnect() {
         this.connected = false;
+        if(clearOnDisconnect) clear();
     }
 
     @Override
