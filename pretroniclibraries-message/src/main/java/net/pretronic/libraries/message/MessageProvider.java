@@ -53,15 +53,18 @@ public interface MessageProvider {
     Collection<MessagePack> getPacks(Language language);
 
 
-    MessagePack importPack(Document pack);
-
     MessagePack getPack(String name);
 
     void addPack(MessagePack pack);
 
     MessagePack addPack(Document pack);
 
-    List<MessagePack> loadPacks(String namespace);
+
+    List<MessagePack> loadPacks(String module);
+
+    MessagePack importPack(Document pack);
+
+    void updatePack(MessagePack pack);
 
 
     Message getMessage(String key);
