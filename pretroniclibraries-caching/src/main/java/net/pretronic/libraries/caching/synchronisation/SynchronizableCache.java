@@ -24,6 +24,7 @@ import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.synchronisation.NetworkSynchronisationCallback;
 import net.pretronic.libraries.synchronisation.SynchronisationHandler;
+import net.pretronic.libraries.synchronisation.UnconnectedSynchronisationCaller;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -38,6 +39,10 @@ public interface SynchronizableCache<O,I> extends Cache<O>, SynchronisationHandl
     void setClearOnDisconnect(boolean enabled);
 
     void setSkipOnDisconnect(boolean enabled);
+
+    default void initUnconnected(){
+        init(new UnconnectedSynchronisationCaller<>(true));
+    }
 
 
     void setIdentifierQuery(CacheQuery<O> query);
