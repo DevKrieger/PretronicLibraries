@@ -62,9 +62,17 @@ public interface MessageProvider {
 
     List<MessagePack> loadPacks(String module);
 
-    MessagePack importPack(Document pack);
+    default MessagePack importPack(Document pack){
+        return MessagePack.fromDocument(pack);
+    }
 
-    void updatePack(MessagePack pack);
+    MessagePack importPack(MessagePack pack);
+
+    default void updatePack(MessagePack pack){
+        updatePack(pack,0);
+    }
+
+    void updatePack(MessagePack pack, int updateCound);
 
 
     Message getMessage(String key);
