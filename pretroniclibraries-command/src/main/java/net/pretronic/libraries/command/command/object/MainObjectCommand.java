@@ -141,7 +141,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
                         ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, null, new String[0]);
                     }else{
                         notFoundHandler.handle(sender, null, new String[0]);
-                    };
+                    }
                 }
             }
         } else {
@@ -154,15 +154,17 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     @SuppressWarnings("unchecked")
     @Override
     public void execute(CommandSender sender, Object object, String[] args) {
-        if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) {
-            return;
-        }
        if(args.length > 0){
            for (Command command : commands) {
                if(command.getConfiguration().hasAlias(args[0])){
+                   if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) {
+                       return;
+                   }
                    if(command instanceof ObjectCommand){
                        ((ObjectCommand<T>)command).execute(sender, (T) object,Arrays.copyOfRange(args,1,args.length));
-                   }else command.execute(sender, args);
+                   }else {
+                       command.execute(sender, args);
+                   }
                    return;
                }
            }
@@ -171,6 +173,9 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
            String command =  args.length == 0 ? "" : args[0];
            String[] args0 = args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length);
            if(notFoundHandler instanceof DefinedNotFindable){
+               if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) {
+                   return;
+               }
                ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, command, args0);
            }else{
                notFoundHandler.handle(sender, command, args0);
