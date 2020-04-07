@@ -40,12 +40,27 @@ public class UnconnectedSynchronisationCaller<I> implements SynchronisationCalle
     }
 
     @Override
+    public void updateAndIgnore(I identifier, Document data) {
+        //Ignored
+    }
+
+    @Override
     public void create(I identifier, Document data) {
         //Ignored
     }
 
     @Override
+    public void createAndIgnore(I identifier, Document data) {
+        //Ignored
+    }
+
+    @Override
     public void delete(I identifier, Document data) {
+        //Ignored
+    }
+
+    @Override
+    public void deleteAndIgnore(I identifier, Document data) {
         //Ignored
     }
 }

@@ -27,8 +27,14 @@ public interface SynchronisationCaller<I> {
 
     void update(I identifier, Document data);
 
+    void updateAndIgnore(I identifier, Document data);
+
     void create(I identifier, Document data);
 
+    void createAndIgnore(I identifier, Document data);
+
     void delete(I identifier, Document data);
+
+    void deleteAndIgnore(I identifier, Document data);
 
 }

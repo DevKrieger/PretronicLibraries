@@ -34,23 +34,37 @@ public interface SynchronisationHandler<O,I> extends SynchronisationCaller<I> {
 
     void init(SynchronisationCaller<I> caller);
 
-
+    @Override
     default void update(I identifier, Document data){
         getCaller().update(identifier, data);
     }
 
+    @Override
+    default void updateAndIgnore(I identifier, Document data) {
+        getCaller().updateAndIgnore(identifier, data);
+    }
+
+    @Override
     default void create(I identifier, Document data){
         getCaller().create(identifier, data);
     }
 
+    @Override
+    default void createAndIgnore(I identifier, Document data) {
+        getCaller().createAndIgnore(identifier, data);
+    }
+
+    @Override
     default void delete(I identifier, Document data){
         getCaller().delete(identifier, data);
     }
 
-
-    default  boolean isConnected(){
-        return getCaller().isConnected();
+    @Override
+    default void deleteAndIgnore(I identifier, Document data) {
+        getCaller().deleteAndIgnore(identifier, data);
     }
 
-
+    default boolean isConnected(){
+        return getCaller().isConnected();
+    }
 }
