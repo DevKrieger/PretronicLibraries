@@ -46,7 +46,8 @@ public class LoopFunction implements Function {
     private Object inLoop(BuildContext context, Module leftOperator, Module rightOperation0, Module[] parameters) {
         if(parameters.length < 1) throw new IllegalArgumentException("Invalid parameter length");
         Object rightOperation = Module.build(rightOperation0,context,true);
-        if(rightOperation instanceof Collection<?>){
+        if(rightOperation == null) return new Object[]{};
+        else if(rightOperation instanceof Collection<?>){
             Iterator<?> iterator = ((Iterable<?>) rightOperation).iterator();
             int index = 0;
             int size = ((Collection<?>) rightOperation).size();
@@ -58,6 +59,7 @@ public class LoopFunction implements Function {
             if(parameters.length > 1){
                 separator = parameters[1].build(context,true).toString();
                 size = (size*2)-1;
+                if(size < 0) return new Object[]{};
             }
             Object[] result = new Object[size];
             boolean first = true;
@@ -88,6 +90,7 @@ public class LoopFunction implements Function {
         if(left == right) return new Object[]{};
         else if(left < right){
             int size = getSize(left, right, separator);
+            if(size < 0) return new Object[]{};
 
             Object[] result = new Object[size];
             int index = left;
