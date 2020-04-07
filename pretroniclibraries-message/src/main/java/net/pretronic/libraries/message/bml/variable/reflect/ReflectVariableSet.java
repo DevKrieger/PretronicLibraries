@@ -23,6 +23,7 @@ package net.pretronic.libraries.message.bml.variable.reflect;
 import net.pretronic.libraries.message.bml.variable.HashVariableSet;
 import net.pretronic.libraries.message.bml.variable.Variable;
 
+@Deprecated
 public class ReflectVariableSet extends HashVariableSet {
 
     @Override

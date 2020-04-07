@@ -18,32 +18,34 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.variable.reflect;
+package net.pretronic.libraries.message.bml.variable.describer;
 
 import net.pretronic.libraries.utility.Validate;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Deprecated
-public final class ReflectVariableDescriberRegistry {
+public final class VariableDescriberRegistry {
 
-    private final static Map<Class<?>,ReflectVariableDescriber> DESCRIBERS = new HashMap<>();
+    private final static Map<Class<?>,VariableDescriber<?>> DESCRIBERS = new HashMap<>();
 
-    public static void registerDescriber(Class<?> clazz, ReflectVariableDescriber describer){
+    public static void registerDescriber(Class<?> clazz, VariableDescriber<?> describer){
         Validate.notNull(clazz,describer);
         DESCRIBERS.put(clazz,describer);
     }
 
-    public static void registerDescriber(Class<?> clazz){
+    public static <T> VariableDescriber<T> registerDescriber(Class<T> clazz){
         Validate.notNull(clazz);
-        registerDescriber(clazz,ReflectVariableDescriber.of(clazz));
+        VariableDescriber<T> describer = VariableDescriber.ofSuper(clazz);
+        registerDescriber(clazz,describer);
+        return describer;
     }
 
 
-    public static ReflectVariableDescriber getDescriber(Class<?> clazz){
+    @SuppressWarnings("unchecked")
+    public static <T> VariableDescriber<T> getDescriber(Class<T> clazz){
         Validate.notNull(clazz);
-        return DESCRIBERS.get(clazz);
+        return (VariableDescriber<T>) DESCRIBERS.get(clazz);
     }
 
 }

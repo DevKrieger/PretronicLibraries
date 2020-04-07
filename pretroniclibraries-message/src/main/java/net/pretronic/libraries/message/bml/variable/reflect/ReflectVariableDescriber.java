@@ -29,6 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+@Deprecated
 public final class ReflectVariableDescriber {
 
     private final CaseIntensiveMap<Method> methods;
@@ -70,6 +71,8 @@ public final class ReflectVariableDescriber {
         Validate.notNull(name,method);
         this.methods.put(name,method);
     }
+
+
 
     public static ReflectVariableDescriber newDescriber(){
         return new ReflectVariableDescriber();

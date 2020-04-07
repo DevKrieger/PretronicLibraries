@@ -18,10 +18,9 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.variable.reflect;
+package net.pretronic.libraries.message.bml.variable.describer;
 
-@Deprecated
-public interface ReflectVariableObjectToString {
+public interface VariableObjectToString {
 
     String toStringVariable();
 
