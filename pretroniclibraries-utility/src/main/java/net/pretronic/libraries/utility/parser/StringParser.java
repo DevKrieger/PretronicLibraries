@@ -296,6 +296,10 @@ public class StringParser {
         this.charIndex = this.lines[this.lineIndex].length-2;
     }
 
+    public void lineEnd(){
+        this.charIndex = this.lines[this.lineIndex].length-1;
+    }
+
     //Search options
 
     public Pair<Integer,Integer> findNextCharIndex(char c){

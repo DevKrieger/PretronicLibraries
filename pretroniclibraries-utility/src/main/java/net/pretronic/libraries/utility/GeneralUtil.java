@@ -48,6 +48,7 @@ public class GeneralUtil {
     }
 
     public static boolean isNaturalNumber(String value){
+        if(value.length() == 0) return false;
         for(char c : value.toCharArray()) if(!Character.isDigit(c)) return false;
         return true;
     }
@@ -58,6 +59,7 @@ public class GeneralUtil {
      * @return True for a string which is a number
      */
     public static boolean isNumber(String value){
+        if(value.length() == 0) return false;
         boolean dot = false;
         boolean start = true;
         for(char c : value.toCharArray()){
