@@ -22,7 +22,6 @@ package net.pretronic.libraries.command.command.object;
 import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.NotFoundHandler;
-import net.pretronic.libraries.command.ObjectCommandPrecondition;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.manager.CommandManager;

@@ -1,4 +1,4 @@
-package net.pretronic.libraries.command;
+package net.pretronic.libraries.command.command.object;
 
 import net.pretronic.libraries.command.sender.CommandSender;
 
