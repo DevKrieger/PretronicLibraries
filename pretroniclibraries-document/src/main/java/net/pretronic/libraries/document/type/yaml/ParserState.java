@@ -21,6 +21,7 @@ package net.pretronic.libraries.document.type.yaml;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.entry.DocumentEntry;
+import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.parser.StringParser;
 
 public interface ParserState {
@@ -91,11 +92,12 @@ public interface ParserState {
 
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
-            if(current != ' '){
+            if(current == '#') {
+                parser.skipLine();
+            }else if(current != ' '){
                 yaml.mark(parser);
                 yaml.setState(DOCUMENT_KEY);
             }
-            else parser.throwException("Invalid character");
         }
     }
 
@@ -114,10 +116,19 @@ public interface ParserState {
 
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
-            if(yaml.getLineMark() != parser.lineIndex()){
+            if(yaml.getLineMark() != parser.lineIndex() ) {
                 yaml.mark(parser);
                 yaml.setState(DOCUMENT_NEXT);
                 parser.previousChar();
+            }else if(current == '#'){
+                parser.lineEnd();
+                if(parser.hasNextChar()){
+                    parser.nextChar();
+                    yaml.mark(parser);
+                    parser.previousChar();
+                    yaml.setState(DOCUMENT_NEXT);
+                }
+                System.out.println();
             }else if(current == '|' || current == '>'){
                 parser.skipLine();
                 yaml.setTempIndent(0);
@@ -149,10 +160,27 @@ public interface ParserState {
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(parser.isLineFinished()){
-                String value = parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()+1).trim();
-                yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),value));
+                String text = parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()+1).trim();
+                yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),extractValue(text)));
+                yaml.setState(DOCUMENT_NEXT_SAME);
+            }else if(current == '#'){
+                String text = parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()).trim();
+                yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),extractValue(text)));
+                parser.lineEnd();
                 yaml.setState(DOCUMENT_NEXT_SAME);
             }
+        }
+
+        private Object extractValue(String text) {
+            Object value = text;
+            if (text.equalsIgnoreCase("true") || text.equalsIgnoreCase("false")) {
+                value = Boolean.parseBoolean(text);
+            } else if (GeneralUtil.isNaturalNumber(text)) {
+                value = Long.parseLong(text);
+            } else if (GeneralUtil.isNumber(text)) {
+                value = Double.parseDouble(text);
+            }
+            return value;
         }
     }
 
@@ -188,6 +216,7 @@ public interface ParserState {
                     value = value.replace(String.valueOf('\\'+endCharacter),String.valueOf(endCharacter));
                 }
                 yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),value));
+                parser.lineEnd();
                 yaml.mark(parser);
                 yaml.setState(yaml.getSequence().isArray() ? DOCUMENT_ARRAY_VALUE_ENDING : DOCUMENT_NEXT_SAME);
             }
@@ -255,6 +284,10 @@ public interface ParserState {
 
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
+            if(current == '#'){
+                parser.skipLine();
+                return;
+            }
             if (yaml.getLineMark() != parser.lineIndex()) {
                 yaml.mark(parser);
             }
