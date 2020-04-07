@@ -20,7 +20,18 @@
 
 package net.pretronic.libraries.message.bml.function.defaults.operation;
 
-public class ConditionFunction {
+import net.pretronic.libraries.message.bml.Module;
+import net.pretronic.libraries.message.bml.builder.BuildContext;
+import net.pretronic.libraries.message.bml.function.Function;
+
+public class ConditionFunction implements Function {
+
+    @Override
+    public Object execute(BuildContext context, Module leftOperator, String operation, Module rightOperation, Module[] parameters) {
+
+
+        return null;
+    }
 
     /*
     @Override
