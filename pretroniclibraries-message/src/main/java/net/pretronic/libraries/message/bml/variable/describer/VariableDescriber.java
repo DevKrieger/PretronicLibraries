@@ -129,16 +129,13 @@ public class VariableDescriber<T> {
                 Function function = describer.getFunctions().get(part);
                 if(function != null){
                     current = function.apply(current);
-                    continue;
                 }else{
                     BiFunction parameterFunction = describer.getParameterFunctions().get(part);
                     if(parameterFunction != null){
                         current = parameterFunction.apply(current,i < parts.length-1 ? parts[++i] : null);
-                        continue;
                     }
                 }
-            }
-            throw new IllegalArgumentException("No variable describer for "+current.getClass()+" found");
+            }else throw new IllegalArgumentException("No variable describer for "+current.getClass()+" found");
         }
         return current;
     }
