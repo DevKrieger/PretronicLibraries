@@ -59,7 +59,7 @@ public class DefaultMessageProcessor implements MessageProcessor {//test hallo !
     public Indicate getIndicate(char char0) {
         OwnedObject<Indicate>  ownedIndicate = Iterators.findOne(this.indicates, ownedObject -> {
             Indicate indicate = ownedObject.getObject();
-            return (indicate.hasPrefix() && indicate.getPrefix() == char0) || (indicate.getStart() == char0);
+            return (indicate.hasPrefix() && indicate.getPrefix() == char0) || (indicate.getStart() == char0 && !indicate.hasPrefix());
         });
         return ownedIndicate != null ? ownedIndicate.getObject() : null;
     }
