@@ -216,7 +216,7 @@ public interface ParserState {
                     value = value.replace(String.valueOf('\\'+endCharacter),String.valueOf(endCharacter));
                 }
                 yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),value));
-                parser.lineEnd();
+                if(!yaml.getSequence().isArray()) parser.lineEnd();
                 yaml.mark(parser);
                 yaml.setState(yaml.getSequence().isArray() ? DOCUMENT_ARRAY_VALUE_ENDING : DOCUMENT_NEXT_SAME);
             }
