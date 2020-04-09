@@ -29,13 +29,13 @@ import java.util.Map;
 public class MessagePack {
 
     private final MessagePackMeta meta;
-    private final Map<String,String> messages;
+    private final LinkedHashMap<String,String> messages;
 
     public MessagePack(MessagePackMeta meta){
         this(meta,new LinkedHashMap<>());
     }
 
-    public MessagePack(MessagePackMeta meta, Map<String, String> messages) {
+    public MessagePack(MessagePackMeta meta, LinkedHashMap<String, String> messages) {
         this.meta = meta;
         this.messages = messages;
     }

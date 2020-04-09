@@ -60,8 +60,15 @@ public class LoopFunction implements Function {
             if(parameters.length > 1){
                 separator = parameters[1].build(context,true).toString();
                 size = (size*2)-1;
-                if(size < 0) return new Object[]{};
+                if(size < 1) return new Object[]{};
             }
+
+            String firstSeparator = null;
+            if(parameters.length > 2){
+                firstSeparator = parameters[2].build(context,true).toString();
+                size++;
+            }
+
             Object[] result = new Object[size];
             boolean first = true;
             while (iterator.hasNext()){
@@ -70,8 +77,10 @@ public class LoopFunction implements Function {
                 positionVar.setObject(indexCount+1);
                 objectVar.setObject(item);
                 if(separator != null){
-                    if(first) first = false;
-                    else result[index++] = separator;
+                    if(first){
+                        if(firstSeparator != null) result[index++] = firstSeparator;
+                        first = false;
+                    }else result[index++] = separator;
                 }
                 result[index] = parameters[0].build(context,false);
                 index++;
