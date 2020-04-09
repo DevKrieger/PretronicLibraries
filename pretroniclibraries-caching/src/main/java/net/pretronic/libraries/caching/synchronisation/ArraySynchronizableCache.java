@@ -167,7 +167,6 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     @Override
     public O get(CacheQuery<O> query, Object... identifiers) {
         if(!connected && skipOnDisconnect){
-            System.out.println("[Debug] SKIP CACHE, NOT CONNECTED");
             query.validate(identifiers);
             return query.load(identifiers);
         }
@@ -177,7 +176,6 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     @Override
     public O get(Predicate<O> query, Supplier<O> loader) {
         if(!connected && skipOnDisconnect){
-            System.out.println("[Debug] SKIP CACHE, NOT CONNECTED");
             return loader != null ? loader.get() : null;
         }
         return super.get(query, loader);
