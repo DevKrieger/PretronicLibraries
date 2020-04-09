@@ -23,6 +23,7 @@ package net.pretronic.libraries.message;
 import net.pretronic.libraries.document.Document;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MessagePack {
@@ -31,7 +32,7 @@ public class MessagePack {
     private final Map<String,String> messages;
 
     public MessagePack(MessagePackMeta meta){
-        this(meta,new HashMap<>());
+        this(meta,new LinkedHashMap<>());
     }
 
     public MessagePack(MessagePackMeta meta, Map<String, String> messages) {
