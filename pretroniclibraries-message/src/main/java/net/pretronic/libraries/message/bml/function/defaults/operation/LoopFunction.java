@@ -50,6 +50,7 @@ public class LoopFunction implements Function {
         else if(rightOperation instanceof Collection<?>){
             Iterator<?> iterator = ((Iterable<?>) rightOperation).iterator();
             int index = 0;
+            int indexCount = 0;
             int size = ((Collection<?>) rightOperation).size();
             String var = leftOperator.build(context,true).toString();
             Variable indexVar = context.getVariables().getOrCreate("index");
@@ -65,8 +66,8 @@ public class LoopFunction implements Function {
             boolean first = true;
             while (iterator.hasNext()){
                 Object item = iterator.next();
-                indexVar.setObject(index);
-                positionVar.setObject(index+1);
+                indexVar.setObject(indexCount);
+                positionVar.setObject(indexCount+1);
                 objectVar.setObject(item);
                 if(separator != null){
                     if(first) first = false;
@@ -74,6 +75,7 @@ public class LoopFunction implements Function {
                 }
                 result[index] = parameters[0].build(context,false);
                 index++;
+                indexCount++;
             }
             return result;
         }else throw new IllegalArgumentException("Object is not iterable");
