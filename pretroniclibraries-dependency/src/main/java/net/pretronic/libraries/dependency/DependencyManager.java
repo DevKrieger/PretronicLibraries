@@ -23,6 +23,7 @@ import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.libraries.logging.PretronicLoggerFactory;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ public class DependencyManager {
     private final File installationFolder;
     private final Collection<Dependency> dependencies;
 
+    private String loggerPrefix;
+
     public DependencyManager(File installationFolder) {
         this(PretronicLoggerFactory.getLogger(DependencyManager.class),installationFolder);
     }
@@ -44,12 +47,22 @@ public class DependencyManager {
     public DependencyManager(PretronicLogger logger, File installationFolder) {
         this.logger = logger;
         this.installationFolder = installationFolder;
-
         this.dependencies = new ArrayList<>();
+        this.loggerPrefix = "(Dependency-Manager) ";
     }
 
     public PretronicLogger getLogger() {
         return logger;
+    }
+
+
+    public String getLoggerPrefix() {
+        return loggerPrefix;
+    }
+
+    public void setLoggerPrefix(String loggerPrefix) {
+        Validate.notNull(loggerPrefix);
+        this.loggerPrefix = loggerPrefix;
     }
 
     public File getInstallationFolder() {

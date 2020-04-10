@@ -109,6 +109,9 @@ public class Dependency {
     public void install(){
         File jar = getLocalJar();
         if(!jar.exists()){
+            if(manager.getLogger() != null) {
+                manager.getLogger().info(manager.getLoggerPrefix()+"Installing dependency " + groupId + " | " + artifactId + " | " + version);
+            }
             jar.getParentFile().mkdirs();
             try{
                 HttpClient client = new HttpClient();
@@ -123,6 +126,9 @@ public class Dependency {
             }catch (Exception exception){
                 throw new DependencyException("Could not install dependency "+artifactId+" v"+version+" ("+exception.getMessage()+")",exception);
             }
+        }
+        if(manager.getLogger() != null){
+            manager.getLogger().info(manager.getLoggerPrefix()+"Dependency "+groupId+" | "+artifactId+" | "+version+" is up to date");
         }
     }
 
