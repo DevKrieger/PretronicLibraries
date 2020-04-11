@@ -45,8 +45,7 @@ public class SLF4JBridgeServiceProvider implements SLF4JServiceProvider, SLF4JSt
             stateField.setAccessible(true);
             stateField.set(null,3);
         }catch (Exception exception){
-            exception.printStackTrace();
-            throw new IllegalArgumentException("Could not initialize Pretronic SLF4J static logger bridge adapter.");
+            throw new IllegalArgumentException("Could not initialize Pretronic SLF4J static logger bridge adapter.",exception);
         }
     }
 
