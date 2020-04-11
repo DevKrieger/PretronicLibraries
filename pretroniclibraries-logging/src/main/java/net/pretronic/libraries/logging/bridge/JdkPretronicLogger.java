@@ -38,11 +38,11 @@ public class JdkPretronicLogger implements PretronicLogger {
 
     private final Logger logger;
     private final Collection<LogHandler> handlers;
-    private Map<LogLevel,Level> logLevelTranslation;
+    private final Map<LogLevel,Level> logLevelTranslation;
 
     private DebugLevel debugLevel;
     private Handler translateHandler;
-    private Function<LogLevel,Level> prefixProcessor;
+    private Function<LogLevel,String> prefixProcessor;
 
     public JdkPretronicLogger(Logger logger) {
         this.logger = logger;
@@ -58,13 +58,14 @@ public class JdkPretronicLogger implements PretronicLogger {
         this.logLevelTranslation.put(LogLevel.ALL,Level.ALL);
     }
 
-    public Function<LogLevel, Level> getPrefixProcessor() {
+    public Function<LogLevel, String> getPrefixProcessor() {
         return prefixProcessor;
     }
 
-    public void setPrefixProcessor(Function<LogLevel, Level> prefixProcessor) {
+    public void setPrefixProcessor(Function<LogLevel, String> prefixProcessor) {
         this.prefixProcessor = prefixProcessor;
     }
+
 
     public Map<LogLevel, Level> getLogLevelTranslation() {
         return logLevelTranslation;
@@ -165,7 +166,10 @@ public class JdkPretronicLogger implements PretronicLogger {
 
     public void log(MessageInfo info, LogLevel level, String message0, Thread thread,Throwable throwable){
         String message = message0;
-        if(prefixProcessor != null) message = prefixProcessor.apply(level)+message;
+        if(prefixProcessor != null){
+            String result = prefixProcessor.apply(level);
+            if(result != null)       message = result+message;
+        }
         LogRecord record = new LogRecord(translateLevel(level),message);
         record.setLoggerName(getName());
         record.setThreadID((int) thread.getId());
