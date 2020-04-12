@@ -27,8 +27,8 @@ import net.pretronic.libraries.logging.handler.LogHandler;
 import net.pretronic.libraries.logging.level.DebugLevel;
 import net.pretronic.libraries.logging.level.LogLevel;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -38,14 +38,41 @@ public class JdkPretronicLogger implements PretronicLogger {
 
     private final Logger logger;
     private final Collection<LogHandler> handlers;
+    private final Map<LogLevel,Level> logLevelTranslation;
 
     private DebugLevel debugLevel;
     private Handler translateHandler;
+    private Function<LogLevel,String> prefixProcessor;
 
     public JdkPretronicLogger(Logger logger) {
         this.logger = logger;
         this.debugLevel = DebugLevel.NORMAL;
         this.handlers = new ArrayList<>();
+        this.logLevelTranslation = new HashMap<>();
+
+        this.logLevelTranslation.put(LogLevel.OFF,Level.OFF);
+        this.logLevelTranslation.put(LogLevel.ERROR,Level.SEVERE);
+        this.logLevelTranslation.put(LogLevel.WARN,Level.WARNING);
+        this.logLevelTranslation.put(LogLevel.INFO,Level.INFO);
+        this.logLevelTranslation.put(LogLevel.DEBUG,Level.FINE);
+        this.logLevelTranslation.put(LogLevel.ALL,Level.ALL);
+    }
+
+    public Function<LogLevel, String> getPrefixProcessor() {
+        return prefixProcessor;
+    }
+
+    public void setPrefixProcessor(Function<LogLevel, String> prefixProcessor) {
+        this.prefixProcessor = prefixProcessor;
+    }
+
+
+    public Map<LogLevel, Level> getLogLevelTranslation() {
+        return logLevelTranslation;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     @Override
@@ -137,7 +164,12 @@ public class JdkPretronicLogger implements PretronicLogger {
        log(info,level,message,thread,null);
     }
 
-    public void log(MessageInfo info, LogLevel level, String message, Thread thread,Throwable throwable){
+    public void log(MessageInfo info, LogLevel level, String message0, Thread thread,Throwable throwable){
+        String message = message0;
+        if(prefixProcessor != null){
+            String result = prefixProcessor.apply(level);
+            if(result != null)       message = result+message;
+        }
         LogRecord record = new LogRecord(translateLevel(level),message);
         record.setLoggerName(getName());
         record.setThreadID((int) thread.getId());
@@ -146,21 +178,19 @@ public class JdkPretronicLogger implements PretronicLogger {
     }
 
     private Level translateLevel(LogLevel level){
-        if(level.equals(LogLevel.ALL)) return Level.ALL;
-        else if(level.equals(LogLevel.WARN)) return Level.WARNING;
-        else if(level.equals(LogLevel.OFF)) return Level.OFF;
-        else if(level.equals(LogLevel.ERROR)) return Level.SEVERE;
-        else if(level.equals(LogLevel.DEBUG)) return Level.FINE;
-        else return Level.INFO;
+        Level result = logLevelTranslation.get(level);
+        return result != null ? result : Level.INFO;
     }
 
     private LogLevel translateLevel(Level level){
-        if(level == Level.ALL) return LogLevel.ALL;
-        else if(level == Level.WARNING) return LogLevel.WARN;
-        else if(level == Level.OFF) return LogLevel.OFF;
-        else if(level == Level.SEVERE) return LogLevel.ERROR;
-        else if(level == Level.FINE) return LogLevel.DEBUG;
-        else return LogLevel.INFO;
+        LogLevel result = null;
+        for (Map.Entry<LogLevel, Level> entry : logLevelTranslation.entrySet()) {
+            if(entry.getValue().equals(level)){
+                result = entry.getKey();
+                break;
+            }
+        }
+        return result != null ? result : LogLevel.INFO;
     }
 
     @Override

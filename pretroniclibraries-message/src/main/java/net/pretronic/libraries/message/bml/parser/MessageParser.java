@@ -39,6 +39,7 @@ public class MessageParser {
     private ParserState state;
     private MessageSequence sequence;
 
+    private int newLines;
     private int markedIndex;
     private int markedLine;
 
@@ -83,9 +84,11 @@ public class MessageParser {
     }
 
     public void markNext(){
+        int current = parser.lineIndex();
         if(parser.hasNextChar()){
             parser.nextChar();
             mark();
+            newLines = parser.lineIndex()-current;
             parser.previousChar();
         }else{
             mark();
@@ -99,9 +102,21 @@ public class MessageParser {
 
     public String extractString(int added){
         if(parser.lineIndex() >= markedLine || parser.charIndex() >= markedIndex ){
-            return parser.get(markedLine,markedIndex,parser.lineIndex(),parser.charIndex()+added);
+            String result = parser.get(markedLine,markedIndex,parser.lineIndex(),parser.charIndex()+added);
+            return buildLine(result);
+        }else if(newLines > 0){
+            return buildLine("");
         }
         return null;
+    }
+
+    private String buildLine(String input){
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < newLines; i++) {
+            result.append("\n");
+        }
+        result.append(input);
+        return result.toString();
     }
 
     public void extractStringAndPush(int added){
