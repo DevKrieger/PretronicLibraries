@@ -62,6 +62,7 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
         this.notFoundHandler = notFoundHandler;
     }
 
+    @Override
     public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
         this.noPermissionHandler = noPermissionHandler;
     }

@@ -81,6 +81,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         this.objectCommandPrecondition = precondition;
     }
 
+    @Override
     public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
         this.noPermissionHandler = noPermissionHandler;
     }

@@ -21,10 +21,12 @@ package net.pretronic.libraries.command.manager;
 
 import net.pretronic.libraries.command.NoPermissionHandler;
 import net.pretronic.libraries.command.NotFoundHandler;
+import net.pretronic.libraries.command.TextableNoPermissionHandler;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.object.ObjectNoPermissionHandler;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.message.StringTextable;
+import net.pretronic.libraries.message.Textable;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.List;
@@ -36,6 +38,12 @@ public interface CommandManager {
     List<Command> getCommands();
 
     void setNotFoundHandler(NotFoundHandler handler);
+
+    void setNoPermissionHandler(NoPermissionHandler noPermissionHandler);
+
+    default void setNoPermissionMessage(Textable textable) {
+        setNoPermissionHandler(new TextableNoPermissionHandler(textable));
+    }
 
 
     void dispatchCommand(CommandSender sender, String commandLine);

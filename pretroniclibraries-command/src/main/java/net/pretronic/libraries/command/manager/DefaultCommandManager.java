@@ -54,6 +54,7 @@ public class DefaultCommandManager implements CommandManager {
         this.notFoundHandler = handler;
     }
 
+    @Override
     public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
         this.noPermissionHandler = noPermissionHandler;
     }
