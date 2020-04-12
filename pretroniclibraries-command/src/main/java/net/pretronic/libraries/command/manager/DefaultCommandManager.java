@@ -19,6 +19,7 @@
 
 package net.pretronic.libraries.command.manager;
 
+import net.pretronic.libraries.command.NoPermissionHandler;
 import net.pretronic.libraries.command.NotFoundHandler;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.sender.CommandSender;
@@ -32,6 +33,7 @@ public class DefaultCommandManager implements CommandManager {
 
     private final List<Command> commands;
     private NotFoundHandler notFoundHandler;
+    private NoPermissionHandler noPermissionHandler;
 
     public DefaultCommandManager() {
         this.commands = new ArrayList<>();
@@ -52,6 +54,10 @@ public class DefaultCommandManager implements CommandManager {
         this.notFoundHandler = handler;
     }
 
+    public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
+        this.noPermissionHandler = noPermissionHandler;
+    }
+
     @Override
     public void dispatchCommand(CommandSender sender, String name0) {
         String name = name0.trim();
@@ -61,7 +67,11 @@ public class DefaultCommandManager implements CommandManager {
         else command = name.substring(0,index);
         Command cmd = getCommand(command);
         String[] args = index==-1?new String[0]:name.substring(index+1).split(" ");
-        if(cmd != null) cmd.execute(sender,args);
+        if(cmd != null) {
+            if(CommandManager.hasPermission(sender, noPermissionHandler, null, cmd.getConfiguration().getPermission(), command, args)) {
+                cmd.execute(sender,args);
+            }
+        }
         else if(notFoundHandler != null) notFoundHandler.handle(sender,command,args);
     }
 

@@ -19,13 +19,12 @@
 
 package net.pretronic.libraries.command.command.object;
 
-import net.pretronic.libraries.command.Completable;
-import net.pretronic.libraries.command.NotFindable;
-import net.pretronic.libraries.command.NotFoundHandler;
+import net.pretronic.libraries.command.*;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.manager.CommandManager;
 import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.StringTextable;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
@@ -39,6 +38,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     private ObjectNotFindable objectNotFoundHandler;
     private ObjectCompletable objectCompletable;
     private ObjectCommandPrecondition objectCommandPrecondition;
+    private NoPermissionHandler noPermissionHandler;
 
     public MainObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner, configuration);
@@ -49,6 +49,9 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         if(this instanceof ObjectNotFindable) setObjectNotFoundHandler((ObjectNotFindable) this);
         if(this instanceof ObjectCompletable) setObjectCompletableHandler((ObjectCompletable) this);
         if(this instanceof ObjectCommandPrecondition) setObjectCommandPrecondition((ObjectCommandPrecondition) this);
+
+        if(this instanceof ObjectNoPermissionAble) setNoPermissionHandler((ObjectNoPermissionAble) this);
+        else if(this instanceof NoPermissionAble) setNoPermissionHandler((NoPermissionAble) this);
     }
 
     @Override
@@ -76,6 +79,10 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
 
     public void setObjectCommandPrecondition(ObjectCommandPrecondition precondition) {
         this.objectCommandPrecondition = precondition;
+    }
+
+    public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
+        this.noPermissionHandler = noPermissionHandler;
     }
 
     @Override
@@ -129,9 +136,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             String name = args[0];
             T object = getObject(sender,name);
             if(object == null) {
-                if(objectNotFoundHandler != null) {
-                    objectNotFoundHandler.objectNotFound(sender, name, Arrays.copyOfRange(args, 1, args.length));
-                }
+                objectNotFoundHandler.objectNotFound(sender, name, Arrays.copyOfRange(args, 1, args.length));
             } else if(args.length > 1) {
                 execute(sender, object,Arrays.copyOfRange(args,1,args.length));
             } else {
@@ -144,9 +149,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
                 }
             }
         } else {
-            if(notFoundHandler != null){
-                notFoundHandler.handle(sender, null, args);
-            }
+            notFoundHandler.handle(sender, null, args);
         }
     }
 
@@ -156,13 +159,15 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
        if(args.length > 0){
            for (Command command : commands) {
                if(command.getConfiguration().hasAlias(args[0])){
-                   if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) {
-                       return;
-                   }
-                   if(command instanceof ObjectCommand){
-                       ((ObjectCommand<T>)command).execute(sender, (T) object,Arrays.copyOfRange(args,1,args.length));
-                   }else {
-                       command.execute(sender, args);
+                   if(CommandManager.hasPermission(sender, noPermissionHandler, object, command.getConfiguration().getPermission(), args[0], args)) {
+                       if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) {
+                           return;
+                       }
+                       if(command instanceof ObjectCommand){
+                           ((ObjectCommand<T>)command).execute(sender, (T) object,Arrays.copyOfRange(args,1,args.length));
+                       }else {
+                           command.execute(sender, args);
+                       }
                    }
                    return;
                }

@@ -19,9 +19,12 @@
 
 package net.pretronic.libraries.command.manager;
 
+import net.pretronic.libraries.command.NoPermissionHandler;
 import net.pretronic.libraries.command.NotFoundHandler;
 import net.pretronic.libraries.command.command.Command;
+import net.pretronic.libraries.command.command.object.ObjectNoPermissionHandler;
 import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.StringTextable;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.List;
@@ -47,4 +50,20 @@ public interface CommandManager {
 
     void unregisterCommands();
 
+    static boolean hasPermission(CommandSender sender, NoPermissionHandler noPermissionHandler, Object object, String permission, String command, String[] args) {
+        if(permission == null) return true;
+        if(!sender.hasPermission(permission)) {
+            if(noPermissionHandler != null) {
+                if(noPermissionHandler instanceof ObjectNoPermissionHandler && object != null) {
+                    ((ObjectNoPermissionHandler) noPermissionHandler).handle(sender, permission, object, args);
+                } else {
+                    noPermissionHandler.handle(sender, permission, command, args);
+                }
+            } else {
+                sender.sendMessage(new StringTextable("You don't have enough permission to execute this command"));
+            }
+            return false;
+        }
+        return true;
+    }
 }
