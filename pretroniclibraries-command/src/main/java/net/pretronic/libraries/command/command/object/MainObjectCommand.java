@@ -82,6 +82,11 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     }
 
     @Override
+    public NoPermissionHandler getNoPermissionHandler() {
+        return this.noPermissionHandler;
+    }
+
+    @Override
     public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
         this.noPermissionHandler = noPermissionHandler;
     }

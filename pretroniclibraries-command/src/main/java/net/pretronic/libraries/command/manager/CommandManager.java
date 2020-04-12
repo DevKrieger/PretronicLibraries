@@ -39,6 +39,8 @@ public interface CommandManager {
 
     void setNotFoundHandler(NotFoundHandler handler);
 
+    NoPermissionHandler getNoPermissionHandler();
+
     void setNoPermissionHandler(NoPermissionHandler noPermissionHandler);
 
     default void setNoPermissionMessage(Textable textable) {

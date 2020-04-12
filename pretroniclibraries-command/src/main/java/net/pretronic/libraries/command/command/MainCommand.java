@@ -63,6 +63,11 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
     }
 
     @Override
+    public NoPermissionHandler getNoPermissionHandler() {
+        return this.noPermissionHandler;
+    }
+
+    @Override
     public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
         this.noPermissionHandler = noPermissionHandler;
     }
