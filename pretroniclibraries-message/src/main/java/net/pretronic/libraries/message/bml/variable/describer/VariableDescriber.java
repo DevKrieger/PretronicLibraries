@@ -109,7 +109,7 @@ public class VariableDescriber<T> {
             }
         }
         if(superClass){
-            if(clazz.getSuperclass() != null && clazz.getSuperclass().equals(Object.class)){
+            if(clazz.getSuperclass() != null && !(Object.class.equals(clazz.getSuperclass()))){
                 of(describer,clazz.getSuperclass(),true);
             }
             for (Class<?> sub : clazz.getInterfaces()) {
