@@ -48,6 +48,8 @@ public interface PluginManager extends ServiceRegistry,ShutdownAble {
 
     Collection<PluginLoader> getLoaders();
 
+    PluginLoader createPluginLoader(String name);
+
     PluginLoader createPluginLoader(File location);
 
     PluginLoader createPluginLoader(File location, PluginDescription description);
