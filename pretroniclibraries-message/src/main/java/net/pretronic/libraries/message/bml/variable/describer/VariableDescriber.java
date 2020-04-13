@@ -20,7 +20,6 @@
 
 package net.pretronic.libraries.message.bml.variable.describer;
 
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableDescriber;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveHashMap;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveMap;
@@ -143,7 +142,7 @@ public class VariableDescriber<T> {
     private static VariableDescriber<?> findDescriber(Class<?> clazz0){
         Class<?> clazz = clazz0;
         VariableDescriber<?> describer = VariableDescriberRegistry.getDescriber(clazz);
-        if(describer != null){
+        if(describer == null){
             while (!(Object.class.equals(clazz.getSuperclass()))){
                 clazz = clazz.getSuperclass();
                 describer  = VariableDescriberRegistry.getDescriber(clazz);
