@@ -124,7 +124,7 @@ public class VariableDescriber<T> {
         for (int i = index; i < parts.length; i++) {
             if(current == null) break;
             String part = parts[i];
-            VariableDescriber<?> describer = VariableDescriberRegistry.getDescriber(current.getClass());
+            VariableDescriber<?> describer = findDescriber(current.getClass());
             if(describer != null){
                 Function function = describer.getFunctions().get(part);
                 if(function != null){
@@ -138,6 +138,19 @@ public class VariableDescriber<T> {
             }else throw new IllegalArgumentException("No variable describer for "+current.getClass()+" found");
         }
         return current;
+    }
+
+    private static VariableDescriber<?> findDescriber(Class<?> clazz0){
+        Class<?> clazz = clazz0;
+        VariableDescriber<?> describer = VariableDescriberRegistry.getDescriber(clazz);
+        if(describer != null){
+            while (!(Object.class.equals(clazz.getSuperclass()))){
+                clazz = clazz.getSuperclass();
+                describer  = VariableDescriberRegistry.getDescriber(clazz);
+                if(describer != null) return describer;
+            }
+        }
+        return describer;
     }
 
 
