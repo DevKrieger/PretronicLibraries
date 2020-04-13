@@ -19,10 +19,9 @@
 
 package net.pretronic.libraries.command.command;
 
-import net.pretronic.libraries.command.Completable;
-import net.pretronic.libraries.command.NotFindable;
-import net.pretronic.libraries.command.NotFoundHandler;
+import net.pretronic.libraries.command.*;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.ObjectNoPermissionAble;
 import net.pretronic.libraries.command.manager.CommandManager;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.Iterators;
@@ -35,6 +34,7 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
     private final List<Command> subCommands;
     private final Collection<String> internalTabComplete;
     private NotFoundHandler notFoundHandler;
+    private NoPermissionHandler noPermissionHandler;
 
     public MainCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner,configuration);
@@ -42,6 +42,9 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
         this.internalTabComplete = new ArrayList<>();
 
         if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
+
+        if(this instanceof ObjectNoPermissionAble) setNoPermissionHandler((ObjectNoPermissionAble) this);
+        else if(this instanceof NoPermissionAble) setNoPermissionHandler((NoPermissionAble) this);
     }
 
     @Override
@@ -57,6 +60,16 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
     @Override
     public void setNotFoundHandler(NotFoundHandler notFoundHandler) {
         this.notFoundHandler = notFoundHandler;
+    }
+
+    @Override
+    public NoPermissionHandler getNoPermissionHandler() {
+        return this.noPermissionHandler;
+    }
+
+    @Override
+    public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
+        this.noPermissionHandler = noPermissionHandler;
     }
 
     @Override
@@ -108,9 +121,11 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0) {
             for (Command command : subCommands) {
-                if (command.getConfiguration().hasAlias(args[0])) {
-                    command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
-                    return;
+                if(CommandManager.hasPermission(sender, noPermissionHandler, null, command.getConfiguration().getPermission(), args[0], args)) {
+                    if (command.getConfiguration().hasAlias(args[0])) {
+                        command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
+                        return;
+                    }
                 }
             }
         }
