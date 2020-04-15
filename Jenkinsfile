@@ -69,6 +69,12 @@ pipeline {
                 }
             }
         }
+        stage('Generate javadoc') {
+            when { equals expected: false, actual: SKIP }
+            steps {
+                sh 'mvn javadoc:aggregate-jar'
+            }
+        }
         stage('Archive') {
             when { equals expected: false, actual: SKIP }
             steps {
