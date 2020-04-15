@@ -68,13 +68,14 @@ pipeline {
                 }
             }
         }
-        stage('Generate javadoc') {
+        stage('Publish javadoc') {
             when {
                 allOf {
                     equals expected: false, actual: SKIP
                     branch 'master'
                 }
             }
+
             steps {
                 sh 'mvn javadoc:aggregate-jar'
                 script {
@@ -87,7 +88,7 @@ pipeline {
                                 responseHandle: 'NONE',
                                 uploadFile: "target/${name}-${VERSION}-javadoc.jar",
                                 customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://mirror.pretronic.net/javadoc/${name}/${VERSION}/create")
+                                url: "https://pretronic.net/javadoc/${name}/${VERSION}/create")
                     }
                 }
             }
