@@ -62,10 +62,34 @@ pipeline {
             }
         }
         stage('Build & Deploy') {
-            when { equals expected: false, actual: SKIP }
             steps {
                 configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
                     sh 'mvn -B -gs $MAVEN_GLOBAL_SETTINGS clean deploy'
+                }
+            }
+        }
+        stage('Publish javadoc') {
+            when {
+                allOf {
+                    equals expected: false, actual: SKIP
+                    branch 'master'
+                }
+            }
+
+            steps {
+                sh 'mvn javadoc:aggregate-jar'
+                script {
+                    withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
+                        String name = env.JOB_NAME
+
+                        httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
+                                httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,
+                                multipartName: 'file',
+                                responseHandle: 'NONE',
+                                uploadFile: "target/${name}-${VERSION}-javadoc.jar",
+                                customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
+                                url: "https://pretronic.net/javadoc/${name}/${VERSION}/create")
+                    }
                 }
             }
         }

@@ -128,7 +128,6 @@ public interface ParserState {
                     parser.previousChar();
                     yaml.setState(DOCUMENT_NEXT);
                 }
-                System.out.println();
             }else if(current == '|' || current == '>'){
                 parser.skipLine();
                 yaml.setTempIndent(0);
@@ -318,7 +317,12 @@ public interface ParserState {
                 DocumentEntry entry = yaml.getSequence().getEntry();
                 yaml.setSequence(yaml.getSequence().getParent());
                 yaml.getSequence().pushEntry(entry);
-                yaml.setState(DOCUMENT_NEXT_SAME);
+
+                if(yaml.getSequence().getParent() != null && yaml.getSequence().getParent().isArray()){
+                    yaml.setState(DOCUMENT_ARRAY_ADVANCED_NEXT);
+                }else{
+                    yaml.setState(DOCUMENT_NEXT_SAME);
+                }
             }else if(!isSpaceChar(current)){
                 yaml.setState(DOCUMENT_ARRAY_VALUE);
                 yaml.mark(parser);
@@ -337,7 +341,12 @@ public interface ParserState {
                     DocumentEntry entry = yaml.getSequence().getEntry();
                     yaml.setSequence(yaml.getSequence().getParent());
                     yaml.getSequence().pushEntry(entry);
-                    yaml.setState(DOCUMENT_NEXT_SAME);
+
+                    if(yaml.getSequence().getParent() != null && yaml.getSequence().getParent().isArray()){
+                        yaml.setState(DOCUMENT_ARRAY_ADVANCED_NEXT);
+                    }else{
+                        yaml.setState(DOCUMENT_NEXT_SAME);
+                    }
                 }else yaml.setState(DOCUMENT_ARRAY_IN);
             }
         }
@@ -353,7 +362,12 @@ public interface ParserState {
                 DocumentEntry entry = yaml.getSequence().getEntry();
                 yaml.setSequence(yaml.getSequence().getParent());
                 yaml.getSequence().pushEntry(entry);
-                yaml.setState(DOCUMENT_NEXT_SAME);
+
+                if(yaml.getSequence().getParent() != null && yaml.getSequence().getParent().isArray()){
+                    yaml.setState(DOCUMENT_ARRAY_ADVANCED_NEXT);
+                }else{
+                    yaml.setState(DOCUMENT_NEXT_SAME);
+                }
             }
         }
     }
@@ -396,7 +410,10 @@ public interface ParserState {
 
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
-            if(parser.isLineFinished()){
+            if(current == '[') {
+                yaml.setSequence(new YamlSequence(yaml.getTempKey(),yaml.getSequence().getIndent(),yaml.getSequence(),true));
+                yaml.setState(DOCUMENT_ARRAY_IN);
+            } else if(parser.isLineFinished()){
                 String value = parser.getOnLine(yaml.getCharacterMark(),parser.charIndex()+1).trim();
                 if(value.startsWith("'") && value.endsWith("'")) value = value.substring(1,value.length()-1);
                 yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry(yaml.getTempKey(),value));
