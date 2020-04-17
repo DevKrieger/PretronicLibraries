@@ -50,8 +50,20 @@ import java.util.stream.Stream;
  */
 public interface Document extends DocumentNode, DocumentEntry {
 
+    /**
+     * Get the current document as array.
+     *
+     * @return The document transformed to an array
+     */
     Array getAsArray();
 
+    /**
+     * Get the current document as array.
+     *
+     * @param type The type of the arrray
+     * @param <A> The type of the arrray
+     * @return The document transformed to an array
+     */
     <A> A getAsArray(A type);
 
     <V> Collection<V> getAsCollection(Class<V> valueClass);
@@ -61,9 +73,14 @@ public interface Document extends DocumentNode, DocumentEntry {
     <K,V> Map<K,V> getAsMap(Class<K> keyClass, Class<V> valueClass);
 
 
-
     //Sub entries
-    
+
+    /**
+     * Get a nested document.
+     *
+     * @param key The key of the document
+     * @return The sub document or null
+     */
     Document getDocument(String key);
 
     Array getArray(String key);
@@ -76,14 +93,30 @@ public interface Document extends DocumentNode, DocumentEntry {
 
     <K,V> Map<K,V> getMap(String key, Class<K> keyClass, Class<V> valueClass);
 
+    /**
+     * Get an serialize a entry to a java object.
+     *
+     * @param key The key of the nested object
+     * @param classOf The class of the object for serializing
+     * @param <T> The type of the object
+     * @return THe transformed object
+     */
     <T> T getObject(String key, Class<T> classOf);
 
     <T> T getObject(String key, Type type);
 
     <T> T getObject(String key, TypeReference<T> reference);
 
+
     //Update entry
 
+    /**
+     * Set a object to this document.
+     *
+     * @param key The key of the entry
+     * @param value The object
+     * @return The current document
+     */
     Document set(String key, Object value);
 
     boolean isArray(String key);
@@ -91,6 +124,7 @@ public interface Document extends DocumentNode, DocumentEntry {
     boolean isObject(String key);
 
     boolean isPrimitive(String key);
+
 
     default Document rename(String source,String destination){
         DocumentEntry entry = getEntry(source);
@@ -102,6 +136,13 @@ public interface Document extends DocumentNode, DocumentEntry {
 
     Iterable<DocumentEntry> iterate(String key);
 
+    /**
+     * Sort the entries of a nested entry with a @{@link Comparator<DocumentEntry>}
+     *
+     * @param key The key of the sub entry
+     * @param sorter The comparator to sort
+     * @return The current document
+     */
     Document sort(String key, Comparator<DocumentEntry> sorter);
 
     @Internal
@@ -111,16 +152,38 @@ public interface Document extends DocumentNode, DocumentEntry {
     void removeEntry(DocumentEntry entry);
 
 
+    /**
+     * Remove a entry from this document.
+     *
+     * @param key The key of the entry
+     * @return The current document
+     */
     Document remove(String key);
 
 
+    /**
+     * Remove all entries in this document.
+     *
+     * @return The current document
+     */
     Document clear();
 
 
     //Update current entry
 
+
+    /**
+     * Get the entries of this object in a stream.
+     *
+     * @return The created stream
+     */
     Stream<DocumentEntry> stream();
 
+    /**
+     * Sor the entries of the current document with a @Comparator<DocumentEntry>
+     *
+     * @return The current document
+     */
     Document sort(Comparator<DocumentEntry> sorter);
 
 
@@ -159,11 +222,17 @@ public interface Document extends DocumentNode, DocumentEntry {
         return contains(key)?getMap(key,keyClass, valueClass):defaultValue;
     }
 
+    /**
+     * Add an object to the document if the key is not already present.
+     *
+     * @param key The key of the entry
+     * @param value The object
+     * @return The current document
+     */
     default Document add(String key, Object value){
         if(value != null && !contains(key)) set(key, value);
         return this;
     }
-
 
     default String write(String type){
         return write(type,true);
@@ -188,10 +257,20 @@ public interface Document extends DocumentNode, DocumentEntry {
 
     //Static content
 
+    /**
+     * Get the default document factory.
+     *
+     * @return The document factory
+     */
     static DocumentFactory factory(){
         return DocumentRegistry.getFactory();
     }
 
+    /**
+     * Create a new document from the default factory.
+     *
+     * @return The new created document
+     */
     static Document newDocument(){
         return DocumentRegistry.getFactory().newDocument();
     }
@@ -204,6 +283,11 @@ public interface Document extends DocumentNode, DocumentEntry {
         return DocumentRegistry.getDefaultContext().serialize(object).toDocument();
     }
 
+    /**
+     * Create a new empty document.
+     *
+     * @return The new created document
+     */
     static Document newEmptyDocument(){
         return EmptyDocument.newDocument();
     }
@@ -241,6 +325,13 @@ public interface Document extends DocumentNode, DocumentEntry {
         return DocumentRegistry.getType(type).getReader().read(parser);
     }
 
+    /**
+     * Find an existing file with an undefined type.
+     *
+     * @param location The location of the file
+     * @param baseName The base name of the file (Before the dot)
+     * @return The existing file and type
+     */
     static Pair<File, DocumentFileType> findExistingType(File location, String baseName){
         for (DocumentFileType type : DocumentRegistry.getTypes()) {
             File file = new File(location,baseName+"."+type.getEnding());
@@ -249,10 +340,23 @@ public interface Document extends DocumentNode, DocumentEntry {
         return null;
     }
 
+    /**
+     * Load a static configuration class
+     *
+     * @param clazz The configuration class
+     * @param document The document
+     */
     static void loadConfigurationClass(Class<?> clazz, Document document){
         ConfigurationUtil.loadConfigurationClass(clazz, document);
     }
 
+    /**
+     * Load a static configuration class
+     *
+     * @param clazz The configuration class
+     * @param document The document
+     * @param appendMissing True if missing entries should be added to the document
+     */
     static void loadConfigurationClass(Class<?> clazz, Document document, boolean appendMissing){
         ConfigurationUtil.loadConfigurationClass(clazz, document,appendMissing);
     }

@@ -25,6 +25,9 @@ import net.pretronic.libraries.logging.handler.ConsoleHandler;
 import java.util.Collections;
 import java.util.Objects;
 
+/**
+ * Create a new logger by the default implementation.
+ */
 public abstract class PretronicLoggerFactory {
 
     private static PretronicLoggerFactory FACTORY = new DefaultFactory();
@@ -33,15 +36,31 @@ public abstract class PretronicLoggerFactory {
         return FACTORY;
     }
 
+    /**
+     * Get a logger
+     * @return The default logger
+     */
     public static PretronicLogger getLogger(){
         return FACTORY.newLogger();
     }
 
+    /**
+     * Get a logger with a name.
+     *
+     * @param name The name of the logger
+     * @return The logger with that name
+     */
     public static PretronicLogger getLogger(String name){
         Objects.requireNonNull(name);
         return FACTORY.newLogger(name);
     }
 
+    /**
+     * Get a logger for a class
+     *
+     * @param clazz The class
+     * @return The logger for that class
+     */
     public static PretronicLogger getLogger(Class<?> clazz){
         Objects.requireNonNull(clazz);
         return FACTORY.newLogger(clazz);

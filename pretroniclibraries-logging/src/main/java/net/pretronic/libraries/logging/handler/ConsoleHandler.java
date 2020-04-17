@@ -27,6 +27,11 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The console handlers prints messages in the console.
+ *
+ * <p>The log factory appends this handler automatically.</p>
+ */
 public class ConsoleHandler implements LogHandler {
 
     private final OutputStream outputStream;

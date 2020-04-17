@@ -35,9 +35,16 @@ import java.util.List;
  */
 public interface DocumentFactory {
 
+    /** Create a new @{@link DocumentContext} from the default factory.
+     *
+     * @return The new created context
+     */
     DocumentContext newContext();
 
-
+    /** Create a new @{@link Document} from the default factory.
+     *
+     * @return The new created context
+     */
     Document newDocument();
 
     Document newDocument(String key);

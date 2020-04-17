@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A default task implementation for attaching more then one runnable.
+ * The multiple task implementation is for attaching more then one runnable.
  */
 public class MultipleTask extends AbstractTask {
 

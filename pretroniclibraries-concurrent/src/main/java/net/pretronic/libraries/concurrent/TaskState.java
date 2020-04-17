@@ -26,12 +26,12 @@ package net.pretronic.libraries.concurrent;
 public enum TaskState {
 
     /**
-     *  This task is running.
+     *  The task is running.
      */
     RUNNING(),
 
     /**
-     * The task is stopped an can be started.
+     * The task is stopped an ready to start.
      */
     STOPPED(),
 

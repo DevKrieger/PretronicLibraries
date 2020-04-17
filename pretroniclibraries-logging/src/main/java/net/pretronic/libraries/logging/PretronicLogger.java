@@ -28,7 +28,8 @@ import net.pretronic.libraries.logging.level.LogLevel;
 import java.util.Collection;
 
 /**
- * The PretronicLogger class is the main object of the Pretronic logging framework, it is the implementation for all Pretronic loggers.
+ * The PretronicLogger class is the main object of the Pretronic logging framework. This class provides many
+ * functionalities for logging logging and debugging with messages.
  */
 public interface PretronicLogger {
 

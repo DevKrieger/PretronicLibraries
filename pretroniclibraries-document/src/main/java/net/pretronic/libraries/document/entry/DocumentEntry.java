@@ -29,7 +29,7 @@ public interface DocumentEntry extends DocumentBase{
     void setKey(String key);
 
     /**
-     * Get all attributes if this entry
+     * Get all attributes of this entry
      *
      * @return All attributes
      */
