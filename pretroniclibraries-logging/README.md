@@ -13,7 +13,7 @@ maven {
     url "https://repository.pretronic.net/repository/pretronic/"
 }
 
-compile group: 'net.pretronic.libraries', name: 'pretroniclibraries-caching', version: '1.0.0'
+compile group: 'net.pretronic.libraries', name: 'pretroniclibraries-logging', version: '1.0.0'
 ```
 
 #### Maven
