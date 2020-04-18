@@ -37,6 +37,8 @@ public class VariableDescriber<T> {
     private final CaseIntensiveMap<Function<T,?>> functions;
     private final CaseIntensiveMap<BiFunction<T,String,?>> parameterFunctions;
 
+    private Function<T,?> forwardFunction;
+
     public VariableDescriber() {
         this.functions = new CaseIntensiveHashMap<>();
         this.parameterFunctions = new CaseIntensiveHashMap<>();
@@ -48,6 +50,14 @@ public class VariableDescriber<T> {
 
     public CaseIntensiveMap<BiFunction<T, String, ?>> getParameterFunctions() {
         return parameterFunctions;
+    }
+
+    public Function<T, ?> getForwardFunction() {
+        return forwardFunction;
+    }
+
+    public void setForwardFunction(Function<T, ?> forwardFunction) {
+        this.forwardFunction = forwardFunction;
     }
 
     public void registerGetter(String name, Class<?> clazz){
@@ -132,6 +142,10 @@ public class VariableDescriber<T> {
                     BiFunction parameterFunction = describer.getParameterFunctions().get(part);
                     if(parameterFunction != null){
                         current = parameterFunction.apply(current,i < parts.length-1 ? parts[++i] : null);
+                    }else if(i == index && describer.getForwardFunction() != null){
+                        Function result = describer.getForwardFunction();
+                        current = result.apply(current);
+                        return get(current,parts,index);
                     }
                 }
             }else throw new IllegalArgumentException("No variable describer for "+current.getClass()+" found");
