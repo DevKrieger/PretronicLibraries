@@ -148,11 +148,13 @@ pipeline {
                             version = major + "." + minorVersion + "." + patchVersion + "." + BUILD_NUMBER + "-SNAPSHOT"
                             commitMessage = COMMIT_MESSAGE.replace("%version%", version)
 
+                            String gitUrl = env.GIT_URL
+
                             sh """
                             if [ -d "tempDevelopment" ]; then rm -Rf tempDevelopment; fi
                             mkdir tempDevelopment
                             cd tempDevelopment/
-                            git clone --single-branch --branch development git@github.com:DevKrieger/PretronicLibraries.git
+                            git clone --single-branch --branch development ${gitUrl}
                             
                             cd PretronicLibraries/
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
