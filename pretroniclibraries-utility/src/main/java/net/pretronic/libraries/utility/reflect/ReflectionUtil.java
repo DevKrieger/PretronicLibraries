@@ -19,17 +19,32 @@
 
 package net.pretronic.libraries.utility.reflect;
 
+import net.pretronic.libraries.utility.SystemUtil;
+import net.pretronic.libraries.utility.reflect.versioned.JDK9ReflectVersioned;
+import net.pretronic.libraries.utility.reflect.versioned.LegacyReflectVersioned;
+import net.pretronic.libraries.utility.reflect.versioned.ReflectVersioned;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ReflectionUtil {
+
+    private final static ReflectVersioned VERSIONED;
+
+    static {
+        ReflectVersioned versioned;
+        if(SystemUtil.getJavaBaseVersion() >= 9){
+            versioned = new JDK9ReflectVersioned();
+        }else{
+            versioned = new LegacyReflectVersioned();
+        }
+        VERSIONED = versioned;
+    }
 
     public static Collection<Field> getAllFields(Class<?> clazz) {
         Collection<Field> result = new HashSet<>();
@@ -52,11 +67,6 @@ public class ReflectionUtil {
             if(declaredField.getType().equals(type)) return declaredField;
         }
         throw new ReflectException("No field with type "+type+" in "+clazz+" found");
-    }
-
-    @Deprecated
-    public static Field findTypeBySimpleName(Class<?> clazz, String name){
-        return findFieldBySimpleName(clazz, name);
     }
 
     public static Field findFieldBySimpleName(Class<?> clazz, String name){
@@ -132,11 +142,11 @@ public class ReflectionUtil {
         return invokeMethod(clazz, object, methodName,buildTyeArray(parameters), parameters);
     }
 
-    public static Object invokeMethod(Object object, String methodName,Class[] classes, Object[] parameters){
+    public static Object invokeMethod(Object object, String methodName,Class<?>[] classes, Object[] parameters){
         return invokeMethod(object.getClass(),object,methodName,classes,parameters);
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object object, String methodName,Class[] classes, Object[] parameters){
+    public static Object invokeMethod(Class<?> clazz, Object object, String methodName,Class<?>[] classes, Object[] parameters){
         try {
             Method method = getMethod(clazz,methodName,classes);
             method.setAccessible(true);
@@ -174,17 +184,8 @@ public class ReflectionUtil {
     }
 
     public static void grantFinalPrivileges(Field field){
-        try{
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-
-            AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
-                modifiersField.setAccessible(true);
-                return null;
-            });
-
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        }catch (NoSuchFieldException | IllegalAccessException e){
-            throw new ReflectException(e);
+        if(Modifier.isFinal(field.getModifiers())){
+            VERSIONED.grantFinalPrivileges(field);
         }
     }
 }

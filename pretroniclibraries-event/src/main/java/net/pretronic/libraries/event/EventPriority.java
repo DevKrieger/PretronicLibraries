@@ -22,7 +22,7 @@ package net.pretronic.libraries.event;
 /**
  * If more the one event is registered, the priority decides which event is executed first and last.
  *
- * <p>Execution order: Low -> Normal -> Height</p>
+ * <p>Execution order: Low - Normal - Height</p>
  */
 public class EventPriority {
 

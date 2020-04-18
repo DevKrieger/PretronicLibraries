@@ -23,6 +23,9 @@ import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.io.DocumentReader;
 import net.pretronic.libraries.utility.parser.StringParser;
 
+/**
+ * The @{@link JsonDocumentReader} reads the json (https://www.json.org/json-en.html) file format into the document structure.
+ */
 public class JsonDocumentReader implements DocumentReader {
 
     @Override

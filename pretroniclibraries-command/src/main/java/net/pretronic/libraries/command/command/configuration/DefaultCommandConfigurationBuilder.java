@@ -23,6 +23,7 @@ import net.pretronic.libraries.utility.Validate;
 
 public class DefaultCommandConfigurationBuilder {
 
+    private boolean enabled = true;
     private String name;
     private String permission;
     private String description;
@@ -50,8 +51,18 @@ public class DefaultCommandConfigurationBuilder {
         return this;
     }
 
+    public DefaultCommandConfigurationBuilder enabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    public DefaultCommandConfigurationBuilder disabled() {
+        this.enabled = false;
+        return this;
+    }
+
     public DefaultCommandConfiguration create() {
         Validate.notNull(name);
-        return new DefaultCommandConfiguration(name, permission, description, aliases);
+        return new DefaultCommandConfiguration(enabled,name, permission, description, aliases);
     }
 }

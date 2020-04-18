@@ -29,7 +29,7 @@ import net.pretronic.libraries.logging.level.LogLevel;
 import java.util.Collection;
 
 /**
- * This is a simple async implementation of the pretronic logging framework.
+ * This is a simple async implementation of the pretronic logger.
  */
 public class SyncPretronicLogger extends AbstractPretronicLogger {
 

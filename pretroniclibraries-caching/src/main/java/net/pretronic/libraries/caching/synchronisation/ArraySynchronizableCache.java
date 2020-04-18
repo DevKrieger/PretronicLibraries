@@ -23,13 +23,23 @@ import net.pretronic.libraries.caching.ArrayCache;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.utility.Validate;
-import net.pretronic.synchronisation.SynchronisationCaller;
-import net.pretronic.synchronisation.Synchronizable;
+import net.pretronic.libraries.synchronisation.SynchronisationCaller;
+import net.pretronic.libraries.synchronisation.Synchronizable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
+/**
+ * The @{@link ArraySynchronizableCache} is based on the @{@link ArrayCache} and implements
+ * the {@link SynchronizableCache} which provides additional functionalities for synchronising different
+ * caches in a cluster network.
+ *
+ * @param <O> The object to cache.
+ * @param <I> The main identifier which is used for the synchronisation
+ */
 public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements SynchronizableCache<O,I> {
 
     private SynchronisationCaller<I> caller;
@@ -38,6 +48,11 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
     private BiConsumer<O, Document> deleteListener;
     private BiConsumer<O, Document> updateListener;
     private BiFunction<I, Document, O> createHandler;
+
+    private boolean clearOnDisconnect;
+    private boolean skipOnDisconnect;
+
+    private boolean connected;
 
     public ArraySynchronizableCache() {}
 
@@ -69,6 +84,7 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
 
     @Override
     public void onDelete(I identifier, Document data) {
+        if(identifierQuery == null) throw new IllegalArgumentException("Identifier query is not set");
         O result = remove(identifierQuery,identifier);
         if(result != null && updateListener != null){
             deleteListener.accept(result,data);
@@ -85,6 +101,7 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
 
     @Override
     public void onUpdate(I identifier, Document data) {
+        if(identifierQuery == null) throw new IllegalArgumentException("Identifier query is not set");
         O object = get(identifierQuery,identifier);
         if(object != null){
             if(object instanceof Synchronizable){
@@ -96,8 +113,9 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
 
     @Override
     public void init(SynchronisationCaller<I> caller) {
-        if(caller != null) throw new IllegalArgumentException("Caller is already initialized");
+        if(this.caller != null) throw new IllegalArgumentException("Caller is already initialized");
         this.caller = caller;
+        this.connected = caller.isConnected();
     }
 
     @Override
@@ -124,5 +142,42 @@ public class ArraySynchronizableCache<O,I> extends ArrayCache<O> implements Sync
         this.createHandler = handler;
     }
 
+    @Override
+    public void setClearOnDisconnect(boolean enabled) {
+        this.clearOnDisconnect = enabled;
+    }
 
+    @Override
+    public void setSkipOnDisconnect(boolean enabled) {
+        this.skipOnDisconnect = enabled;
+    }
+
+    @Override
+    public void onConnect() {
+        this.connected = true;
+        if(clearOnDisconnect) clear();
+    }
+
+    @Override
+    public void onDisconnect() {
+        this.connected = false;
+        if(clearOnDisconnect) clear();
+    }
+
+    @Override
+    public O get(CacheQuery<O> query, Object... identifiers) {
+        if(!connected && skipOnDisconnect){
+            query.validate(identifiers);
+            return query.load(identifiers);
+        }
+        return super.get(query, identifiers);
+    }
+
+    @Override
+    public O get(Predicate<O> query, Supplier<O> loader) {
+        if(!connected && skipOnDisconnect){
+            return loader != null ? loader.get() : null;
+        }
+        return super.get(query, loader);
+    }
 }

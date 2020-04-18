@@ -23,6 +23,11 @@ import net.pretronic.libraries.document.Document;
 
 public interface ArrayEntry extends Document {
 
+    /**
+     * Check if this array contains only primitive members.
+     *
+     * @return True if it contains only primitives
+     */
     boolean isPrimitiveArray();
 
     default ArrayEntry copy(){

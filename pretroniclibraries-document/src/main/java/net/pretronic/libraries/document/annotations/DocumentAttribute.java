@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used, when the field should be written and ridden in/from the attribute section.
+ * This annotation is used, when the field should be written and ridden into or from the attribute section.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

@@ -31,6 +31,15 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
+/**
+ * The {@link PropertiesDocumentWriter} reads the document structure from the famous.properties format
+ * which is often used in java applications.
+ *
+ * <p>Structure</p>
+ * <p>Key=Value</p>
+ * <p>Key2=Value2</p>
+ * <p>Key3=Value2</p>
+ */
 public class PropertiesDocumentWriter implements DocumentWriter {
 
     @Override

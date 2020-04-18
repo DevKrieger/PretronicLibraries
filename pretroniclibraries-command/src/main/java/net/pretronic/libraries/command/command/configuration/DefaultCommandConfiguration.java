@@ -21,16 +21,23 @@ package net.pretronic.libraries.command.command.configuration;
 
 public class DefaultCommandConfiguration implements CommandConfiguration {
 
+    private final boolean enabled;
     private final String name;
     private final String permission;
     private final String description;
     private final String[] aliases;
 
-    protected DefaultCommandConfiguration(String name, String permission, String description, String[] aliases) {
+    protected DefaultCommandConfiguration(boolean enabled, String name, String permission, String description, String[] aliases) {
+        this.enabled = enabled;
         this.name = name;
         this.permission = permission;
         this.description = description;
         this.aliases = aliases;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override

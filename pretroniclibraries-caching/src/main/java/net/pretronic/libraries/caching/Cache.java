@@ -30,10 +30,10 @@ import java.util.function.Supplier;
  * The Pretronic caching library provides a bridge between your application and database. The cache is not a
  * key value store, you are able to access a object with a query from every side.
  *
- * <p>You are able to register a CacheQuery. With this query you are able to search a object. If the object
+ * <p>You are able to register a CacheQuery. With that query you are able to search an object. If the object
  * is not cached, the integrated loader will load the object from your storage.</p>
  *
- * Todo: Create search may option
+ * Todo: Create search many option
  *
  * @param <O> The object to cache.
  */

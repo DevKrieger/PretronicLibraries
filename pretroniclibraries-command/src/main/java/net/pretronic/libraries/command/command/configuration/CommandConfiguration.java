@@ -21,6 +21,8 @@ package net.pretronic.libraries.command.command.configuration;
 
 public interface CommandConfiguration {
 
+    boolean isEnabled();
+
     String getName();
 
     String getPermission();

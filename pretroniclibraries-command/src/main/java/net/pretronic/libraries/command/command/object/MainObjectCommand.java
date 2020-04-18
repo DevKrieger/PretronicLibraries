@@ -19,13 +19,12 @@
 
 package net.pretronic.libraries.command.command.object;
 
-import net.pretronic.libraries.command.Completable;
-import net.pretronic.libraries.command.NotFindable;
-import net.pretronic.libraries.command.NotFoundHandler;
+import net.pretronic.libraries.command.*;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
 import net.pretronic.libraries.command.manager.CommandManager;
 import net.pretronic.libraries.command.sender.CommandSender;
+import net.pretronic.libraries.message.StringTextable;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
@@ -38,6 +37,8 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     private NotFoundHandler notFoundHandler;
     private ObjectNotFindable objectNotFoundHandler;
     private ObjectCompletable objectCompletable;
+    private ObjectCommandPrecondition objectCommandPrecondition;
+    private NoPermissionHandler noPermissionHandler;
 
     public MainObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner, configuration);
@@ -47,6 +48,10 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
         if(this instanceof ObjectNotFindable) setObjectNotFoundHandler((ObjectNotFindable) this);
         if(this instanceof ObjectCompletable) setObjectCompletableHandler((ObjectCompletable) this);
+        if(this instanceof ObjectCommandPrecondition) setObjectCommandPrecondition((ObjectCommandPrecondition) this);
+
+        if(this instanceof ObjectNoPermissionAble) setNoPermissionHandler((ObjectNoPermissionAble) this);
+        else if(this instanceof NoPermissionAble) setNoPermissionHandler((NoPermissionAble) this);
     }
 
     @Override
@@ -72,6 +77,20 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         this.objectCompletable = completable;
     }
 
+    public void setObjectCommandPrecondition(ObjectCommandPrecondition precondition) {
+        this.objectCommandPrecondition = precondition;
+    }
+
+    @Override
+    public NoPermissionHandler getNoPermissionHandler() {
+        return this.noPermissionHandler;
+    }
+
+    @Override
+    public void setNoPermissionHandler(NoPermissionHandler noPermissionHandler) {
+        this.noPermissionHandler = noPermissionHandler;
+    }
+
     @Override
     public void dispatchCommand(CommandSender sender, String name) {
         name = name.trim();
@@ -85,6 +104,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
 
     @Override
     public void registerCommand(Command command) {
+        if(!command.getConfiguration().isEnabled()) return;
         if(getCommand(command.getConfiguration().getName()) != null){
             throw new IllegalArgumentException("A command with the name "+command.getConfiguration().getName()+" is already registered as sub command.");
         }
@@ -115,26 +135,27 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         this.commands.clear();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0){
             String name = args[0];
-            T object = getObject(name);
+            T object = getObject(sender,name);
             if(object == null) {
-                if(objectNotFoundHandler != null) {
-                    objectNotFoundHandler.objectNotFound(sender, name, Arrays.copyOfRange(args, 1, args.length));
-                }
+                objectNotFoundHandler.objectNotFound(sender, name, Arrays.copyOfRange(args, 1, args.length));
             } else if(args.length > 1) {
                 execute(sender, object,Arrays.copyOfRange(args,1,args.length));
             } else {
                 if(notFoundHandler != null){
-                    notFoundHandler.handle(sender, args[0], Arrays.copyOfRange(args,1,args.length));
+                    if(notFoundHandler instanceof DefinedNotFindable){
+                        ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, null, new String[0]);
+                    }else{
+                        notFoundHandler.handle(sender, null, new String[0]);
+                    }
                 }
             }
         } else {
-            if(notFoundHandler != null){
-                notFoundHandler.handle(sender, null, args);
-            }
+            notFoundHandler.handle(sender, null, args);
         }
     }
 
@@ -144,16 +165,31 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
        if(args.length > 0){
            for (Command command : commands) {
                if(command.getConfiguration().hasAlias(args[0])){
-                   if(command instanceof ObjectCommand){
-                       ((ObjectCommand<T>)command).execute(sender, (T) object,Arrays.copyOfRange(args,1,args.length));
-                   }else command.execute(sender, args);
+                   if(CommandManager.hasPermission(sender, noPermissionHandler, object, command.getConfiguration().getPermission(), args[0], args)) {
+                       if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) {
+                           return;
+                       }
+                       if(command instanceof ObjectCommand){
+                           ((ObjectCommand<T>)command).execute(sender, (T) object,Arrays.copyOfRange(args,1,args.length));
+                       }else {
+                           command.execute(sender, args);
+                       }
+                   }
                    return;
                }
            }
        }
        if(notFoundHandler != null){
-           notFoundHandler.handle(sender, args.length == 0 ? "" : args[0],
-                   args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length));
+           String command =  args.length == 0 ? "" : args[0];
+           String[] args0 = args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length);
+           if(notFoundHandler instanceof DefinedNotFindable){
+               if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) {
+                   return;
+               }
+               ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, command, args0);
+           }else{
+               notFoundHandler.handle(sender, command, args0);
+           }
        }
     }
 
@@ -173,7 +209,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             String subCommand = args[1];
             Command command = getCommand(subCommand);
             if(command instanceof DefinedCompletable){
-                T object = getObject(args[0]);
+                T object = getObject(sender,args[0]);
                 if(object == null) return Collections.emptyList();
                 return ((DefinedCompletable<T>) command).complete(sender, object,Arrays.copyOfRange(args,2,args.length));
             }else if(command instanceof Completable){
@@ -182,5 +218,5 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         }
     }
 
-    public abstract T getObject(String name);
+    public abstract T getObject(CommandSender sender, String name);
 }

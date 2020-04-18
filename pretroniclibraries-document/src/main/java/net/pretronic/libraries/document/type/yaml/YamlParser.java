@@ -33,7 +33,7 @@ public class YamlParser {
     private int characterMark;
     private int lineMark;
 
-    public YamlParser() {
+    protected YamlParser() {
         this.state = ParserState.DOCUMENT_START;
         this.sequence = new YamlSequence("root",0,null,false);
     }

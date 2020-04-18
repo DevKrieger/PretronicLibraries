@@ -28,88 +28,88 @@ import java.util.function.Consumer;
 /**
  * A task allows you to execute one or more runnables, it is an advancement thread.
  *
- * <p>You are able ro delay a task and set a period. So all runnables will be executed
+ * <p>You are able to delay a task and set a period. So all runnables will be executed
  * after the delay is finished and every period again.</p>
  *
- * <p>Tasks are created over a task scheduler. This scheduler manages all tasks.
+ * <p>Tasks are created over a task scheduler. This scheduler manages all tasks and their threads.
  * If you have created a task you can start and stop them.</p>
- *
  */
 public interface Task extends Runnable{
 
     /**
-     * Get the id of this task.
+     * Get the id of the task.
      *
      * @return The task id
      */
     int getID();
 
     /**
-     * Every task can have a name. The name is useful for identifying a task and using a task simple.
+     * Every task can have a name. The name is useful for identifying a task and using a task simpler.
      *
-     * @return The name of this task.
+     * @return The name of the task.
      */
     String getName();
 
     /**
-     * Get the state of this task (@See TaskState.class)
+     * Get the state of the task (@See TaskState.class)
      *
-     * @return The current state of this task.
+     * @return The current state of the task.
      */
     TaskState getState();
 
     /**
-     * Get the delay of this task.
+     * Get the delay of the task.
      *
-     * <p>The call will be executed after the delay.</p>
+     * <p>The {@link #call()} will be executed after the delay.</p>
      *
-     * @return the delay of this task.
+     * @return The delay of the task.
      */
     long getDelay();
 
     /**
-     * Get the interval of this task.
+     * Get the interval of the task.
      *
      * <p>The call will be executed every period again.</p>
      *
-     * @return The period of this task.
+     * @return The period of the task.
      */
-    long getPeriod();
+    long getInterval();
 
     /**
-     * Get the owner of this task.
+     * Get the owner of the task.
      *
      * <p>Every task has an owner, all task from a specified process can be identified.
      * So it is possible to split your project in modules and start or stop them.</p>
-     * @return The owner of this task.
+     *
+     * @return The owner of the task.
      */
     ObjectOwner getOwner();
 
     /**
      * Get the task scheduler which is managing this task.
      *
-     * @return The task scheduler of this task
+     * @return The task scheduler of the task
      */
     TaskScheduler getScheduler();
 
     /**
-     * Get all attached runnables of this task..
+     * Get all attached runnables of the task.
      *
      * @return A collection of all attached runnables
      */
     Collection<Runnable> getRunnables();
 
     /**
-     * Check if this task is running or not.
+     * Check if the task is running or not.
      *
-     * @return If the task runs.
+     * @return True if the task is running
      */
     boolean isRunning();
 
     /**
-     * Check if this task is running respectively executing async.
+     * Check if the task is running respectively executing async.
      *
-     * @return if async or not
+     * @return True if the task is executed async
      */
     boolean isAsync();
 
@@ -124,7 +124,7 @@ public interface Task extends Runnable{
     Task append(Runnable runnable);
 
     /**
-     * Append more then one runnable to this task.
+     * Append more then one runnable to the task.
      *
      * @param runnable The runnable which should be added.
      * @return The current task.
@@ -132,7 +132,7 @@ public interface Task extends Runnable{
     Task append(Runnable... runnable);
 
     /**
-     * Remove an attached runnable form his task.
+     * Remove an attached runnable form the task.
      *
      * <p>The runnable will no longer be executed.</p>
      *
@@ -145,7 +145,7 @@ public interface Task extends Runnable{
      * Set a start delay to this task.
      *
      * @param delay The new time.
-     * @param unit In Which unit your time is.
+     * @param unit In which unit your time is.
      * @return The current task.
      */
     Task setDelay(long delay, TimeUnit unit);
@@ -159,7 +159,7 @@ public interface Task extends Runnable{
      * @param unit In Which unit your time is.
      * @return The current task.
      */
-    Task setPeriod(long period, TimeUnit unit);
+    Task setInterval(long period, TimeUnit unit);
 
     /**
      * Add a task listener will be executed by every state change.

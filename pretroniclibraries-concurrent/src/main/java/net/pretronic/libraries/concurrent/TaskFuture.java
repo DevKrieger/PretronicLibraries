@@ -22,7 +22,7 @@ package net.pretronic.libraries.concurrent;
 /**
  * A task future is created for every listener, it contains information about the task state.
  *
- * The task future is over given in a consumer which is registered at a task.
+ * The task future is over given in a consumer which is registered in a task.
  */
 public interface TaskFuture {
 
@@ -34,10 +34,10 @@ public interface TaskFuture {
     TaskState getState();
 
     /**
-     * Get an problem (Usually only included when the task failed).
+     * Get an exception (Usually only included when the task failed).
      *
-     * <p>Note: If no problem is available, the thrown will be null.</p>
-     * @return the current problem.
+     * <p>Note: If no exception is available, @{@link Throwable} will be null.</p>
+     * @return the current exception.
      */
     Throwable getThrowable();
 
@@ -56,7 +56,7 @@ public interface TaskFuture {
     boolean isCompleted();
 
     /**
-     * Check if the task failed(TaskState.FAILED);
+     * Check if the task failed (TaskState.FAILED);
      *
      * @return if the task failed
      */

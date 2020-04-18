@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +23,19 @@ package net.pretronic.libraries.message;
 import net.pretronic.libraries.document.Document;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MessagePack {
 
     private final MessagePackMeta meta;
-    private final Map<String,String> messages;
+    private final LinkedHashMap<String,String> messages;
 
     public MessagePack(MessagePackMeta meta){
-        this(meta,new HashMap<>());
+        this(meta,new LinkedHashMap<>());
     }
 
-    public MessagePack(MessagePackMeta meta, Map<String, String> messages) {
+    public MessagePack(MessagePackMeta meta, LinkedHashMap<String, String> messages) {
         this.meta = meta;
         this.messages = messages;
     }

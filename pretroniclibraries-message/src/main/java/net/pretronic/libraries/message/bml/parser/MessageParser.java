@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,119 +21,155 @@
 package net.pretronic.libraries.message.bml.parser;
 
 import net.pretronic.libraries.message.bml.Message;
-import net.pretronic.libraries.message.bml.function.Function;
-import net.pretronic.libraries.message.bml.function.RandomTextFunction;
-import net.pretronic.libraries.message.bml.function.SubstringFunction;
+import net.pretronic.libraries.message.bml.MessageProcessor;
+import net.pretronic.libraries.message.bml.Module;
+import net.pretronic.libraries.message.bml.builder.MessageBuilder;
 import net.pretronic.libraries.message.bml.indicate.Indicate;
-import net.pretronic.libraries.message.bml.module.Module;
-import net.pretronic.libraries.message.bml.module.RootModule;
 import net.pretronic.libraries.utility.parser.StringParser;
 
+
+//@if(test in test;test,${test})
 public class MessageParser {
 
+    private final MessageProcessor processor;
     private final StringParser parser;
+    private final Module root;
 
-    private ParserStateOLD state;
+    private Module current;
+    private ParserState state;
     private MessageSequence sequence;
 
-    private Indicate indicate;
-    private int characterMark;
-    private int lineMark;
+    private int newLines;
+    private int markedIndex;
+    private int markedLine;
 
-    public MessageParser(StringParser parser) {
+    public MessageParser(MessageProcessor processor,String input){
+        this(processor,new StringParser(input));
+    }
+
+    public MessageParser(MessageProcessor processor,StringParser parser){
+        this.processor = processor;
         this.parser = parser;
-        this.state = ParserStateOLD.START;
+        this.state = new ParserState.OutlineState();
+
+        this.root = new Module(null, null);
+        this.current = this.root;
+
+        if(!parser.isEmpty()){
+            parser.nextChar();
+            mark();
+            parser.previousChar();
+        }
     }
 
     public StringParser getParser() {
         return parser;
     }
 
-
-    public ParserStateOLD getState() {
-        return state;
-    }
-
     public void setState(ParserState state) {
-     //   this.state = state;
+        this.state = state;
     }
 
-    public Indicate getIndicate() {
-        return indicate;
-    }
-
-    public void setIndicate(Indicate indicate) {
-        this.indicate = indicate;
+    public Indicate getIndicate(){
+        return getSequence().getIndicate();
     }
 
     public MessageSequence getSequence() {
         return sequence;
     }
 
-    public void setSequence(MessageSequence sequence) {
-        this.sequence = sequence;
-    }
-
-
-    public int getCharacterMark() {
-        return characterMark;
-    }
-
-    public void setCharacterMark(int characterMark) {
-        this.characterMark = characterMark;
-    }
-
-    public int getLineMark() {
-        return lineMark;
-    }
-
-    public void setLineMark(int lineMark) {
-        this.lineMark = lineMark;
-    }
-
-    public void extendMarkPrevious(){
-        if(characterMark > 0) characterMark--;
-        else{
-            lineMark--;
-            characterMark = parser.getLines()[lineMark].length-1;
-        }
-    }
-
     public void mark(){
-        this.characterMark = parser.charIndex();
-        this.lineMark = parser.lineIndex();
+        markedIndex = parser.charIndex();
+        markedLine = parser.lineIndex();
     }
 
     public void markNext(){
-        if(!parser.hasNextChar()) return;
-        parser.skipChar();
-        mark();
-        parser.previousChar();
+        int current = parser.lineIndex();
+        if(parser.hasNextChar()){
+            parser.nextChar();
+            mark();
+            newLines = parser.lineIndex()-current;
+            parser.previousChar();
+        }else{
+            mark();
+            markedIndex++;
+        }
     }
 
-    public String getString(){
-        return parser.get(lineMark,characterMark,parser.lineIndex(),parser.charIndex());
+    public String extractString(){
+        return extractString(0);
     }
 
-
-    public void nextModule(Module module){
-
-    }
-
-    public Function getFunction(String name){
-        if(name.equalsIgnoreCase("randomText")) return new RandomTextFunction();
-        else if(name.equalsIgnoreCase("substring")) return new SubstringFunction();
-        parser.throwException("Function "+name+" not found");
+    public String extractString(int added){
+        if(parser.lineIndex() >= markedLine || parser.charIndex() >= markedIndex ){
+            String result = parser.get(markedLine,markedIndex,parser.lineIndex(),parser.charIndex()+added);
+            return buildLine(result);
+        }else if(newLines > 0){
+            return buildLine("");
+        }
         return null;
     }
 
-    public Message parse(){
-        parser.resetIndex();
-        mark();
-        RootModule root = new RootModule();
-        this.sequence = new MessageSequence(root);
-        while (parser.hasNextChar()) this.state.parse(this,parser.nextChar());
-        return new Message(root.getNext());
+    private String buildLine(String input){
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < newLines; i++) {
+            result.append("\n");
+        }
+        result.append(input);
+        return result.toString();
     }
 
+    public void extractStringAndPush(int added){
+        String text = extractString(added);
+
+        if(text != null){
+            MessageBuilder builder = processor.getTextBuilderFactory().create(text);
+            Module module = new Module(null,builder);
+            nextModule(module);
+        }
+    }
+
+    public void extractStringAndPush(){
+        extractStringAndPush(0);
+    }
+
+    public void nextSequence(String name, Indicate indicate,ParserState start){
+        Module module = new Module(name,indicate != null ? (indicate.hasName() ? null : indicate.getFactory().create(name)) : null);
+        nextModule(module);
+
+        this.sequence = new MessageSequence(this.sequence,indicate,module,start);
+        markNext();
+    }
+
+    public void nextModule(Module module){
+        if(this.sequence != null){
+            if(this.sequence.getState() instanceof ParserState.LeftOperationState){
+                this.sequence.getModule().setLeftOperation(module);
+            }else if(this.sequence.getState() instanceof ParserState.RightOperationState){
+                this.sequence.getModule().setRightOperation(module);
+            }else if(this.sequence.getState() instanceof ParserState.ExtensionIndicateState){
+                this.sequence.getModule().setExtension(module);
+            }else{
+                this.sequence.pushModule(module);
+            }
+        }else{
+            this.current.setNext(module);
+            this.current = module;
+        }
+    }
+
+    public void finishSequence(){
+        this.sequence = this.sequence.getParent();
+        markNext();
+    }
+
+    public Message parse(){
+        if(parser.isEmpty()) return new Message(null);
+        while (this.parser.hasNextChar()){
+            this.state.parse(processor,this,parser.nextChar());
+        }
+        extractStringAndPush(1);
+        return new Message(root.getNext());
+    }
 }
+

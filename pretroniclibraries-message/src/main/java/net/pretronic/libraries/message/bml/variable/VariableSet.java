@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,8 @@
 
 package net.pretronic.libraries.message.bml.variable;
 
+import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
@@ -28,6 +31,8 @@ public interface VariableSet extends Set<Variable> {
     Set<Variable> getVariables();
 
     Variable get(String name);
+
+    Variable getOrCreate(String name);
 
     Object getValue(String name);
 
@@ -61,8 +66,16 @@ public interface VariableSet extends Set<Variable> {
         return new HashVariableSet();
     }
 
-    static VariableSet newEmptySet(){
+    static VariableSet createEmpty(){
+        return new ReflectVariableSet();
+    }
+
+    static VariableSet createReflected(){
         return EmptyVariableSet.newEmptySet();
+    }
+
+    static VariableSet newEmptySet(){
+        return createReflected();
     }
 
     static String replace(String text, VariableSet variables){

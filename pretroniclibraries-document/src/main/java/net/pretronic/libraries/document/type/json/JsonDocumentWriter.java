@@ -28,6 +28,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
+/**
+ * The @{@link JsonDocumentWriter} writs the document structure into the json (https://www.json.org/json-en.html) file format.
+ */
 public class JsonDocumentWriter implements DocumentWriter {
 
     @Override

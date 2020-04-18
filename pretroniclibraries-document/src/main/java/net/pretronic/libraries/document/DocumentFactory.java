@@ -31,13 +31,20 @@ import java.util.List;
  * The {@link DocumentFactory} creates new instances of the different entry types.
  * A factory is registered in the {@link DocumentRegistry}, only one factory can exist per application.
  *
- * <p>Default implementation: {@link SimpleDocumentFactory}</p>>
+ * <p>Default implementation: {@link SimpleDocumentFactory}</p>
  */
 public interface DocumentFactory {
 
+    /** Create a new @{@link DocumentContext} from the default factory.
+     *
+     * @return The new created context
+     */
     DocumentContext newContext();
 
-
+    /** Create a new @{@link Document} from the default factory.
+     *
+     * @return The new created context
+     */
     Document newDocument();
 
     Document newDocument(String key);

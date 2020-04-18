@@ -24,9 +24,9 @@ import net.pretronic.libraries.utility.reflect.TypeReference;
 
 /**
  * {@link DocumentAdapter} are restricted to a type. With factories you are able to dynamically
- * create adapters for different object types.
+ * create adapters for different object super class types.
  *
- * <p>If no adapter was found for a type, all factory will be asked for a possible adapter.
+ * <p>If no adapter was found for a type, all factories will be asked for building a possible adapter.
  * Example: {@link HierarchyAdapterFactory}</p>
  */
 public interface DocumentAdapterFactory {

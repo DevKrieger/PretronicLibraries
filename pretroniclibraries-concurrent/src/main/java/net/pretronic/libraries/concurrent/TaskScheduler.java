@@ -39,6 +39,7 @@ public interface TaskScheduler {
     /**
      * Get all registered tasks with a specified name.
      *
+     * @param name The name of the task
      * @return All tasks with the same name in a collection
      */
     Collection<Task> getTasks(String name);
@@ -52,14 +53,20 @@ public interface TaskScheduler {
     Collection<Task> getTasks(TaskState state);
 
     /**
-     * Get a task by his id.
+     * Get a task by id.
      *
-     * @param id The task id
+     * @param id The id of the tak
      * @return The task
      */
     Task getTask(int id);
 
 
+    /**
+     * Create a new task with a builder. See more in @{@link Builder}
+     *
+     * @param owner The task owner
+     * @return The task builder
+     */
     Builder createTask(ObjectOwner owner);
 
     /**
@@ -126,20 +133,70 @@ public interface TaskScheduler {
      */
     void shutdown();
 
+    /**
+     *
+     */
     interface Builder {
 
+        /**
+         * The name if the task
+         *
+         * @param name The name
+         * @return The current builder
+         */
         Builder name(String name);
 
+        /**
+         * The task is executed async (Not synchronized).
+         *
+         * @return The current builder
+         */
         Builder async();
 
+        /**
+         * The task is synchronized with the main thread
+         *
+         * @return The current builder
+         */
         Builder sync();
 
+        /**
+         * The task will execute with a delay
+         *
+         * @param time The delay time
+         * @param unit The time unit of the delay
+         * @return The current builder
+         */
         Builder delay(long time, TimeUnit unit);
 
+        /**
+         * The task will repeat
+         *
+         * <p>Important: The delay is only executed at the first time</p>
+         *
+         * @param time The interval
+         * @param unit The unit of the interval
+         * @return The current builder
+         */
         Builder interval(long time, TimeUnit unit);
 
+        /**
+         * Create and register a task. The task must be started manually.
+         *
+         * <p>You can then attach runnables to the task.</p>
+         *
+         * @return The created task
+         */
         Task create();
 
+        /**
+         * Execute the task directly with a runnable.
+         *
+         * <p>Important: The task can only be executed once.</p>
+         *
+         * @param runnable The runnable to execute
+         * @return The created task
+         */
         Task execute(Runnable runnable);
     }
 

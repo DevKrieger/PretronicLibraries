@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,16 +28,14 @@ public class MessagePackMeta {
 
     private final String name;
     private final String module;
-    private final boolean bml;
     private final boolean enabled;
     private final Language language;
     @Nullable
     private final RepositoryInfo repository;
 
-    public MessagePackMeta(String name,String module, boolean bml, boolean enabled, Language language, RepositoryInfo repository) {
+    public MessagePackMeta(String name,String module, boolean enabled, Language language, RepositoryInfo repository) {
         this.name = name;
         this.module = module;
-        this.bml = bml;
         this.enabled = enabled;
         this.language = language;
         this.repository = repository;
@@ -48,10 +47,6 @@ public class MessagePackMeta {
 
     public String getModule() {
         return module;
-    }
-
-    public boolean isBml() {
-        return bml;
     }
 
     public boolean isEnabled() {

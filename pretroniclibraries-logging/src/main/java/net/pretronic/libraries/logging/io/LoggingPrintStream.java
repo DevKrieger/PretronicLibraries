@@ -28,7 +28,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 /**
- * The logging output io is for hooking the default java output io in to the logger.
+ * The @{@link LoggingPrintStream} is for hooking the default java output into the pretronic logger.
  */
 public class LoggingPrintStream extends PrintStream {
 

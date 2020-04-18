@@ -30,7 +30,7 @@ import net.pretronic.libraries.utility.reflect.TypeReference;
  * Adapters are registered in a {@link DocumentContext} or
  * in the global {@link DocumentRegistry}.
  *
- * <p>Usually you only need mapper in special cases, when the object variables not correspond with the document structure.
+ * <p>Usually you only need a mapper in special cases, when the object variables not correspond with the document structure.
  * Examples are: {@link java.util.List}, {@link java.util.Map} or {@link java.util.UUID}.
  * See all default examples in the package {@link net.pretronic.libraries.document.adapter.defaults}
  * </p>

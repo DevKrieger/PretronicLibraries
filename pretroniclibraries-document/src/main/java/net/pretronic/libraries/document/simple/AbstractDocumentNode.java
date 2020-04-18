@@ -270,7 +270,7 @@ public abstract class AbstractDocumentNode implements DocumentNode {
     @Internal
     protected DocumentEntry findLocalEntry(String key){
         if(GeneralUtil.isNaturalNumber(key)) return getEntry(Integer.parseInt(key));
-        else return Iterators.findOne(this.entries, entry -> key.equals(entry.getKey()));
+        else return Iterators.findOne(this.entries, entry -> key.equalsIgnoreCase(entry.getKey()));
     }
 
 }

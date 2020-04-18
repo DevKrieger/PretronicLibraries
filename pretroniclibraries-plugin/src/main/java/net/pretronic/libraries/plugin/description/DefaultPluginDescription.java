@@ -21,6 +21,7 @@ package net.pretronic.libraries.plugin.description;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.DocumentContext;
+import net.pretronic.libraries.document.DocumentRegistry;
 import net.pretronic.libraries.plugin.description.dependency.Dependency;
 import net.pretronic.libraries.plugin.description.dependency.DependencyAdapter;
 import net.pretronic.libraries.plugin.description.dependency.PluginDependency;
@@ -148,6 +149,7 @@ public class DefaultPluginDescription implements PluginDescription{
         DocumentContext context = Document.factory().newContext();
         context.registerAdapter(Dependency.class,new DependencyAdapter(manager,DEPENDENCY_FACTORIES));
         context.registerAdapter(MainClass.class,new MainClassAdapter());
+        context.registerAdapter(PluginVersion.class,new PluginVersionAdapter());
         document.setContext(context);
         return document.getAsObject(DefaultPluginDescription.class);
     }

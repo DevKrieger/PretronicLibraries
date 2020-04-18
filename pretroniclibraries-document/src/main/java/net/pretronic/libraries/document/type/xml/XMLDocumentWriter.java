@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
+/**
+ * The @{@link XMLDocumentWriter} writes the document structure into the xml (https://www.w3.org/TR/xml/) file format.
+ */
 public class XMLDocumentWriter implements DocumentWriter {
 
     @Override

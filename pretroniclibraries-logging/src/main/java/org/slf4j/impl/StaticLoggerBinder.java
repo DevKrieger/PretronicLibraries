@@ -26,6 +26,9 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.spi.LoggerFactoryBinder;
 
+/**
+ * A static logger binder implementation for the jslf4 logger.
+ */
 public class StaticLoggerBinder implements LoggerFactoryBinder, SLF4JStaticBridge.LoggerSetter {
 
     private static final StaticLoggerBinder BINDER = new StaticLoggerBinder();

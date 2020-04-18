@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:45
+ * @since 21.03.20, 17:04
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +41,16 @@ public class HashVariableSet extends HashSet<Variable> implements VariableSet{
     public Variable get(String name) {
         for (Variable variable : this) if(variable.getName().equalsIgnoreCase(name)) return variable;
         return null;
+    }
+
+    @Override
+    public Variable getOrCreate(String name) {
+        Variable variable = get(name);
+        if(variable == null){
+            variable = new Variable(name,null);
+            add(variable);
+        }
+        return variable;
     }
 
     @Override

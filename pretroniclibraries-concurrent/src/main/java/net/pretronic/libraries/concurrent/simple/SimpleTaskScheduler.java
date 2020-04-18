@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * The simple implementation of the task scheduler.
+ * A simple implementation of the task scheduler.
  */
 public class SimpleTaskScheduler implements TaskScheduler {
 

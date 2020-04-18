@@ -22,9 +22,14 @@ package net.pretronic.libraries.document.utils;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.annotations.DocumentIgnored;
 import net.pretronic.libraries.document.annotations.DocumentKey;
+import net.pretronic.libraries.document.annotations.OnDocumentConfigurationLoad;
+import net.pretronic.libraries.utility.exception.OperationFailedException;
 import net.pretronic.libraries.utility.reflect.ReflectException;
+import net.pretronic.libraries.utility.reflect.ReflectionUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class ConfigurationUtil {
@@ -38,17 +43,31 @@ public class ConfigurationUtil {
             for(Field field : clazz.getDeclaredFields()){
                 if(Modifier.isStatic(field.getModifiers()) && field.getAnnotation(DocumentIgnored.class) == null && !Modifier.isTransient(field.getModifiers())){
                     field.setAccessible(true);
+                    ReflectionUtil.grantFinalPrivileges(field);
+
                     DocumentKey key = field.getAnnotation(DocumentKey.class);
                     String name = key != null ? key.value() : field.getName().toLowerCase().replace('_','.');
                     Object result = data.getObject(name,field.getGenericType());
-                    if(result != null) field.set(null,result);
-                    else if(appendMissing){
-                        Object defaultValue = field.get(null);
-                        if(defaultValue != null) data.set(name,defaultValue);
+
+                    try{
+                        if(result != null) field.set(null,result);
+                        else if(appendMissing){
+                            Object defaultValue = field.get(null);
+                            if(defaultValue != null) data.set(name,defaultValue);
+                        }
+                    }catch (Exception exception){
+                        throw new OperationFailedException("Failed initializing field "+field.getName()+" is configuration class "+clazz,exception);
                     }
                 }
             }
-        }catch (IllegalAccessException exception){
+
+            for (Method method : clazz.getDeclaredMethods()){
+                if(Modifier.isStatic(method.getModifiers()) && method.getAnnotation(OnDocumentConfigurationLoad.class) != null){
+                    method.setAccessible(true);
+                    method.invoke(null);
+                }
+            }
+        }catch (IllegalAccessException | InvocationTargetException exception){
             throw new ReflectException(exception);
         }
     }

@@ -19,11 +19,29 @@
 
 package net.pretronic.libraries.caching;
 
+/**
+ * A {@link CacheStateAble} object shows his caching state. In some application it is required
+ * to reload objects which are no longer in the cache.
+ * @param <T>
+ */
 public interface CacheStateAble<T> {
 
+    /**
+     * Check if the object is in the cache.
+     *
+     * @return True if the object is in the cache
+     */
     boolean isCached();
 
+    /**
+    Define if the object is cached.
+     */
     boolean setCached(boolean cached);
 
+    /**
+     * Reload the object and get the same instance.
+     *
+     * @return The reloaded object (Can be the same or a new instance).
+     */
     T reload();
 }

@@ -175,6 +175,11 @@ public final class DefaultPluginManager implements PluginManager{
     }
 
     @Override
+    public PluginLoader createPluginLoader(String name) {
+        throw new UnsupportedOperationException("@Todo implement searching");
+    }
+
+    @Override
     public PluginLoader createPluginLoader(File location) {
         return createPluginLoader(location,loadPluginDescription(location));
     }

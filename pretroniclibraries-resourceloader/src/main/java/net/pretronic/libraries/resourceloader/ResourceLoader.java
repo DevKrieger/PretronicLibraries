@@ -37,6 +37,7 @@ import java.nio.file.LinkOption;
 public class ResourceLoader {
 
     private final static String VERSION_INFO_FILE_NAME = "version.dat";
+    private final static String UPDATE_CONFIGURATION_FILE_NAME = "update.dat";
     private final static Method METHOD_ADD_URL;
 
     static {
@@ -52,10 +53,32 @@ public class ResourceLoader {
 
     private VersionInfo currentVersion;
     private VersionInfo latestVersion;
+    private UpdateConfiguration updateConfiguration;
 
     public ResourceLoader(ResourceInfo info) {
         this.info = info;
         info.getLocation().mkdirs();
+    }
+
+    public UpdateConfiguration getUpdateConfiguration(){
+        if (updateConfiguration == null) {
+            File file = new File(info.getLocation(),UPDATE_CONFIGURATION_FILE_NAME);
+            if (file.exists()) {
+                try {
+                    InputStream input = new FileInputStream(file);
+                    updateConfiguration = UpdateConfiguration.parse(readFirstLine(input));
+                    input.close();
+                } catch (IOException exception) {
+                    throw new ResourceException("Could not load update configuration (" + exception.getMessage() + ")", exception);
+                }
+            }
+        }
+        if(updateConfiguration != null) return updateConfiguration;
+        return UpdateConfiguration.DEFAULT;
+    }
+
+    public void setUpdateConfiguration(UpdateConfiguration updateConfiguration) {
+        this.updateConfiguration = updateConfiguration;
     }
 
     /**
@@ -66,11 +89,10 @@ public class ResourceLoader {
     public VersionInfo getLatestVersion(){
         if(latestVersion == null){
             try {
-                InputStream input = openHttpConnection(info.getVersionUrl());
+                InputStream input = openHttpConnection(prepareUrl(info.getVersionUrl(),null));
                 latestVersion = VersionInfo.parse(readFirstLine(input));
                 input.close();
             } catch (IOException exception) {
-                exception.printStackTrace();
                 throw new ResourceException("Could not get latest version ("+exception.getMessage()+")",exception);
             }
         }
@@ -85,14 +107,12 @@ public class ResourceLoader {
     public VersionInfo getCurrentVersion(){
         if(currentVersion == null){
             File file = new File(info.getLocation(),VERSION_INFO_FILE_NAME);
-            try {
-                Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-            } catch (IOException ignored) {}
             if(file.exists()){
                 try {
-                    currentVersion =  VersionInfo.parse(readFirstLine(new FileInputStream(file)));
+                    InputStream input = new FileInputStream(file);
+                    currentVersion =  VersionInfo.parse(readFirstLine(input));
+                    input.close();
                 } catch (IOException exception) {
-                    exception.printStackTrace();
                     throw new ResourceException("Could not read version info file ("+exception.getMessage()+")",exception);
                 }
             }else currentVersion = VersionInfo.UNKNOWN;
@@ -124,7 +144,6 @@ public class ResourceLoader {
             if(!version.equals(currentVersion)) changeCurrentVersion(version);
             return file;
         } catch (IOException exception) {
-            exception.printStackTrace();
             throw new ResourceException("Could not download version "+version.getName()+"#"+version.getBuild()+" ("+exception.getMessage()+")",exception);
         }
     }
@@ -178,7 +197,7 @@ public class ResourceLoader {
         if(file.exists() && file.isFile()){
             try {
                 METHOD_ADD_URL.invoke(loader, file.toURI().toURL());
-            } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {}
+            } catch (IllegalAccessException | InvocationTargetException | MalformedURLException ignored) {}
         }else throw new ResourceException(file.getAbsolutePath()+" is not a valid resource (jar) file");
     }
 
@@ -191,23 +210,35 @@ public class ResourceLoader {
         this.currentVersion = version;
         File file = new File(info.getLocation(),VERSION_INFO_FILE_NAME);
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.write(version.toPlainText());
+            FileWriter fileWriter = new FileWriter(file);
+            BufferedWriter writer = new BufferedWriter(fileWriter);
+            writer.write(version.getName());
             writer.close();
+            fileWriter.close();
         } catch (IOException exception) {
-            throw new ResourceException("Could not update current version");
+            exception.printStackTrace();
+            throw new ResourceException("Could not update current version ("+exception.getMessage()+")");
         }
     }
 
     private String prepareUrl(String url, VersionInfo version){
-        if(version == null) version = getCurrentVersion();
-        if(version != null) return url.replace("$version",version.getName()).replace("$build",String.valueOf(version.getBuild()));
-        throw new ResourceException("Could not get latest resource version");
+        url = url.replace("{qualifier}",getUpdateConfiguration().getQualifier());
+        if(version != null){
+            url = url.replace("{version}",version.getName())
+                    .replace("{version.build}",String.valueOf(version.getBuild()))
+                    .replace("{version.minor}",String.valueOf(version.getMinor()))
+                    .replace("{version.major}",String.valueOf(version.getMajor()))
+                    .replace("{version.patch}",String.valueOf(version.getPatch()))
+                    .replace("{version.qualifier}",version.getQualifier())
+                    .replace("{qualifier}",getUpdateConfiguration().getQualifier());
+        }
+        return url;
     }
 
     private File getLocalFile(VersionInfo version){
-        return new File(info.getLocation(),(info.getName()+"-"+version.getName()+"-"+ version.getBuild()+".jar").toLowerCase());
+        return new File(info.getLocation(),(info.getName()+"-"+version.getName()+".jar").toLowerCase());
     }
+
     private InputStream openHttpConnection(String rawUrl) throws IOException{
         HttpURLConnection connection = (HttpURLConnection) new URL(rawUrl).openConnection();
         connection.setRequestMethod("GET");
@@ -221,8 +252,11 @@ public class ResourceLoader {
     }
 
     private static String readFirstLine(InputStream input) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
-            return reader.readLine();
+        InputStreamReader inputStream = new InputStreamReader(input);
+        try (BufferedReader reader = new BufferedReader(inputStream)) {
+            String result =  reader.readLine();
+            inputStream.close();
+            return result;
         }
     }
 

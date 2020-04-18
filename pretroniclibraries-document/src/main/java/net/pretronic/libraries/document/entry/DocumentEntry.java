@@ -19,17 +19,34 @@
 
 package net.pretronic.libraries.document.entry;
 
+/**
+ * A @{@link DocumentEntry} represents any kind of entry.
+ */
 public interface DocumentEntry extends DocumentBase{
 
     String getKey();
 
     void setKey(String key);
 
-
+    /**
+     * Get all attributes of this entry
+     *
+     * @return All attributes
+     */
     DocumentAttributes getAttributes();
 
+    /**
+     * Set a set of attributes.
+     *
+     * @param attributes The attributes to set
+     */
     void setAttributes(DocumentAttributes attributes);
 
+    /**
+     * Check if this entry has attributes.
+     *
+     * @return True if the attribute data is available
+     */
     boolean hasAttributes();
 
 
@@ -37,6 +54,12 @@ public interface DocumentEntry extends DocumentBase{
         return copy(getKey());
     }
 
+    /**
+     * Copy this entry with the included data and define a new key.
+     *
+     * @param key The new key of the entry
+     * @return The new entry
+     */
     DocumentEntry copy(String key);
 
 }

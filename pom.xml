@@ -26,7 +26,7 @@
     <groupId>net.pretronic.libraries</groupId>
     <artifactId>PretronicLibraries</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.33</version>
+    <version>1.0.121.100-SNAPSHOT</version>
 
     <developers>
         <developer>
@@ -60,6 +60,9 @@
 
         <plugin.maven.compiler.version>3.8.1</plugin.maven.compiler.version>
         <plugin.maven.source.version>3.2.1</plugin.maven.source.version>
+        <plugin.maven.javadoc.version>3.2.0</plugin.maven.javadoc.version>
+        <plugin.maven.site.version>3.9.0</plugin.maven.site.version>
+        <plugin.maven.project.info.reports.version>3.0.0</plugin.maven.project.info.reports.version>
     </properties>
 
     <modules>
@@ -80,6 +83,38 @@
         <module>pretroniclibraries-synchronisation</module>
     </modules>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${plugin.maven.javadoc.version}</version>
+                <configuration>
+                    <show>private</show>
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate-jar</goal>
+                        </goals>
+                        <phase>site</phase>
+                        <configuration>
+                            <show>private</show>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
 
 

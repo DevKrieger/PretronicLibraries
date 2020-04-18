@@ -26,8 +26,14 @@ import net.pretronic.libraries.document.entry.PrimitiveEntry;
 import net.pretronic.libraries.document.io.DocumentReader;
 import net.pretronic.libraries.utility.parser.StringParser;
 
-/*
-@Todo implement attributes
+/**
+ * The {@link PropertiesDocumentWriter} writes the document structure into the famous.properties format
+ * which is often used in java applications.
+ *
+ * <p>Structure</p>
+ * <p>Key=Value</p>
+ * <p>Key2=Value2</p>
+ * <p>Key3=Value2</p>
  */
 public class PropertiesDocumentReader implements DocumentReader {
 
@@ -52,7 +58,10 @@ public class PropertiesDocumentReader implements DocumentReader {
         String entryKey = keyIndex == -1 ? key : key.substring(keyIndex+1);
         PrimitiveEntry entry = prepareEntry(parser,root,key,entryKey);
         if(!parser.isLineFinished()){
+            parser.skipChar();
             entry.setValue(readValue(parser));
+        } else {
+            entry.setValue(null);
         }
     }
 
@@ -96,7 +105,7 @@ public class PropertiesDocumentReader implements DocumentReader {
         }
         if(startLine != parser.lineIndex()) parser.throwException("Invalid key");
         String key = parser.getOnLine(start,parser.charIndex());
-        parser.skipChar();
+        //parser.skipChar();
         return key;
     }
 
