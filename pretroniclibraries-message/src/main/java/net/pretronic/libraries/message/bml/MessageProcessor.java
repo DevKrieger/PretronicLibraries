@@ -57,6 +57,11 @@ public interface MessageProcessor {
     void unregisterFunctions(ObjectOwner owner);
 
 
+    char getEscapeCharacter();
+
+    void setEscapeCharacter(char character);
+
+
     boolean isIgnoredChar(char char0);
 
     void addIgnoredChar(char char0);
