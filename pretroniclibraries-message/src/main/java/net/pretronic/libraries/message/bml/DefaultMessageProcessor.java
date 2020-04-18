@@ -34,11 +34,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class DefaultMessageProcessor implements MessageProcessor {//test hallo !(test)[https://]   @hallo(test)
+public class DefaultMessageProcessor implements MessageProcessor {
 
     private final Collection<OwnedObject<Indicate>> indicates;
     private final Collection<FunctionEntry> functions;
     private final Collection<Character> ignoredChars;
+    private char escapeCharacter;
 
     private MessageBuilderFactory textBuilderFactory;
 
@@ -48,6 +49,7 @@ public class DefaultMessageProcessor implements MessageProcessor {//test hallo !
         this.ignoredChars = new HashSet<>();
 
         textBuilderFactory = new StaticTextMessageBuilder.Factory();
+        escapeCharacter = '\\';
     }
 
     @Override
@@ -126,6 +128,16 @@ public class DefaultMessageProcessor implements MessageProcessor {//test hallo !
     public void unregisterFunctions(ObjectOwner owner) {
         Validate.notNull(owner);
         Iterators.removeSilent(this.functions, functionEntry -> functionEntry.getOwner().equals(owner));
+    }
+
+    @Override
+    public char getEscapeCharacter() {
+        return escapeCharacter;
+    }
+
+    @Override
+    public void setEscapeCharacter(char character) {
+        this.escapeCharacter = character;
     }
 
     @Override
