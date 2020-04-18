@@ -34,6 +34,9 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+/**
+ * This pretronic logger implementation uses a jdk logger.
+ */
 public class JdkPretronicLogger implements PretronicLogger {
 
     private final Logger logger;

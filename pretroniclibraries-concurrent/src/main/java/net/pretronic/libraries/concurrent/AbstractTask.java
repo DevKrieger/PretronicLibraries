@@ -79,7 +79,7 @@ public abstract class AbstractTask implements Task{
     }
 
     @Override
-    public long getPeriod() {
+    public long getInterval() {
         return this.period;
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractTask implements Task{
     }
 
     @Override
-    public Task setPeriod(long period, TimeUnit unit) {
+    public Task setInterval(long period, TimeUnit unit) {
         TaskDestroyedException.validate(this);
         this.period = unit.toMillis(period);
         return this;
@@ -162,7 +162,7 @@ public abstract class AbstractTask implements Task{
             invokeListeners(null);
         }catch (Throwable thrown){
             state = TaskState.FAILED;
-            invokeListeners(thrown);
+            if(!invokeListeners(thrown)) thrown.printStackTrace();
         }
     }
 
@@ -213,10 +213,11 @@ public abstract class AbstractTask implements Task{
         this.scheduler.unregister(this);
     }
 
-    protected void invokeListeners(Throwable thrown){
-        if(listeners.isEmpty()) return;
+    protected boolean invokeListeners(Throwable thrown){
+        if(listeners.isEmpty()) return false;
         TaskFuture future = new DefaultTaskFuture(this.state,thrown);
         listeners.forEach(listener -> listener.accept(future));
+        return true;
     }
 
     protected void stopInternal(Throwable thrown){

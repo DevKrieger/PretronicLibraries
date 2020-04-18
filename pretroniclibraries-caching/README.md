@@ -34,8 +34,7 @@ compile group: 'net.pretronic.libraries', name: 'pretroniclibraries-caching', ve
 ```
 
 ### Javadoc
-For complete API documentation, see Javadoc.
-@Todo add link
+For a complete API documentation, see the [Javadocs](https://pretronic.net/javadoc/PretronicLibraries/1.0.117.90-SNAPSHOT/overview-summary.html).
 
 ### Example
 

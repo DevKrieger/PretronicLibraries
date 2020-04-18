@@ -129,11 +129,25 @@ public interface DocumentContext {
     void removeContext(DocumentContext context);
 
 
+    /**
+     * Serialize a java object to a document entry.
+     *
+     * @param value The object for serializing
+     * @return The serialized object in a document
+     */
     DocumentEntry serialize(Object value);
 
     DocumentEntry serialize(String key, Object value);
 
 
+    /**
+     * The serialize a document base entry to a java object.
+     *
+     * @param entry The base entry
+     * @param clazz The type class
+     * @param <T> The class of the object
+     * @return The result object
+     */
     <T> T deserialize(DocumentBase entry, Class<T> clazz);
 
     <T> T deserialize(DocumentBase entry, Type type);

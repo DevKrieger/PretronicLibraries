@@ -26,6 +26,9 @@ import net.pretronic.libraries.logging.level.LogLevel;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+/**
+ * The @{@link LoggingPrintWriter} is for hooking the default java output into the pretronic logger.
+ */
 public class LoggingPrintWriter extends PrintWriter {
 
     private final PretronicLogger logger;

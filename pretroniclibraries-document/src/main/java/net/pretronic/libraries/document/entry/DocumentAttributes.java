@@ -23,8 +23,22 @@ import net.pretronic.libraries.utility.annonations.Internal;
 
 public interface DocumentAttributes extends DocumentNode {
 
+    /**
+     * Set a primitive object with a key in the attribute.
+     *
+     * @param key The key
+     * @param value The value
+     * @return The current attribute
+     */
     DocumentAttributes set(String key, Object value);
 
+    /**
+     * Rename the key of an object.
+     *
+     * @param source The current name
+     * @param destination The new name
+     * @return The current attribute
+     */
     default DocumentAttributes rename(String source, String destination){
         DocumentEntry entry = getEntry(source);
         if(entry != null) entry.setKey(destination);
@@ -38,8 +52,19 @@ public interface DocumentAttributes extends DocumentNode {
     void removeEntry(DocumentEntry entry);
 
 
+    /**
+     * Remove an object for the attributes.
+     *
+     * @param key The key ot remove
+     * @return The current attribute
+     */
     DocumentAttributes remove(String key);
 
+    /**
+     * Clear all objects in this attribute.
+     *
+     * @return The current attribute
+     */
     DocumentAttributes clear();
 
 

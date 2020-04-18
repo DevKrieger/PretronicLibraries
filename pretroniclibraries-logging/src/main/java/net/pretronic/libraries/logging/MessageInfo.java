@@ -20,7 +20,7 @@
 package net.pretronic.libraries.logging;
 
 /**
- * The message info object contains information about a log, it defines the message.
+ * The message info object contains information about a log message.
  */
 public class MessageInfo {
 
