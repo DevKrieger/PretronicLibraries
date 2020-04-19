@@ -62,6 +62,7 @@ pipeline {
             }
         }
         stage('Build & Deploy') {
+            when { equals expected: false, actual: SKIP }
             steps {
                 configFileProvider([configFile(fileId: 'afe25550-309e-40c1-80ad-59da7989fb4e', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
                     sh 'mvn -B -gs $MAVEN_GLOBAL_SETTINGS clean deploy'
@@ -131,8 +132,6 @@ pipeline {
                             sh "git push origin HEAD:development -v"
                         }
                     } else if (BRANCH == BRANCH_MASTER) {
-                        minorVersion++
-                        patchVersion = 0
 
                         String version = major + "." + minorVersion + "." + patchVersion + "." + BUILD_NUMBER
                         String commitMessage = COMMIT_MESSAGE.replace("%version%", version)
@@ -144,6 +143,9 @@ pipeline {
                             git commit -m '$commitMessage' -v
                             git push origin HEAD:master -v
                             """
+
+                            minorVersion++
+                            patchVersion = 0
 
                             version = major + "." + minorVersion + "." + patchVersion + "." + BUILD_NUMBER + "-SNAPSHOT"
                             commitMessage = COMMIT_MESSAGE.replace("%version%", version)
