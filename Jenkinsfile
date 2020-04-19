@@ -105,7 +105,7 @@ pipeline {
         success {
             script {
                 if(!SKIP) {
-                    BUILD_NUMBER++
+
                     sh """
                     git config --global user.name '$CI_NAME' -v
                     git config --global user.email '$CI_EMAIL' -v
@@ -118,6 +118,7 @@ pipeline {
                     int patchVersion = versionSplit[2].toInteger()
 
                     if (BRANCH == BRANCH_DEVELOPMENT) {
+                        BUILD_NUMBER++
                         patchVersion++
 
                         String version = major + "." + minorVersion + "." + patchVersion+ "." + BUILD_NUMBER + "-SNAPSHOT"
@@ -144,6 +145,7 @@ pipeline {
                             git push origin HEAD:master -v
                             """
 
+                            BUILD_NUMBER++
                             minorVersion++
                             patchVersion = 0
 
