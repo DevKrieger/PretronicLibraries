@@ -73,7 +73,7 @@ pipeline {
             when {
                 allOf {
                     equals expected: false, actual: SKIP
-                    branch 'master'
+                    branch BRANCH_MASTER
                 }
             }
 
