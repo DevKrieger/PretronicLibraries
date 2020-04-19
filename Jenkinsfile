@@ -70,26 +70,24 @@ pipeline {
             }
         }
         stage('Publish javadoc') {
-            when {
-                allOf {
-                    equals expected: false, actual: SKIP
-                    branch BRANCH_MASTER
-                }
-            }
+            when { equals expected: false, actual: SKIP }
 
             steps {
-                sh 'mvn javadoc:aggregate-jar'
-                script {
-                    withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
-                        String name = env.JOB_NAME
 
-                        httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
-                                httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,
-                                multipartName: 'file',
-                                responseHandle: 'NONE',
-                                uploadFile: "target/${name}-${VERSION}-javadoc.jar",
-                                customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
-                                url: "https://pretronic.net/javadoc/${name}/${VERSION}/create")
+                script {
+                    if(BRANCH == BRANCH_MASTER) {
+                        sh 'mvn javadoc:aggregate-jar'
+                        withCredentials([string(credentialsId: '120a9a64-81a7-4557-80bf-161e3ab8b976', variable: 'SECRET')]) {
+                            String name = env.JOB_NAME
+
+                            httpRequest(acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_OCTETSTREAM',
+                                    httpMode: 'POST', ignoreSslErrors: true, timeout: 3000,
+                                    multipartName: 'file',
+                                    responseHandle: 'NONE',
+                                    uploadFile: "target/${name}-${VERSION}-javadoc.jar",
+                                    customHeaders:[[name:'token', value:"${SECRET}", maskValue:true]],
+                                    url: "https://pretronic.net/javadoc/${name}/${VERSION}/create")
+                        }
                     }
                 }
             }
