@@ -36,7 +36,7 @@ public class Convert {
      * @return The input object as string
      */
     public static String toString(Object input){
-        return input.toString();
+        return input != null ? input.toString() : null;
     }
 
     /**

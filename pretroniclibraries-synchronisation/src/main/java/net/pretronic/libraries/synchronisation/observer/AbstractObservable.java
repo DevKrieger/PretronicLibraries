@@ -22,17 +22,22 @@ package net.pretronic.libraries.synchronisation.observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractObservable<O extends AbstractObservable<O,T>,T> implements Observable<O,T>{
+public class AbstractObservable<O extends Observable<O,T>,T> implements Observable<O,T>{
 
     private final List<ObserveCallback<O, T>> callbacks;
 
-    public AbstractObservable() {
+    protected AbstractObservable() {
         callbacks = new ArrayList<>();
     }
 
     @Override
     public List<ObserveCallback<O,T>> getObservers() {
         return callbacks;
+    }
+
+    @Override
+    public boolean isObserverSubscribed(ObserveCallback<O, T> callback) {
+        return this.callbacks.contains(callback);
     }
 
     @Override
@@ -47,6 +52,10 @@ public class AbstractObservable<O extends AbstractObservable<O,T>,T> implements 
 
     @SuppressWarnings("unchecked")
     public void callObservers(T arg){
-        for (ObserveCallback<O, T> callback : this.callbacks) callback.callback((O) this,arg);
+        callObservers((O) this,arg);
+    }
+
+    public void callObservers(O object, T arg){
+        for (ObserveCallback<O, T> callback : this.callbacks) callback.callback(object,arg);
     }
 }

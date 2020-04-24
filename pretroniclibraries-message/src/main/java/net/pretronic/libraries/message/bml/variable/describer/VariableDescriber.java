@@ -21,6 +21,7 @@
 package net.pretronic.libraries.message.bml.variable.describer;
 
 import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.exception.OperationFailedException;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveHashMap;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveMap;
 import net.pretronic.libraries.utility.reflect.ReflectException;
@@ -77,7 +78,7 @@ public class VariableDescriber<T> {
             try {
                 return method.invoke(method.getDeclaringClass().cast(value));
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new ReflectException(e);
+                throw new OperationFailedException("Could not invoke describer method "+method.getName()+" with key "+key,e);
             }
         });
     }

@@ -19,16 +19,28 @@
 
 package net.pretronic.libraries.synchronisation.observer;
 
+import java.util.Collections;
 import java.util.List;
 
-public interface Observable<O extends Observable<O,T>,T> {
+public class UnusedObservable<O extends Observable<O,T>,T> implements Observable<O,T>{
 
-    List<ObserveCallback<O,T>> getObservers();
+    @Override
+    public List<ObserveCallback<O,T>> getObservers() {
+        return Collections.emptyList();
+    }
 
-    boolean isObserverSubscribed(ObserveCallback<O,T> callback);
+    @Override
+    public boolean isObserverSubscribed(ObserveCallback<O, T> callback) {
+        return false;//Unused without error
+    }
 
-    void subscribeObserver(ObserveCallback<O,T> callback);
+    @Override
+    public void subscribeObserver(ObserveCallback<O, T> callback) {
+        //Unused without error
+    }
 
-    void unsubscribeObserver(ObserveCallback<O,T> callback);
-
+    @Override
+    public void unsubscribeObserver(ObserveCallback<O, T> callback) {
+        //Unused without error
+    }
 }

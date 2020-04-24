@@ -63,9 +63,12 @@ public final class Validate {
     }
 
     public static void notNull(Object... values) {
-        if(values == null) throw new NullPointerException();
-        for (Object value : values) {
-            if(value == null) throw new NullPointerException();
+        if(values == null) throw new NullPointerException("Values are null");
+        for (int i = 0; i < values.length; i++) {
+            Object value = values[i];
+            if(value == null){
+                throw new NullPointerException("Vale on validation position "+i+" is null.");
+            }
         }
     }
 }
