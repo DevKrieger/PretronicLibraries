@@ -43,10 +43,7 @@ public interface ParserState {
 
     static boolean checkNextIndicate(MessageProcessor processor, MessageParser parser, char current, boolean push){
         Indicate indicate = processor.getIndicate(current);
-        parser.getParser().previousChar();
-        char previous = parser.getParser().currentChar();
-        parser.getParser().nextChar();
-        if(indicate != null && previous != processor.getEscapeCharacter()) {
+        if(indicate != null) {
             if (indicate.hasPrefix()) {
                 if (indicate.hasName()) {
                     if(push) parser.extractStringAndPush();
