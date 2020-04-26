@@ -105,11 +105,9 @@ public interface ParserState {
                 if(nextState != null) parser.getSequence().getParent().setState(nextState);
             }else {
                 Indicate indicate = processor.getIndicate(current);
-                if(indicate != null) {
-                    if(checkNextIndicate(processor,parser,current,push)){
-                        if(nextState != null) parser.getSequence().getParent().setState(nextState);
-                        return;
-                    }
+                if(indicate != null && checkNextIndicate(processor,parser,current,push)) {
+                    if(nextState != null) parser.getSequence().getParent().setState(nextState);
+                    return;
                 }
                 parser.getParser().throwException("Invalid character");
             }

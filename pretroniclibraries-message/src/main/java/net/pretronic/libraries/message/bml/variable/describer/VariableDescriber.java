@@ -112,10 +112,10 @@ public class VariableDescriber<T> {
 
     public static void of(VariableDescriber<?> describer,Class<?> clazz, boolean superClass){
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
-            if(!Modifier.isStatic(declaredMethod.getModifiers()) && Modifier.isPublic(declaredMethod.getModifiers())){
-                if(declaredMethod.getName().startsWith("get")){
-                    describer.registerMethod(declaredMethod.getName().substring(3),declaredMethod);
-                }
+            if(!Modifier.isStatic(declaredMethod.getModifiers())
+                    && Modifier.isPublic(declaredMethod.getModifiers())
+                    && declaredMethod.getName().startsWith("get")){
+                describer.registerMethod(declaredMethod.getName().substring(3),declaredMethod);
             }
         }
         if(superClass){

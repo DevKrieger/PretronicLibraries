@@ -108,15 +108,13 @@ public class DefaultPConsole implements PConsole {
     @Override
     public int read() throws IOException {
         int read = inputStream.read();
-        if(inputStream.available() > 0){
-            if(read == 27 && inputStream.read() == 91){
-                while(inputStream.available() > 0) read = inputStream.read();
-                if(read == 65) read = 38;
-                else if(read == 66) read = 40;
-                else if(read == 67) read = 39;
-                else if(read == 68) read = 37;
-                else read = 0;
-            }
+        if(inputStream.available() > 0 && read == 27 && inputStream.read() == 91){
+            while(inputStream.available() > 0) read = inputStream.read();
+            if(read == 65) read = 38;
+            else if(read == 66) read = 40;
+            else if(read == 67) read = 39;
+            else if(read == 68) read = 37;
+            else read = 0;
         }
         return read;
     }

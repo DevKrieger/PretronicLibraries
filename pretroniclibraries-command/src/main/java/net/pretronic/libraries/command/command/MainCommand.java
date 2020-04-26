@@ -43,7 +43,7 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
 
         if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
 
-        if(this instanceof ObjectNoPermissionAble) setNoPermissionHandler((ObjectNoPermissionAble) this);
+        if(this instanceof ObjectNoPermissionAble) setNoPermissionHandler((ObjectNoPermissionAble<?>) this);
         else if(this instanceof NoPermissionAble) setNoPermissionHandler((NoPermissionAble) this);
     }
 
@@ -121,11 +121,10 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0) {
             for (Command command : subCommands) {
-                if(CommandManager.hasPermission(sender, noPermissionHandler, null, command.getConfiguration().getPermission(), args[0], args)) {
-                    if (command.getConfiguration().hasAlias(args[0])) {
-                        command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
-                        return;
-                    }
+                if(CommandManager.hasPermission(sender, noPermissionHandler, null, command.getConfiguration().getPermission(), args[0], args)
+                        && command.getConfiguration().hasAlias(args[0])) {
+                    command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
+                    return;
                 }
             }
         }

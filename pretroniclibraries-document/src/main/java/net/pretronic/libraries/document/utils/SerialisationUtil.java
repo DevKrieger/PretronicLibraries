@@ -75,20 +75,8 @@ public class SerialisationUtil {
                         if(field.getAnnotation(DocumentIgnored.class) == null){
                             Object fieldValue = field.get(value);
                             if(fieldValue == null) continue;
-                            if(field.isAnnotationPresent(DocumentIgnoreZeroValue.class)
-                                    && fieldValue instanceof Number) {
-                                Number valueNumber = (Number) fieldValue;
-                                if(valueNumber instanceof Integer && valueNumber.intValue() == 0) continue;
-                                else if(valueNumber instanceof Long && valueNumber.longValue() == 0) continue;
-                                else if(valueNumber instanceof Double && valueNumber.doubleValue() == 0) continue;
-                                else if(valueNumber instanceof Float && valueNumber.floatValue() == 0) continue;
-                                else if(valueNumber instanceof Byte && valueNumber.byteValue() == 0) continue;
-                                else if(valueNumber instanceof Short && valueNumber.shortValue() == 0) continue;
-                            }
-                            if(field.isAnnotationPresent(DocumentIgnoreBooleanValue.class) && fieldValue instanceof Boolean) {
-                                DocumentIgnoreBooleanValue ignoreBooleanValue = field.getAnnotation(DocumentIgnoreBooleanValue.class);
-                                if(ignoreBooleanValue.ignore() == (boolean) fieldValue) continue;
-                            }
+                            if (isIgnored(field, fieldValue)) continue;
+
                             DocumentKey name = field.getAnnotation(DocumentKey.class);
                             String endName = name!=null?name.value():field.getName();
 
@@ -113,6 +101,24 @@ public class SerialisationUtil {
             }
         }
         return document;
+    }
+
+    private static boolean isIgnored(Field field, Object fieldValue) {
+        if(field.isAnnotationPresent(DocumentIgnoreZeroValue.class)
+                && fieldValue instanceof Number) {
+            Number valueNumber = (Number) fieldValue;
+            if(valueNumber instanceof Integer && valueNumber.intValue() == 0) return true;
+            else if(valueNumber instanceof Long && valueNumber.longValue() == 0) return true;
+            else if(valueNumber instanceof Double && valueNumber.doubleValue() == 0) return true;
+            else if(valueNumber instanceof Float && valueNumber.floatValue() == 0) return true;
+            else if(valueNumber instanceof Byte && valueNumber.byteValue() == 0) return true;
+            else if(valueNumber instanceof Short && valueNumber.shortValue() == 0) return true;
+        }
+        if(field.isAnnotationPresent(DocumentIgnoreBooleanValue.class) && fieldValue instanceof Boolean) {
+            DocumentIgnoreBooleanValue ignoreBooleanValue = field.getAnnotation(DocumentIgnoreBooleanValue.class);
+            if(ignoreBooleanValue.ignore() == (boolean) fieldValue) return true;
+        }
+        return false;
     }
 
     public static <T> T deserialize(DocumentContext context, DocumentBase entry, Class<T> clazz){

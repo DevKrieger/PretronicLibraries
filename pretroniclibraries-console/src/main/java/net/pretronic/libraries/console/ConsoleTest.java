@@ -38,9 +38,6 @@ public class ConsoleTest {
             }
         }).start();
         System.out.println("In: "+console.readLine());
-
-        System.exit(0);
-
     }
 
 }
