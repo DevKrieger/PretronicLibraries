@@ -62,6 +62,8 @@ public interface MessageProvider {
 
     List<MessagePack> loadPacks(String module);
 
+    void unloadPacks(String module);
+
     default MessagePack importPack(Document pack){
         return MessagePack.fromDocument(pack);
     }
