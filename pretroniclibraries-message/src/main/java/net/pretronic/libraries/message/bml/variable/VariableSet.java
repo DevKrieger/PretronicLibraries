@@ -20,7 +20,7 @@
 
 package net.pretronic.libraries.message.bml.variable;
 
-import net.pretronic.libraries.message.bml.variable.reflect.ReflectVariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,11 +67,15 @@ public interface VariableSet extends Set<Variable> {
     }
 
     static VariableSet createEmpty(){
-        return new ReflectVariableSet();
+        return EmptyVariableSet.newEmptySet();
     }
 
     static VariableSet createReflected(){
-        return EmptyVariableSet.newEmptySet();
+        return new DescribedHashVariableSet();
+    }
+
+    static VariableSet createDescribed(){
+        return new DescribedHashVariableSet();
     }
 
     static VariableSet newEmptySet(){

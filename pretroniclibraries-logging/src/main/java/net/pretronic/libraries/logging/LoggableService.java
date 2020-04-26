@@ -27,7 +27,10 @@ package net.pretronic.libraries.logging;
  */
 public class LoggableService {
 
-    private final String name, shortName, version, website;
+    private final String name;
+    private final String shortName;
+    private final String version;
+    private final String website;
 
     public LoggableService(String name) {
         this(name,name);

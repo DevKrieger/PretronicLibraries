@@ -29,7 +29,8 @@ import java.util.function.Function;
 
 public class TreeCallbackMap<K,V> extends TreeMap<K,V> implements CallbackMap<K,V>{
 
-    private BiConsumer<K, V> putCallback, removeCallback;
+    private BiConsumer<K, V> putCallback;
+    private BiConsumer<K, V> removeCallback;
 
     public TreeCallbackMap() {
     }

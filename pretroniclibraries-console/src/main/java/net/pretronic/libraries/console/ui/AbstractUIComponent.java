@@ -21,7 +21,4 @@ package net.pretronic.libraries.console.ui;
 
 public class AbstractUIComponent {
 
-    private int backgroundColor, color;
-    private boolean disabled;
-
 }

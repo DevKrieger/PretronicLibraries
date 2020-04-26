@@ -27,7 +27,8 @@ import java.util.function.Function;
 
 public class HashCallbackMap<K,V> extends HashMap<K,V> implements CallbackMap<K,V>{
 
-    private BiConsumer<K, V> putCallback, removeCallback;
+    private BiConsumer<K, V> putCallback;
+    private BiConsumer<K, V> removeCallback;
 
     public HashCallbackMap(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);

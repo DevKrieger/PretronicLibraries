@@ -57,10 +57,13 @@ class UnixTerminal implements Terminal{
         REDIRECT_INPUT_METHOD = redirectInputMethod;
     }
 
-    public final String textOnlyConsoleDevice, sttyCommand, shCommand, defaultSttyConfig;
-    public final boolean useRedirect;
-    public String sttyConfig;
-    public long lastConfigLoadTime;
+    private final String textOnlyConsoleDevice;
+    private final String sttyCommand;
+    private final String shCommand;
+    private final String defaultSttyConfig;
+    private final boolean useRedirect;
+    private String sttyConfig;
+    private long lastConfigLoadTime;
 
     public UnixTerminal(){
         this(DEFAULT_TEXT_ONLY_CONSOLE_DEVICE);
