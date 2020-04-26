@@ -248,9 +248,11 @@ public class ResourceLoader {
         connection.setReadTimeout(3000);
         connection.setInstanceFollowRedirects(true);
         if(info.getAuthenticator() != null) info.getAuthenticator().invokeAuthentication(connection);
-        InputStream result = connection.getInputStream();
-        if(connection.getResponseCode() != 200) throw new IllegalArgumentException(connection.getResponseCode()+" | "+connection.getResponseMessage());
-        return result;
+        connection.connect();
+        if(connection.getResponseCode() != 200){
+            throw new IllegalArgumentException(connection.getResponseCode()+" | "+readFirstLine(connection.getErrorStream()));
+        }
+        return connection.getInputStream();
     }
 
     private static String readFirstLine(InputStream input) throws IOException {

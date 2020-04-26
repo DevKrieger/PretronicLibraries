@@ -21,6 +21,9 @@ package net.pretronic.libraries.utility.interfaces;
 
 public interface Castable<T>  {
 
-    <N extends T> N getAs(Class<N> castedClass);
+    @SuppressWarnings("unchecked")
+    default <N extends T> N getAs(Class<N> castedClass){
+        return (N) this;
+    }
 
 }

@@ -22,12 +22,14 @@ package net.pretronic.libraries.plugin;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.libraries.plugin.description.PluginDescription;
 import net.pretronic.libraries.plugin.loader.PluginLoader;
+import net.pretronic.libraries.utility.annonations.Internal;
+import net.pretronic.libraries.utility.interfaces.Castable;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.io.File;
 import java.security.SecurityPermission;
 
-public abstract class Plugin<R> implements ObjectOwner {
+public abstract class Plugin<R> implements ObjectOwner, Castable<Plugin<R>> {
 
     private static final SecurityPermission INIT_PERMISSION = new SecurityPermission("PretronicPluginInitialize");
 
@@ -61,7 +63,18 @@ public abstract class Plugin<R> implements ObjectOwner {
         return new File(loader.getLocation().getParentFile(),getName().toLowerCase()+"/");
     }
 
-    public void initialize(PluginDescription description, PluginLoader loader, PretronicLogger logger, R runtime){
+    @SuppressWarnings("unchecked")
+    @Internal
+    public void initialize(PluginDescription description, PluginLoader loader, PretronicLogger logger, Object runtime){
+        try{
+            initialize0(description,loader,logger, (R) runtime);
+        }catch (ClassCastException e){
+            throw new IllegalArgumentException("Invalid runtime type");
+        }
+    }
+
+    @Internal
+    private void initialize0(PluginDescription description, PluginLoader loader, PretronicLogger logger, R runtime){
         if(this.loader != null) throw new IllegalArgumentException("This plugin instance is already initialized.");
 
         //Check runtime permission
