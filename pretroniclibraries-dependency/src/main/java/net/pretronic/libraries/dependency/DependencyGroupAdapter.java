@@ -20,7 +20,6 @@
 
 package net.pretronic.libraries.dependency;
 
-import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.DocumentContext;
 import net.pretronic.libraries.document.adapter.DocumentAdapter;
 import net.pretronic.libraries.document.adapter.DocumentAdapterInitializeAble;

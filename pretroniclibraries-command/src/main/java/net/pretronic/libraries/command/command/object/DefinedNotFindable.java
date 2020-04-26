@@ -19,11 +19,8 @@
 
 package net.pretronic.libraries.command.command.object;
 
-import net.pretronic.libraries.command.Completable;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.sender.CommandSender;
-
-import java.util.Collection;
 
 public interface DefinedNotFindable<T> extends NotFindable {
 

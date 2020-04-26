@@ -22,9 +22,9 @@ package net.pretronic.libraries.caching.synchronisation;
 import net.pretronic.libraries.caching.ArrayCache;
 import net.pretronic.libraries.caching.CacheQuery;
 import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.synchronisation.SynchronisationCaller;
 import net.pretronic.libraries.synchronisation.Synchronizable;
+import net.pretronic.libraries.utility.Validate;
 
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;

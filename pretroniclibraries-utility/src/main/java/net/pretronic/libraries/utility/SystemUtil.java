@@ -19,8 +19,6 @@
 
 package net.pretronic.libraries.utility;
 
-import net.pretronic.libraries.utility.annonations.Internal;
-
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 

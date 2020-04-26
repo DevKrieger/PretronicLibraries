@@ -25,7 +25,6 @@ import net.pretronic.libraries.document.entry.DocumentAttributes;
 import net.pretronic.libraries.document.entry.DocumentEntry;
 import net.pretronic.libraries.document.entry.PrimitiveEntry;
 import net.pretronic.libraries.document.io.DocumentReader;
-import net.pretronic.libraries.document.type.json.JsonDocumentWriter;
 import net.pretronic.libraries.utility.io.IORuntimeException;
 import net.pretronic.libraries.utility.parser.StringParser;
 
