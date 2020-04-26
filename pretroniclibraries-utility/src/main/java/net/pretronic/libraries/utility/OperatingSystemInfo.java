@@ -25,7 +25,10 @@ package net.pretronic.libraries.utility;
 @Deprecated
 public class OperatingSystemInfo {
 
-    private final String name, version, architecture, javaVersion;
+    private final String name;
+    private final String version;
+    private final String architecture;
+    private final String javaVersion;
 
     public OperatingSystemInfo(String name, String version, String architecture, String javaVersion) {
         this.name = name;

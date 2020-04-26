@@ -39,7 +39,8 @@ public abstract class AbstractTask implements Task{
     protected final String name;
     protected final boolean async;
 
-    protected long delay, period;
+    protected long delay;
+    protected long period;
     protected TaskState state;
     protected Thread runningThread;
 

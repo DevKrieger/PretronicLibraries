@@ -54,7 +54,8 @@ public class HttpClient {
 
     private URL url;
     private int timeOut;
-    private String requestMethod, content;
+    private String requestMethod;
+    private String content;
     private boolean saveCookies;
     private String tlsVersion;
 

@@ -326,7 +326,7 @@ public interface ParserState {
     class TagFinish implements ParserState {
 
         @Override
-        public void parse(XmlSequence sequence, StringParser parser, char current) {}
+        public void parse(XmlSequence sequence, StringParser parser, char current) {/*Unused*/}
 
     }
 

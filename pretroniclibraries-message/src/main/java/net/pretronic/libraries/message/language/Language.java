@@ -47,7 +47,9 @@ public class Language {
         REGISTRY.add(ITALIAN);
     }
 
-    private final String code, name, localizedName;
+    private final String code;
+    private final String name;
+    private final String localizedName;
 
     public Language(String code, String name, String localizedName) {
         this.code = code;
