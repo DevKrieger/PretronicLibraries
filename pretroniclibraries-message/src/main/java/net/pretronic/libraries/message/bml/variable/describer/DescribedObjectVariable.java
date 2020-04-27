@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 07.04.20, 18:39
+ * @since 21.03.20, 17:04
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -20,33 +20,46 @@
 
 package net.pretronic.libraries.message.bml.variable.describer;
 
-import net.pretronic.libraries.message.bml.variable.HashVariableSet;
-import net.pretronic.libraries.message.bml.variable.ObjectVariable;
 import net.pretronic.libraries.message.bml.variable.Variable;
 
-@Deprecated
-public class DescribedHashVariableSet extends HashVariableSet {
+public class DescribedObjectVariable implements Variable {
 
+    private final String name;
+    private final String[] parts;
+    private Object object;
+
+    public DescribedObjectVariable(String name, Object object) {
+        this.name = name;
+        this.parts = name.split("\\.");
+        this.object = object;
+    }
 
     @Override
-    public Object getValue(String name) {
-        Variable variable = get(name);
+    public String getName() {
+        return name;
+    }
 
-        if(variable != null){
-            Object result =  variable.getObject();
+    @Override
+    public Object getObject() {
+        if(parts.length > 1){
+            Object result =  VariableDescriber.get(object,parts,1);
             if(result instanceof VariableObjectToString) return ((VariableObjectToString) result).toStringVariable();
             return result;
         }
+        return object;
+    }
 
-        String[] parts = name.split("\\.");
-        if(parts.length > 1){
-            variable = get(parts[0]);
-            if(variable != null){
-                Object result =  VariableDescriber.get(variable.getObject(),parts,1);
-                if(result instanceof VariableObjectToString) return ((VariableObjectToString) result).toStringVariable();
-                return result;
-            }
+    @Override
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
+    @Override
+    public boolean matches(String name) {
+        if(this.name.equalsIgnoreCase(name)) return true;
+        else{
+            String[] input = name.split("\\.");
+            return input[0].equalsIgnoreCase(parts[0]);
         }
-        return null;
     }
 }

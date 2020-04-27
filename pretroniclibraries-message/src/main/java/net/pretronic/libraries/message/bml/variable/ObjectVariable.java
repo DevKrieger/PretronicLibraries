@@ -20,15 +20,28 @@
 
 package net.pretronic.libraries.message.bml.variable;
 
-public interface Variable {
+public class ObjectVariable implements Variable{
 
-    String getName();
+    private final String name;
+    private Object object;
 
-    Object getObject();
+    public ObjectVariable(String name, Object object) {
+        this.name = name;
+        this.object = object;
+    }
 
-    void setObject(Object object);
+    @Override
+    public String getName() {
+        return name;
+    }
 
-    default boolean matches(String name){
-        return getName().equalsIgnoreCase(name);
+    @Override
+    public Object getObject() {
+        return object;
+    }
+
+    @Override
+    public void setObject(Object object) {
+        this.object = object;
     }
 }

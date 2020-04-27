@@ -23,6 +23,7 @@ package net.pretronic.libraries.message.bml.function.defaults.operation;
 import net.pretronic.libraries.message.bml.Module;
 import net.pretronic.libraries.message.bml.builder.BuildContext;
 import net.pretronic.libraries.message.bml.function.Function;
+import net.pretronic.libraries.message.bml.variable.ObjectVariable;
 import net.pretronic.libraries.message.bml.variable.Variable;
 import net.pretronic.libraries.utility.GeneralUtil;
 

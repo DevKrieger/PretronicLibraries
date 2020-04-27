@@ -38,12 +38,12 @@ public class EmptyVariableSet implements VariableSet{
     }
 
     @Override
-    public Variable get(String name) {
+    public ObjectVariable get(String name) {
         return null;
     }
 
     @Override
-    public Variable getOrCreate(String name) {
+    public ObjectVariable getOrCreate(String name) {
         return null;//Unused
     }
 
@@ -90,7 +90,7 @@ public class EmptyVariableSet implements VariableSet{
     @SuppressWarnings("unchecked")
     @Override
     public <T> T[] toArray(T[] a) {
-        return (T[]) Array.newInstance(Variable.class,0);
+        return (T[]) Array.newInstance(ObjectVariable.class,0);
     }
 
     @Override

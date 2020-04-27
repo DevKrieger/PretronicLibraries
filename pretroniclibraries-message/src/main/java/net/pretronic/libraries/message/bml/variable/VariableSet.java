@@ -21,6 +21,7 @@
 package net.pretronic.libraries.message.bml.variable;
 
 import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
+import net.pretronic.libraries.message.bml.variable.describer.DescribedObjectVariable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,14 +37,21 @@ public interface VariableSet extends Set<Variable> {
 
     Object getValue(String name);
 
-    VariableSet add(String name, Object source);
+    default VariableSet add(String name, Object source){
+        add(new ObjectVariable(name,source));
+        return this;
+    }
+
+    default VariableSet addDescribed(String name, Object source){
+        add(new DescribedObjectVariable(name,source));
+        return this;
+    }
 
     VariableSet remove(String name);
 
     default String replace(String text){
         return replace(text,this);
     }
-
 
     static VariableSet of(Variable... variables){
         return new HashVariableSet(Arrays.asList(variables));
@@ -70,16 +78,18 @@ public interface VariableSet extends Set<Variable> {
         return EmptyVariableSet.newEmptySet();
     }
 
+    static VariableSet newEmptySet(){
+        return createReflected();
+    }
+
+    @Deprecated
     static VariableSet createReflected(){
         return new DescribedHashVariableSet();
     }
 
+    @Deprecated
     static VariableSet createDescribed(){
         return new DescribedHashVariableSet();
-    }
-
-    static VariableSet newEmptySet(){
-        return createReflected();
     }
 
     static String replace(String text, VariableSet variables){
