@@ -23,11 +23,11 @@ public class ServicePriority {
 
     public static final byte HIGHEST = (byte) 127;
 
-    public static final byte HIGH = (byte) 60;
+    public static final byte HIGH = (byte) 64;
 
     public static final byte NORMAL = (byte) 0;
 
-    public static final byte LOW = (byte) -60;
+    public static final byte LOW = (byte) -64;
 
     public static final byte LOWEST = (byte) -128;
 
