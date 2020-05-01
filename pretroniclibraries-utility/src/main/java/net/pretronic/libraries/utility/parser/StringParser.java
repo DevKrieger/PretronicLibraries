@@ -134,6 +134,11 @@ public class StringParser {
         return hasLine(this.lineIndex);
     }
 
+    public boolean hasPreviousChar(){
+        return hasChar(lineIndex,charIndex-1) || hasLine(lineIndex-1);
+    }
+
+
     @Deprecated
     public boolean has(int lineIndex, int charIndex){
         return hasChar(lineIndex,charIndex) || hasLine(lineIndex);

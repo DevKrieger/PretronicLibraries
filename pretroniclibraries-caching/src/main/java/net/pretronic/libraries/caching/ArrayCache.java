@@ -106,6 +106,7 @@ public class ArrayCache<O> implements Cache<O>{
         Arrays.fill(entries, null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<O> getCachedObjects() {
         ArrayList<O> values = new ArrayList<>();
@@ -127,6 +128,7 @@ public class ArrayCache<O> implements Cache<O>{
         return get(query,identifiers);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public O get(CacheQuery<O> query, Object... identifiers) {
         query.validate(identifiers);
@@ -149,6 +151,7 @@ public class ArrayCache<O> implements Cache<O>{
         return get(query,null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public O get(Predicate<O> query, Supplier<O> loader) {
         Objects.requireNonNull(query,"Query is null");
@@ -219,6 +222,7 @@ public class ArrayCache<O> implements Cache<O>{
         return get(query,identifiers);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public O remove(CacheQuery<O> query, Object... identifiers) {
         query.validate(identifiers);
@@ -233,6 +237,7 @@ public class ArrayCache<O> implements Cache<O>{
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public O remove(Predicate<O> query) {
         Objects.requireNonNull(query,"Query is null");
@@ -420,6 +425,7 @@ public class ArrayCache<O> implements Cache<O>{
             this.running = false;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void run() {
             this.running = true;
