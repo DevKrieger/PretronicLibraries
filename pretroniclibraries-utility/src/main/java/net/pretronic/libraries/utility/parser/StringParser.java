@@ -145,7 +145,6 @@ public class StringParser {
     }
 
     public boolean hasChar(int lineIndex,int charIndex){
-        if(lineIndex < 0 || charIndex < 0) return false;
         return lineIndex >= 0 && lines.length>lineIndex && lines[lineIndex].length > charIndex;
     }
 
