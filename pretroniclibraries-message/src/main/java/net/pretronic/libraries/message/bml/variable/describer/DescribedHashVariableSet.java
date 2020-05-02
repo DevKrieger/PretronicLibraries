@@ -23,10 +23,16 @@ package net.pretronic.libraries.message.bml.variable.describer;
 import net.pretronic.libraries.message.bml.variable.HashVariableSet;
 import net.pretronic.libraries.message.bml.variable.ObjectVariable;
 import net.pretronic.libraries.message.bml.variable.Variable;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 
 @Deprecated
 public class DescribedHashVariableSet extends HashVariableSet {
 
+    @Override
+    public VariableSet addDescribed(String name, Object source){
+        add(new ObjectVariable(name,source));
+        return this;
+    }
 
     @Override
     public Object getValue(String name) {
