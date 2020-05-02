@@ -26,6 +26,10 @@ public interface Variable {
 
     Object getObject();
 
+    default Object getObject(String name){
+        return getObject();
+    }
+
     void setObject(Object object);
 
     default boolean matches(String name){

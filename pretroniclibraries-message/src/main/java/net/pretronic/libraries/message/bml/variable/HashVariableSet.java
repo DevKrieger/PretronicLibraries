@@ -40,7 +40,7 @@ public class HashVariableSet extends HashSet<Variable> implements VariableSet{
     @Override
     public Variable get(String name) {
         for (Variable variable : this){
-            if(variable.getName().equalsIgnoreCase(name)) return variable;
+            if(variable.matches(name)) return variable;
         }
         return null;
     }
@@ -58,7 +58,7 @@ public class HashVariableSet extends HashSet<Variable> implements VariableSet{
     @Override
     public Object getValue(String name) {
         Variable variable = get(name);
-        return variable != null ? variable.getObject() : null;
+        return variable != null ? variable.getObject(name) : null;
     }
 
     @Override

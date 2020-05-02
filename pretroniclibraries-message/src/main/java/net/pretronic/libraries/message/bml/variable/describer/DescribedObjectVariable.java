@@ -25,12 +25,10 @@ import net.pretronic.libraries.message.bml.variable.Variable;
 public class DescribedObjectVariable implements Variable {
 
     private final String name;
-    private final String[] parts;
     private Object object;
 
     public DescribedObjectVariable(String name, Object object) {
         this.name = name;
-        this.parts = name.split("\\.");
         this.object = object;
     }
 
@@ -41,7 +39,13 @@ public class DescribedObjectVariable implements Variable {
 
     @Override
     public Object getObject() {
-        if(parts.length > 1){
+        return object;
+    }
+
+    @Override
+    public Object getObject(String name) {
+        String[] parts = name.split("\\.");
+        if(parts.length > 0){
             Object result =  VariableDescriber.get(object,parts,1);
             if(result instanceof VariableObjectToString) return ((VariableObjectToString) result).toStringVariable();
             return result;
@@ -58,8 +62,11 @@ public class DescribedObjectVariable implements Variable {
     public boolean matches(String name) {
         if(this.name.equalsIgnoreCase(name)) return true;
         else{
-            String[] input = name.split("\\.");
-            return input[0].equalsIgnoreCase(parts[0]);
+            int matchIndex = name.indexOf('.');
+            if(matchIndex > 0){
+                return this.name.equalsIgnoreCase(name.substring(0,matchIndex));
+            }
         }
+        return false;
     }
 }
