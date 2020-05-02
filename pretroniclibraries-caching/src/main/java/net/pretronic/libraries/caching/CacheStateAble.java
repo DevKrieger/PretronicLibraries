@@ -22,7 +22,7 @@ package net.pretronic.libraries.caching;
 /**
  * A {@link CacheStateAble} object shows his caching state. In some application it is required
  * to reload objects which are no longer in the cache.
- * @param <T>
+ * @param <T> The item type
  */
 public interface CacheStateAble<T> {
 
@@ -34,7 +34,10 @@ public interface CacheStateAble<T> {
     boolean isCached();
 
     /**
-    Define if the object is cached.
+     *  Define if the object is cached.
+     *
+     * @param cached If the object is cached
+     * @return  If the object is cached
      */
     boolean setCached(boolean cached);
 

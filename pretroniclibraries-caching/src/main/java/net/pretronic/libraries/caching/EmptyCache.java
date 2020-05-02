@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 
 /**
  * This implementation represents an always empty cache.
- * @param <O>
+ * @param <O> The item type
  */
 public class EmptyCache<O> implements Cache<O> {
 

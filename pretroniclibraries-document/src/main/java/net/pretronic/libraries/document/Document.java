@@ -137,7 +137,7 @@ public interface Document extends DocumentNode, DocumentEntry {
     Iterable<DocumentEntry> iterate(String key);
 
     /**
-     * Sort the entries of a nested entry with a @{@link Comparator<DocumentEntry>}
+     * Sort the entries of a nested entry with a @{@link Comparator}
      *
      * @param key The key of the sub entry
      * @param sorter The comparator to sort
@@ -180,7 +180,7 @@ public interface Document extends DocumentNode, DocumentEntry {
     Stream<DocumentEntry> stream();
 
     /**
-     * Sor the entries of the current document with a @Comparator<DocumentEntry>
+     * Sor the entries of the current document with a @{@link Comparator}
      *
      * @return The current document
      */
