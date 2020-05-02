@@ -20,9 +20,9 @@
 package net.pretronic.libraries.synchronisation.map;
 
 import net.pretronic.libraries.document.Document;
-import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.synchronisation.SynchronisationCaller;
 import net.pretronic.libraries.synchronisation.Synchronizable;
+import net.pretronic.libraries.utility.Validate;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

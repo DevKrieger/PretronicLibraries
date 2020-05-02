@@ -21,9 +21,9 @@
 package net.pretronic.libraries.message.bml.variable.describer;
 
 import net.pretronic.libraries.utility.Validate;
+import net.pretronic.libraries.utility.exception.OperationFailedException;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveHashMap;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveMap;
-import net.pretronic.libraries.utility.reflect.ReflectException;
 import net.pretronic.libraries.utility.reflect.ReflectionUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +37,8 @@ public class VariableDescriber<T> {
     private final CaseIntensiveMap<Function<T,?>> functions;
     private final CaseIntensiveMap<BiFunction<T,String,?>> parameterFunctions;
 
+    private Function<T,?> forwardFunction;
+
     public VariableDescriber() {
         this.functions = new CaseIntensiveHashMap<>();
         this.parameterFunctions = new CaseIntensiveHashMap<>();
@@ -48,6 +50,14 @@ public class VariableDescriber<T> {
 
     public CaseIntensiveMap<BiFunction<T, String, ?>> getParameterFunctions() {
         return parameterFunctions;
+    }
+
+    public Function<T, ?> getForwardFunction() {
+        return forwardFunction;
+    }
+
+    public void setForwardFunction(Function<T, ?> forwardFunction) {
+        this.forwardFunction = forwardFunction;
     }
 
     public void registerGetter(String name, Class<?> clazz){
@@ -67,7 +77,7 @@ public class VariableDescriber<T> {
             try {
                 return method.invoke(method.getDeclaringClass().cast(value));
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new ReflectException(e);
+                throw new OperationFailedException("Could not invoke describer method "+method.getName()+" with key "+key,e);
             }
         });
     }
@@ -102,10 +112,10 @@ public class VariableDescriber<T> {
 
     public static void of(VariableDescriber<?> describer,Class<?> clazz, boolean superClass){
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
-            if(!Modifier.isStatic(declaredMethod.getModifiers()) && Modifier.isPublic(declaredMethod.getModifiers())){
-                if(declaredMethod.getName().startsWith("get")){
-                    describer.registerMethod(declaredMethod.getName().substring(3),declaredMethod);
-                }
+            if(!Modifier.isStatic(declaredMethod.getModifiers())
+                    && Modifier.isPublic(declaredMethod.getModifiers())
+                    && declaredMethod.getName().startsWith("get")){
+                describer.registerMethod(declaredMethod.getName().substring(3),declaredMethod);
             }
         }
         if(superClass){
@@ -132,6 +142,10 @@ public class VariableDescriber<T> {
                     BiFunction parameterFunction = describer.getParameterFunctions().get(part);
                     if(parameterFunction != null){
                         current = parameterFunction.apply(current,i < parts.length-1 ? parts[++i] : null);
+                    }else if(i == index && describer.getForwardFunction() != null){
+                        Function result = describer.getForwardFunction();
+                        current = result.apply(current);
+                        return get(current,parts,index);
                     }
                 }
             }else throw new IllegalArgumentException("No variable describer for "+current.getClass()+" found");

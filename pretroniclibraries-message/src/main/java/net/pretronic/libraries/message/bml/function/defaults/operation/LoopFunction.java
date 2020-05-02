@@ -23,6 +23,7 @@ package net.pretronic.libraries.message.bml.function.defaults.operation;
 import net.pretronic.libraries.message.bml.Module;
 import net.pretronic.libraries.message.bml.builder.BuildContext;
 import net.pretronic.libraries.message.bml.function.Function;
+import net.pretronic.libraries.message.bml.variable.ObjectVariable;
 import net.pretronic.libraries.message.bml.variable.Variable;
 import net.pretronic.libraries.utility.GeneralUtil;
 
@@ -55,7 +56,7 @@ public class LoopFunction implements Function {
             String var = leftOperator.build(context,true).toString();
             Variable indexVar = context.getVariables().getOrCreate("index");
             Variable positionVar = context.getVariables().getOrCreate("position");
-            Variable objectVar = context.getVariables().getOrCreate(var);
+            Variable objectVar = context.getVariables().getOrCreateDescribed(var);
             String separator = null;
             if(parameters.length > 1){
                 separator = parameters[1].build(context,true).toString();

@@ -27,7 +27,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 
 /**
  * The resource loader manages the installation of an application.
@@ -248,6 +247,10 @@ public class ResourceLoader {
         connection.setReadTimeout(3000);
         connection.setInstanceFollowRedirects(true);
         if(info.getAuthenticator() != null) info.getAuthenticator().invokeAuthentication(connection);
+        connection.connect();
+        if(connection.getResponseCode() != 200){
+            throw new IllegalArgumentException(connection.getResponseCode()+" | "+readFirstLine(connection.getErrorStream()));
+        }
         return connection.getInputStream();
     }
 

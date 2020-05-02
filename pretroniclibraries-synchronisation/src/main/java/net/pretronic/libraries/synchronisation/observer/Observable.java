@@ -25,6 +25,8 @@ public interface Observable<O extends Observable<O,T>,T> {
 
     List<ObserveCallback<O,T>> getObservers();
 
+    boolean isObserverSubscribed(ObserveCallback<O,T> callback);
+
     void subscribeObserver(ObserveCallback<O,T> callback);
 
     void unsubscribeObserver(ObserveCallback<O,T> callback);

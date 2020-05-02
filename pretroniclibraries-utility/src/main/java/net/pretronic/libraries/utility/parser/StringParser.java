@@ -134,17 +134,23 @@ public class StringParser {
         return hasLine(this.lineIndex);
     }
 
+    public boolean hasPreviousChar(){
+        return hasChar(lineIndex,charIndex-1) || hasLine(lineIndex-1);
+    }
+
+
     @Deprecated
     public boolean has(int lineIndex, int charIndex){
         return hasChar(lineIndex,charIndex) || hasLine(lineIndex);
     }
 
     public boolean hasChar(int lineIndex,int charIndex){
-        return lineIndex >= 0 && lines.length>lineIndex && lines[lineIndex].length > charIndex;
+        if(lineIndex < 0 || charIndex < 0) return false;
+        return lines.length>lineIndex && lines[lineIndex].length > charIndex;
     }
 
     public boolean hasLine(int lineIndex){
-        return lines.length>lineIndex;
+        return lineIndex >= 0 && lines.length>lineIndex;
     }
 
     public boolean isEmpty(){

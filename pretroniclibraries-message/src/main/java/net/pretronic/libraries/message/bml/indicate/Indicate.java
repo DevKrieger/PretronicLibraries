@@ -42,7 +42,7 @@ public class Indicate {
 
     private final MessageBuilderFactory factory;
 
-    public Indicate(char prefix, char start, char end, char parameter, char extensionStart, char extensionEnd
+    protected Indicate(char prefix, char start, char end, char parameter, char extensionStart, char extensionEnd
             , boolean hasPrefix, boolean hasName, boolean hasParameters, boolean hasExtension, boolean hasOperation
             , boolean isSubIndicateAble, boolean isExtensionSubIndicateAble, MessageBuilderFactory factory) {
         this.prefix = prefix;

@@ -43,10 +43,20 @@ public interface ParserState {
 
     static boolean checkNextIndicate(MessageProcessor processor, MessageParser parser, char current, boolean push){
         Indicate indicate = processor.getIndicate(current);
-        parser.getParser().previousChar();
-        char previous = parser.getParser().currentChar();
-        parser.getParser().nextChar();
-        if(indicate != null && previous != processor.getEscapeCharacter()) {
+        if(indicate != null) {
+            char previous = (int)255;
+            if(parser.getParser().hasPreviousChar()){
+                parser.getParser().previousChar();
+                previous = parser.getParser().currentChar();
+                parser.getParser().nextChar();
+            }
+
+            if(previous == processor.getEscapeCharacter()){
+                parser.extractStringAndPush(-1);
+                parser.mark();
+                return false;
+            }
+
             if (indicate.hasPrefix()) {
                 if (indicate.hasName()) {
                     if(push) parser.extractStringAndPush();
@@ -108,11 +118,9 @@ public interface ParserState {
                 if(nextState != null) parser.getSequence().getParent().setState(nextState);
             }else {
                 Indicate indicate = processor.getIndicate(current);
-                if(indicate != null) {
-                    if(checkNextIndicate(processor,parser,current,push)){
-                        if(nextState != null) parser.getSequence().getParent().setState(nextState);
-                        return;
-                    }
+                if(indicate != null && checkNextIndicate(processor,parser,current,push)) {
+                    if(nextState != null) parser.getSequence().getParent().setState(nextState);
+                    return;
                 }
                 parser.getParser().throwException("Invalid character");
             }

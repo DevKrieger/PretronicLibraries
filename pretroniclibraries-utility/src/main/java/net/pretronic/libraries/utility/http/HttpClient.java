@@ -19,6 +19,7 @@
 
 package net.pretronic.libraries.utility.http;
 
+import net.pretronic.libraries.utility.exception.OperationFailedException;
 import net.pretronic.libraries.utility.io.FileUtil;
 import net.pretronic.libraries.utility.io.IORuntimeException;
 
@@ -53,7 +54,8 @@ public class HttpClient {
 
     private URL url;
     private int timeOut;
-    private String requestMethod, content;
+    private String requestMethod;
+    private String content;
     private boolean saveCookies;
     private String tlsVersion;
 
@@ -214,7 +216,7 @@ public class HttpClient {
         } catch (IOException exception) {
             throw new IORuntimeException(exception);
         } catch (NoSuchAlgorithmException | KeyManagementException exception) {
-            throw new RuntimeException(exception);
+            throw new OperationFailedException(exception);
         }
     }
 

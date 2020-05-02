@@ -40,7 +40,7 @@ import java.lang.reflect.*;
 public class DefaultPluginLoader implements PluginLoader {
 
     private final PluginManager pluginManager;
-    private final RuntimeEnvironment environment;
+    private final RuntimeEnvironment<?> environment;
     private final PretronicLogger logger;
     private final PluginClassLoader classLoader;
     private final String descriptionName;
@@ -51,20 +51,20 @@ public class DefaultPluginLoader implements PluginLoader {
 
     private final LifecycleState defaultState;
 
-    private Plugin instance;
+    private Plugin<?> instance;
     private boolean enabled;
 
-    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, PretronicLogger logger
+    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment<?> environment, PretronicLogger logger
             , PluginClassLoader classLoader, String descriptionName, File location,boolean lifecycleLogging) {
         this(pluginManager,environment,logger,classLoader,descriptionName,location,null,lifecycleLogging);
     }
 
-    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, PretronicLogger logger
+    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment<?> environment, PretronicLogger logger
             , PluginClassLoader classLoader,  File location, PluginDescription description,boolean lifecycleLogging) {
         this(pluginManager,environment,logger,classLoader,null,location,description,lifecycleLogging);
     }
 
-    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment environment, PretronicLogger logger
+    public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment<?> environment, PretronicLogger logger
             , PluginClassLoader classLoader, String descriptionName, File location, PluginDescription description,boolean lifecycleLogging) {
         this.pluginManager = pluginManager;
         this.environment = environment;
@@ -76,7 +76,7 @@ public class DefaultPluginLoader implements PluginLoader {
 
         this.description = description!=null?description:loadDescription();
 
-        this.defaultState = new LifecycleState<>(this.description,this,this.environment);
+        this.defaultState = new LifecycleState(this.description,this);
     }
 
     @Override
@@ -138,8 +138,8 @@ public class DefaultPluginLoader implements PluginLoader {
                 try{
                     method.invoke(instance,(method.getParameterTypes()[0]).cast(stateEvent));
                 }catch (Exception exception) {
-                    pluginManager.getLogger().error("Could not execute lifecycle state {} for plugin {}",state,description.getName());
                     exception.printStackTrace();
+                    pluginManager.getLogger().error("Could not execute lifecycle state {} for plugin {}",state,description.getName());
                 }
             }
         }
@@ -147,13 +147,13 @@ public class DefaultPluginLoader implements PluginLoader {
     }
 
     @Override
-    public Plugin getInstance() {
+    public Plugin<?> getInstance() {
         if(!isInstanceAvailable()) throw new PluginLoadException("No plugin instance available.");
         return instance;
     }
 
     @Override
-    public Plugin enable() {
+    public Plugin<?> enable() {
         construct();
         initialize();
         load();
@@ -168,7 +168,7 @@ public class DefaultPluginLoader implements PluginLoader {
     }
 
     @Override
-    public Plugin construct() {
+    public Plugin<?> construct() {
         if(isInstanceAvailable()) throw new PluginLoadException("Plugin is already constructed.");
         try{
             Class<? extends Plugin> mainClass = loadMainClass();

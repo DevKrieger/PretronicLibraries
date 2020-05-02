@@ -22,7 +22,8 @@ package net.pretronic.libraries.console;
 public class Cursor {
 
     public final PConsole console;
-    public int top, left;
+    public int top;
+    public int left;
 
     public Cursor(PConsole console) {
         this.console = console;

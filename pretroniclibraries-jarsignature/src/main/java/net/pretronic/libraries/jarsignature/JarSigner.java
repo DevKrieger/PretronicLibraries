@@ -33,7 +33,8 @@ public class JarSigner {
 
     private final File jarFile;
     private final String name;
-    private final String privateKey, publicKey;
+    private final String privateKey;
+    private final String publicKey;
 
     private Certificate certificate;
 

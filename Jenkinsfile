@@ -160,7 +160,6 @@ pipeline {
                             
                             cd PretronicLibraries/
                             mvn versions:set -DgenerateBackupPoms=false -DnewVersion=$version
-
                             git add . -v
                             git commit -m '$commitMessage' -v
                             git push origin HEAD:development -v
@@ -175,4 +174,3 @@ pipeline {
         }
     }
 }
-

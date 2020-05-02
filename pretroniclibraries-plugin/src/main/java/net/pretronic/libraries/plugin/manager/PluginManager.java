@@ -37,11 +37,11 @@ public interface PluginManager extends ServiceRegistry,ShutdownAble {
 
     PretronicLogger getLogger();
 
-    Collection<Plugin> getPlugins();
+    Collection<Plugin<?>> getPlugins();
 
-    Plugin getPlugin(String name);
+    Plugin<?> getPlugin(String name);
 
-    Plugin getPlugin(UUID id);
+    Plugin<?> getPlugin(UUID id);
 
     boolean isPluginEnabled(String name);
 
@@ -60,13 +60,13 @@ public interface PluginManager extends ServiceRegistry,ShutdownAble {
     Collection<PluginDescription> detectPluginDescriptions(File directory);
 
 
-    void setLifecycleStateListener(String state, BiConsumer<Plugin, LifecycleState> listener);
+    void setLifecycleStateListener(String state, BiConsumer<Plugin<?>, LifecycleState> listener);
 
     @Internal
-    void executeLifecycleStateListener(String state,LifecycleState stateEvent, Plugin plugin);
+    void executeLifecycleStateListener(String state,LifecycleState stateEvent, Plugin<?> plugin);
 
 
-    Collection<Plugin> enablePlugins(File directory);
+    Collection<Plugin<?>> enablePlugins(File directory);
 
 
     void disablePlugins();

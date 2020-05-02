@@ -22,7 +22,6 @@ package net.pretronic.libraries.message;
 
 import net.pretronic.libraries.document.Document;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

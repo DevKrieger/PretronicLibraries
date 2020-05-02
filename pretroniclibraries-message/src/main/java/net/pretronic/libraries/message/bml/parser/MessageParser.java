@@ -27,8 +27,8 @@ import net.pretronic.libraries.message.bml.builder.MessageBuilder;
 import net.pretronic.libraries.message.bml.indicate.Indicate;
 import net.pretronic.libraries.utility.parser.StringParser;
 
+import java.util.Collection;
 
-//@if(test in test;test,${test})
 public class MessageParser {
 
     private final MessageProcessor processor;

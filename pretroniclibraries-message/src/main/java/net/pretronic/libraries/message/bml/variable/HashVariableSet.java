@@ -20,6 +20,8 @@
 
 package net.pretronic.libraries.message.bml.variable;
 
+import net.pretronic.libraries.message.bml.variable.describer.DescribedObjectVariable;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +41,9 @@ public class HashVariableSet extends HashSet<Variable> implements VariableSet{
 
     @Override
     public Variable get(String name) {
-        for (Variable variable : this) if(variable.getName().equalsIgnoreCase(name)) return variable;
+        for (Variable variable : this){
+            if(variable.matches(name)) return variable;
+        }
         return null;
     }
 
@@ -47,7 +51,17 @@ public class HashVariableSet extends HashSet<Variable> implements VariableSet{
     public Variable getOrCreate(String name) {
         Variable variable = get(name);
         if(variable == null){
-            variable = new Variable(name,null);
+            variable = new ObjectVariable(name,null);
+            add(variable);
+        }
+        return variable;
+    }
+
+    @Override
+    public Variable getOrCreateDescribed(String name) {
+        Variable variable = get(name);
+        if(variable == null){
+            variable = new DescribedObjectVariable(name,null);
             add(variable);
         }
         return variable;
@@ -56,13 +70,7 @@ public class HashVariableSet extends HashSet<Variable> implements VariableSet{
     @Override
     public Object getValue(String name) {
         Variable variable = get(name);
-        return variable != null ? variable.getObject() : null;
-    }
-
-    @Override
-    public VariableSet add(String name, Object source) {
-        super.add(new Variable(name,source));
-        return this;
+        return variable != null ? variable.getObject(name) : null;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class Convert {
      * @return The input object as string
      */
     public static String toString(Object input){
-        return input.toString();
+        return input != null ? input.toString() : null;
     }
 
     /**
@@ -75,12 +75,15 @@ public class Convert {
         else if(input instanceof Float) return (Float) input == 1;
         else if(input instanceof Byte) return (Byte) input == 1;
         else if(input instanceof Number) return ((Number) input).intValue() == 1;
-        else if(input.toString().equalsIgnoreCase("true")) return true;
-        else if(input.toString().equalsIgnoreCase("false")) return false;
-        else if(input.toString().equalsIgnoreCase("on")) return true;
-        else if(input.toString().equalsIgnoreCase("off")) return false;
-        else if(input.toString().equalsIgnoreCase("enabled")) return true;
-        else if(input.toString().equalsIgnoreCase("disabled")) return false;
+        else{
+            String textInput = input.toString().trim();
+            if(textInput.equalsIgnoreCase("true")) return true;
+            else if(textInput.equalsIgnoreCase("false")) return false;
+            else if(textInput.equalsIgnoreCase("on")) return true;
+            else if(textInput.equalsIgnoreCase("off")) return false;
+            else if(textInput.equalsIgnoreCase("enabled")) return true;
+            else if(textInput.equalsIgnoreCase("disabled")) return false;
+        }
         throw new IllegalArgumentException("Can not be converted to character " + input);
     }
 

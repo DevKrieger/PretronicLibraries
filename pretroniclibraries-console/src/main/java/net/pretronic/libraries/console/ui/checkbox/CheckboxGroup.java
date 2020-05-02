@@ -19,10 +19,6 @@
 
 package net.pretronic.libraries.console.ui.checkbox;
 
-import java.util.List;
-
 public class CheckboxGroup {
-
-    private List<Checkbox> checkboxes;
 
 }

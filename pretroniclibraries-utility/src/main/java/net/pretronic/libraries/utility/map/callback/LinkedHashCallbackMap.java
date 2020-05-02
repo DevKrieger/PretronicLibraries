@@ -27,7 +27,8 @@ import java.util.function.Function;
 
 public class LinkedHashCallbackMap<K,V> extends LinkedHashMap<K,V> implements CallbackMap<K,V>{
 
-    private BiConsumer<K, V> putCallback, removeCallback;
+    private BiConsumer<K, V> putCallback;
+    private BiConsumer<K, V> removeCallback;
 
     public LinkedHashCallbackMap(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);

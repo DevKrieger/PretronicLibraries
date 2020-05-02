@@ -194,7 +194,7 @@ public interface ParserState {
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
             ParserState state = sequence.getNextSequence().getCurrentState();
-            if(state == DOCUMENT_FINISHED){
+            if(state.equals(DOCUMENT_FINISHED)){
                 sequence.pushEntry(sequence.getNextSequence().getSequenceEntry());
                 parser.previousChar();
                 sequence.setCurrentState(DOCUMENT_NEXT_PAIR);

@@ -35,7 +35,8 @@ import java.util.jar.JarFile;
 public class JarVerifier {
 
     private final CertificateAuthorityGroup authorityGroup;
-    private final String publicKey, signature;
+    private final String publicKey;
+    private final String signature;
     private final Certificate certificate;
 
     private CertificateValidity validity;

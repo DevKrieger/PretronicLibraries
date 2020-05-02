@@ -21,7 +21,6 @@ package net.pretronic.libraries.document.type.xml;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.io.DocumentReader;
-import net.pretronic.libraries.document.type.yaml.YamlDocumentReader;
 import net.pretronic.libraries.utility.parser.StringParser;
 
 /**

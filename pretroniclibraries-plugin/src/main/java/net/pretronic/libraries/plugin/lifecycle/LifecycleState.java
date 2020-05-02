@@ -19,12 +19,10 @@
 
 package net.pretronic.libraries.plugin.lifecycle;
 
-import net.pretronic.libraries.plugin.RuntimeEnvironment;
 import net.pretronic.libraries.plugin.description.PluginDescription;
 import net.pretronic.libraries.plugin.loader.PluginLoader;
 
-public class LifecycleState<R> {
-
+public class LifecycleState {
 
     public static final String CONSTRUCTION = "CONSTRUCTION";
 
@@ -42,12 +40,10 @@ public class LifecycleState<R> {
 
     private final PluginDescription description;
     private final PluginLoader loader;
-    private final RuntimeEnvironment<R> environment;
 
-    public LifecycleState(PluginDescription description, PluginLoader loader, RuntimeEnvironment<R> environment) {
+    public LifecycleState(PluginDescription description, PluginLoader loader) {
         this.description = description;
         this.loader = loader;
-        this.environment = environment;
     }
 
     public PluginDescription getDescription() {
@@ -56,15 +52,6 @@ public class LifecycleState<R> {
 
     public PluginLoader getLoader() {
         return loader;
-    }
-
-    public RuntimeEnvironment<R> getEnvironment() {
-        return environment;
-    }
-
-
-    public R getRuntime(){
-        return this.environment.getInstance();
     }
 
     public <T> T getService(Class<T> serviceClass){

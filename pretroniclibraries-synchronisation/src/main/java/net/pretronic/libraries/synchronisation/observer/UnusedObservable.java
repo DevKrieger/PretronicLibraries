@@ -2,8 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 03.04.20, 22:10
- * @web %web%
+ * @since 11.03.20, 18:46
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +17,30 @@
  * under the License.
  */
 
-package net.pretronic.libraries.message.bml.variable.reflect;
+package net.pretronic.libraries.synchronisation.observer;
 
-@Deprecated
-public interface ReflectVariableObjectToString {
+import java.util.Collections;
+import java.util.List;
 
-    String toStringVariable();
+public class UnusedObservable<O extends Observable<O,T>,T> implements Observable<O,T>{
 
+    @Override
+    public List<ObserveCallback<O,T>> getObservers() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isObserverSubscribed(ObserveCallback<O, T> callback) {
+        return false;//Unused without error
+    }
+
+    @Override
+    public void subscribeObserver(ObserveCallback<O, T> callback) {
+        //Unused without error
+    }
+
+    @Override
+    public void unsubscribeObserver(ObserveCallback<O, T> callback) {
+        //Unused without error
+    }
 }

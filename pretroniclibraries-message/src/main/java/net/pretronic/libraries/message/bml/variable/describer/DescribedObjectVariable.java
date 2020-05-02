@@ -2,7 +2,7 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 07.04.20, 18:39
+ * @since 21.03.20, 17:04
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -20,39 +20,53 @@
 
 package net.pretronic.libraries.message.bml.variable.describer;
 
-import net.pretronic.libraries.message.bml.variable.HashVariableSet;
-import net.pretronic.libraries.message.bml.variable.ObjectVariable;
 import net.pretronic.libraries.message.bml.variable.Variable;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
 
-@Deprecated
-public class DescribedHashVariableSet extends HashVariableSet {
+public class DescribedObjectVariable implements Variable {
 
-    @Override
-    public VariableSet addDescribed(String name, Object source){
-        add(new ObjectVariable(name,source));
-        return this;
+    private final String name;
+    private Object object;
+
+    public DescribedObjectVariable(String name, Object object) {
+        this.name = name;
+        this.object = object;
     }
 
     @Override
-    public Object getValue(String name) {
-        Variable variable = get(name);
+    public String getName() {
+        return name;
+    }
 
-        if(variable != null){
-            Object result =  variable.getObject();
+    @Override
+    public Object getObject() {
+        return object;
+    }
+
+    @Override
+    public Object getObject(String name) {
+        String[] parts = name.split("\\.");
+        if(parts.length > 0){
+            Object result =  VariableDescriber.get(object,parts,1);
             if(result instanceof VariableObjectToString) return ((VariableObjectToString) result).toStringVariable();
             return result;
         }
+        return object;
+    }
 
-        String[] parts = name.split("\\.");
-        if(parts.length > 1){
-            variable = get(parts[0]);
-            if(variable != null){
-                Object result =  VariableDescriber.get(variable.getObject(),parts,1);
-                if(result instanceof VariableObjectToString) return ((VariableObjectToString) result).toStringVariable();
-                return result;
+    @Override
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
+    @Override
+    public boolean matches(String name) {
+        if(this.name.equalsIgnoreCase(name)) return true;
+        else{
+            int matchIndex = name.indexOf('.');
+            if(matchIndex > 0){
+                return this.name.equalsIgnoreCase(name.substring(0,matchIndex));
             }
         }
-        return null;
+        return false;
     }
 }

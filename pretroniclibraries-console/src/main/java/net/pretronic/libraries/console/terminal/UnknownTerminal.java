@@ -25,8 +25,10 @@ public class UnknownTerminal implements Terminal{
 
     public static final int DEFAULT_HEIGHT = 30;
 
-    public boolean available, ansiSupported;
-    public int width, height;
+    private boolean available;
+    private boolean ansiSupported;
+    private int width;
+    private int height;
 
     public UnknownTerminal() {
         this(false,false);

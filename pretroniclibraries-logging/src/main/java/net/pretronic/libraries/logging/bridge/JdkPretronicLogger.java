@@ -27,7 +27,10 @@ import net.pretronic.libraries.logging.handler.LogHandler;
 import net.pretronic.libraries.logging.level.DebugLevel;
 import net.pretronic.libraries.logging.level.LogLevel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Handler;
 import java.util.logging.Level;
