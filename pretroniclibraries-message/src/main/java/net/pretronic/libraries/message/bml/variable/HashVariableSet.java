@@ -20,6 +20,8 @@
 
 package net.pretronic.libraries.message.bml.variable;
 
+import net.pretronic.libraries.message.bml.variable.describer.DescribedObjectVariable;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,6 +52,16 @@ public class HashVariableSet extends HashSet<Variable> implements VariableSet{
         Variable variable = get(name);
         if(variable == null){
             variable = new ObjectVariable(name,null);
+            add(variable);
+        }
+        return variable;
+    }
+
+    @Override
+    public Variable getOrCreateDescribed(String name) {
+        Variable variable = get(name);
+        if(variable == null){
+            variable = new DescribedObjectVariable(name,null);
             add(variable);
         }
         return variable;

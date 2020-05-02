@@ -35,6 +35,8 @@ public interface VariableSet extends Set<Variable> {
 
     Variable getOrCreate(String name);
 
+    Variable getOrCreateDescribed(String name);
+
     Object getValue(String name);
 
     default VariableSet add(String name, Object source){

@@ -48,6 +48,11 @@ public class EmptyVariableSet implements VariableSet{
     }
 
     @Override
+    public Variable getOrCreateDescribed(String name) {
+        return null;//Unused
+    }
+
+    @Override
     public String getValue(String name) {
         return null;
     }
