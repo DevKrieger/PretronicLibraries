@@ -34,6 +34,8 @@ public final class VariableDescriberRegistry {
         DESCRIBERS.put(clazz,describer);
     }
 
+
+
     public static <T> VariableDescriber<T> registerDescriber(Class<T> clazz){
         Validate.notNull(clazz);
         VariableDescriber<T> describer = VariableDescriber.ofSuper(clazz);
