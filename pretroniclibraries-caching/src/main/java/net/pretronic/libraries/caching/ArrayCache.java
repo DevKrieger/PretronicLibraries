@@ -141,7 +141,8 @@ public class ArrayCache<O> implements Cache<O>{
                 return (O) entry.value;
             }
         }
-        O value = query.load(identifiers);
+        O value = callInternalLoad(query,identifiers);
+        if(value == null) value = query.load(identifiers);
         if(value!= null) insert(value);
         return value;
     }
@@ -164,12 +165,10 @@ public class ArrayCache<O> implements Cache<O>{
                 return (O) entry.value;
             }
         }
-        if(loader != null){
-            O value = loader.get();
-            if(value!= null) insert(value);
-            return value;
-        }
-        return null;
+        O value = callInternalLoad(query);
+        if(loader != null && value == null) value = loader.get();
+        if(value!= null) insert(value);
+        return value;
     }
 
     @Override
@@ -219,7 +218,7 @@ public class ArrayCache<O> implements Cache<O>{
         Objects.requireNonNull(identifiers,"Identifiers are null");
         CacheQuery<O> query = queries.get(queryName.toLowerCase());
         if(query == null) throw new IllegalArgumentException(queryName+" not found.");
-        return get(query,identifiers);
+        return remove(query,identifiers);
     }
 
     @SuppressWarnings("unchecked")
@@ -228,6 +227,7 @@ public class ArrayCache<O> implements Cache<O>{
         query.validate(identifiers);
         for(int i = 0; i < size; i++) {
             O value = (O)this.entries[i].value;
+            callInternalRemove(value);
             if(query.check(value,identifiers)){
                 move(i);
                 this.entries[size--] = null;
@@ -244,6 +244,7 @@ public class ArrayCache<O> implements Cache<O>{
         for(int i = 0; i < size; i++) {
             O value = (O)this.entries[i].value;
             if(query.test(value)){
+                callInternalRemove(value);
                 move(i);
                 this.entries[size--] = null;
                 return value;
@@ -252,11 +253,13 @@ public class ArrayCache<O> implements Cache<O>{
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean remove(Object value) {
         Objects.requireNonNull(value,"Object is null");
         for(int i = 0; i < size; i++) {
             if(this.entries[i].value.equals(value)){
+                callInternalRemove((O) this.entries[i].value);
                 move(i);
                 this.entries[size--] = null;
                 return true;
@@ -397,6 +400,20 @@ public class ArrayCache<O> implements Cache<O>{
         return Executors.newCachedThreadPool();
     }
 
+    protected void callInternalRemove(O object){
+        /*Unused, required for abstract implementation */
+    }
+
+    protected O callInternalLoad(CacheQuery<O> query, Object[] identifiers){
+        /*Unused, required for abstract implementation */
+        return null;
+    }
+
+    protected O callInternalLoad(Predicate<O> query){
+        /*Unused, required for abstract implementation */
+        return null;
+    }
+
     private static class CacheEntry {
 
         private long entered;
@@ -442,6 +459,7 @@ public class ArrayCache<O> implements Cache<O>{
                                 canceled = removeListener.test((O) entry.value);
                             }
                             if(!canceled) {
+                                callInternalRemove((O) entry.value);
                                 move(i);
                                 size--;
                                 entries[size] = null;
