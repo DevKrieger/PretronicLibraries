@@ -27,7 +27,11 @@ public class AbstractObservable<O extends Observable<O,T>,T> implements Observab
     private final List<ObserveCallback<O, T>> callbacks;
 
     protected AbstractObservable() {
-        callbacks = new ArrayList<>();
+        this(new ArrayList<>());
+    }
+
+    protected AbstractObservable(List<ObserveCallback<O, T>> callbacks) {
+        this.callbacks = callbacks;
     }
 
     @Override
