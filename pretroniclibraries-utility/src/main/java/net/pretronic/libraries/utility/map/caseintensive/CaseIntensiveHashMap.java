@@ -19,6 +19,8 @@
 
 package net.pretronic.libraries.utility.map.caseintensive;
 
+import net.pretronic.libraries.utility.Validate;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -46,6 +48,7 @@ public class CaseIntensiveHashMap<V> extends HashMap<String,V> implements CaseIn
 
     @Override
     public void putAll(Map<? extends String, ? extends V> m) {
+        Validate.notNull(m);
         m.forEach((BiConsumer<String, V>) (s, v) -> put(s.toLowerCase(),v));
     }
 
