@@ -43,8 +43,9 @@ public class WeakReferenceList<E> implements List<E> {
             int count = 0;
             WeakNode<E> position = first;
             while (position != null){
-                if(position.get() == null) connect(position.previous,position.next);
-                else count++;
+                if(position.get() == null){
+                    connect(position.previous,position.next);
+                }else count++;
                 position = position.next;
             }
             return count;
@@ -264,8 +265,8 @@ public class WeakReferenceList<E> implements List<E> {
             last = previous;
             last.next = null;
         }else{
-            previous.next = previous;
-            next.previous = next;
+            previous.next = next;
+            next.previous = previous;
         }
     }
 
@@ -347,6 +348,7 @@ public class WeakReferenceList<E> implements List<E> {
 
         private void findNext(){
             while (position != null){
+                System.out.println("Finding next in reference");
                 index = 0;
                 E next = position.get();
                 if(next == null){

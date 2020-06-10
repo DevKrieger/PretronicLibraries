@@ -241,12 +241,14 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public O remove(Predicate<O> query) {
         Objects.requireNonNull(query,"Query is null");
+        int size = this.size;
         for(int i = 0; i < size; i++) {
             O value = (O)this.entries[i].value;
             if(query.test(value)){
                 callInternalRemove(value);
                 move(i);
-                this.entries[size--] = null;
+                this.size--;
+                this.entries[size-1] = null;
                 return value;
             }
         }
@@ -257,11 +259,13 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public boolean remove(Object value) {
         Objects.requireNonNull(value,"Object is null");
+        int size = this.size;
         for(int i = 0; i < size; i++) {
             if(this.entries[i].value.equals(value)){
                 callInternalRemove((O) this.entries[i].value);
                 move(i);
-                this.entries[size--] = null;
+                this.size--;
+                this.entries[size-1] = null;
                 return true;
             }
         }
