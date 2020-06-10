@@ -76,7 +76,7 @@ public class VariableDescriber<T> {
         registerFunction(key, value -> {
             try {
                 return method.invoke(method.getDeclaringClass().cast(value));
-            } catch (IllegalAccessException | InvocationTargetException e) {
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 throw new OperationFailedException("Could not invoke describer method "+method.getName()+" with key "+key,e);
             }
         });
