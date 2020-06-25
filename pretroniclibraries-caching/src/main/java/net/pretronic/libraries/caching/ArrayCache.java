@@ -455,7 +455,7 @@ public class ArrayCache<O> implements Cache<O>{
                     Thread.sleep(TASK_SLEEP_TIME);
                     for(int i = 0; i < size; i++) {
                         CacheEntry entry = entries[i];
-                        if((expireTimeAfterAccess > 0 && entry.lastUsed+expireTime <= System.currentTimeMillis())
+                        if((expireTimeAfterAccess > 0 && entry.lastUsed+expireTimeAfterAccess <= System.currentTimeMillis())
                                 || (expireTime > 0 && entry.entered+expireTime <= System.currentTimeMillis())
                                 || (refreshTime > 0 && entry.entered+refreshTime <= System.currentTimeMillis())){
                             boolean canceled = false;
