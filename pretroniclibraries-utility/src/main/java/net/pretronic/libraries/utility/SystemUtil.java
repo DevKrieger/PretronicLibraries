@@ -20,6 +20,7 @@
 package net.pretronic.libraries.utility;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public final class SystemUtil {
@@ -33,16 +34,16 @@ public final class SystemUtil {
         }catch (Exception ignored){}
     }
 
-    public static void sleepUntil(Supplier<Boolean> finished){
-        while(!finished.get()){
+    public static void sleepUntil(BooleanSupplier finished){
+        while(!finished.getAsBoolean()){
             try {
                 Thread.sleep(0,250000);
             } catch (InterruptedException ignored) {}
         }
     }
 
-    public static void sleepAsLong(Supplier<Boolean> finished){
-        while(finished.get()){
+    public static void sleepAsLong(BooleanSupplier finished){
+        while(finished.getAsBoolean()){
             try { Thread.sleep(0,250000);
             } catch (InterruptedException ignored) {}
         }

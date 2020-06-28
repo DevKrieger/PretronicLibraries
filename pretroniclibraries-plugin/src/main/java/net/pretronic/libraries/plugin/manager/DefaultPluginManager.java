@@ -19,6 +19,7 @@
 
 package net.pretronic.libraries.plugin.manager;
 
+import com.sun.org.apache.bcel.internal.generic.BALOAD;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.libraries.logging.PretronicLoggerFactory;
@@ -34,8 +35,10 @@ import net.pretronic.libraries.plugin.loader.DefaultPluginLoader;
 import net.pretronic.libraries.plugin.loader.PluginLoader;
 import net.pretronic.libraries.plugin.loader.classloader.URLPluginClassLoader;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
+import net.pretronic.libraries.utility.interfaces.OwnerUnregisterAble;
 import net.pretronic.libraries.utility.io.archive.ZipArchive;
 
 import java.io.File;
@@ -44,7 +47,7 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-public final class DefaultPluginManager implements PluginManager{
+public final class DefaultPluginManager implements PluginManager {
 
     private final PretronicLogger logger;
     private final RuntimeEnvironment<?> environment;
@@ -87,16 +90,19 @@ public final class DefaultPluginManager implements PluginManager{
 
     @Override
     public Plugin<?> getPlugin(String name) {
+        Validate.notNull(name);
         return Iterators.findOne(this.plugins, plugin -> plugin.getName().equalsIgnoreCase(name));
     }
 
     @Override
     public Plugin<?> getPlugin(UUID id) {
+        Validate.notNull(id);
         return Iterators.findOne(this.plugins, plugin -> plugin.getDescription().getId().equals(id));
     }
 
     @Override
     public boolean isPluginEnabled(String name) {
+        Validate.notNull(name);
         Plugin<?> plugin = getPlugin(name);
         return plugin != null && plugin.getLoader().isEnabled();
     }
@@ -112,6 +118,7 @@ public final class DefaultPluginManager implements PluginManager{
     @SuppressWarnings("unchecked")
     @Override
     public <T> List<T> getServices(Class<T> serviceClass) {
+        Validate.notNull(serviceClass);
         List<T> services =  Iterators.map(this.services, entry -> (T) entry.service, entry -> entry.serviceClass.equals(serviceClass));
         if(services.isEmpty()) throw new UnsupportedOperationException("Service is not available.");
         return services;
@@ -120,6 +127,7 @@ public final class DefaultPluginManager implements PluginManager{
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getService(Class<T> serviceClass) {
+        Validate.notNull(serviceClass);
         T result = getServiceOrDefault(serviceClass,null);
         if(result == null) throw new UnsupportedOperationException("Service is not available.");
         return result;
@@ -127,11 +135,14 @@ public final class DefaultPluginManager implements PluginManager{
 
     @Override
     public <T> T getServiceOrDefault(Class<T> serviceClass) {
+        Validate.notNull(serviceClass);
         return getServiceOrDefault(serviceClass,null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getServiceOrDefault(Class<T> serviceClass, Supplier<T> consumer) {
+        Validate.notNull(serviceClass);
         List<ServiceEntry> services = Iterators.filter(this.services, entry -> entry.serviceClass.equals(serviceClass));
         services.sort((o1, o2) -> {
             if(o1.priority < o2.priority) return -1;
@@ -145,28 +156,38 @@ public final class DefaultPluginManager implements PluginManager{
 
     @Override
     public <T> void registerService(ObjectOwner owner, Class<T> serviceClass, T service, byte priority) {
+        Validate.notNull(owner,serviceClass,service,priority);
         this.services.add(new ServiceEntry(owner,serviceClass,service,priority));
     }
 
     @Override
     public <T> boolean isServiceAvailable(Class<T> serviceClass) {
+        Validate.notNull(serviceClass);
         for (ServiceEntry entry : this.services) if(entry.serviceClass.equals(serviceClass)) return true;
         return false;
     }
 
     @Override
     public void unregisterService(Object service) {
+        Validate.notNull(service);
         Iterators.removeOne(this.services, entry -> entry.service.equals(service));
     }
 
     @Override
     public void unregisterServices(Class<?> serviceClass) {
+        Validate.notNull(serviceClass);
         Iterators.removeOne(this.services, entry -> entry.serviceClass.equals(serviceClass));
     }
 
     @Override
     public void unregisterServices(ObjectOwner owner) {
+        Validate.notNull(owner);
         Iterators.removeOne(this.services, entry -> entry.owner.equals(owner));
+        for (ServiceEntry service : this.services) {
+            if(service instanceof OwnerUnregisterAble){
+                ((OwnerUnregisterAble) service).unregister(owner);
+            }
+        }
     }
 
     @Override

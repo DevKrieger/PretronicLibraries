@@ -88,7 +88,7 @@ public class LoopFunction implements Function {
                 indexCount++;
             }
             return result;
-        }else throw new IllegalArgumentException("Object is not iterable");
+        }else throw new IllegalArgumentException(rightOperation.getClass()+" is not iterable");
     }
 
     private Object toLoop(BuildContext context, Module leftOperator, Module rightOperation, Module[] parameters) {
