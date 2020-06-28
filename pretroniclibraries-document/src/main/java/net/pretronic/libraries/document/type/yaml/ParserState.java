@@ -428,6 +428,7 @@ public interface ParserState {
         public void parse(YamlParser yaml, StringParser parser, char current) {
             if(yaml.getLineMark() != parser.lineIndex()){
                 yaml.mark(parser);
+                yaml.setTempIndent(0);
             }
             if(!isSpaceChar(current)){
                 int indent = parser.charIndex()-yaml.getCharacterMark();
