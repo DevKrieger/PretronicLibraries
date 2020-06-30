@@ -25,5 +25,14 @@ public interface IndexMap<K, V> extends Map<K, V> {
 
     boolean containsIndex(int index);
 
-    V getIndex(int index);
+    default V getIndexValue(int index) {
+        return getIndexEntry(index).getValue();
+    }
+
+    @Deprecated
+    default V getIndex(int index) {
+        return getIndexValue(index);
+    }
+
+    Map.Entry<K, V> getIndexEntry(int index);
 }

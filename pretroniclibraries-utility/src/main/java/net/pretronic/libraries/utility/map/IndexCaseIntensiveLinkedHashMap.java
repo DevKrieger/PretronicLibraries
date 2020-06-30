@@ -31,10 +31,10 @@ public class IndexCaseIntensiveLinkedHashMap<V> extends CaseIntensiveLinkedHashM
     }
 
     @Override
-    public V getIndex(int index) {
+    public Map.Entry<String, V> getIndexEntry(int index) {
         int i = 0;
         for (Map.Entry<String, V> entry : this.entrySet()) {
-            if(i == index) return entry.getValue();
+            if(i == index) return entry;
             i++;
         }
         return null;

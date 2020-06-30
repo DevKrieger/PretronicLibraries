@@ -30,10 +30,10 @@ public class IndexLinkedHashMap<K, V> extends LinkedHashMap<K, V> implements Ind
     }
 
     @Override
-    public V getIndex(int index) {
+    public Map.Entry<K, V> getIndexEntry(int index) {
         int i = 0;
         for (Map.Entry<K, V> entry : this.entrySet()) {
-            if(i == index) return entry.getValue();
+            if(i == index) return entry;
             i++;
         }
         return null;
