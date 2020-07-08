@@ -80,17 +80,7 @@ public interface VariableSet extends Set<Variable> {
     }
 
     static VariableSet newEmptySet(){
-        return createReflected();
-    }
-
-    @Deprecated
-    static VariableSet createReflected(){
-        return new DescribedHashVariableSet();
-    }
-
-    @Deprecated
-    static VariableSet createDescribed(){
-        return new DescribedHashVariableSet();
+        return createEmpty();
     }
 
     static String replace(String text, VariableSet variables){
