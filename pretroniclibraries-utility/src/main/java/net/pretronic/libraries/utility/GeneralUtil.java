@@ -91,6 +91,10 @@ public class GeneralUtil {
     }
 
     public static <U> List<U> getItemsOnPage(List<U> list, int page, int perPage){
+        if(list.size() <= perPage) {
+            if(page != 1) return Collections.emptyList();
+            return list;
+        }
         List<U> result = new ArrayList<>();
 
         int from = (perPage*(page - 1))+1;
