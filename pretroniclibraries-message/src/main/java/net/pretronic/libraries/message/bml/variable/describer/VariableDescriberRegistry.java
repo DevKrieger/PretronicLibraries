@@ -34,15 +34,12 @@ public final class VariableDescriberRegistry {
         DESCRIBERS.put(clazz,describer);
     }
 
-
-
     public static <T> VariableDescriber<T> registerDescriber(Class<T> clazz){
         Validate.notNull(clazz);
         VariableDescriber<T> describer = VariableDescriber.ofSuper(clazz);
         registerDescriber(clazz,describer);
         return describer;
     }
-
 
     @SuppressWarnings("unchecked")
     public static <T> VariableDescriber<T> getDescriber(Class<T> clazz){

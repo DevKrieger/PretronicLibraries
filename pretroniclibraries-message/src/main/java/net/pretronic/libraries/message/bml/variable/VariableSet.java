@@ -20,7 +20,6 @@
 
 package net.pretronic.libraries.message.bml.variable;
 
-import net.pretronic.libraries.message.bml.variable.describer.DescribedHashVariableSet;
 import net.pretronic.libraries.message.bml.variable.describer.DescribedObjectVariable;
 
 import java.util.Arrays;

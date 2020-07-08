@@ -114,6 +114,7 @@ public class VariableDescriber<T> {
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
             if(!Modifier.isStatic(declaredMethod.getModifiers())
                     && Modifier.isPublic(declaredMethod.getModifiers())
+                    && declaredMethod.getParameters().length == 0
                     && declaredMethod.getName().startsWith("get")){
                 describer.registerMethod(declaredMethod.getName().substring(3),declaredMethod);
             }
