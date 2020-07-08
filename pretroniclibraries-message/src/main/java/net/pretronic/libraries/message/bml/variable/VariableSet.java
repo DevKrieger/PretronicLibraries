@@ -98,7 +98,7 @@ public interface VariableSet extends Set<Variable> {
                 String key = text.substring(start+1,i);
                 Variable variable = variables.get(key);
                 if(variable != null){
-                    builder.append(variable.getObject());
+                    builder.append(variable.getObject(key));
                 }else builder.append("NULL");
                 start = -1;
             }else if(start == -1){

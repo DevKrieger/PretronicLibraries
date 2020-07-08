@@ -5,7 +5,7 @@
     <parent>
         <artifactId>PretronicLibraries</artifactId>
         <groupId>net.pretronic.libraries</groupId>
-        <version>1.2.13.150-SNAPSHOT</version>
+        <version>1.2.14.151-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
