@@ -20,6 +20,8 @@
 
 package net.pretronic.libraries.message.bml.variable.describer;
 
+import net.pretronic.libraries.message.bml.variable.Variable;
+import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.exception.OperationFailedException;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveHashMap;
@@ -143,7 +145,7 @@ public class VariableDescriber<T> {
                     BiFunction parameterFunction = describer.getParameterFunctions().get(part);
                     if(parameterFunction != null){
                         current = parameterFunction.apply(current,i < parts.length-1 ? parts[++i] : null);
-                    }else if(i == index && describer.getForwardFunction() != null){
+                    }else if(i == (parts.length-1) && describer.getForwardFunction() != null){
                         Function result = describer.getForwardFunction();
                         current = result.apply(current);
                         return get(current,parts,index);
