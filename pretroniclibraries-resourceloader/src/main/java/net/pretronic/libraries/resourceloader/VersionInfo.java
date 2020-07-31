@@ -27,7 +27,7 @@ import java.util.Objects;
  * <p>Every version has a name and a build id.</p>
  */
 public class VersionInfo {
-
+    
     public static VersionInfo UNKNOWN = new VersionInfo("Unknown",0,0,0,0,"Unknown");
 
     private final String name;

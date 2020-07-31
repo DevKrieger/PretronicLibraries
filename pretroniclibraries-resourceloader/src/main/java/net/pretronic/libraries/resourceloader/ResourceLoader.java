@@ -36,7 +36,6 @@ import java.nio.file.Files;
 public class ResourceLoader {
 
     private final static String VERSION_INFO_FILE_NAME = "version.dat";
-    private final static String UPDATE_CONFIGURATION_FILE_NAME = "update.dat";
     private final static Method METHOD_ADD_URL;
 
     static {
@@ -52,32 +51,10 @@ public class ResourceLoader {
 
     private VersionInfo currentVersion;
     private VersionInfo latestVersion;
-    private UpdateConfiguration updateConfiguration;
 
     public ResourceLoader(ResourceInfo info) {
         this.info = info;
         info.getLocation().mkdirs();
-    }
-
-    public UpdateConfiguration getUpdateConfiguration(){
-        if (updateConfiguration == null) {
-            File file = new File(info.getLocation(),UPDATE_CONFIGURATION_FILE_NAME);
-            if (file.exists()) {
-                try {
-                    InputStream input = new FileInputStream(file);
-                    updateConfiguration = UpdateConfiguration.parse(readFirstLine(input));
-                    input.close();
-                } catch (IOException exception) {
-                    throw new ResourceException("Could not load update configuration (" + exception.getMessage() + ")", exception);
-                }
-            }
-        }
-        if(updateConfiguration != null) return updateConfiguration;
-        return UpdateConfiguration.DEFAULT;
-    }
-
-    public void setUpdateConfiguration(UpdateConfiguration updateConfiguration) {
-        this.updateConfiguration = updateConfiguration;
     }
 
     /**
@@ -221,15 +198,13 @@ public class ResourceLoader {
     }
 
     private String prepareUrl(String url, VersionInfo version){
-        url = url.replace("{qualifier}",getUpdateConfiguration().getQualifier());
         if(version != null){
             url = url.replace("{version}",version.getName())
                     .replace("{version.build}",String.valueOf(version.getBuild()))
                     .replace("{version.minor}",String.valueOf(version.getMinor()))
                     .replace("{version.major}",String.valueOf(version.getMajor()))
                     .replace("{version.patch}",String.valueOf(version.getPatch()))
-                    .replace("{version.qualifier}",version.getQualifier())
-                    .replace("{qualifier}",getUpdateConfiguration().getQualifier());
+                    .replace("{version.qualifier}",version.getQualifier());
         }
         return url;
     }
@@ -246,6 +221,7 @@ public class ResourceLoader {
         connection.setConnectTimeout(3000);
         connection.setReadTimeout(3000);
         connection.setInstanceFollowRedirects(true);
+
         if(info.getAuthenticator() != null) info.getAuthenticator().invokeAuthentication(connection);
         connection.connect();
         if(connection.getResponseCode() != 200){
