@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:44
+ * @since 31.07.20, 14:22
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +18,34 @@
  * under the License.
  */
 
-package net.pretronic.libraries.event.executor;
+package net.pretronic.libraries.event.network;
 
-import net.pretronic.libraries.event.network.DefaultNetworkEventOrigin;
-import net.pretronic.libraries.event.network.EventOrigin;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
+import java.util.UUID;
 
-public interface EventExecutor {
+public class DefaultNetworkEventOrigin implements EventOrigin{
 
-    byte getPriority();
+    private static final EventOrigin INSTANCE = new DefaultNetworkEventOrigin();
 
-    ObjectOwner getOwner();
+    private final UUID uniqueId = new UUID(0,0);
 
-    default void execute(Object... events){
-        execute(DefaultNetworkEventOrigin.newInstance(),events);
+    private DefaultNetworkEventOrigin() {}
+
+    @Override
+    public String getName() {
+        return "Default Local Network Event Origin";
     }
 
-    void execute(EventOrigin origin,Object... events);
+    @Override
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
 
+    @Override
+    public boolean isLocal() {
+        return true;
+    }
+
+    public static EventOrigin newInstance(){
+        return INSTANCE;
+    }
 }

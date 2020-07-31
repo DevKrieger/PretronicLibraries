@@ -23,16 +23,17 @@ import net.pretronic.libraries.event.EventException;
 import net.pretronic.libraries.event.network.EventOrigin;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class ConsumerEventExecutor<E> implements EventExecutor{
+public class BiConsumerEventExecutor<E> implements EventExecutor{
 
     private final ObjectOwner owner;
     private final byte priority;
     private final Class<?> allowedClass;
-    private final Consumer<E> consumer;
+    private final BiConsumer<E,EventOrigin> consumer;
 
-    public ConsumerEventExecutor(ObjectOwner owner, byte priority,Class<?> allowedClass,  Consumer<E> consumer) {
+    public BiConsumerEventExecutor(ObjectOwner owner, byte priority, Class<?> allowedClass, BiConsumer<E,EventOrigin> consumer) {
         this.owner = owner;
         this.priority = priority;
         this.allowedClass = allowedClass;
@@ -49,7 +50,7 @@ public class ConsumerEventExecutor<E> implements EventExecutor{
         return owner;
     }
 
-    public Consumer<E> getConsumer() {
+    public BiConsumer<E,EventOrigin> getConsumer() {
         return consumer;
     }
 
@@ -58,7 +59,7 @@ public class ConsumerEventExecutor<E> implements EventExecutor{
         for (Object event : events){
             if(allowedClass.isAssignableFrom(event.getClass())){
                 try{
-                    consumer.accept((E) event);
+                    consumer.accept((E) event,origin);
                 }catch (Exception exception){
                     throw new EventException("Could not execute listener "+consumer,exception);
                 }

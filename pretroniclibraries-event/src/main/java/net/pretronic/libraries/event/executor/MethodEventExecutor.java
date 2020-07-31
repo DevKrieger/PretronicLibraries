@@ -20,6 +20,7 @@
 package net.pretronic.libraries.event.executor;
 
 import net.pretronic.libraries.event.EventException;
+import net.pretronic.libraries.event.network.EventOrigin;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.lang.reflect.Method;
@@ -31,14 +32,28 @@ public class MethodEventExecutor implements EventExecutor{
     private final Object listener;
     private final Class<?> allowedClass;
     private final Method method;
+    private final boolean withOrigin;
+    private final boolean onlyRemote;
+    private final boolean onlyLocal;
 
     public MethodEventExecutor(ObjectOwner owner, byte priority, Object listener,Class<?> allowedClass, Method method) {
+        this(owner,priority,listener,allowedClass,method,false,false);
+    }
+
+    public MethodEventExecutor(ObjectOwner owner, byte priority, Object listener,Class<?> allowedClass, Method method,boolean onlyRemote,boolean onlyLocal) {
         this.owner = owner;
         this.priority = priority;
         this.listener = listener;
         this.allowedClass = allowedClass;
         this.method = method;
+
+        this.withOrigin = method.getParameterCount() == 2;
+
+        this.onlyLocal = onlyLocal;
+        this.onlyRemote = onlyRemote;
     }
+
+
 
     @Override
     public byte getPriority() {
@@ -55,11 +70,15 @@ public class MethodEventExecutor implements EventExecutor{
     }
 
     @Override
-    public void execute(Object... events) {
+    public void execute(EventOrigin origin,Object... events) {
+        if(onlyRemote && !origin.isRemote()) return;
+        if(onlyLocal && !origin.isLocal()) return;
+
         for (Object event : events) {
             if(allowedClass.isAssignableFrom(event.getClass())){
                 try{
-                    this.method.invoke(this.listener,event);
+                    if(withOrigin) this.method.invoke(this.listener,event,origin);
+                    else this.method.invoke(this.listener,event);
                 }catch (Exception exception){
                     throw new EventException("Could not execute listener "+listener,exception);
                 }

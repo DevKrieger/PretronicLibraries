@@ -2,7 +2,8 @@
  * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:44
+ * @since 31.07.20, 14:03
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +18,22 @@
  * under the License.
  */
 
-package net.pretronic.libraries.event.executor;
+package net.pretronic.libraries.event.network;
 
-import net.pretronic.libraries.event.network.DefaultNetworkEventOrigin;
-import net.pretronic.libraries.event.network.EventOrigin;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
+import net.pretronic.libraries.event.EventPriority;
 
-public interface EventExecutor {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    byte getPriority();
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface NetworkListener {
 
-    ObjectOwner getOwner();
+    boolean onlyRemote() default false;
 
-    default void execute(Object... events){
-        execute(DefaultNetworkEventOrigin.newInstance(),events);
-    }
+    boolean onlyLocal() default false;
 
-    void execute(EventOrigin origin,Object... events);
-
+    byte priority() default EventPriority.NORMAL;
 }

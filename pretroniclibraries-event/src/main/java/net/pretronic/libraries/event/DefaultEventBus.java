@@ -19,9 +19,13 @@
 
 package net.pretronic.libraries.event;
 
+import net.pretronic.libraries.event.executor.BiConsumerEventExecutor;
 import net.pretronic.libraries.event.executor.ConsumerEventExecutor;
 import net.pretronic.libraries.event.executor.EventExecutor;
 import net.pretronic.libraries.event.executor.MethodEventExecutor;
+import net.pretronic.libraries.event.network.DefaultNetworkEventOrigin;
+import net.pretronic.libraries.event.network.EventOrigin;
+import net.pretronic.libraries.event.network.NetworkEvent;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.annonations.Internal;
@@ -31,10 +35,12 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class DefaultEventBus implements EventBus {
 
+    private final NetworkEventHandler networkEventHandler;
     private final Executor executor;
     private final Map<Class<?>, List<EventExecutor>> executors;
     private final Map<Class<?>,Class<?>> mappedClasses;
@@ -44,6 +50,15 @@ public class DefaultEventBus implements EventBus {
     }
 
     public DefaultEventBus(Executor executor) {
+        this(executor,new NetworkEventHandler());
+    }
+
+    public DefaultEventBus(NetworkEventHandler networkEventHandler) {
+        this(GeneralUtil.getDefaultExecutorService(),networkEventHandler);
+    }
+
+    public DefaultEventBus(Executor executor,NetworkEventHandler networkEventHandler) {
+        this.networkEventHandler = networkEventHandler;
         this.executor = executor;
         this.executors = new LinkedHashMap<>();
         this.mappedClasses = new LinkedHashMap<>();
@@ -62,9 +77,7 @@ public class DefaultEventBus implements EventBus {
                     Class<?> mappedClass = this.mappedClasses.get(eventClass);
                     if(mappedClass == null) mappedClass = eventClass;
 
-                    List<EventExecutor> executors = this.executors.computeIfAbsent(mappedClass, k -> new ArrayList<>());
-                    executors.add(new MethodEventExecutor(owner,info.priority(),listener,eventClass,method));
-                    sortByPriority(executors);
+                    addExecutor(mappedClass,new MethodEventExecutor(owner,info.priority(),listener,eventClass,method));
                 }
             }catch (Exception exception){
                 throw new IllegalArgumentException("Could not register listener "+listener,exception);
@@ -81,9 +94,19 @@ public class DefaultEventBus implements EventBus {
         Class<?> mappedClass = this.mappedClasses.get(eventClass);
         if(mappedClass == null) mappedClass = eventClass;
 
-        List<EventExecutor> executors = this.executors.computeIfAbsent(mappedClass, k -> new ArrayList<>());
-        executors.add(new ConsumerEventExecutor<>(owner,priority,eventClass,handler));
-        sortByPriority(executors);
+        addExecutor(mappedClass,new ConsumerEventExecutor<>(owner,priority,eventClass,handler));
+    }
+
+    @Override
+    public <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T, EventOrigin> handler, byte priority) {
+        Objects.requireNonNull(owner,"Owner can't be null.");
+        Objects.requireNonNull(eventClass,"Event type can't be null.");
+        Objects.requireNonNull(handler,"Handler can't be null.");
+
+        Class<?> mappedClass = this.mappedClasses.get(eventClass);
+        if(mappedClass == null) mappedClass = eventClass;
+
+        addExecutor(mappedClass,new BiConsumerEventExecutor<>(owner,priority,eventClass,handler));
     }
 
     @Override
@@ -100,6 +123,14 @@ public class DefaultEventBus implements EventBus {
         executors.forEach((event, executors) -> Iterators.removeSilent(executors,
                 executor -> executor instanceof ConsumerEventExecutor
                         && ((ConsumerEventExecutor) executor).getConsumer().equals(handler)));
+    }
+
+    @Override
+    public void unsubscribe(BiConsumer<?, EventOrigin> handler) {
+        Objects.requireNonNull(handler,"Handler can't be null.");
+        executors.forEach((event, executors) -> Iterators.removeSilent(executors,
+                executor -> executor instanceof ConsumerEventExecutor
+                        && ((BiConsumerEventExecutor) executor).getConsumer().equals(handler)));
     }
 
     @Override
@@ -125,8 +156,7 @@ public class DefaultEventBus implements EventBus {
     public <T, E extends T> E callEvent(Class<T> executionClass, E event) {
         Objects.requireNonNull(executionClass,"Class can't be null.");
         Objects.requireNonNull(event,"Event can't be null.");
-        List<EventExecutor> executors = this.executors.get(executionClass);
-        if(executors != null) executors.forEach(executor -> executor.execute(event));
+        callEvents(null,executionClass,new Object[]{event});
         return event;
     }
 
@@ -137,28 +167,15 @@ public class DefaultEventBus implements EventBus {
     }
 
     @Override
-    public <T, E extends T> CompletableFuture<T> callEventAsync(Class<T> executionClass, E event) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-        executor.execute(()->{
-            try{
-                future.complete(callEvent(executionClass,event));
-            }catch (Exception exception){
-                future.completeExceptionally(exception);
-            }
-        });
-        return future;
+    public <T> void callEvents(EventOrigin origin,Class<T> executionClass, Object... events) {
+        callEventsInternal(origin,executionClass,events);
     }
 
     @Override
-    public <T> void callEvents(Class<T> executionClass, Object... events) {
-        callEventsInternal(executionClass,events);
-    }
-
-    @Override
-    public <T> void callEventsAsync(Class<T> executionClass, Runnable callback, Object... events) {
+    public <T> void callEventsAsync(EventOrigin origin,Class<T> executionClass, Runnable callback, Object... events) {
         if(callback != null){
             executor.execute(()->{
-                callEventsInternal(executionClass,events);
+                callEventsInternal(origin,executionClass,events);
                 callback.run();
             });
         }else executor.execute(()-> callEvent(events));
@@ -175,8 +192,11 @@ public class DefaultEventBus implements EventBus {
     }
 
     @Internal
-    private <T> void callEventsInternal(Class<T> executionClass, Object[] events){
+    private <T> void callEventsInternal(EventOrigin origin,Class<T> executionClass, Object[] events){
         List<EventExecutor> executors = this.executors.get(executionClass);
+        if(networkEventHandler.isNetworkEvent(executionClass)){
+            networkEventHandler.handleNetworkEvents(origin,executionClass,events);
+        }
         if(executors != null) executors.forEach(executor -> executor.execute(events));
     }
 
@@ -184,5 +204,21 @@ public class DefaultEventBus implements EventBus {
     private void sortByPriority(List<EventExecutor> executors){
         //Sort all listeners by the priority.
         executors.sort((o1, o2) -> o1.getPriority() >= o2.getPriority()?0:-1);
+    }
+
+    public static class NetworkEventHandler {
+
+        public EventOrigin getLocal(){
+            return DefaultNetworkEventOrigin.newInstance();
+        }
+
+        public boolean isNetworkEvent(Class<?> executionClass){
+            return executionClass.getAnnotation(NetworkEvent.class) != null;
+        }
+
+        public void handleNetworkEvents(EventOrigin origin,Class<?> executionClass, Object[] events){
+            //Unused, when not implemented
+        }
+
     }
 }
