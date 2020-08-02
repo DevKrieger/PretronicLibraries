@@ -231,6 +231,7 @@ public class ResourceLoader {
     }
 
     private static String readFirstLine(InputStream input) throws IOException {
+        if(input == null) return "";
         InputStreamReader inputStream = new InputStreamReader(input);
         try (BufferedReader reader = new BufferedReader(inputStream)) {
             String result =  reader.readLine();
