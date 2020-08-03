@@ -136,7 +136,7 @@ public class JsonDocumentWriter implements DocumentWriter {
             output.write("null");
         }else if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character) {
             output.write('"');
-            output.write(entry.getAsString());
+            output.write(entry.getAsString().replace("\n","\\n"));
             output.write('"');
         }else output.write(entry.getAsString());
     }

@@ -153,7 +153,7 @@ public interface ParserState {
         public void parse(JsonSequence sequence, StringParser parser, char current) {
             parser.previousChar();
             if(current == end && parser.currentChar() != '\\'){
-                String value = parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()+1);
+                String value = parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()+1).replace("\n","\\n");
                 DocumentEntry primitive = Document.factory().newPrimitiveEntry(sequence.getCurrentKey(),value);
                 sequence.pushEntry(primitive);
                 sequence.setCurrentState(DOCUMENT_NEXT_PAIR);
