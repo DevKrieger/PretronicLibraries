@@ -136,9 +136,15 @@ public class JsonDocumentWriter implements DocumentWriter {
             output.write("null");
         }else if(entry.getAsObject() instanceof String || entry.getAsObject() instanceof Character) {
             output.write('"');
-            output.write(entry.getAsString().replace("\n","\\n"));
+            output.write(escapeString(entry.getAsString()));
             output.write('"');
         }else output.write(entry.getAsString());
+    }
+
+    private String escapeString(String input){
+        return input.replace("\\","\\\\")
+                .replace("\t","\\t")
+                .replace("\n","\\n");
     }
 
     private int writeAttributes(Writer output, DocumentEntry entry, int indent) throws IOException {

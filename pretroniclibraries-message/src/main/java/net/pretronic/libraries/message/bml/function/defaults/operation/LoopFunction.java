@@ -150,7 +150,6 @@ public class LoopFunction implements Function {
         return size;
     }
 
-
     private int getNumber(BuildContext context, Module operator) {
         int right = 0;
         Object rightOperation = Module.build(operator,context,true);
