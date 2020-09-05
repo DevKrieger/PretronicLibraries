@@ -115,22 +115,25 @@ public class DurationProcessor {
     public Duration parse(String input){
         if(!input.isEmpty()){
             Matcher matcher = this.pattern.matcher(input);
-            while (matcher.find()) {
-                if (matcher.group() == null || matcher.group().isEmpty()) {
-                    continue;
-                }
-                Duration duration = Duration.ZERO;
-                int index = 1;
-                for (DurationUnit unit : units) {
-                    if (matcher.group(index) != null && !matcher.group(index).isEmpty()) {
-                        int time = Integer.parseInt(matcher.group(index));
-                        if (time > 0) {
-                            duration = duration.plus(unit.getUnit().getDuration().multipliedBy(time));
-                        }
+            if(matcher.matches()){
+                matcher.reset();
+                while (matcher.find()) {
+                    if (matcher.group() == null || matcher.group().isEmpty()) {
+                        continue;
                     }
-                    index++;
+                    Duration duration = Duration.ZERO;
+                    int index = 1;
+                    for (DurationUnit unit : units) {
+                        if (matcher.group(index) != null && !matcher.group(index).isEmpty()) {
+                            int time = Integer.parseInt(matcher.group(index));
+                            if (time > 0) {
+                                duration = duration.plus(unit.getUnit().getDuration().multipliedBy(time));
+                            }
+                        }
+                        index++;
+                    }
+                    return duration;
                 }
-                return duration;
             }
         }
         throw new IllegalArgumentException("Input cannot be parsed to a Duration");
@@ -167,7 +170,5 @@ public class DurationProcessor {
         }
 
     }
-
-
 
 }
