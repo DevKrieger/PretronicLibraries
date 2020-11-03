@@ -19,10 +19,12 @@
 
 package net.pretronic.libraries.utility.map.callback;
 
+import net.pretronic.libraries.utility.CallbackAble;
+
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public interface CallbackMap<K,V>  extends Map<K,V> {
+public interface CallbackMap<K,V>  extends Map<K,V>, CallbackAble {
 
     void setPutCallback(BiConsumer<K,V> consumer);
 
