@@ -2,7 +2,6 @@ package net.pretronic.libraries.utility.list;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ArrayCallbackList<E> extends ArrayList<E> implements CallbackList<E> {
@@ -12,26 +11,30 @@ public class ArrayCallbackList<E> extends ArrayList<E> implements CallbackList<E
 
     @Override
     public boolean add(E e) {
+        boolean result = super.add(e);
         callAddCallback(e);
-        return super.add(e);
+        return result;
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
+        boolean result = super.addAll(c);
         c.forEach(this::callAddCallback);
-        return super.addAll(c);
+        return result;
     }
 
     @Override
     public boolean remove(Object o) {
+        boolean result = super.remove(o);
         callRemoveCallback((E) o);
-        return super.remove(o);
+        return result;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
+        boolean result = super.removeAll(c);
         c.forEach(entry -> callRemoveCallback((E) entry));
-        return super.removeAll(c);
+        return result;
     }
 
     @Override
