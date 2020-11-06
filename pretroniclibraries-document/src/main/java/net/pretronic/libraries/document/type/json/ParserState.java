@@ -152,7 +152,7 @@ public interface ParserState {
         @Override
         public void parse(JsonSequence sequence, StringParser parser, char current) {
             parser.previousChar();
-            if(current == end && parser.currentChar() != '\\'){
+            if(current == end && parser.currentChar() != '\\'){//@Todo check for double escape!
                 String value = unescapeString(parser.getOnLine(sequence.getCharacterMark(),parser.charIndex()+1));
                 DocumentEntry primitive = Document.factory().newPrimitiveEntry(sequence.getCurrentKey(),value);
                 sequence.pushEntry(primitive);
@@ -161,8 +161,10 @@ public interface ParserState {
             parser.skipChar();
         }
 
-        private String unescapeString(String input){
-            return input.replace("\\\\","\\")
+        private String unescapeString(String input){// \" => "   \\" =>
+            return input
+                    .replace("\\\"","\"")
+                    .replace("\\\\","\\")
                     .replace("\\t","\t")
                     .replace("\\n","\n");
         }
