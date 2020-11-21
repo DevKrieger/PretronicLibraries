@@ -142,7 +142,9 @@ public class JsonDocumentWriter implements DocumentWriter {
     }
 
     private String escapeString(String input){
-        return input.replace("\\","\\\\")
+        return input
+                .replace("\\","\\\\")
+                .replace("\"","\\\"")
                 .replace("\t","\\t")
                 .replace("\n","\\n");
     }
