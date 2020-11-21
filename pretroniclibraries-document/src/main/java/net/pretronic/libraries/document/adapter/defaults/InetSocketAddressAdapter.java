@@ -37,11 +37,15 @@ public class InetSocketAddressAdapter implements DocumentAdapter<InetSocketAddre
             return new InetSocketAddress(InetAddressAdapter.INSTANCE.read(
                     entry.toDocument().getEntry("address"),new TypeReference<>()),
                     entry.toDocument().getEntry("port").toPrimitive().getAsInt());
-        }else if(entry.isPrimitive()){
+        } else if(entry.isPrimitive()){
             String[] split = entry.toPrimitive().getAsString().split(":");
             if(split.length == 2){
                 try {
                     return new InetSocketAddress(InetAddress.getByName(split[0]),Integer.parseInt(split[1]));
+                } catch (UnknownHostException ignored) {}
+            } else if(split.length == 1) {
+                try {
+                    return new InetSocketAddress(InetAddress.getByName(split[0]), 0);
                 } catch (UnknownHostException ignored) {}
             }
         }
