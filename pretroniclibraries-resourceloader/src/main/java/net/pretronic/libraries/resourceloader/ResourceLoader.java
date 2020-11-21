@@ -209,7 +209,7 @@ public class ResourceLoader {
         return url;
     }
 
-    private File getLocalFile(VersionInfo version){
+    public File getLocalFile(VersionInfo version){
         return new File(info.getLocation(),(info.getName()+"-"+version.getName()+".jar").toLowerCase());
     }
 
