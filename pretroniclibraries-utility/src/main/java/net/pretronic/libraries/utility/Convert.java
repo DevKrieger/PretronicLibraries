@@ -19,6 +19,7 @@
 
 package net.pretronic.libraries.utility;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.UUID;
@@ -266,4 +267,13 @@ public class Convert {
         }
     }
 
+    public static BigDecimal toBigDecimal(Object input) {
+        if(input == null) return null;
+        else if(input instanceof BigDecimal) return (BigDecimal) input;
+        else if(input instanceof Double) return BigDecimal.valueOf((double) input);
+        else if(input instanceof Long) return BigDecimal.valueOf((long) input);
+        else if(input instanceof Integer) return BigDecimal.valueOf((int) input);
+        else if(input instanceof String) return new BigDecimal((String) input);
+        throw new IllegalArgumentException("Can not be converted to BigDecimal " + input);
+    }
 }
