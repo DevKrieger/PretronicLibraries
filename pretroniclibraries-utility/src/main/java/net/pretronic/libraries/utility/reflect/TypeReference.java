@@ -21,6 +21,9 @@ package net.pretronic.libraries.utility.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TypeReference<T> {
 
@@ -55,14 +58,24 @@ public class TypeReference<T> {
     }
 
     public boolean hasArgument(int index) {
-        return ((ParameterizedType)type).getActualTypeArguments().length > index;
+        return getArguments().length > index;
     }
 
     public Type getArgument(int index) {
+        Type[] arguments = getArguments();
+        if(index >= arguments.length) throw new IndexOutOfBoundsException();
+        return arguments[index];
+    }
+
+    public Type[] getArguments() {
         if(this.type instanceof ParameterizedType){
-            return ((ParameterizedType)type).getActualTypeArguments()[index];
+            return ((ParameterizedType)type).getActualTypeArguments();
         }
-        return null;
+        return new Type[]{};
+    }
+
+    public List<Type> getArgumentsAsList() {
+        return Arrays.asList(getArguments());
     }
 
     public Type[] getGenericInterfaceArgument(int interfaceIndex, int... indices) {
@@ -78,7 +91,10 @@ public class TypeReference<T> {
         return null;
     }
 
-    public boolean isAssingable(){
+    public boolean isAssignableFrom(Class<?> clazz){
+        if(this.type instanceof Class<?>){
+            return ((Class<?>) this.type).isAssignableFrom(clazz);
+        }
         return false;
     }
 
@@ -93,7 +109,7 @@ public class TypeReference<T> {
     @Override
     public boolean equals(Object obj) {
         if(obj == this) return true;
-        if(obj instanceof TypeReference) return type.equals(((TypeReference) obj).type);
+        if(obj instanceof TypeReference) return type.equals(((TypeReference<?>) obj).type);
         return false;
     }
 

@@ -23,6 +23,7 @@ import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.DocumentRegistry;
 import net.pretronic.libraries.document.entry.DocumentAttributes;
 import net.pretronic.libraries.document.entry.DocumentEntry;
+import net.pretronic.libraries.utility.reflect.GenericTypeReference;
 import net.pretronic.libraries.utility.reflect.TypeReference;
 
 import java.io.File;
@@ -62,17 +63,17 @@ public class SimpleDocument extends AbstractDocumentNode implements Document {
 
     @Override
     public <V> Collection<V> getAsCollection(Class<V> valueClass) {
-        return getContext().deserialize(this,new TypeReference<Collection<V>>());
+        return getContext().deserialize(this,new GenericTypeReference<Collection<?>>(Collection.class,valueClass){});
     }
 
     @Override
     public <V> List<V> getAsList(Class<V> valueClass) {
-        return getContext().deserialize(this,new TypeReference<List<V>>(){});
+        return getContext().deserialize(this,new GenericTypeReference<List<?>>(List.class,valueClass){});
     }
 
     @Override
     public <K, V> Map<K, V> getAsMap(Class<K> keyClass, Class<V> valueClass) {
-        return getContext().deserialize(this,new TypeReference<Map<K,V>>(){});
+        return getContext().deserialize(this,new GenericTypeReference<Map<?,?>>(Map.class,keyClass,valueClass){});
     }
 
     @Override

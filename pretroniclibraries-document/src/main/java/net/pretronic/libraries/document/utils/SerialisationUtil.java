@@ -80,21 +80,23 @@ public class SerialisationUtil {
                             DocumentKey name = field.getAnnotation(DocumentKey.class);
                             String endName = name!=null?name.value():field.getName();
 
-                            DocumentNode current = document;
+                            DocumentAttribute attribute = field.getAnnotation(DocumentAttribute.class);
+                            DocumentNode node = attribute == null ? document : document.toDocument().getAttributes();
+
                             String[] keys = endName.split("\\.");
-                            if(keys.length > 1 && current.isObject()){
+                            if(keys.length > 1 && node.isObject()){
                                 for (int i = 0; i < keys.length-1; i++) {
-                                    Document next = current.toDocument().getDocument(keys[i]);
+                                    Document next = node.toDocument().getDocument(keys[i]);
                                     if(next == null){
                                         next = Document.factory().newDocument(keys[i]);
-                                        current.entries().add(next);
+                                        node.entries().add(next);
                                     }
-                                    current = next;
+                                    node = next;
                                 }
                                 endName = keys[keys.length-1];
                             }
 
-                            current.entries().add(serialize(context,endName,fieldValue));
+                            node.entries().add(serialize(context,endName,fieldValue));
                         }
                     }catch (Exception ignored){}
                 }
@@ -116,7 +118,7 @@ public class SerialisationUtil {
         }
         if(field.isAnnotationPresent(DocumentIgnoreBooleanValue.class) && fieldValue instanceof Boolean) {
             DocumentIgnoreBooleanValue ignoreBooleanValue = field.getAnnotation(DocumentIgnoreBooleanValue.class);
-            if(ignoreBooleanValue.ignore() == (boolean) fieldValue) return true;
+            return ignoreBooleanValue.ignore() == (boolean) fieldValue;
         }
         return false;
     }
