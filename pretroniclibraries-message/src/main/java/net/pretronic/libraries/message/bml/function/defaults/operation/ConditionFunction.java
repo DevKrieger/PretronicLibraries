@@ -47,9 +47,9 @@ public class ConditionFunction implements Function {
         }else throw new IllegalArgumentException("function has not right operation");
 
         if(ok){
-            return parameters[0].build(context,true);
+            return parameters[0].build(context,false);
         }else if(parameters.length > 1){
-            return parameters[1].build(context,true);
+            return parameters[1].build(context,false);
         }else return "";
     }
 }
