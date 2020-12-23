@@ -62,15 +62,16 @@ public interface ParserState {
                     if(push) parser.extractStringAndPush();
                     parser.nextSequence(null, indicate,new NameIndicateState());
                     return true;
-                } else {
-                    if (parser.getParser().hasNextChar()) {
-                        if (parser.getParser().nextChar() == indicate.getStart()) {
-                            if(push)parser.extractStringAndPush(-1);
-                        } else {
-                            parser.getParser().previousChar();
-                            return false;//No indicate go further
-                        }
+                } else if (parser.getParser().hasNextChar()) {
+                    if (parser.getParser().nextChar() == indicate.getStart()) {
+                        if(push)parser.extractStringAndPush(-1);
+                    } else {
+                        parser.getParser().previousChar();
+                        return false;//No indicate go further
                     }
+                }else {
+                    parser.getParser().previousChar();
+                    return false;
                 }
             }else{
                 if(push) parser.extractStringAndPush();
