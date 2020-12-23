@@ -27,54 +27,29 @@ import net.pretronic.libraries.message.bml.function.Function;
 public class ConditionFunction implements Function {
 
     @Override
-    public Object execute(BuildContext context, Module leftOperator, String operation, Module rightOperation, Module[] parameters) {
-
-
-        return null;
-    }
-
-    /*
-    @Override
-    public Object execute(BuildContext context, Object leftOperator, String operation, Object rightOperation, Object[] parameters) {
-        if(parameters.length < 2){
-            throw new IllegalArgumentException("Invalid parameter length");
+    public Object execute(BuildContext context, Module leftOperator0, String operation, Module rightOperation0, Module[] parameters) {
+        if(parameters.length < 1){
+            throw new IllegalArgumentException("Condition function needs at least one parameter");
         }
+
+        Object leftOperation = Module.build(leftOperator0,context,true);
 
         boolean ok = false;
-        if(parameters[0] instanceof Boolean){
-            ok = (boolean) parameters[0];
-        }else if(parameters[0] instanceof String){
-            String condition = (String) parameters[0];
-            if(condition.equalsIgnoreCase("true")){
-                ok = true;
-            }else if(!condition.equalsIgnoreCase("false")){
-                if(condition.contains(" == ")){
-                    String[] parts = condition.split(" == ");
-                    if(parts.length != 2) throw new IllegalArgumentException("Invalid length of condition");
-                }else if(condition.contains("!=")){
+        if(operation == null){
+            ok = leftOperation.equals(true) || "true".equalsIgnoreCase(leftOperation.toString());
+        }else if(rightOperation0 != null){
+            Object rightOperation = Module.build(rightOperation0,context,true);
 
-                }else if(condition.contains(">=")){
+            ok = leftOperation.equals(rightOperation) || leftOperation.toString().equals(rightOperation.toString());
 
-                }else if(condition.contains("<")){
-
-                }else if(condition.contains(">")){
-
-                }
-            }
-        }
+            if(operation.equals("!=")) ok = !ok;
+            else if(!operation.equals("==")) throw new UnsupportedOperationException("Unsupported operation ("+operation+")");
+        }else throw new IllegalArgumentException("function has not right operation");
 
         if(ok){
-            return parameters[1];
-        }else if(parameters.length >= 3){
-            return parameters[2];
-        }else{
-            return "";
-        }
+            return parameters[0].build(context,true);
+        }else if(parameters.length > 1){
+            return parameters[1].build(context,true);
+        }else return "";
     }
-
-    @Override
-    public Object execute(BuildContext context, Module leftOperator, String operation, Module rightOperation, Module[] parameters) {
-        return null;
-    }
-     */
 }
