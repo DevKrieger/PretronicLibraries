@@ -136,7 +136,7 @@ public class DurationProcessor {
                 }
             }
         }
-        throw new IllegalArgumentException("Input cannot be parsed to a Duration");
+        throw new IllegalArgumentException(String.format("Input (%s) cannot be parsed to a Duration", input));
     }
 
     public static Builder newBuilder(){
