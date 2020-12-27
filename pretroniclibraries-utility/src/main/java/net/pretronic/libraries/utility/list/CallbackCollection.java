@@ -1,6 +1,6 @@
 package net.pretronic.libraries.utility.list;
 
-import net.pretronic.libraries.utility.CallbackAble;
+import net.pretronic.libraries.utility.interfaces.CallbackAble;
 
 import java.util.Collection;
 import java.util.function.Consumer;
