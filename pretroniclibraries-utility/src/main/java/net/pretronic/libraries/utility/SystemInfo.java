@@ -3,6 +3,8 @@ package net.pretronic.libraries.utility;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import javax.management.*;
+import java.lang.management.ManagementFactory;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.util.Base64;
@@ -63,5 +65,22 @@ public final class SystemInfo {
             exception.printStackTrace();
         }
         return null;
+    }
+
+    public static double getProcessCpuLoad() {
+        try {
+            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+            ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+            AttributeList list = mbs.getAttributes(name, new String[]{ "ProcessCpuLoad" });
+
+            if (list.isEmpty())     return 0;
+
+            Attribute att = (Attribute)list.get(0);
+            Double value  = (Double)att.getValue();
+            if(value < 0) return 0;
+            return value;
+        } catch (MalformedObjectNameException | InstanceNotFoundException | ReflectionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
