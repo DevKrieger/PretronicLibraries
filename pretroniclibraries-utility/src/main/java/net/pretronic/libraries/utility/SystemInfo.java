@@ -83,4 +83,16 @@ public final class SystemInfo {
             throw new RuntimeException(e);
         }
     }
+
+    public static double getPercentProcessCpuLoad(int precision) {
+
+        if(precision == 0) {
+            return ((int)(getProcessCpuLoad() * 1000) / 10);
+        } else {
+            int multiplier = (int) (1000*Math.pow(10, precision-1));
+            double divider = 10.0*Math.pow(10, precision-1);
+            return ((int)(getProcessCpuLoad() * multiplier) / divider);
+        }
+
+    }
 }
