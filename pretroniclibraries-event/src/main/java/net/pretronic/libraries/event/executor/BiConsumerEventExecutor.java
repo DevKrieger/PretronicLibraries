@@ -19,12 +19,10 @@
 
 package net.pretronic.libraries.event.executor;
 
-import net.pretronic.libraries.event.EventException;
 import net.pretronic.libraries.event.network.EventOrigin;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class BiConsumerEventExecutor<E> implements EventExecutor{
 
@@ -61,7 +59,8 @@ public class BiConsumerEventExecutor<E> implements EventExecutor{
                 try{
                     consumer.accept((E) event,origin);
                 }catch (Exception exception){
-                    throw new EventException("Could not execute listener "+consumer,exception);
+                    System.out.println("Could not execute subscription "+consumer.getClass());
+                    exception.printStackTrace();
                 }
             }
         }

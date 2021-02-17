@@ -60,7 +60,8 @@ public class ConsumerEventExecutor<E> implements EventExecutor{
                 try{
                     consumer.accept((E) event);
                 }catch (Exception exception){
-                    throw new EventException("Could not execute listener "+consumer,exception);
+                    System.out.println("Could not execute subscription "+consumer.getClass());
+                    exception.printStackTrace();
                 }
             }
         }

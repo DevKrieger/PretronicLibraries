@@ -53,8 +53,6 @@ public class MethodEventExecutor implements EventExecutor{
         this.onlyRemote = onlyRemote;
     }
 
-
-
     @Override
     public byte getPriority() {
         return priority;
@@ -80,7 +78,8 @@ public class MethodEventExecutor implements EventExecutor{
                     if(withOrigin) this.method.invoke(this.listener,event,origin);
                     else this.method.invoke(this.listener,event);
                 }catch (Exception exception){
-                    throw new EventException("Could not execute listener "+listener,exception);
+                    System.out.println("Could not execute subscription "+listener.getClass()+"#"+method.getName());
+                    exception.printStackTrace();
                 }
             }
         }
