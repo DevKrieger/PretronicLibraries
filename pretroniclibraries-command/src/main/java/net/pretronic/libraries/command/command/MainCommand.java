@@ -136,11 +136,11 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
 
     @Override
     public Collection<String> complete(CommandSender sender, String[] args) {
-        if(args.length <= 0) return internalTabComplete;
+        if(args.length <= 1) return internalTabComplete;
         else{
-            String subCommand = args[0];
+            String subCommand = args[1];
             Command command = getCommand(subCommand);
-            if(command instanceof Completable) return ((Completable) command).complete(sender,Arrays.copyOfRange(args,1,args.length));
+            if(command instanceof Completable) return ((Completable) command).complete(sender,Arrays.copyOfRange(args,2,args.length));
             else return Collections.emptyList();
         }
     }
