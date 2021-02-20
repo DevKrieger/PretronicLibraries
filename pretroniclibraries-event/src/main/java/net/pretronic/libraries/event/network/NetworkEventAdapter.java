@@ -24,8 +24,8 @@ import net.pretronic.libraries.document.Document;
 
 public interface NetworkEventAdapter {
 
-    void read(Document data);
+    void read(Document document);
 
-    Document write();
+    void write(Document document);
 
 }

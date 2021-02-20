@@ -19,7 +19,8 @@
 
 package net.pretronic.libraries.event.executor;
 
-import net.pretronic.libraries.event.network.EventOrigin;
+import net.pretronic.libraries.event.execution.EventExecution;
+import net.pretronic.libraries.event.execution.ExecutionType;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.function.BiConsumer;
@@ -28,12 +29,14 @@ public class BiConsumerEventExecutor<E> implements EventExecutor{
 
     private final ObjectOwner owner;
     private final byte priority;
+    private final ExecutionType executionType;
     private final Class<?> allowedClass;
-    private final BiConsumer<E,EventOrigin> consumer;
+    private final BiConsumer<E,EventExecution> consumer;
 
-    public BiConsumerEventExecutor(ObjectOwner owner, byte priority, Class<?> allowedClass, BiConsumer<E,EventOrigin> consumer) {
+    public BiConsumerEventExecutor(ObjectOwner owner, byte priority,ExecutionType executionType, Class<?> allowedClass, BiConsumer<E,EventExecution> consumer) {
         this.owner = owner;
         this.priority = priority;
+        this.executionType = executionType;
         this.allowedClass = allowedClass;
         this.consumer = consumer;
     }
@@ -44,20 +47,25 @@ public class BiConsumerEventExecutor<E> implements EventExecutor{
     }
 
     @Override
+    public ExecutionType getExecutionType() {
+        return executionType;
+    }
+
+    @Override
     public ObjectOwner getOwner() {
         return owner;
     }
 
-    public BiConsumer<E,EventOrigin> getConsumer() {
+    public BiConsumer<E,EventExecution> getConsumer() {
         return consumer;
     }
 
     @Override
-    public void execute(EventOrigin origin,Object... events) {
+    public void execute(EventExecution execution,Object... events) {
         for (Object event : events){
             if(allowedClass.isAssignableFrom(event.getClass())){
                 try{
-                    consumer.accept((E) event,origin);
+                    consumer.accept((E) event,execution);
                 }catch (Exception exception){
                     System.out.println("Could not execute subscription "+consumer.getClass());
                     exception.printStackTrace();

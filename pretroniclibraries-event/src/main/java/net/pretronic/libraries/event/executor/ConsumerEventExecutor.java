@@ -19,8 +19,8 @@
 
 package net.pretronic.libraries.event.executor;
 
-import net.pretronic.libraries.event.EventException;
-import net.pretronic.libraries.event.network.EventOrigin;
+import net.pretronic.libraries.event.execution.EventExecution;
+import net.pretronic.libraries.event.execution.ExecutionType;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.function.Consumer;
@@ -29,12 +29,14 @@ public class ConsumerEventExecutor<E> implements EventExecutor{
 
     private final ObjectOwner owner;
     private final byte priority;
+    private final ExecutionType executionType;
     private final Class<?> allowedClass;
     private final Consumer<E> consumer;
 
-    public ConsumerEventExecutor(ObjectOwner owner, byte priority,Class<?> allowedClass,  Consumer<E> consumer) {
+    public ConsumerEventExecutor(ObjectOwner owner, byte priority,ExecutionType executionType,Class<?> allowedClass,  Consumer<E> consumer) {
         this.owner = owner;
         this.priority = priority;
+        this.executionType = executionType;
         this.allowedClass = allowedClass;
         this.consumer = consumer;
     }
@@ -42,6 +44,11 @@ public class ConsumerEventExecutor<E> implements EventExecutor{
     @Override
     public byte getPriority() {
         return priority;
+    }
+
+    @Override
+    public ExecutionType getExecutionType() {
+        return executionType;
     }
 
     @Override
@@ -54,7 +61,7 @@ public class ConsumerEventExecutor<E> implements EventExecutor{
     }
 
     @Override
-    public void execute(EventOrigin origin,Object... events) {
+    public void execute(EventExecution execution,Object... events) {
         for (Object event : events){
             if(allowedClass.isAssignableFrom(event.getClass())){
                 try{

@@ -19,6 +19,8 @@
 
 package net.pretronic.libraries.event;
 
+import net.pretronic.libraries.event.execution.EventExecution;
+import net.pretronic.libraries.event.execution.ExecutionType;
 import net.pretronic.libraries.event.executor.EventExecutor;
 import net.pretronic.libraries.event.network.EventOrigin;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
@@ -35,14 +37,30 @@ public interface EventBus {
         subscribe(owner, eventClass, handler,EventPriority.NORMAL);
     }
 
-    <T> void subscribe(ObjectOwner owner, Class<T> eventClass, Consumer<T> handler, byte priority);
+    default <T> void subscribe(ObjectOwner owner, Class<T> eventClass, Consumer<T> handler, byte priority){
+        subscribe(owner, eventClass, handler,ExecutionType.BLOCKING, priority);
+    }
+
+    default <T> void subscribe(ObjectOwner owner, Class<T> eventClass, Consumer<T> handler, ExecutionType type){
+        subscribe(owner, eventClass, handler, type,EventPriority.NORMAL);
+    }
+
+    <T> void subscribe(ObjectOwner owner, Class<T> eventClass, Consumer<T> handler, ExecutionType type, byte priority);
 
 
-    default <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T,EventOrigin> handler){
+    default <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T,EventExecution> handler){
         subscribe(owner, eventClass, handler,EventPriority.NORMAL);
     }
 
-    <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T,EventOrigin> handler, byte priority);
+    default <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T, EventExecution> handler, byte priority){
+        subscribe(owner, eventClass, handler,ExecutionType.BLOCKING, priority);
+    }
+
+    default <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T, EventExecution> handler, ExecutionType type){
+        subscribe(owner, eventClass, handler, type,EventPriority.NORMAL);
+    }
+
+    <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T, EventExecution> handler,ExecutionType type, byte priority);
 
 
     void unsubscribe(Object listener);

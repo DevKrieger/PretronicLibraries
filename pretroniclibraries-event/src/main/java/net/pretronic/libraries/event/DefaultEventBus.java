@@ -20,6 +20,8 @@
 package net.pretronic.libraries.event;
 
 import net.pretronic.libraries.event.execution.AsyncEventExecution;
+import net.pretronic.libraries.event.execution.EventExecution;
+import net.pretronic.libraries.event.execution.ExecutionType;
 import net.pretronic.libraries.event.execution.SyncEventExecution;
 import net.pretronic.libraries.event.executor.BiConsumerEventExecutor;
 import net.pretronic.libraries.event.executor.ConsumerEventExecutor;
@@ -79,7 +81,7 @@ public class DefaultEventBus implements EventBus {
                     Class<?> mappedClass = this.mappedClasses.get(eventClass);
                     if(mappedClass == null) mappedClass = eventClass;
 
-                    addExecutor(mappedClass,new MethodEventExecutor(owner,info.priority(),listener,eventClass,method));
+                    addExecutor(mappedClass,new MethodEventExecutor(owner,info.priority(),info.execution(),listener,eventClass,method));
                 }
             }catch (Exception exception){
                 throw new IllegalArgumentException("Could not register listener "+listener,exception);
@@ -88,7 +90,7 @@ public class DefaultEventBus implements EventBus {
     }
 
     @Override
-    public <T> void subscribe(ObjectOwner owner, Class<T> eventClass, Consumer<T> handler, byte priority) {
+    public <T> void subscribe(ObjectOwner owner, Class<T> eventClass, Consumer<T> handler, ExecutionType type, byte priority) {
         Objects.requireNonNull(owner,"Owner can't be null.");
         Objects.requireNonNull(eventClass,"Event type can't be null.");
         Objects.requireNonNull(handler,"Handler can't be null.");
@@ -96,11 +98,11 @@ public class DefaultEventBus implements EventBus {
         Class<?> mappedClass = this.mappedClasses.get(eventClass);
         if(mappedClass == null) mappedClass = eventClass;
 
-        addExecutor(mappedClass,new ConsumerEventExecutor<>(owner,priority,eventClass,handler));
+        addExecutor(mappedClass,new ConsumerEventExecutor<>(owner,priority,type,eventClass,handler));
     }
 
     @Override
-    public <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T, EventOrigin> handler, byte priority) {
+    public <T> void subscribe(ObjectOwner owner, Class<T> eventClass, BiConsumer<T, EventExecution> handler, ExecutionType type, byte priority) {
         Objects.requireNonNull(owner,"Owner can't be null.");
         Objects.requireNonNull(eventClass,"Event type can't be null.");
         Objects.requireNonNull(handler,"Handler can't be null.");
@@ -108,7 +110,7 @@ public class DefaultEventBus implements EventBus {
         Class<?> mappedClass = this.mappedClasses.get(eventClass);
         if(mappedClass == null) mappedClass = eventClass;
 
-        addExecutor(mappedClass,new BiConsumerEventExecutor<>(owner,priority,eventClass,handler));
+        addExecutor(mappedClass,new BiConsumerEventExecutor<>(owner,priority,type,eventClass,handler));
     }
 
     @Override
