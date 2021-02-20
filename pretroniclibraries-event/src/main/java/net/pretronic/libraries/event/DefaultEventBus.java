@@ -176,9 +176,9 @@ public class DefaultEventBus implements EventBus {
         List<EventExecutor> executors = this.executors.get(executionClass);
         if(executors != null){
             new SyncEventExecution(origin,executors.iterator(),this.executor,events);
-            if(networkEventHandler.isNetworkEvent(executionClass)){
-                networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
-            }
+        }
+        if(networkEventHandler.isNetworkEvent(executionClass)){
+            networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
         }
     }
 
@@ -188,6 +188,13 @@ public class DefaultEventBus implements EventBus {
         List<EventExecutor> executors = this.executors.get(executionClass);
         if(executors != null){
             new AsyncEventExecution(origin, executors.iterator(), this.executor, events, () -> {
+                if(networkEventHandler.isNetworkEvent(executionClass)){
+                    networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
+                }
+                if(callback != null) callback.run();
+            });
+        }else{
+            this.executor.execute(() -> {
                 if(networkEventHandler.isNetworkEvent(executionClass)){
                     networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
                 }
