@@ -174,9 +174,11 @@ public class DefaultEventBus implements EventBus {
     public <T> void callEvents(EventOrigin origin0,Class<T> executionClass, Object... events) {
         final EventOrigin origin = origin0 != null ? origin0 : networkEventHandler.getLocal();
         List<EventExecutor> executors = this.executors.get(executionClass);
-        new SyncEventExecution(origin,executors.iterator(),this.executor,events);
-        if(networkEventHandler.isNetworkEvent(executionClass)){
-            networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
+        if(executors != null){
+            new SyncEventExecution(origin,executors.iterator(),this.executor,events);
+            if(networkEventHandler.isNetworkEvent(executionClass)){
+                networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
+            }
         }
     }
 
@@ -184,12 +186,14 @@ public class DefaultEventBus implements EventBus {
     public <T> void callEventsAsync(EventOrigin origin0,Class<T> executionClass, Runnable callback, Object... events) {
         final EventOrigin origin = origin0 != null ? origin0 : networkEventHandler.getLocal();
         List<EventExecutor> executors = this.executors.get(executionClass);
-        new AsyncEventExecution(origin, executors.iterator(), this.executor, events, () -> {
-            if(networkEventHandler.isNetworkEvent(executionClass)){
-                networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
-            }
-            if(callback != null) callback.run();
-        });
+        if(executors != null){
+            new AsyncEventExecution(origin, executors.iterator(), this.executor, events, () -> {
+                if(networkEventHandler.isNetworkEvent(executionClass)){
+                    networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
+                }
+                if(callback != null) callback.run();
+            });
+        }
     }
 
     @Override
