@@ -1,8 +1,9 @@
 /*
- * (C) Copyright 2020 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
+ * (C) Copyright 2021 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 11.03.20, 18:44
+ * @since 20.02.21, 10:46
+ * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +18,15 @@
  * under the License.
  */
 
-package net.pretronic.libraries.event.executor;
+package net.pretronic.libraries.event.execution;
 
-import net.pretronic.libraries.event.execution.EventExecution;
-import net.pretronic.libraries.event.execution.ExecutionType;
-import net.pretronic.libraries.event.network.DefaultNetworkEventOrigin;
 import net.pretronic.libraries.event.network.EventOrigin;
-import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
-public interface EventExecutor {
+public interface EventExecution {
 
-    byte getPriority();
+    EventOrigin getOrigin();
 
-    ExecutionType getExecutionType();
+    void complete();
 
-    ObjectOwner getOwner();
-
-    void execute(EventExecution execution, Object... events);
 
 }

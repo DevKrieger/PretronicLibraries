@@ -19,6 +19,8 @@
 
 package net.pretronic.libraries.event;
 
+import net.pretronic.libraries.event.execution.AsyncEventExecution;
+import net.pretronic.libraries.event.execution.SyncEventExecution;
 import net.pretronic.libraries.event.executor.BiConsumerEventExecutor;
 import net.pretronic.libraries.event.executor.ConsumerEventExecutor;
 import net.pretronic.libraries.event.executor.EventExecutor;
@@ -167,18 +169,25 @@ public class DefaultEventBus implements EventBus {
     }
 
     @Override
-    public <T> void callEvents(EventOrigin origin,Class<T> executionClass, Object... events) {
-        callEventsInternal(origin,executionClass,events);
+    public <T> void callEvents(EventOrigin origin0,Class<T> executionClass, Object... events) {
+        final EventOrigin origin = origin0 != null ? origin0 : networkEventHandler.getLocal();
+        List<EventExecutor> executors = this.executors.get(executionClass);
+        new SyncEventExecution(origin,executors.iterator(),this.executor,events);
+        if(networkEventHandler.isNetworkEvent(executionClass)){
+            networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
+        }
     }
 
     @Override
-    public <T> void callEventsAsync(EventOrigin origin,Class<T> executionClass, Runnable callback, Object... events) {
-        if(callback != null){
-            executor.execute(()->{
-                callEventsInternal(origin,executionClass,events);
-                callback.run();
-            });
-        }else executor.execute(()-> callEvent(events));
+    public <T> void callEventsAsync(EventOrigin origin0,Class<T> executionClass, Runnable callback, Object... events) {
+        final EventOrigin origin = origin0 != null ? origin0 : networkEventHandler.getLocal();
+        List<EventExecutor> executors = this.executors.get(executionClass);
+        new AsyncEventExecution(origin, executors.iterator(), this.executor, events, () -> {
+            if(networkEventHandler.isNetworkEvent(executionClass)){
+                networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
+            }
+            if(callback != null) callback.run();
+        });
     }
 
     @Override
@@ -189,15 +198,6 @@ public class DefaultEventBus implements EventBus {
     @Override
     public void registerMappedClass(Class<?> original, Class<?> mapped) {
         this.mappedClasses.put(original,mapped);
-    }
-
-    @Internal
-    private <T> void callEventsInternal(EventOrigin origin,Class<T> executionClass, Object[] events){
-        List<EventExecutor> executors = this.executors.get(executionClass);
-        if(networkEventHandler.isNetworkEvent(executionClass)){
-            networkEventHandler.handleNetworkEvents(origin,executionClass,events);
-        }
-        if(executors != null) executors.forEach(executor -> executor.execute(events));
     }
 
     @Internal
@@ -216,7 +216,7 @@ public class DefaultEventBus implements EventBus {
             return executionClass.getAnnotation(NetworkEvent.class) != null;
         }
 
-        public void handleNetworkEvents(EventOrigin origin,Class<?> executionClass, Object[] events){
+        public void handleNetworkEventsAsync(EventOrigin origin,Class<?> executionClass, Object[] events){
             //Unused, when not implemented
         }
 

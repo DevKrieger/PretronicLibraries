@@ -19,7 +19,6 @@
 
 package net.pretronic.libraries.event.executor;
 
-import net.pretronic.libraries.event.EventException;
 import net.pretronic.libraries.event.network.EventOrigin;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 

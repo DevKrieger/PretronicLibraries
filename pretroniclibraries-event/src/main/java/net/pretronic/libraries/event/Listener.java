@@ -19,6 +19,8 @@
 
 package net.pretronic.libraries.event;
 
+import net.pretronic.libraries.event.execution.ExecutionType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -34,5 +36,7 @@ import java.lang.annotation.Target;
 public @interface Listener {
 
     byte priority() default EventPriority.NORMAL;
+
+    ExecutionType execution() default ExecutionType.BLOCKING;
 
 }
