@@ -26,7 +26,7 @@
     <groupId>net.pretronic.libraries</groupId>
     <artifactId>PretronicLibraries</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.46.185-SNAPSHOT</version>
+    <version>1.2.47.186-SNAPSHOT</version>
 
     <developers>
         <developer>
