@@ -19,8 +19,11 @@
 
 package net.pretronic.libraries.synchronisation.observer;
 
+import net.pretronic.libraries.utility.Iterators;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class AbstractObservable<O extends Observable<O,T>,T> implements Observable<O,T>{
 
@@ -51,7 +54,7 @@ public class AbstractObservable<O extends Observable<O,T>,T> implements Observab
 
     @Override
     public void unsubscribeObserver(ObserveCallback<O, T> callback) {
-        this.callbacks.remove(callback);
+        Iterators.removeOne(this.callbacks, callback1 -> callback1.equals(callback));
     }
 
     @SuppressWarnings("unchecked")
