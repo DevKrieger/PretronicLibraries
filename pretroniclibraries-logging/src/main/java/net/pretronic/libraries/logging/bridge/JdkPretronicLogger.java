@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -49,6 +50,7 @@ public class JdkPretronicLogger implements PretronicLogger {
     private DebugLevel debugLevel;
     private Handler translateHandler;
     private Function<LogLevel,String> prefixProcessor;
+    private Predicate<LogLevel> canLog;
 
     public JdkPretronicLogger(Logger logger) {
         this.logger = logger;
@@ -72,6 +74,9 @@ public class JdkPretronicLogger implements PretronicLogger {
         this.prefixProcessor = prefixProcessor;
     }
 
+    public void setCanLog(Predicate<LogLevel> canLog) {
+        this.canLog = canLog;
+    }
 
     public Map<LogLevel, Level> getLogLevelTranslation() {
         return logLevelTranslation;
@@ -176,11 +181,16 @@ public class JdkPretronicLogger implements PretronicLogger {
             String result = prefixProcessor.apply(level);
             if(result != null)       message = result+message;
         }
+        if(!canInternalLog(level)) return;
         LogRecord record = new LogRecord(translateLevel(level),message);
         record.setLoggerName(getName());
         record.setThreadID((int) thread.getId());
         record.setThrown(throwable);
         logger.log(record);
+    }
+
+    private boolean canInternalLog(LogLevel level){
+        return canLog == null || canLog.test(level);
     }
 
     private Level translateLevel(LogLevel level){
