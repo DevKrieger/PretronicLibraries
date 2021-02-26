@@ -69,6 +69,9 @@ public interface ParserState {
                         parser.getParser().previousChar();
                         return false;//No indicate go further
                     }
+                }else {
+                    parser.getParser().previousChar();
+                    return false;
                 }
             }else{
                 if(push) parser.extractStringAndPush();
