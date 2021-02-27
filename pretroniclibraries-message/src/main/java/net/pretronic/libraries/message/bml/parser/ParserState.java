@@ -70,7 +70,6 @@ public interface ParserState {
                         return false;//No indicate go further
                     }
                 }else {
-                    parser.getParser().previousChar();
                     return false;
                 }
             }else{

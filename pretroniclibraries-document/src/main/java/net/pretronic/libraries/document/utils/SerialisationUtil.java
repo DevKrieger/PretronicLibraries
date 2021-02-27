@@ -46,7 +46,13 @@ public class SerialisationUtil {
 
     public static DocumentEntry serialize(DocumentContext context,String key, Object value){
         if(value == null || Primitives.isPrimitive(value)) return DocumentRegistry.getFactory().newPrimitiveEntry(key,value);
-        else if(DocumentEntry.class.isAssignableFrom(value.getClass())) return ((DocumentEntry) value);//.copy(key);
+        else if(DocumentEntry.class.isAssignableFrom(value.getClass())) {
+            DocumentEntry entry = ((DocumentEntry) value);
+            if(entry.getKey() == null || entry.getKey().equals(key)){
+                entry.setKey(key);
+                return ((DocumentEntry) value);
+            }else return ((DocumentEntry) value).copy(key);
+        }
         else if(value.getClass().isArray()) return serializeArray(context,key, value);
         return serializeObject(context,key, value);
     }
