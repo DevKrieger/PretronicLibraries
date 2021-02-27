@@ -134,7 +134,7 @@ public class VariableDescriber<T> {
     public static Object get(Object object,String[] parts, int index){
         Object current = object;
         for (int i = index; i < parts.length; i++) {
-            if(current == null) break;
+            if(current == null) return null;
             String part = parts[i];
             VariableDescriber<?> describer = findDescriber(current.getClass());
             if(describer != null){
