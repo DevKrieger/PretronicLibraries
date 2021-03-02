@@ -48,6 +48,7 @@ public class DefaultEventBus implements EventBus {
     private final Executor executor;
     private final Map<Class<?>, List<EventExecutor>> executors;
     private final Map<Class<?>,Class<?>> mappedClasses;
+    private BiConsumer<Throwable,Object> exceptionHandler;
 
     public DefaultEventBus() {
         this(GeneralUtil.getDefaultExecutorService());
@@ -66,6 +67,10 @@ public class DefaultEventBus implements EventBus {
         this.executor = executor;
         this.executors = new LinkedHashMap<>();
         this.mappedClasses = new LinkedHashMap<>();
+    }
+
+    public void setExceptionHandler(BiConsumer<Throwable, Object> exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
@@ -175,7 +180,7 @@ public class DefaultEventBus implements EventBus {
         final EventOrigin origin = origin0 != null ? origin0 : networkEventHandler.getLocal();
         List<EventExecutor> executors = this.executors.get(executionClass);
         if(executors != null){
-            new SyncEventExecution(origin,executors.iterator(),this.executor,events);
+            new SyncEventExecution(origin,executors.iterator(),this.executor,events,exceptionHandler);
         }
         if(networkEventHandler.isNetworkEvent(executionClass)){
             networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
@@ -187,7 +192,7 @@ public class DefaultEventBus implements EventBus {
         final EventOrigin origin = origin0 != null ? origin0 : networkEventHandler.getLocal();
         List<EventExecutor> executors = this.executors.get(executionClass);
         if(executors != null){
-            new AsyncEventExecution(origin, executors.iterator(), this.executor, events, () -> {
+            new AsyncEventExecution(origin, executors.iterator(), this.executor, events,exceptionHandler, () -> {
                 if(networkEventHandler.isNetworkEvent(executionClass)){
                     networkEventHandler.handleNetworkEventsAsync(origin,executionClass,events);
                 }

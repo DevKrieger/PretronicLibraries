@@ -86,8 +86,7 @@ public class MethodEventExecutor implements EventExecutor{
                     if(withOrigin) this.method.invoke(this.listener,event,execution);
                     else this.method.invoke(this.listener,event);
                 }catch (Exception exception){
-                    System.out.println("Could not execute subscription "+listener.getClass()+"#"+method.getName());
-                    exception.printStackTrace();
+                    execution.throwException(exception,listener.getClass()+"#"+method.getName());
                 }
             }
         }

@@ -26,15 +26,18 @@ import net.pretronic.libraries.utility.SystemUtil;
 
 import java.util.Iterator;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 
 public class SyncEventExecution implements EventExecution{
 
     private final EventOrigin origin;
     private volatile boolean waitingForCompletion;
+    private final BiConsumer<Throwable,Object> exceptionHandler;
 
-    public SyncEventExecution(EventOrigin origin,Iterator<EventExecutor> executors, Executor executor, Object[] events) {
+    public SyncEventExecution(EventOrigin origin,Iterator<EventExecutor> executors, Executor executor, Object[] events,BiConsumer<Throwable,Object> exceptionHandler) {
         this.origin = origin;
         this.waitingForCompletion = false;
+        this.exceptionHandler = exceptionHandler;
         execute(executors,executor,events);
     }
 
@@ -63,6 +66,15 @@ public class SyncEventExecution implements EventExecution{
             waitingForCompletion = false;
         }else {
             throw new IllegalArgumentException("Event execution is not non blocking");
+        }
+    }
+
+    @Override
+    public void throwException(Throwable exception, Object location) {
+        if(exceptionHandler != null) exceptionHandler.accept(exception,location);
+        else{
+            System.out.println("Could not execute subscription "+location);
+            exception.printStackTrace();
         }
     }
 }

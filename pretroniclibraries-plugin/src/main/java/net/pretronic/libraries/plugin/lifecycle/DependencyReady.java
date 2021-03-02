@@ -2,7 +2,7 @@
  * (C) Copyright 2021 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 20.02.21, 10:46
+ * @since 02.03.21, 20:23
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,21 +18,21 @@
  * under the License.
  */
 
-package net.pretronic.libraries.event.execution;
+package net.pretronic.libraries.plugin.lifecycle;
 
-import net.pretronic.libraries.event.network.EventOrigin;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface EventExecution {
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DependencyReady {
 
-    EventOrigin getOrigin();
+    String name();
 
-    void complete();
+    String earliestState();
 
-    default void throwException(Throwable e){
-        throwException(e,"Unknown");
-    }
-
-    void throwException(Throwable e, Object location);
-
+    long delay() default 0;
 
 }

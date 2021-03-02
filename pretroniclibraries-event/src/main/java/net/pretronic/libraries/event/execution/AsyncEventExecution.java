@@ -25,6 +25,7 @@ import net.pretronic.libraries.event.network.EventOrigin;
 
 import java.util.Iterator;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 
 public class AsyncEventExecution implements EventExecution{
 
@@ -34,13 +35,15 @@ public class AsyncEventExecution implements EventExecution{
     private final Runnable callback;
     private final Object[] events;
     private boolean waitingForCompletion;
+    private final BiConsumer<Throwable,Object> exceptionHandler;
 
-    public AsyncEventExecution(EventOrigin origin,Iterator<EventExecutor> executors, Executor executor, Object[] events,Runnable callback) {
+    public AsyncEventExecution(EventOrigin origin,Iterator<EventExecutor> executors, Executor executor, Object[] events,BiConsumer<Throwable,Object> exceptionHandler,Runnable callback) {
         this.origin = origin;
         this.executors = executors;
         this.executor = executor;
         this.callback = callback;
         this.events = events;
+        this.exceptionHandler = exceptionHandler;
         this.waitingForCompletion = false;
         executor.execute(this::executeNext);
     }
@@ -74,6 +77,15 @@ public class AsyncEventExecution implements EventExecution{
             waitingForCompletion = false;
         }else {
             throw new IllegalArgumentException("Event execution is not non blocking");
+        }
+    }
+
+    @Override
+    public void throwException(Throwable exception, Object location) {
+        if(exceptionHandler != null) exceptionHandler.accept(exception,location);
+        else{
+            System.out.println("Could not execute subscription "+location);
+            exception.printStackTrace();
         }
     }
 }
