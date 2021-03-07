@@ -247,6 +247,10 @@ public interface ParserState {
 
         @Override
         public void parse(YamlParser yaml, StringParser parser, char current) {
+            if(current == '#'){
+                parser.skipLine();
+                return;
+            }
             if(yaml.getLineMark() != parser.lineIndex()){
                 yaml.mark(parser);
             }
