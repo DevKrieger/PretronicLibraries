@@ -28,6 +28,8 @@ public interface EventExecution {
 
     void complete();
 
+    void stopPropagation();
+
     default void throwException(Throwable e){
         throwException(e,"Unknown");
     }

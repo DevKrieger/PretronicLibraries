@@ -34,8 +34,10 @@ public class AsyncEventExecution implements EventExecution{
     private final Executor executor;
     private final Runnable callback;
     private final Object[] events;
-    private boolean waitingForCompletion;
     private final BiConsumer<Throwable,Object> exceptionHandler;
+
+    private volatile boolean waitingForCompletion;
+    private volatile boolean stopPropagation;
 
     public AsyncEventExecution(EventOrigin origin,Iterator<EventExecutor> executors, Executor executor, Object[] events,BiConsumer<Throwable,Object> exceptionHandler,Runnable callback) {
         this.origin = origin;
@@ -44,7 +46,10 @@ public class AsyncEventExecution implements EventExecution{
         this.callback = callback;
         this.events = events;
         this.exceptionHandler = exceptionHandler;
+
         this.waitingForCompletion = false;
+        this.stopPropagation = false;
+
         executor.execute(this::executeNext);
     }
 
@@ -54,7 +59,7 @@ public class AsyncEventExecution implements EventExecution{
     }
 
     private void executeNext(){
-        if(executors.hasNext()){
+        if(!this.stopPropagation && executors.hasNext()){
             EventExecutor executor = executors.next();
             if(executor.getExecutionType() == ExecutionType.BLOCKING){
                 executor.execute(this,events);
@@ -73,11 +78,16 @@ public class AsyncEventExecution implements EventExecution{
 
     public void complete(){
         if(waitingForCompletion){
-            executeNext();
             waitingForCompletion = false;
+            executeNext();
         }else {
             throw new IllegalArgumentException("Event execution is not non blocking");
         }
+    }
+
+    @Override
+    public void stopPropagation() {
+        this.stopPropagation = true;
     }
 
     @Override

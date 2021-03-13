@@ -31,13 +31,18 @@ import java.util.function.BiConsumer;
 public class SyncEventExecution implements EventExecution{
 
     private final EventOrigin origin;
-    private volatile boolean waitingForCompletion;
     private final BiConsumer<Throwable,Object> exceptionHandler;
+
+    private volatile boolean stopPropagation;
+    private volatile boolean waitingForCompletion;
 
     public SyncEventExecution(EventOrigin origin,Iterator<EventExecutor> executors, Executor executor, Object[] events,BiConsumer<Throwable,Object> exceptionHandler) {
         this.origin = origin;
-        this.waitingForCompletion = false;
         this.exceptionHandler = exceptionHandler;
+
+        this.waitingForCompletion = false;
+        this.stopPropagation = false;
+
         execute(executors,executor,events);
     }
 
@@ -47,7 +52,7 @@ public class SyncEventExecution implements EventExecution{
     }
 
     private void execute(Iterator<EventExecutor> executors, Executor executor0, Object[] events){
-        while(executors.hasNext()){
+        while(!stopPropagation && executors.hasNext()){
             EventExecutor executor = executors.next();
             if(executor.getExecutionType() == ExecutionType.BLOCKING){
                 executor.execute(this,events);
@@ -67,6 +72,11 @@ public class SyncEventExecution implements EventExecution{
         }else {
             throw new IllegalArgumentException("Event execution is not non blocking");
         }
+    }
+
+    @Override
+    public void stopPropagation() {
+        stopPropagation = true;
     }
 
     @Override
