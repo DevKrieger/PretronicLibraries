@@ -54,7 +54,8 @@ public class InetSocketAddressAdapter implements DocumentAdapter<InetSocketAddre
 
     @Override
     public DocumentEntry write(String key, InetSocketAddress object) {
-        String address = object.getAddress().getHostAddress()+":"+object.getPort();
-        return DocumentRegistry.getFactory().newPrimitiveEntry(key,address);
+        String address = object.getAddress() != null ? object.getAddress().getHostAddress() : "127.0.0.1";
+        String addressComplex = address+":"+object.getPort();
+        return DocumentRegistry.getFactory().newPrimitiveEntry(key,addressComplex);
     }
 }
