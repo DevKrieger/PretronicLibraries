@@ -20,12 +20,12 @@
 package net.pretronic.libraries.command.command.object.multiple;
 
 import net.pretronic.libraries.command.Completable;
+import net.pretronic.libraries.command.NoPermissionHandler;
 import net.pretronic.libraries.command.NotFindable;
 import net.pretronic.libraries.command.NotFoundHandler;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
-import net.pretronic.libraries.command.command.object.DefinedCompletable;
-import net.pretronic.libraries.command.command.object.ObjectCommand;
+import net.pretronic.libraries.command.command.object.*;
 import net.pretronic.libraries.command.manager.CommandManager;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.Iterators;
@@ -33,7 +33,7 @@ import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.*;
 
-public abstract class MultipleMainObjectCommand<T,B> extends ObjectCommand<T> implements CommandManager, DefinedCompletable<T> {
+public abstract class MultipleMainObjectCommand<T,B> extends MainObjectCommand<T> implements CommandManager, DefinedCompletable<T> {
 
     private final List<Command> commands;
     private final Collection<String> internalTabComplete;
@@ -49,6 +49,7 @@ public abstract class MultipleMainObjectCommand<T,B> extends ObjectCommand<T> im
         if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
         if(this instanceof MultipleObjectNotFindable) setObjectNotFoundHandler((MultipleObjectNotFindable<T>) this);
         if(this instanceof MultipleObjectCompletable) setObjectCompletableHandler((MultipleObjectCompletable<T>) this);
+        if(this instanceof ObjectCommandPrecondition) setObjectCommandPrecondition((ObjectCommandPrecondition) this);
     }
 
     @Override
@@ -127,16 +128,20 @@ public abstract class MultipleMainObjectCommand<T,B> extends ObjectCommand<T> im
     public void execute(CommandSender sender, Object object, String[] args) {
         if(args.length > 0){
             String name = args[0];
-            B bridged = getObject((T)object,name);
+            B bridged = getObject(sender, (T)object,name);
             if(bridged == null) {
                 if(objectNotFoundHandler != null) {
                     objectNotFoundHandler.objectNotFound(sender, (T) object, name, Arrays.copyOfRange(args, 1, args.length));
                 }
             } else if(args.length > 1) {
-                execute(sender, bridged,Arrays.copyOfRange(args,1,args.length));
+                super.execute(sender, bridged,Arrays.copyOfRange(args,1,args.length));
             } else {
                 if(notFoundHandler != null){
-                    notFoundHandler.handle(sender, args[0], Arrays.copyOfRange(args,1,args.length));
+                    if(notFoundHandler instanceof DefinedNotFindable){
+                        ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, null, new String[0]);
+                    }else{
+                        notFoundHandler.handle(sender, null, new String[0]);
+                    }
                 }
             }
         } else {
@@ -162,7 +167,7 @@ public abstract class MultipleMainObjectCommand<T,B> extends ObjectCommand<T> im
             String subCommand = args[1];
             Command command = getCommand(subCommand);
             if(command instanceof DefinedCompletable){
-                B bridged = getObject(object,args[0]);
+                B bridged = getObject(sender, object,args[0]);
                 if(object == null) return Collections.emptyList();
                 return ((DefinedCompletable<B>) command).complete(sender,bridged,Arrays.copyOfRange(args,1,args.length));
             }else if(command instanceof Completable){
@@ -172,5 +177,10 @@ public abstract class MultipleMainObjectCommand<T,B> extends ObjectCommand<T> im
         }
     }
 
-    public abstract B getObject(T original, String name);
+    @Override
+    public T getObject(CommandSender sender, String name) {
+        throw new UnsupportedOperationException("Can't be called for a MultipleMainObjectCommand. It is bridged from a MainObjectCommand.");
+    }
+
+    public abstract B getObject(CommandSender commandSender, T original, String name);
 }
