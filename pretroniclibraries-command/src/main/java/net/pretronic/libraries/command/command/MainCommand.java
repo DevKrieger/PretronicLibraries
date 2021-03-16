@@ -73,6 +73,16 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
     }
 
     @Override
+    public NoPermissionHandler getNoPermissionHandler(ObjectOwner owner) {
+        return this.noPermissionHandler;
+    }
+
+    @Override
+    public void setNoPermissionHandler(ObjectOwner owner, NoPermissionHandler noPermissionHandler) {
+        throw new UnsupportedOperationException("Not supported on main commands, use the normal handler");
+    }
+
+    @Override
     public void dispatchCommand(CommandSender sender, String name0) {
         String name = name0.trim();
         int index = name.indexOf(" ");

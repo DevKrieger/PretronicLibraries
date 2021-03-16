@@ -26,17 +26,18 @@ import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class DefaultCommandManager implements CommandManager {
 
     private final List<Command> commands;
     private NotFoundHandler notFoundHandler;
     private NoPermissionHandler noPermissionHandler;
+    private final Map<ObjectOwner,NoPermissionHandler> specificNoPermissionHandler;
 
     public DefaultCommandManager() {
         this.commands = new ArrayList<>();
+        this.specificNoPermissionHandler = new HashMap<>();
     }
 
     @Override
@@ -65,6 +66,17 @@ public class DefaultCommandManager implements CommandManager {
     }
 
     @Override
+    public NoPermissionHandler getNoPermissionHandler(ObjectOwner owner) {
+        return specificNoPermissionHandler.getOrDefault(owner,this.noPermissionHandler);
+    }
+
+    @Override
+    public void setNoPermissionHandler(ObjectOwner owner, NoPermissionHandler handler) {
+        if(handler == null) this.specificNoPermissionHandler.remove(owner);
+        else this.specificNoPermissionHandler.put(owner,handler);
+    }
+
+    @Override
     public void dispatchCommand(CommandSender sender, String name0) {
         String name = name0.trim();
         int index = name.indexOf(" ");
@@ -74,6 +86,8 @@ public class DefaultCommandManager implements CommandManager {
         Command cmd = getCommand(command);
         String[] args = index==-1?new String[0]:name.substring(index+1).split(" ");
         if(cmd != null) {
+            NoPermissionHandler noPermissionHandler = this.specificNoPermissionHandler.get(cmd.getOwner());
+            if(noPermissionHandler == null) noPermissionHandler = this.noPermissionHandler;
             if(CommandManager.hasPermission(sender, noPermissionHandler, null, cmd.getConfiguration().getPermission(), command, args)) {
                 cmd.execute(sender,args);
             }

@@ -43,6 +43,10 @@ public interface CommandManager {
 
     void setNoPermissionHandler(NoPermissionHandler noPermissionHandler);
 
+    NoPermissionHandler getNoPermissionHandler(ObjectOwner owner);
+
+    void setNoPermissionHandler(ObjectOwner owner,NoPermissionHandler noPermissionHandler);
+
     default void setNoPermissionMessage(Textable textable) {
         setNoPermissionHandler(new TextableNoPermissionHandler(textable));
     }
