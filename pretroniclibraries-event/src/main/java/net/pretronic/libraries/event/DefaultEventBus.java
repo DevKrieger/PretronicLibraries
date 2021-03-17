@@ -78,19 +78,23 @@ public class DefaultEventBus implements EventBus {
         Objects.requireNonNull(owner,"Owner can't be null.");
         Objects.requireNonNull(listener,"Listener can't be null.");
 
-        for(Method method : listener.getClass().getDeclaredMethods()){
-            try{
-                Listener info = method.getAnnotation(Listener.class);
-                if(info != null && (method.getParameterTypes().length == 1 || method.getParameterTypes().length == 2)){
-                    Class<?> eventClass = method.getParameterTypes()[0];
-                    Class<?> mappedClass = this.mappedClasses.get(eventClass);
-                    if(mappedClass == null) mappedClass = eventClass;
+        Class<?> listenerClass = listener.getClass();
+        while (listenerClass != null) {
+            for(Method method : listenerClass.getDeclaredMethods()){
+                try{
+                    Listener info = method.getAnnotation(Listener.class);
+                    if(info != null && (method.getParameterTypes().length == 1 || method.getParameterTypes().length == 2)){
+                        Class<?> eventClass = method.getParameterTypes()[0];
+                        Class<?> mappedClass = this.mappedClasses.get(eventClass);
+                        if(mappedClass == null) mappedClass = eventClass;
 
-                    addExecutor(mappedClass,new MethodEventExecutor(owner,info.priority(),info.execution(),listener,eventClass,method));
+                        addExecutor(mappedClass,new MethodEventExecutor(owner,info.priority(),info.execution(),listener,eventClass,method));
+                    }
+                }catch (Exception exception){
+                    throw new IllegalArgumentException("Could not register listener "+listener,exception);
                 }
-            }catch (Exception exception){
-                throw new IllegalArgumentException("Could not register listener "+listener,exception);
             }
+            listenerClass = listenerClass.getSuperclass();
         }
     }
 
