@@ -134,6 +134,16 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         this.commands.clear();
     }
 
+    @Override
+    public NoPermissionHandler getNoPermissionHandler(ObjectOwner owner) {
+        return this.noPermissionHandler;
+    }
+
+    @Override
+    public void setNoPermissionHandler(ObjectOwner owner, NoPermissionHandler noPermissionHandler) {
+        throw new UnsupportedOperationException("Not supported on main commands, use the normal handler");
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(CommandSender sender, String[] args) {
