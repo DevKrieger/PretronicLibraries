@@ -28,18 +28,18 @@ import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class MainCommand extends BasicCommand implements CommandManager, Completable {
 
     private final List<Command> subCommands;
-    private final Collection<String> internalTabComplete;
     private NotFoundHandler notFoundHandler;
     private NoPermissionHandler noPermissionHandler;
 
     public MainCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner,configuration);
         this.subCommands = new ArrayList<>();
-        this.internalTabComplete = new ArrayList<>();
 
         if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
 
@@ -97,25 +97,21 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
             throw new IllegalArgumentException("A command with the name "+command.getConfiguration().getName()+" is already registered as sub command.");
         }
         this.subCommands.add(command);
-        this.internalTabComplete.add(command.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(String command) {
         Command result = Iterators.removeOne(this.subCommands, entry -> entry.getConfiguration().getName().equalsIgnoreCase(command));
-        if(result != null) this.internalTabComplete.remove(result.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(Command command) {
         Command result = Iterators.removeOne(this.subCommands, entry -> entry.equals(command));
-        if(result != null) this.internalTabComplete.remove(result.getConfiguration().getName());
     }
 
     @Override
     public void unregisterCommand(ObjectOwner owner) {
         Collection<Command> result = Iterators.remove(this.subCommands, entry -> entry.getOwner().equals(owner));
-        for (Command command : result) this.internalTabComplete.remove(command.getConfiguration().getName());
     }
 
     @Override
@@ -146,11 +142,15 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
 
     @Override
     public Collection<String> complete(CommandSender sender, String[] args) {
-        if(args.length <= 1) return internalTabComplete;
-        else{
-            String subCommand = args[1];
+        if(args.length == 0) {
+            return Iterators.map(getCommands(), command -> command.getConfiguration().getName());
+        }else if(args.length == 1) {
+            return Iterators.map(getCommands(), command -> command.getConfiguration().getName()
+                    ,command -> command.getConfiguration().getName().toLowerCase().startsWith(args[0].toLowerCase()));
+        }else{
+            String subCommand = args[0];
             Command command = getCommand(subCommand);
-            if(command instanceof Completable) return ((Completable) command).complete(sender,Arrays.copyOfRange(args,2,args.length));
+            if(command instanceof Completable) return ((Completable) command).complete(sender,Arrays.copyOfRange(args,1,args.length));
             else return Collections.emptyList();
         }
     }
