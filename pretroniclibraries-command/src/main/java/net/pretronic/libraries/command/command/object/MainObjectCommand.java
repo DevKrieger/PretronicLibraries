@@ -215,12 +215,17 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         }else{
             String subCommand = args[1];
             Command command = getCommand(subCommand);
+
+            String[] subArg;
+            if(command instanceof MainObjectCommand) subArg = Arrays.copyOfRange(args,1,args.length);
+            else subArg = Arrays.copyOfRange(args,2,args.length);
+
             if(command instanceof DefinedCompletable){
                 T object = getObject(sender,args[0]);
                 if(object == null) return Collections.emptyList();
-                return ((DefinedCompletable<T>) command).complete(sender, object,Arrays.copyOfRange(args,2,args.length));
+                return ((DefinedCompletable<T>) command).complete(sender, object,subArg);
             }else if(command instanceof Completable){
-                return ((Completable) command).complete(sender,Arrays.copyOfRange(args,2,args.length));
+                return ((Completable) command).complete(sender,subArg);
             }else return Collections.emptyList();
         }
     }

@@ -101,17 +101,17 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
 
     @Override
     public void unregisterCommand(String command) {
-        Command result = Iterators.removeOne(this.subCommands, entry -> entry.getConfiguration().getName().equalsIgnoreCase(command));
+        Iterators.removeOne(this.subCommands, entry -> entry.getConfiguration().getName().equalsIgnoreCase(command));
     }
 
     @Override
     public void unregisterCommand(Command command) {
-        Command result = Iterators.removeOne(this.subCommands, entry -> entry.equals(command));
+        Iterators.removeOne(this.subCommands, entry -> entry.equals(command));
     }
 
     @Override
     public void unregisterCommand(ObjectOwner owner) {
-        Collection<Command> result = Iterators.remove(this.subCommands, entry -> entry.getOwner().equals(owner));
+        Iterators.remove(this.subCommands, entry -> entry.getOwner().equals(owner));
     }
 
     @Override
