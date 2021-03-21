@@ -211,7 +211,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             }
         }else if(args.length == 2) {
             return Iterators.map(getCommands(), command -> command.getConfiguration().getName()
-                    ,command -> command.getConfiguration().getName().toLowerCase().startsWith(args[0].toLowerCase()));
+                    ,command -> command.getConfiguration().getName().toLowerCase().startsWith(args[1].toLowerCase()));
         }else{
             String subCommand = args[1];
             Command command = getCommand(subCommand);
