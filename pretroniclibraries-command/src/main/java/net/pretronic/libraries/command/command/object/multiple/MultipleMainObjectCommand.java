@@ -138,7 +138,7 @@ public abstract class MultipleMainObjectCommand<T,B> extends MainObjectCommand<T
             } else {
                 if(notFoundHandler != null){
                     if(notFoundHandler instanceof DefinedNotFindable){
-                        ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, null, new String[0]);
+                        ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,bridged, null, new String[0]);
                     }else{
                         notFoundHandler.handle(sender, null, new String[0]);
                     }
