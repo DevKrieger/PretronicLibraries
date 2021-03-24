@@ -25,7 +25,7 @@ import net.pretronic.libraries.command.command.configuration.CommandConfiguratio
 import net.pretronic.libraries.command.command.object.DefinedCompletable;
 import net.pretronic.libraries.command.command.object.DefinedNotFindable;
 import net.pretronic.libraries.command.command.object.MainObjectCommand;
-import net.pretronic.libraries.command.command.object.ObjectCompletable;
+import net.pretronic.libraries.command.command.object.ObjectCommand;
 import net.pretronic.libraries.command.manager.CommandManager;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.Iterators;
@@ -62,7 +62,7 @@ public abstract class MultipleMainObjectCommand<T,B> extends MainObjectCommand<T
 
     @SuppressWarnings("unchecked")
     @Override
-    public void execute(CommandSender sender, Object object, String[] args) {
+    public void execute(CommandSender sender, T object, String[] args) {
         if(args.length > 0){
             String name = args[0];
             B bridged = getObject(sender, (T)object,name);
@@ -71,7 +71,7 @@ public abstract class MultipleMainObjectCommand<T,B> extends MainObjectCommand<T
                     objectNotFoundHandler.objectNotFound(sender, (T) object, name, Arrays.copyOfRange(args, 1, args.length));
                 }
             } else if(args.length > 1) {
-                super.execute(sender, bridged,Arrays.copyOfRange(args,1,args.length));
+                executeBridged(sender, bridged,Arrays.copyOfRange(args,1,args.length));
             } else {
                 if(notFoundHandler != null){
                     if(notFoundHandler instanceof DefinedNotFindable){
@@ -84,6 +84,32 @@ public abstract class MultipleMainObjectCommand<T,B> extends MainObjectCommand<T
         } else {
             if(notFoundHandler != null){
                 notFoundHandler.handle(sender, null, args);
+            }
+        }
+    }
+
+    protected void executeBridged(CommandSender sender, B object, String[] args) {
+        if(args.length > 0){
+            for (Command command : commands) {
+                if(command.getConfiguration().hasAlias(args[0])){
+                    if(CommandManager.hasPermission(sender, noPermissionHandler, object, command.getConfiguration().getPermission(), args[0], args)) {
+                        if(command instanceof ObjectCommand){
+                            ((ObjectCommand<B>)command).execute(sender, object,Arrays.copyOfRange(args,1,args.length));
+                        }else {
+                            command.execute(sender, args);
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+        if(notFoundHandler != null){
+            String command =  args.length == 0 ? "" : args[0];
+            String[] args0 = args.length == 0 ? args : Arrays.copyOfRange(args,1,args.length);
+            if(notFoundHandler instanceof DefinedNotFindable){
+                ((DefinedNotFindable) notFoundHandler).commandNotFound(sender,object, command, args0);
+            }else{
+                notFoundHandler.handle(sender, command, args0);
             }
         }
     }

@@ -28,8 +28,6 @@ import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class MainCommand extends BasicCommand implements CommandManager, Completable {
 

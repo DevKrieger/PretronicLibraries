@@ -31,12 +31,12 @@ import java.util.*;
 
 public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements CommandManager, Completable {
 
-    private final List<Command> commands;
+    protected final List<Command> commands;
     protected final Collection<String> internalTabComplete;
     protected NotFoundHandler notFoundHandler;
     private ObjectNotFindable objectNotFoundHandler;
     private ObjectCompletable objectCompletable;
-    private NoPermissionHandler noPermissionHandler;
+    protected NoPermissionHandler noPermissionHandler;
 
     public MainObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner, configuration);
@@ -86,13 +86,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
 
     @Override
     public void dispatchCommand(CommandSender sender, String name) {
-        name = name.trim();
-        int index = name.indexOf(" ");
-        String command;
-        if(index == -1) command = name;
-        else command = name.substring(0,index);
-        String[] args = index==-1?new String[0]:name.substring(index+1).split(" ");
-        execute(sender,command,args);
+        throw new UnsupportedOperationException("dispatchCommand is not supported in MainObjectCommand");
     }
 
     @Override
@@ -166,7 +160,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
 
     @SuppressWarnings("unchecked")
     @Override
-    public void execute(CommandSender sender, Object object, String[] args) {
+    public void execute(CommandSender sender, T object, String[] args) {
         if(args.length > 0){
             for (Command command : commands) {
                 if(command.getConfiguration().hasAlias(args[0])){
