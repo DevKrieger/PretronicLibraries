@@ -32,11 +32,10 @@ import java.util.*;
 public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements CommandManager, Completable {
 
     private final List<Command> commands;
-    private final Collection<String> internalTabComplete;
-    private NotFoundHandler notFoundHandler;
+    protected final Collection<String> internalTabComplete;
+    protected NotFoundHandler notFoundHandler;
     private ObjectNotFindable objectNotFoundHandler;
     private ObjectCompletable objectCompletable;
-    private ObjectCommandPrecondition objectCommandPrecondition;
     private NoPermissionHandler noPermissionHandler;
 
     public MainObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
@@ -47,7 +46,6 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         if(this instanceof NotFindable) setNotFoundHandler((NotFoundHandler) this);
         if(this instanceof ObjectNotFindable) setObjectNotFoundHandler((ObjectNotFindable) this);
         if(this instanceof ObjectCompletable) setObjectCompletableHandler((ObjectCompletable) this);
-        if(this instanceof ObjectCommandPrecondition) setObjectCommandPrecondition((ObjectCommandPrecondition) this);
 
         if(this instanceof ObjectNoPermissionAble) setNoPermissionHandler((ObjectNoPermissionAble) this);
         else if(this instanceof NoPermissionAble) setNoPermissionHandler((NoPermissionAble) this);
@@ -74,10 +72,6 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
 
     public void setObjectCompletableHandler(ObjectCompletable completable){
         this.objectCompletable = completable;
-    }
-
-    public void setObjectCommandPrecondition(ObjectCommandPrecondition precondition) {
-        this.objectCommandPrecondition = precondition;
     }
 
     @Override
@@ -173,7 +167,6 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     @SuppressWarnings("unchecked")
     @Override
     public void execute(CommandSender sender, Object object, String[] args) {
-        if(objectCommandPrecondition != null && !objectCommandPrecondition.checkPrecondition(sender, object)) return;
         if(args.length > 0){
             for (Command command : commands) {
                 if(command.getConfiguration().hasAlias(args[0])){
