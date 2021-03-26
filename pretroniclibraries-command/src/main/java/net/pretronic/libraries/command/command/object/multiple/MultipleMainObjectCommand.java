@@ -132,9 +132,9 @@ public abstract class MultipleMainObjectCommand<T,B> extends MainObjectCommand<T
             Command command = getCommand(subCommand);
 
             String[] subArg;
-            if(command instanceof MainObjectCommand) subArg = Arrays.copyOfRange(args,1,args.length);
+            if(command instanceof MainObjectCommand && !(command instanceof MultipleMainObjectCommand)) subArg = Arrays.copyOfRange(args,1,args.length);
             else subArg = Arrays.copyOfRange(args,2,args.length);
-
+F
             if(command instanceof DefinedCompletable){
                 B bridged = getObject(sender, object,args[0]);
                 if(object == null) return Collections.emptyList();
