@@ -125,9 +125,10 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0) {
             for (Command command : subCommands) {
-                if(CommandManager.hasPermission(sender, noPermissionHandler, null, command.getConfiguration().getPermission(), args[0], args)
-                        && command.getConfiguration().hasAlias(args[0])) {
-                    command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
+                if(command.getConfiguration().hasAlias(args[0])){
+                    if(CommandManager.hasPermission(sender, noPermissionHandler, null, command.getConfiguration().getPermission(), args[0], args)){
+                        command.execute(sender,Arrays.copyOfRange(args, 1, args.length));
+                    }
                     return;
                 }
             }
