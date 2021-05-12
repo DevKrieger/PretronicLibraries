@@ -20,10 +20,11 @@
 package net.pretronic.libraries.utility.reflect;
 
 import net.pretronic.libraries.utility.SystemUtil;
-//import net.pretronic.libraries.utility.reflect.versioned.JDK9ReflectVersioned;
+import net.pretronic.libraries.utility.reflect.versioned.JDK16ReflectVersioned;
 import net.pretronic.libraries.utility.reflect.versioned.JDK9ReflectVersioned;
 import net.pretronic.libraries.utility.reflect.versioned.LegacyReflectVersioned;
 import net.pretronic.libraries.utility.reflect.versioned.ReflectVersioned;
+import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,15 +37,27 @@ import java.util.Set;
 public class ReflectionUtil {
 
     private final static ReflectVersioned VERSIONED;
+    private static Unsafe UNSAFE;
 
     static {
         ReflectVersioned versioned;
-        if(SystemUtil.getJavaBaseVersion() >= 9){
-            versioned = new JDK9ReflectVersioned();
-        }else{
-            versioned = new LegacyReflectVersioned();
-        }
+        if(SystemUtil.getJavaBaseVersion() >= 16) versioned = new JDK16ReflectVersioned();
+        else if(SystemUtil.getJavaBaseVersion() >= 9) versioned = new JDK9ReflectVersioned();
+        else versioned = new LegacyReflectVersioned();
         VERSIONED = versioned;
+    }
+
+    public static Unsafe getUnsafe(){
+        if(UNSAFE == null){
+            try {
+                Field fu = Unsafe.class.getDeclaredField("theUnsafe");
+                fu.setAccessible(true);
+                UNSAFE = (Unsafe) fu.get(null);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new ReflectException(e);
+            }
+        }
+        return UNSAFE;
     }
 
     public static Collection<Field> getAllFields(Class<?> clazz) {
@@ -111,6 +124,20 @@ public class ReflectionUtil {
 
     public static void changeFieldValue(Object object,String fieldName,Object value){
         changeFieldValue(object.getClass(),object, fieldName, value);
+    }
+
+    public static void setUnsafeObjectFieldValue(Field field,Object value){
+        setUnsafeObjectFieldValue(null,field,value);
+    }
+
+    public static void setUnsafeObjectFieldValue(Object target,Field field,Object value){
+        Unsafe unsafe = getUnsafe();
+        if (Modifier.isStatic(field.getModifiers())) {
+            unsafe.putObjectVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field),value);
+        }else{
+            if(target == null) throw new IllegalArgumentException("Target can only be null for static fields");
+            unsafe.putObject(target, unsafe.objectFieldOffset(field),value);
+        }
     }
 
     public static void changeFieldValue(Class<?> clazz, Object object,String fieldName,Object value){
