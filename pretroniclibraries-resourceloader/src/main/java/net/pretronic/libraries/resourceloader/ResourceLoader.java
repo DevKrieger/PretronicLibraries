@@ -27,6 +27,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * The resource loader manages the installation of an application.
@@ -41,7 +43,14 @@ public class ResourceLoader {
     static {
         try {
             METHOD_ADD_URL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            METHOD_ADD_URL.setAccessible(true);
+            if (System.getSecurityManager() == null)
+                METHOD_ADD_URL.setAccessible(true);
+            else {
+                AccessController.doPrivileged((PrivilegedAction) () -> {
+                    METHOD_ADD_URL.setAccessible(true);
+                    return null;
+                });
+            }
         } catch (NoSuchMethodException exception) {
             throw new ExceptionInInitializerError(exception);
         }
