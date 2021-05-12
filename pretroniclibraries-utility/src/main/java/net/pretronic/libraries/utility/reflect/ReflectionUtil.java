@@ -38,8 +38,7 @@ public class ReflectionUtil {
     static {
         ReflectVersioned versioned;
         if(SystemUtil.getJavaBaseVersion() >= 9){
-            //versioned = new net.pretronic.libraries.utility.reflect.versioned.JDK9ReflectVersioned();
-            versioned = new LegacyReflectVersioned();
+            versioned = new net.pretronic.libraries.utility.reflect.versioned.JDK9ReflectVersioned();
         }else{
             versioned = new LegacyReflectVersioned();
         }
