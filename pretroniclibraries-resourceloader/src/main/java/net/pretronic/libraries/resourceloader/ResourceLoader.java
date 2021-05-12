@@ -21,14 +21,11 @@ package net.pretronic.libraries.resourceloader;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 /**
  * The resource loader manages the installation of an application.
@@ -38,16 +35,6 @@ import java.security.PrivilegedAction;
 public class ResourceLoader {
 
     private final static String VERSION_INFO_FILE_NAME = "version.dat";
-    private final static Method METHOD_ADD_URL;
-
-    static {
-        Method method = null;
-        try {
-            method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-        } catch (NoSuchMethodException ignored) {}
-        METHOD_ADD_URL = method;
-    }
 
     private final ResourceInfo info;
 
@@ -168,16 +155,9 @@ public class ResourceLoader {
      * @param loader The class loader to add this jar file
      * @param version the version for loading
      */
+    @Deprecated
     public void loadReflected(URLClassLoader loader, VersionInfo version){
-        if(METHOD_ADD_URL == null) throw new UnsupportedOperationException("Not available in current Java version");
-        if(version == null) version = getCurrentVersion();
-        if(version == null) throw new ResourceException("No installed version found");
-        File file = getLocalFile(version);
-        if(file.exists() && file.isFile()){
-            try {
-                METHOD_ADD_URL.invoke(loader, file.toURI().toURL());
-            } catch (IllegalAccessException | InvocationTargetException | MalformedURLException ignored) {}
-        }else throw new ResourceException(file.getAbsolutePath()+" is not a valid resource (jar) file");
+        throw new UnsupportedOperationException("No longer functional in newer Java versions (>16)");
     }
 
     /**
