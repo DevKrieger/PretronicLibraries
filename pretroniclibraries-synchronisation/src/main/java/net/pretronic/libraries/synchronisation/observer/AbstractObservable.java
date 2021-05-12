@@ -22,6 +22,7 @@ package net.pretronic.libraries.synchronisation.observer;
 import net.pretronic.libraries.utility.Iterators;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -39,7 +40,7 @@ public class AbstractObservable<O extends Observable<O,T>,T> implements Observab
 
     @Override
     public List<ObserveCallback<O,T>> getObservers() {
-        return callbacks;
+        return Collections.unmodifiableList(callbacks);
     }
 
     @Override
@@ -63,6 +64,6 @@ public class AbstractObservable<O extends Observable<O,T>,T> implements Observab
     }
 
     public void callObservers(O object, T arg){
-        for (ObserveCallback<O, T> callback : this.callbacks) callback.callback(object,arg);
+        for (ObserveCallback<O, T> callback : getObservers()) callback.callback(object,arg);
     }
 }

@@ -19,6 +19,7 @@
 
 package net.pretronic.libraries.dependency;
 
+import net.pretronic.libraries.dependency.loader.DependencyClassLoader;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.entry.DocumentEntry;
 import net.pretronic.libraries.document.type.DocumentFileType;
@@ -64,14 +65,13 @@ public class DependencyGroup {
         dependencies.forEach(Dependency::install);
     }
 
+
     /**
      * Load all dependencies
      * @return A list with all loader
      */
     public List<ClassLoader> load(){
-        List<ClassLoader> loaders = new ArrayList<>();
-        this.dependencies.forEach(dependency -> loaders.add(dependency.load()));
-        return loaders;
+        return load((ClassLoader) null);
     }
 
     public List<ClassLoader> load(ClassLoader parent){
@@ -80,6 +80,17 @@ public class DependencyGroup {
         return loaders;
     }
 
+    public List<ClassLoader> load(DependencyClassLoader loader){
+        return load(loader,null);
+    }
+
+    public List<ClassLoader> load(DependencyClassLoader loader,ClassLoader parent){
+        List<ClassLoader> loaders = new ArrayList<>();
+        this.dependencies.forEach(dependency -> loaders.add(dependency.load(loader,parent)));
+        return loaders;
+    }
+
+    @Deprecated
     public void loadReflected(URLClassLoader loader){
         this.dependencies.forEach(dependency -> dependency.loadReflected(loader));
     }

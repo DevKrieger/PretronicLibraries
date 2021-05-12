@@ -22,6 +22,7 @@ package net.pretronic.libraries.command.command.object;
 import net.pretronic.libraries.command.*;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.command.configuration.CommandConfiguration;
+import net.pretronic.libraries.command.command.object.multiple.MultipleMainObjectCommand;
 import net.pretronic.libraries.command.manager.CommandManager;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.Iterators;
@@ -204,7 +205,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             Command command = getCommand(subCommand);
 
             String[] subArg;
-            if(command instanceof MainObjectCommand) subArg = Arrays.copyOfRange(args,1,args.length);
+            if(command instanceof MainObjectCommand && !(command instanceof MultipleMainObjectCommand)) subArg = Arrays.copyOfRange(args,1,args.length);
             else subArg = Arrays.copyOfRange(args,2,args.length);
 
             if(command instanceof DefinedCompletable){

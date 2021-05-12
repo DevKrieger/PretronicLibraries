@@ -21,7 +21,6 @@ package net.pretronic.libraries.resourceloader;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,16 +35,6 @@ import java.nio.file.Files;
 public class ResourceLoader {
 
     private final static String VERSION_INFO_FILE_NAME = "version.dat";
-    private final static Method METHOD_ADD_URL;
-
-    static {
-        try {
-            METHOD_ADD_URL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            METHOD_ADD_URL.setAccessible(true);
-        } catch (NoSuchMethodException exception) {
-            throw new ExceptionInInitializerError(exception);
-        }
-    }
 
     private final ResourceInfo info;
 
@@ -166,15 +155,9 @@ public class ResourceLoader {
      * @param loader The class loader to add this jar file
      * @param version the version for loading
      */
+    @Deprecated
     public void loadReflected(URLClassLoader loader, VersionInfo version){
-        if(version == null) version = getCurrentVersion();
-        if(version == null) throw new ResourceException("No installed version found");
-        File file = getLocalFile(version);
-        if(file.exists() && file.isFile()){
-            try {
-                METHOD_ADD_URL.invoke(loader, file.toURI().toURL());
-            } catch (IllegalAccessException | InvocationTargetException | MalformedURLException ignored) {}
-        }else throw new ResourceException(file.getAbsolutePath()+" is not a valid resource (jar) file");
+        throw new UnsupportedOperationException("No longer functional in newer Java versions (>16)");
     }
 
     /**
