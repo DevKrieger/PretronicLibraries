@@ -41,19 +41,12 @@ public class ResourceLoader {
     private final static Method METHOD_ADD_URL;
 
     static {
+        Method method = null;
         try {
-            METHOD_ADD_URL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            if (System.getSecurityManager() == null)
-                METHOD_ADD_URL.setAccessible(true);
-            else {
-                AccessController.doPrivileged((PrivilegedAction) () -> {
-                    METHOD_ADD_URL.setAccessible(true);
-                    return null;
-                });
-            }
-        } catch (NoSuchMethodException exception) {
-            throw new ExceptionInInitializerError(exception);
-        }
+            method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+        } catch (NoSuchMethodException ignored) {}
+        METHOD_ADD_URL = method;
     }
 
     private final ResourceInfo info;
@@ -176,6 +169,7 @@ public class ResourceLoader {
      * @param version the version for loading
      */
     public void loadReflected(URLClassLoader loader, VersionInfo version){
+        if(METHOD_ADD_URL == null) throw new UnsupportedOperationException("Not available in current Java version");
         if(version == null) version = getCurrentVersion();
         if(version == null) throw new ResourceException("No installed version found");
         File file = getLocalFile(version);
