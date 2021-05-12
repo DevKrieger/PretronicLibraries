@@ -20,6 +20,7 @@
 
 package net.pretronic.libraries.message;
 
+import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.message.bml.variable.VariableSet;
 
 public interface Textable {
@@ -29,4 +30,6 @@ public interface Textable {
     }
 
     String toText(VariableSet variables);
+
+    Document toDocument();
 }
