@@ -90,6 +90,11 @@ public class DependencyGroup {
         return loaders;
     }
 
+    @Deprecated
+    public void loadReflected(URLClassLoader loader){
+        this.dependencies.forEach(dependency -> dependency.loadReflected(loader));
+    }
+
     public static DependencyGroup load(DependencyManager manager,File location){
         return load(manager,DocumentFileType.JSON.getReader().read(location));
     }

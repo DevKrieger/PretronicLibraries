@@ -20,6 +20,7 @@
 package net.pretronic.libraries.dependency;
 
 import net.pretronic.libraries.dependency.loader.DependencyClassLoader;
+import net.pretronic.libraries.dependency.loader.LegacyReflectedDependencyClassLoader;
 import net.pretronic.libraries.utility.http.HttpClient;
 import net.pretronic.libraries.utility.http.HttpResult;
 import net.pretronic.libraries.utility.io.FileUtil;
@@ -159,7 +160,11 @@ public class Dependency {
         } catch (Exception exception) {
             throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" ("+exception.getMessage()+")",exception);
         }
+    }
 
+    @Deprecated
+    public void loadReflected(URLClassLoader loader){
+        load(new LegacyReflectedDependencyClassLoader(),loader);
     }
 
 
