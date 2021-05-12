@@ -19,6 +19,7 @@
 
 package net.pretronic.libraries.dependency;
 
+import net.pretronic.libraries.dependency.loader.DependencyClassLoader;
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.libraries.logging.PretronicLoggerFactory;
@@ -37,6 +38,8 @@ public class DependencyManager {
     private final PretronicLogger logger;
     private final File installationFolder;
     private final Collection<Dependency> dependencies;
+
+    private DependencyClassLoader defaultLoader;
 
     private String loggerPrefix;
 
@@ -63,6 +66,14 @@ public class DependencyManager {
     public void setLoggerPrefix(String loggerPrefix) {
         Validate.notNull(loggerPrefix);
         this.loggerPrefix = loggerPrefix;
+    }
+
+    public DependencyClassLoader getDefaultLoader() {
+        return defaultLoader;
+    }
+
+    public void setDefaultLoader(DependencyClassLoader defaultLoader) {
+        this.defaultLoader = defaultLoader;
     }
 
     public File getInstallationFolder() {

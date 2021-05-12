@@ -19,6 +19,7 @@
 
 package net.pretronic.libraries.dependency;
 
+import net.pretronic.libraries.dependency.loader.DependencyClassLoader;
 import net.pretronic.libraries.utility.http.HttpClient;
 import net.pretronic.libraries.utility.http.HttpResult;
 import net.pretronic.libraries.utility.io.FileUtil;
@@ -34,17 +35,6 @@ The {@link Dependency} class represents a dependency which is located in a maven
  This class provides methods for installing and loading the dependency at runtime.
  */
 public class Dependency {
-
-    private final static Method METHOD_ADD_URL;
-
-    static {
-        try {
-            METHOD_ADD_URL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            METHOD_ADD_URL.setAccessible(true);
-        } catch (NoSuchMethodException exception) {
-            throw new ExceptionInInitializerError(exception);
-        }
-    }
 
     private final transient DependencyManager manager;
     private final String repository;
@@ -132,44 +122,41 @@ public class Dependency {
         }
     }
 
-    /**
-     * Load the dependency, a new class loader will be created.
-     *
-     * @return The new class laoder
-     */
     public ClassLoader load(){
-        if(isLoaded()) return loader;
-        File jar = getLocalJar();
-        if(!jar.exists()) throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" (Dependency is not installed)");
-        return new URLClassLoader(new URL[]{FileUtil.fileToUrl(jar)});
+        return load((ClassLoader) null);
     }
 
-    /**
-     * Load the dependency with a parent loader, a new class loader will be created.
-     *
-     * @param parent Parent classloader
-     * @return The new class laoder
-     */
     public ClassLoader load(ClassLoader parent){
-        if(isLoaded()) return loader;
-        File jar = getLocalJar();
-        if(!jar.exists()) throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" (Dependency is not installed)");
-        return new URLClassLoader(new URL[]{FileUtil.fileToUrl(jar)},parent);
+        if(manager.getDefaultLoader() == null){
+            throw new IllegalArgumentException("No default class loader available");
+        }
+        return load(manager.getDefaultLoader(),parent);
     }
 
     /**
-     * Inject the dependency in an existing url class loader.
+     * Load the dependency,
      *
-     * @param loader The existing laoder
+     * @param loader The dependency loader
+     * @return The created java class loader
      */
-    public void loadReflected(URLClassLoader loader){
-        if(isLoaded()) return;
+    public ClassLoader load(DependencyClassLoader loader){
+        return load(loader,null);
+    }
+
+    /**
+     * Load the dependency,
+     *
+     * @param loader The dependency loader
+     * @param parent The parent java class loader
+     * @return The created java class loader
+     */
+    public ClassLoader load(DependencyClassLoader loader,ClassLoader parent){
+        if(isLoaded()) return null;
         File jar = getLocalJar();
         if(!jar.exists()) throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" (Dependency is not installed)");
         try {
-            METHOD_ADD_URL.invoke(loader, FileUtil.fileToUrl(jar));
-            this.loader = loader;
-        } catch (IllegalAccessException | InvocationTargetException exception) {
+            return loader.load(parent,FileUtil.fileToUrl(jar));
+        } catch (Exception exception) {
             throw new DependencyException("Could not load dependency "+artifactId+" v"+version+" ("+exception.getMessage()+")",exception);
         }
 
