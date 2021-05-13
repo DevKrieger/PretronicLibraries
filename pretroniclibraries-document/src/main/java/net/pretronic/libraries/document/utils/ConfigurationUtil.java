@@ -50,6 +50,7 @@ public class ConfigurationUtil {
                     try{
                         if(result != null) ReflectionUtil.setUnsafeObjectFieldValue(field,result);
                         else if(appendMissing){
+                            field.setAccessible(true);
                             Object defaultValue = field.get(null);
                             if(defaultValue != null) data.set(name,defaultValue);
                         }

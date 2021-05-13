@@ -20,7 +20,6 @@
 package net.pretronic.libraries.resourceloader;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
