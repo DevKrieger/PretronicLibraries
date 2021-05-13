@@ -1,0 +1,43 @@
+format:
+  date:
+    pattern: 'dd-MM-yyyy HH:mm'
+    endlessly: '-'
+player:
+  onJoin:
+    clearChat: true
+    info:
+      teamChat: true
+      punishNotify: true
+      report: true
+      listReports: true
+  session:
+    logging: true
+    retention: '90d'
+chat:
+  filter:
+    enabled: true
+    notification: true
+    block:
+      repeat: true
+      capslock: true
+      tofast: true
+    repeatDelay: 1000
+  tabComplete:
+    enabled: true
+    mode: 'DYNAMIC'
+    suggestions:
+      - 'help'
+      - 'ping'
+      - 'dkbans'
+      - 'report'
+      - 'ban@dkbans.command.punish'
+joinme:
+  headEnabled: true
+  multipleLines: true
+  disabledScopes: []
+  cooldown: '15m'
+ipAddress:
+  blockAltMinPlaytime: '1h'
+  historyType: 'NETWORK'
+integration:
+  labyModEnabled: true
