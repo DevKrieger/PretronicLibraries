@@ -131,12 +131,57 @@ public class ReflectionUtil {
     }
 
     public static void setUnsafeObjectFieldValue(Object target,Field field,Object value){
+        Class<?> type = field.getType();
         Unsafe unsafe = getUnsafe();
         if (Modifier.isStatic(field.getModifiers())) {
-            unsafe.putObjectVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field),value);
+            if(type.isPrimitive()){
+                if(type == int.class || type == Integer.class){
+                    unsafe.putIntVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field), (int) value);
+                }else if(type == long.class || type == Long.class){
+                    unsafe.putLongVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field), (long) value);
+                }else if(type == double.class || type == Double.class){
+                    unsafe.putDoubleVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field), (double) value);
+                }else if(type == short.class || type == Short.class){
+                    unsafe.putShortVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field), (short) value);
+                }else if(type == float.class || type == Float.class){
+                    unsafe.putFloatVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field), (float) value);
+                }else if(type == byte.class || type == Byte.class){
+                    unsafe.putByteVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field), (byte) value);
+                }else if(type == boolean.class || type == Boolean.class){
+                    unsafe.putBooleanVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field), (boolean) value);
+                }else if(type == char.class || type == Character.class){
+                    unsafe.putCharVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field), (char) value);
+                }else{
+                    throw new UnsupportedOperationException("Invalid primitive type");
+                }
+            }else{
+                unsafe.putObjectVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field),value);
+            }
         }else{
             if(target == null) throw new IllegalArgumentException("Target can only be null for static fields");
-            unsafe.putObject(target, unsafe.objectFieldOffset(field),value);
+            if(type.isPrimitive()){
+                if(type == int.class || type == Integer.class){
+                    unsafe.putInt(target, unsafe.objectFieldOffset(field), (int) value);
+                }else if(type == long.class || type == Long.class){
+                    unsafe.putLong(target, unsafe.objectFieldOffset(field), (long) value);
+                }else if(type == double.class || type == Double.class){
+                    unsafe.putDouble(target, unsafe.objectFieldOffset(field), (double) value);
+                }else if(type == short.class || type == Short.class){
+                    unsafe.putShort(target, unsafe.objectFieldOffset(field), (short) value);
+                }else if(type == float.class || type == Float.class){
+                    unsafe.putFloat(target, unsafe.objectFieldOffset(field), (float) value);
+                }else if(type == byte.class || type == Byte.class){
+                    unsafe.putByte(target, unsafe.objectFieldOffset(field), (byte) value);
+                }else if(type == boolean.class || type == Boolean.class){
+                    unsafe.putBoolean(target, unsafe.objectFieldOffset(field), (boolean) value);
+                }else if(type == char.class || type == Character.class){
+                    unsafe.putChar(target, unsafe.objectFieldOffset(field), (char) value);
+                }else{
+                    throw new UnsupportedOperationException("Invalid primitive type");
+                }
+            }else{
+                unsafe.putObject(target, unsafe.objectFieldOffset(field),value);
+            }
         }
     }
 
