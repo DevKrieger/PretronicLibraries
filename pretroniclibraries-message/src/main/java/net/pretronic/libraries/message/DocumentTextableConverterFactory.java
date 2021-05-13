@@ -15,7 +15,7 @@ public class DocumentTextableConverterFactory {
         CONVERTERS.put(StringTextable.class, new StringTextable.DocumentStringTextAbleConverter());
     }
 
-    public static void registerConverter(Class<? extends Textable> clazz, Function<Document, Textable> converter) {
+    public static void registerConverter(Class<? extends Textable> clazz, Function<Document, ? extends Textable> converter) {
         Validate.notNull(clazz, converter);
         CONVERTERS.put(clazz, converter);
     }
