@@ -39,12 +39,16 @@ public class ReflectionUtil {
     private final static ReflectVersioned VERSIONED;
     private static Unsafe UNSAFE;
 
+    public static final long STRING_VALUE_FIELD_OFFSET;
+
     static {
         ReflectVersioned versioned;
         if(SystemUtil.getJavaBaseVersion() >= 16) versioned = new JDK16ReflectVersioned();
         else if(SystemUtil.getJavaBaseVersion() >= 9) versioned = new JDK9ReflectVersioned();
         else versioned = new LegacyReflectVersioned();
         VERSIONED = versioned;
+
+        STRING_VALUE_FIELD_OFFSET = getStringFieldOffset("value");
     }
 
     public static Unsafe getUnsafe(){
@@ -131,6 +135,7 @@ public class ReflectionUtil {
     }
 
     public static void setUnsafeObjectFieldValue(Object target,Field field,Object value){
+        field.setAccessible(true);
         Class<?> type = field.getType();
         Unsafe unsafe = getUnsafe();
         if (Modifier.isStatic(field.getModifiers())) {
@@ -154,8 +159,21 @@ public class ReflectionUtil {
                 }else{
                     throw new UnsupportedOperationException("Invalid primitive type");
                 }
-            }else{
-                unsafe.putObjectVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field),value);
+            }else {
+                if(type.equals(String.class)) {
+                    try {
+                        String newValue = (String) value;
+                        char[] chars = newValue.toCharArray();
+
+                        String string = (String) field.get(null);
+
+                        unsafe.putObjectVolatile(string, STRING_VALUE_FIELD_OFFSET, chars);
+                    } catch (IllegalAccessException e) {
+                        throw new ReflectException(e);
+                    }
+                } else {
+                    unsafe.putObjectVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field),value);
+                }
             }
         }else{
             if(target == null) throw new IllegalArgumentException("Target can only be null for static fields");
@@ -259,6 +277,14 @@ public class ReflectionUtil {
     public static void grantFinalPrivileges(Field field){
         if(Modifier.isFinal(field.getModifiers())){
             VERSIONED.grantFinalPrivileges(field);
+        }
+    }
+
+    private static long getStringFieldOffset(String fieldName) {
+        try {
+            return getUnsafe().objectFieldOffset(String.class.getDeclaredField(fieldName));
+        } catch (NoSuchFieldException e) {
+            throw new ReflectException(e);
         }
     }
 }

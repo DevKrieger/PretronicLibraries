@@ -23,6 +23,7 @@ import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.annotations.DocumentIgnored;
 import net.pretronic.libraries.document.annotations.DocumentKey;
 import net.pretronic.libraries.document.annotations.OnDocumentConfigurationLoad;
+import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.utility.exception.OperationFailedException;
 import net.pretronic.libraries.utility.reflect.ReflectException;
 import net.pretronic.libraries.utility.reflect.ReflectionUtil;
@@ -31,6 +32,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.sql.Ref;
 
 public class ConfigurationUtil {
 
@@ -48,8 +50,9 @@ public class ConfigurationUtil {
                     Object result = data.getObject(name,field.getGenericType());
 
                     try{
-                        if(result != null) ReflectionUtil.setUnsafeObjectFieldValue(field,result);
-                        else if(appendMissing){
+                        if(result != null) {
+                            ReflectionUtil.setUnsafeObjectFieldValue(field,result);
+                        } else if(appendMissing){
                             field.setAccessible(true);
                             Object defaultValue = field.get(null);
                             if(defaultValue != null) data.set(name,defaultValue);
@@ -59,7 +62,6 @@ public class ConfigurationUtil {
                     }
                 }
             }
-
             for (Method method : clazz.getDeclaredMethods()){
                 if(Modifier.isStatic(method.getModifiers()) && method.getAnnotation(OnDocumentConfigurationLoad.class) != null){
                     method.setAccessible(true);
