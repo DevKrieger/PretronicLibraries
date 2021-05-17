@@ -20,10 +20,9 @@
 package net.pretronic.libraries.caching;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -43,16 +42,19 @@ public class ArrayCache<O> implements Cache<O>{
 
     private final Map<String,CacheQuery<O>> queries;
     private final ExecutorService executor;
-    private CacheEntry[] entries;
     private Consumer<O> insertListener;
     private Predicate<O> removeListener;
     private CacheTask task;
     private long refreshTime;
     private long expireTime;
     private long expireTimeAfterAccess;
+
     private int maxSize;
-    private int size;
     private int buffer;
+
+    private CacheEntry[] entries;
+    private final AtomicInteger size;
+    private final AtomicBoolean arrayOperationsLocked;
 
     public ArrayCache() {
         this(DEFAULT_MAX_SIZE);
@@ -83,26 +85,27 @@ public class ArrayCache<O> implements Cache<O>{
         this.queries = new LinkedHashMap<>();
         this.entries = new CacheEntry[buffer];
         this.removeListener = null;
-        this.size = 0;
+        this.size = new AtomicInteger(0);
+        this.arrayOperationsLocked = new AtomicBoolean(false);
         this.refreshTime = 0;
         this.expireTime = 0;
     }
 
     @Override
     public int size() {
-        return size;
+        return size.get();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.size == 0;
+        return this.size.get() == 0;
     }
 
     @Override
     public void clear() {
         CacheEntry[] entries = this.entries;
         this.entries = new CacheEntry[buffer];
-        this.size = 0;
+        this.size.set(0);
         Arrays.fill(entries, null);
     }
 
@@ -112,9 +115,11 @@ public class ArrayCache<O> implements Cache<O>{
         ArrayList<O> values = new ArrayList<>();
         int index = 0;
         for(CacheEntry entry : entries){
-            if(index >= size) return values;
-            values.add((O) entry.value);
-            index++;
+            if(index >= size.get()) return values;
+            if(entry != null){
+                values.add((O) entry.value);
+                index++;
+            }
         }
         return values;
     }
@@ -132,12 +137,12 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public O get(CacheQuery<O> query, Object... identifiers) {
         query.validate(identifiers);
-        for(int i = 0; i < size; i++) {
-            if(query.check((O) this.entries[i].value,identifiers)){
-                CacheEntry entry = this.entries[i];
+        for(int i = 0; i < size.get(); i++) {
+            CacheEntry entry = this.entries[i];
+            if(entry != null && query.check((O) this.entries[i].value,identifiers)){
                 move(i);
                 entry.lastUsed = System.currentTimeMillis();
-                this.entries[size-1] = entry;
+                this.entries[size.get()-1] = entry;
                 return (O) entry.value;
             }
         }
@@ -156,12 +161,12 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public O get(Predicate<O> query, Supplier<O> loader) {
         Objects.requireNonNull(query,"Query is null");
-        for(int i = 0; i < size; i++) {
-            if(query.test((O) this.entries[i].value)){
-                CacheEntry entry = this.entries[i];
+        for(int i = 0; i < size.get(); i++) {
+            CacheEntry entry = this.entries[i];
+            if(entry != null && query.test((O) this.entries[i].value)){
                 move(i);
                 entry.lastUsed = System.currentTimeMillis();
-                this.entries[size-1] = entry;
+                this.entries[size.get()-1] = entry;
                 return (O) entry.value;
             }
         }
@@ -194,13 +199,15 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public void insert(O value) {
         Objects.requireNonNull(value,"Object is null");
-        if(size >= maxSize){
+        if(size.get() >= maxSize){
             move(0);
-            this.entries[size-1] = new CacheEntry(value);
+            this.entries[size.get()-1] = new CacheEntry(value);
         }else{
-            if(size >= this.entries.length) grow();
+            int size = this.size.getAndIncrement();
+            if(size >= this.entries.length){
+                grow();
+            }
             this.entries[size] = new CacheEntry(value);
-            size++;
         }
         if(insertListener != null) {
             insertListener.accept(value);
@@ -225,13 +232,16 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public O remove(CacheQuery<O> query, Object... identifiers) {
         query.validate(identifiers);
-        for(int i = 0; i < size; i++) {
-            O value = (O)this.entries[i].value;
-            callInternalRemove(value);
-            if(query.check(value,identifiers)){
-                move(i);
-                this.entries[size--] = null;
-                return value;
+        for(int i = 0; i < size.get(); i++) {
+            CacheEntry entry = this.entries[i];
+            if(entry != null){
+                O value = (O)entry.value;
+                if(query.check(value,identifiers)){
+                    callInternalRemove(value);
+                    move(i);
+                    this.entries[size.getAndDecrement()] = null;
+                    return value;
+                }
             }
         }
         return null;
@@ -241,15 +251,16 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public O remove(Predicate<O> query) {
         Objects.requireNonNull(query,"Query is null");
-        int size = this.size;
-        for(int i = 0; i < size; i++) {
-            O value = (O)this.entries[i].value;
-            if(query.test(value)){
-                callInternalRemove(value);
-                move(i);
-                this.size--;
-                this.entries[size-1] = null;
-                return value;
+        for(int i = 0; i < this.size.get(); i++) {
+            CacheEntry entry = this.entries[i];
+            if(entry != null){
+                O value = (O)entry.value;
+                if(query.test(value)){
+                    callInternalRemove(value);
+                    move(i);
+                    this.entries[size.getAndDecrement()] = null;
+                    return value;
+                }
             }
         }
         return null;
@@ -259,13 +270,12 @@ public class ArrayCache<O> implements Cache<O>{
     @Override
     public boolean remove(Object value) {
         Objects.requireNonNull(value,"Object is null");
-        int size = this.size;
-        for(int i = 0; i < size; i++) {
-            if(this.entries[i].value.equals(value)){
-                callInternalRemove((O) this.entries[i].value);
+        for(int i = 0; i < size.get(); i++) {
+            CacheEntry entry = this.entries[i];
+            if(entry != null && entry.value.equals(value)){
+                callInternalRemove((O) entry.value);
                 move(i);
-                this.size--;
-                this.entries[size-1] = null;
+                this.entries[size.getAndDecrement()] = null;
                 return true;
             }
         }
@@ -370,18 +380,30 @@ public class ArrayCache<O> implements Cache<O>{
     }
 
     private void grow(){
+        if(!arrayOperationsLocked.compareAndSet(false,true)){
+            while (arrayOperationsLocked.get()) {
+                try {
+                    Thread.sleep(0,1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }
         int newLength = this.entries.length+buffer;
+
         if(newLength > maxSize) this.entries = Arrays.copyOf(this.entries,maxSize);
         else this.entries = Arrays.copyOf(this.entries,newLength);
+        arrayOperationsLocked.set(false);
     }
 
     private void shrink(){
-        int different = this.entries.length-size;
-        if(different > buffer) entries = Arrays.copyOf(this.entries,size+buffer);
+        int different = this.entries.length-size.get();
+        if(different > buffer) entries = Arrays.copyOf(this.entries,size.get()+buffer);
     }
 
     private void move(int index){
-        int move = this.size - index - 1;
+        int move = size.get()- index - 1;
         System.arraycopy(entries,index+1,entries,index, move);
     }
 
@@ -453,20 +475,19 @@ public class ArrayCache<O> implements Cache<O>{
             while(!Thread.interrupted() && this.running){
                 try{
                     Thread.sleep(TASK_SLEEP_TIME);
-                    for(int i = 0; i < size; i++) {
+                    for(int i = 0; i < size.get(); i++) {
                         CacheEntry entry = entries[i];
-                        if((expireTimeAfterAccess > 0 && entry.lastUsed+expireTimeAfterAccess <= System.currentTimeMillis())
+                        if(entry == null || (expireTimeAfterAccess > 0 && entry.lastUsed+expireTimeAfterAccess <= System.currentTimeMillis())
                                 || (expireTime > 0 && entry.entered+expireTime <= System.currentTimeMillis())
                                 || (refreshTime > 0 && entry.entered+refreshTime <= System.currentTimeMillis())){
                             boolean canceled = false;
-                            if(removeListener != null) {
+                            if(entry != null && removeListener != null) {
                                 canceled = removeListener.test((O) entry.value);
                             }
                             if(!canceled) {
-                                callInternalRemove((O) entry.value);
+                                if(entry != null) callInternalRemove((O) entry.value);
                                 move(i);
-                                size--;
-                                entries[size] = null;
+                                entries[size.getAndDecrement()] = null;
                                 i--;
                             }
                         }
