@@ -81,6 +81,7 @@
         <module>pretroniclibraries-copy</module>
         <module>pretroniclibraries-resourceloader</module>
         <module>pretroniclibraries-synchronisation</module>
+        <module>pretroniclibraries-injection</module>
     </modules>
 
 </project>
