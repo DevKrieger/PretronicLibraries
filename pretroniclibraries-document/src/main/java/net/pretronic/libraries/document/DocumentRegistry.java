@@ -21,6 +21,8 @@ package net.pretronic.libraries.document;
 
 import net.pretronic.libraries.document.adapter.DocumentAdapter;
 import net.pretronic.libraries.document.adapter.defaults.*;
+import net.pretronic.libraries.document.injection.DefaultInjectionObjectInstanceFactory;
+import net.pretronic.libraries.document.injection.ObjectInstanceFactory;
 import net.pretronic.libraries.document.simple.SimpleDocumentFactory;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.utility.Iterators;
@@ -44,7 +46,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class DocumentRegistry {
 
-    private static Collection<DocumentFileType> TYPES = new HashSet<>();
+    private static final Collection<DocumentFileType> TYPES = new HashSet<>();
+    private static ObjectInstanceFactory INSTANCE_FACTORY = new DefaultInjectionObjectInstanceFactory();
     private static DocumentFactory FACTORY = new SimpleDocumentFactory();
     private static DocumentContext DEFAULT_CONTEXT = FACTORY.newContext();
 
@@ -79,6 +82,14 @@ public class DocumentRegistry {
 
     private DocumentRegistry(){
         throw new UnsupportedOperationException();
+    }
+
+    public static ObjectInstanceFactory getInstanceFactory() {
+        return INSTANCE_FACTORY;
+    }
+
+    public static void setInstanceFactory(ObjectInstanceFactory instanceFactory) {
+        INSTANCE_FACTORY = instanceFactory;
     }
 
     /**

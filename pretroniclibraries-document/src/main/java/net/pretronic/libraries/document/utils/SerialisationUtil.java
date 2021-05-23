@@ -196,7 +196,7 @@ public class SerialisationUtil {
 
         if(Primitives.isPrimitive(type.getRawClass())) throw new IllegalArgumentException("Entry is not a primitive");
 
-        Object instance = UnsafeInstanceCreator.newInstance(type.getRawClass());
+        Object instance = DocumentRegistry.getInstanceFactory().newInstance(type.getRawClass());
 
         DocumentNode document = entry.toNode();
         for(Class<?> clazz = type.getRawClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
@@ -221,6 +221,7 @@ public class SerialisationUtil {
                 }catch (Exception ignored){}
             }
         }
+        DocumentRegistry.getInstanceFactory().inject(instance);
         return instance;
     }
 }

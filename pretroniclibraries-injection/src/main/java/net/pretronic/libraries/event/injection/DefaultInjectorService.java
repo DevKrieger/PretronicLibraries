@@ -108,7 +108,7 @@ public class DefaultInjectorService implements InjectorService{
                         Object toSet = registry.getObject(field.getType(),this);
                         field.setAccessible(true);
                         ReflectionUtil.setUnsafeObjectFieldValue(field,toSet);
-                    }else if(obj != null){
+                    }else if(obj != null && field.get(obj) != null){
                         Object toSet = registry.getObject(field.getType(),this);
                         field.setAccessible(true);
                         ReflectionUtil.setUnsafeObjectFieldValue(obj,field,toSet);

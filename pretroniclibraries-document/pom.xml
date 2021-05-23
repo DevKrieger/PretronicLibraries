@@ -63,6 +63,13 @@
 
         <dependency>
             <groupId>net.pretronic.libraries</groupId>
+            <artifactId>pretroniclibraries-injection</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.pretronic.libraries</groupId>
             <artifactId>pretroniclibraries-utility</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
