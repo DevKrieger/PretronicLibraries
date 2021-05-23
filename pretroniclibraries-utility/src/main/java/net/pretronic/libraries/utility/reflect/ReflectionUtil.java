@@ -160,20 +160,7 @@ public class ReflectionUtil {
                     throw new UnsupportedOperationException("Invalid primitive type");
                 }
             }else {
-                if(type.equals(String.class)) {
-                    try {
-                        String newValue = (String) value;
-                        char[] chars = newValue.toCharArray();
-
-                        String string = (String) field.get(null);
-
-                        unsafe.putObjectVolatile(string, STRING_VALUE_FIELD_OFFSET, chars);
-                    } catch (IllegalAccessException e) {
-                        throw new ReflectException(e);
-                    }
-                } else {
-                    unsafe.putObjectVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field),value);
-                }
+                unsafe.putObjectVolatile(field.getDeclaringClass(), unsafe.staticFieldOffset(field),value);
             }
         }else{
             if(target == null) throw new IllegalArgumentException("Target can only be null for static fields");
