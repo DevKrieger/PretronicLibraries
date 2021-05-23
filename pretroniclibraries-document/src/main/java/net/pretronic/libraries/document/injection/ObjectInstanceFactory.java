@@ -20,10 +20,10 @@
 
 package net.pretronic.libraries.document.injection;
 
-public interface ObjectInstanceFactory {
+import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
+
+public interface ObjectInstanceFactory extends InjectorAdapter {
 
     <T> T newInstance(Class<?> clazz);
-
-    void inject(Object object);
 
 }

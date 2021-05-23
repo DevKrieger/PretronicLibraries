@@ -26,11 +26,13 @@ import net.pretronic.libraries.command.command.object.multiple.MultipleMainObjec
 import net.pretronic.libraries.command.manager.CommandManager;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapterAble;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.*;
 
-public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements CommandManager, Completable {
+public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements CommandManager, Completable, InjectorAdapterAble {
 
     protected final List<Command> commands;
     protected final Collection<String> internalTabComplete;
@@ -38,6 +40,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
     private ObjectNotFindable objectNotFoundHandler;
     private ObjectCompletable objectCompletable;
     protected NoPermissionHandler noPermissionHandler;
+    private InjectorAdapter injector;
 
     public MainObjectCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner, configuration);
@@ -98,6 +101,7 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
         }
         this.commands.add(command);
         this.internalTabComplete.add(command.getConfiguration().getName());
+        if(injector != null) injector.inject(command);
     }
 
     @Override
@@ -215,6 +219,14 @@ public abstract class MainObjectCommand<T> extends ObjectCommand<T> implements C
             }else if(command instanceof Completable){
                 return ((Completable) command).complete(sender,subArg);
             }else return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public void setInjector(InjectorAdapter adapter) {
+        this.injector = adapter;
+        if(adapter != null){
+            for (Command command : getCommands()) injector.inject(command);
         }
     }
 

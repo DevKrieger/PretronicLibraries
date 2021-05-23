@@ -33,6 +33,8 @@ import net.pretronic.libraries.event.network.NetworkEvent;
 import net.pretronic.libraries.utility.GeneralUtil;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.annonations.Internal;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapterAble;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.lang.reflect.Method;
@@ -42,13 +44,14 @@ import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class DefaultEventBus implements EventBus {
+public class DefaultEventBus implements EventBus, InjectorAdapterAble {
 
     private final NetworkEventHandler networkEventHandler;
     private final Executor executor;
     private final Map<Class<?>, List<EventExecutor>> executors;
     private final Map<Class<?>,Class<?>> mappedClasses;
     private BiConsumer<Throwable,Object> exceptionHandler;
+    private InjectorAdapter injector;
 
     public DefaultEventBus() {
         this(GeneralUtil.getDefaultExecutorService());
@@ -67,6 +70,10 @@ public class DefaultEventBus implements EventBus {
         this.executor = executor;
         this.executors = new LinkedHashMap<>();
         this.mappedClasses = new LinkedHashMap<>();
+    }
+
+    public void setInjector(InjectorAdapter injector) {
+        this.injector = injector;
     }
 
     public void setExceptionHandler(BiConsumer<Throwable, Object> exceptionHandler) {
@@ -96,6 +103,7 @@ public class DefaultEventBus implements EventBus {
             }
             listenerClass = listenerClass.getSuperclass();
         }
+        if(injector != null) injector.inject(listener);
     }
 
     @Override

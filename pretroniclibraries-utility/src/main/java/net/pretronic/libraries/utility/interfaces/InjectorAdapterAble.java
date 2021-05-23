@@ -2,7 +2,7 @@
  * (C) Copyright 2021 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 23.05.21, 09:31
+ * @since 23.05.21, 19:44
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,14 +18,10 @@
  * under the License.
  */
 
-package net.pretronic.libraries.event.injection;
+package net.pretronic.libraries.utility.interfaces;
 
-public class TestService {
+public interface InjectorAdapterAble {
 
-    private String name = "Hallo";
+    void setInjector(InjectorAdapter adapter);
 
-
-    public String getName() {
-        return name;
-    }
 }

@@ -24,6 +24,7 @@ import net.pretronic.libraries.event.injection.annotations.Inject;
 import net.pretronic.libraries.event.injection.annotations.InjectNoConstructor;
 import net.pretronic.libraries.event.injection.registry.ClassRegistry;
 import net.pretronic.libraries.utility.exception.OperationFailedException;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapterAble;
 import net.pretronic.libraries.utility.reflect.ReflectException;
 import net.pretronic.libraries.utility.reflect.ReflectionUtil;
 import net.pretronic.libraries.utility.reflect.UnsafeInstanceCreator;
@@ -50,6 +51,7 @@ public class DefaultInjectorService implements InjectorService{
         if(clazz.getAnnotation(InjectNoConstructor.class) != null){
             Object obj = UnsafeInstanceCreator.newInstance(clazz0);
             inject(obj);
+            if(obj instanceof InjectorAdapterAble) ((InjectorAdapterAble) obj).setInjector(this);
             return (O) obj;
         }else{
             try{
@@ -75,6 +77,7 @@ public class DefaultInjectorService implements InjectorService{
                 }
                 Object obj = constructor.newInstance(objects);
                 inject(obj);
+                if(obj instanceof InjectorAdapterAble) ((InjectorAdapterAble) obj).setInjector(this);
                 return (O) obj;
             }catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                 throw new ReflectException(e);

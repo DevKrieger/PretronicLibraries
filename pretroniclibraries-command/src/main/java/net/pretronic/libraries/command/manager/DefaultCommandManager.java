@@ -24,6 +24,8 @@ import net.pretronic.libraries.command.NotFoundHandler;
 import net.pretronic.libraries.command.command.Command;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapterAble;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.ArrayList;
@@ -37,8 +39,14 @@ public class DefaultCommandManager implements CommandManager {
     private NotFoundHandler notFoundHandler;
     private NoPermissionHandler noPermissionHandler;
     private final Map<ObjectOwner,NoPermissionHandler> specificNoPermissionHandler;
+    private final InjectorAdapter injector;
 
     public DefaultCommandManager() {
+        this(null);
+    }
+
+    public DefaultCommandManager(InjectorAdapter injector) {
+        this.injector = injector;
         this.commands = new ArrayList<>();
         this.specificNoPermissionHandler = new HashMap<>();
     }
@@ -104,6 +112,7 @@ public class DefaultCommandManager implements CommandManager {
         if(getCommand(command.getConfiguration().getName()) != null){
             throw new IllegalArgumentException("There is already a commend with the name "+command.getConfiguration().getName()+" registered.");
         }
+        if(injector != null) injector.inject(command);
         this.commands.add(command);
     }
 

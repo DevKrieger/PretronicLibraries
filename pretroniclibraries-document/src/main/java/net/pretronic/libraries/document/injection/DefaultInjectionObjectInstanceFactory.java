@@ -31,6 +31,11 @@ public class DefaultInjectionObjectInstanceFactory implements ObjectInstanceFact
     }
 
     @Override
+    public void inject(Class<?> clazz) {
+        //Unused, default not available
+    }
+
+    @Override
     public void inject(Object object) {
         //Unused, default not available
     }

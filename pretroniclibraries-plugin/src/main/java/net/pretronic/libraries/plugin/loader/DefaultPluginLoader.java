@@ -31,13 +31,15 @@ import net.pretronic.libraries.plugin.lifecycle.Lifecycle;
 import net.pretronic.libraries.plugin.lifecycle.LifecycleState;
 import net.pretronic.libraries.plugin.loader.classloader.PluginClassLoader;
 import net.pretronic.libraries.plugin.manager.PluginManager;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapterAble;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.*;
 
-public class DefaultPluginLoader implements PluginLoader {
+public class DefaultPluginLoader implements PluginLoader, InjectorAdapterAble {
 
     private final PluginManager pluginManager;
     private final RuntimeEnvironment<?> environment;
@@ -50,12 +52,13 @@ public class DefaultPluginLoader implements PluginLoader {
     private final boolean lifecycleLogging;
 
     private final LifecycleState defaultState;
+    private InjectorAdapter injector;
 
     private Plugin<?> instance;
     private boolean enabled;
 
     public DefaultPluginLoader(PluginManager pluginManager, RuntimeEnvironment<?> environment, PretronicLogger logger
-            , PluginClassLoader classLoader, String descriptionName, File location,boolean lifecycleLogging) {
+            , PluginClassLoader classLoader, String descriptionName, File location, boolean lifecycleLogging) {
         this(pluginManager,environment,logger,classLoader,descriptionName,location,null,lifecycleLogging);
     }
 
@@ -185,6 +188,7 @@ public class DefaultPluginLoader implements PluginLoader {
 
     @Override
     public void initialize() {
+        if(injector != null) injector.inject(this.instance);
         Class<?> pluginClass = this.instance.getClass();
         while(!pluginClass.getSuperclass().equals(Plugin.class)) pluginClass = pluginClass.getSuperclass();
         Type type = pluginClass.getGenericSuperclass();
@@ -241,5 +245,10 @@ public class DefaultPluginLoader implements PluginLoader {
         }finally {
             try { stream.close(); } catch (IOException ignored) {}
         }
+    }
+
+    @Override
+    public void setInjector(InjectorAdapter adapter) {
+        this.injector = adapter;
     }
 }

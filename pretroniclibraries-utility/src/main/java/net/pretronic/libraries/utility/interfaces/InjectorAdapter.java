@@ -2,7 +2,7 @@
  * (C) Copyright 2021 The PretronicLibraries Project (Davide Wietlisbach & Philipp Elvin Friedhoff)
  *
  * @author Davide Wietlisbach
- * @since 22.05.21, 22:24
+ * @since 23.05.21, 19:44
  * @web %web%
  *
  * The PretronicLibraries Project is under the Apache License, version 2.0 (the "License");
@@ -18,20 +18,9 @@
  * under the License.
  */
 
-package net.pretronic.libraries.event.injection;
+package net.pretronic.libraries.utility.interfaces;
 
-import net.pretronic.libraries.event.injection.registry.ClassRegistry;
-import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
-
-public interface InjectorService extends InjectorAdapter {
-
-    ClassRegistry getClassRegistry();
-
-
-    <O> O create(Class<O> clazz);
-
-    <O> O createSilent(Class<O> clazz);
-
+public interface InjectorAdapter {
 
     void inject(Class<?> clazz);
 

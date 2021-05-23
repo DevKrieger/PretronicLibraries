@@ -20,6 +20,7 @@
 
 package net.pretronic.libraries.document.injection;
 
+import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
 import net.pretronic.libraries.utility.reflect.UnsafeInstanceCreator;
 import net.pretronic.libraries.event.injection.InjectorService;
 
@@ -35,6 +36,11 @@ public class DependencyInjectionObjectInstanceFactory implements ObjectInstanceF
     @Override
     public <T> T newInstance(Class<?> clazz) {
         return (T) UnsafeInstanceCreator.newInstance(clazz);
+    }
+
+    @Override
+    public void inject(Class<?> clazz) {
+        injector.inject(clazz);
     }
 
     @Override

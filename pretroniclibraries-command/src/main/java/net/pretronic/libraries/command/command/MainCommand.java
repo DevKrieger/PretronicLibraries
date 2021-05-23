@@ -25,15 +25,18 @@ import net.pretronic.libraries.command.command.object.ObjectNoPermissionAble;
 import net.pretronic.libraries.command.manager.CommandManager;
 import net.pretronic.libraries.command.sender.CommandSender;
 import net.pretronic.libraries.utility.Iterators;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapterAble;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 
 import java.util.*;
 
-public class MainCommand extends BasicCommand implements CommandManager, Completable {
+public class MainCommand extends BasicCommand implements CommandManager, Completable,InjectorAdapterAble {
 
     private final List<Command> subCommands;
     private NotFoundHandler notFoundHandler;
     private NoPermissionHandler noPermissionHandler;
+    private InjectorAdapter injector;
 
     public MainCommand(ObjectOwner owner, CommandConfiguration configuration) {
         super(owner,configuration);
@@ -95,6 +98,7 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
             throw new IllegalArgumentException("A command with the name "+command.getConfiguration().getName()+" is already registered as sub command.");
         }
         this.subCommands.add(command);
+        if(injector != null) injector.inject(command);
     }
 
     @Override
@@ -151,6 +155,14 @@ public class MainCommand extends BasicCommand implements CommandManager, Complet
             Command command = getCommand(subCommand);
             if(command instanceof Completable) return ((Completable) command).complete(sender,Arrays.copyOfRange(args,1,args.length));
             else return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public void setInjector(InjectorAdapter adapter) {
+        this.injector = adapter;
+        if(adapter != null){
+            for (Command command : getCommands()) injector.inject(command);
         }
     }
 }

@@ -19,7 +19,6 @@
 
 package net.pretronic.libraries.plugin.manager;
 
-import com.sun.org.apache.bcel.internal.generic.BALOAD;
 import net.pretronic.libraries.document.type.DocumentFileType;
 import net.pretronic.libraries.logging.PretronicLogger;
 import net.pretronic.libraries.logging.PretronicLoggerFactory;
@@ -37,6 +36,8 @@ import net.pretronic.libraries.plugin.loader.classloader.URLPluginClassLoader;
 import net.pretronic.libraries.utility.Iterators;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.annonations.Internal;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapter;
+import net.pretronic.libraries.utility.interfaces.InjectorAdapterAble;
 import net.pretronic.libraries.utility.interfaces.ObjectOwner;
 import net.pretronic.libraries.utility.interfaces.OwnerUnregisterAble;
 import net.pretronic.libraries.utility.io.archive.ZipArchive;
@@ -47,7 +48,7 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-public final class DefaultPluginManager implements PluginManager {
+public final class DefaultPluginManager implements PluginManager, InjectorAdapterAble {
 
     private final PretronicLogger logger;
     private final RuntimeEnvironment<?> environment;
@@ -58,6 +59,7 @@ public final class DefaultPluginManager implements PluginManager {
     private final Collection<PluginLoader> loaders;
     private final Collection<Plugin<?>> plugins;
     private final Collection<ServiceEntry> services;
+    private InjectorAdapter injector;
 
     public DefaultPluginManager(RuntimeEnvironment<?> environment) {
         this(PretronicLoggerFactory.getLogger(PluginManager.class),environment);
@@ -211,6 +213,7 @@ public final class DefaultPluginManager implements PluginManager {
         if(loader != null) return loader;
         loader = new DefaultPluginLoader(this,environment,null//@Todo add prefixed logger
                 ,URLPluginClassLoader.of(this,location),location,description,true);
+        ((InjectorAdapterAble) loader).setInjector(injector);
         if(logger.isDebugging()) logger.debug("Created plugin loader for {} v{}",loader.getDescription().getName(),loader.getDescription().getVersion().getName());
         this.loaders.add(loader);
         return loader;
@@ -325,6 +328,11 @@ public final class DefaultPluginManager implements PluginManager {
     @Override
     public void provideLoader(PluginLoader loader) {
         throw new UnsupportedOperationException("Method is not allowed");
+    }
+
+    @Override
+    public void setInjector(InjectorAdapter adapter) {
+        this.injector = adapter;
     }
 
     private static class ServiceEntry {
