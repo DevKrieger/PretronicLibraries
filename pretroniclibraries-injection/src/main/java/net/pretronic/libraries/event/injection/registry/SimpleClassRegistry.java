@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 
 public class SimpleClassRegistry implements ClassRegistry{
 
-    private final Map<Class<?>,Object> mappings;
+    protected final Map<Class<?>,Object> mappings;
 
     public SimpleClassRegistry() {
         this.mappings = new ConcurrentHashMap<>();
