@@ -27,6 +27,10 @@ public class DependencyInjectionObjectInstanceFactory implements ObjectInstanceF
 
     private final InjectorService injector;
 
+    public DependencyInjectionObjectInstanceFactory(InjectorService injector) {
+        this.injector = injector;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T newInstance(Class<?> clazz) {
