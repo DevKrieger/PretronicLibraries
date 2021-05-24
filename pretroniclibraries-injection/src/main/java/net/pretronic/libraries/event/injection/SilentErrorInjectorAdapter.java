@@ -37,7 +37,7 @@ public class SilentErrorInjectorAdapter implements InjectorAdapter {
     public void inject(Class<?> clazz) {
         try {
             adapter.inject(clazz);
-        }catch (Exception e){
+        }catch (Throwable e){
             logger.warn("(Injector Service) Could not inject class "+clazz);
             logger.warn("(Injector Service) Error: "+e.getMessage());
         }
@@ -47,7 +47,7 @@ public class SilentErrorInjectorAdapter implements InjectorAdapter {
     public void inject(Object obj) {
         try {
             adapter.inject(obj);
-        }catch (Exception e){
+        }catch (Throwable e){
             logger.warn("(Injector Service) Could not inject object "+obj.getClass());
             logger.warn("(Injector Service) Error: "+e.getMessage());
         }
