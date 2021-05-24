@@ -30,6 +30,8 @@ import net.pretronic.libraries.utility.reflect.ReflectionUtil;
 import net.pretronic.libraries.utility.reflect.UnsafeInstanceCreator;
 
 import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultInjectorService implements InjectorService{
 
