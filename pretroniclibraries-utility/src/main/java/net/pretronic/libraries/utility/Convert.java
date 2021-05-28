@@ -230,14 +230,14 @@ public class Convert {
             if(((String)input).contains("-")) {
                 return UUID.fromString((String) input);
             } else {
-                StringBuilder dashBuilder = new StringBuilder((String)input)
-                        .insert(20, '-')
-                        .insert(16, '-')
-                        .insert(12, '-')
-                        .insert(8, '-');
                 try {
+                    StringBuilder dashBuilder = new StringBuilder((String)input)
+                            .insert(20, '-')
+                            .insert(16, '-')
+                            .insert(12, '-')
+                            .insert(8, '-');
                     return UUID.fromString(dashBuilder.toString());
-                } catch (IllegalArgumentException exception) {
+                } catch (IndexOutOfBoundsException | IllegalArgumentException exception) {
                     throw new IllegalArgumentException("Can not be converted to uuid " + input);
                 }
             }
