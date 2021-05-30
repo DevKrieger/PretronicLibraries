@@ -348,7 +348,6 @@ public class WeakReferenceList<E> implements List<E> {
 
         private void findNext(){
             while (position != null){
-                System.out.println("Finding next in reference");
                 index = 0;
                 E next = position.get();
                 if(next == null){
