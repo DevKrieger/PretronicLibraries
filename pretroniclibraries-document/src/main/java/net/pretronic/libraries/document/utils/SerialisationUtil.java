@@ -221,7 +221,9 @@ public class SerialisationUtil {
                 }catch (Exception ignored){}
             }
         }
-        DocumentRegistry.getInstanceFactory().inject(instance);
+        if(DocumentRegistry.getInstanceFactory() != null){
+            DocumentRegistry.getInstanceFactory().inject(instance);A
+        }
         return instance;
     }
 }
