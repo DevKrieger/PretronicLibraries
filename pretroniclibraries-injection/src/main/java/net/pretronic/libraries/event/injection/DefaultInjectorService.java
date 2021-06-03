@@ -109,13 +109,12 @@ public class DefaultInjectorService implements InjectorService{
         try{
             for (Field field : clazz.getDeclaredFields()) {
                 if(field.getAnnotation(Inject.class) != null){
+                    field.setAccessible(true);
                     if(Modifier.isStatic(field.getModifiers())){
                         Object toSet = registry.getObject(field.getType(),this);
-                        field.setAccessible(true);
                         ReflectionUtil.setUnsafeObjectFieldValue(field,toSet);
-                    }else if(obj != null && field.get(obj) != null){
+                    }else if(obj != null && field.get(obj) == null){
                         Object toSet = registry.getObject(field.getType(),this);
-                        field.setAccessible(true);
                         ReflectionUtil.setUnsafeObjectFieldValue(obj,field,toSet);
                     }
                 }
@@ -123,6 +122,7 @@ public class DefaultInjectorService implements InjectorService{
 
             for (Method method : clazz.getDeclaredMethods()) {
                 if(method.getAnnotation(Inject.class) != null){
+                    method.setAccessible(true);
                     if(Modifier.isStatic(method.getModifiers())){
                         method.invoke(null,getParameters(method));
                     }else if(obj != null){
@@ -136,7 +136,6 @@ public class DefaultInjectorService implements InjectorService{
     }
 
     private Object[] getParameters(Method method) {
-        method.setAccessible(true);
         Object[] objects = new Object[method.getParameterCount()];
         int i = 0;
         for (Class<?> parameterType : method.getParameterTypes()) {
