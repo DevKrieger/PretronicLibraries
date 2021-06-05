@@ -52,7 +52,6 @@ public class ConfigurationUtil {
                     String name = key != null ? key.value() : field.getName().toLowerCase().replace('_','.');
                     Object result = data.getObject(name,field.getGenericType());
 
-                    System.out.println(field.getDeclaringClass());
                     try{
                         if(result != null) ReflectionUtil.setUnsafeObjectFieldValue(field,result);
                         else if(appendMissing) {
