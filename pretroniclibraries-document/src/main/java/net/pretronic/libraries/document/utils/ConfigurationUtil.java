@@ -42,6 +42,8 @@ public class ConfigurationUtil {
 
     public static void loadConfigurationClass(Class<?> clazz, Document data, boolean appendMissing){
         try{
+            //Initialising the class, otherwise unsafe is not able to set the values.
+            Class.forName(clazz.getName(),true,clazz.getClassLoader());
             for(Field field : clazz.getDeclaredFields()){
                 if(Modifier.isStatic(field.getModifiers()) && field.getAnnotation(DocumentIgnored.class) == null && !Modifier.isTransient(field.getModifiers())){
                     field.setAccessible(true);
@@ -50,6 +52,7 @@ public class ConfigurationUtil {
                     String name = key != null ? key.value() : field.getName().toLowerCase().replace('_','.');
                     Object result = data.getObject(name,field.getGenericType());
 
+                    System.out.println(field.getDeclaringClass());
                     try{
                         if(result != null) ReflectionUtil.setUnsafeObjectFieldValue(field,result);
                         else if(appendMissing) {
@@ -67,7 +70,7 @@ public class ConfigurationUtil {
                     method.invoke(null);
                 }
             }
-        }catch (IllegalAccessException | InvocationTargetException exception){
+        }catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException exception){
             throw new ReflectException(exception);
         }
     }
