@@ -21,6 +21,7 @@ package net.pretronic.libraries.plugin.description;
 
 import net.pretronic.libraries.document.Document;
 import net.pretronic.libraries.document.DocumentContext;
+import net.pretronic.libraries.document.adapter.defaults.UUIDAdapter;
 import net.pretronic.libraries.plugin.description.dependency.Dependency;
 import net.pretronic.libraries.plugin.description.dependency.DependencyAdapter;
 import net.pretronic.libraries.plugin.description.dependency.PluginDependency;
@@ -146,6 +147,7 @@ public class DefaultPluginDescription implements PluginDescription{
 
     public static PluginDescription create(PluginManager manager, Document document){
         DocumentContext context = Document.factory().newContext();
+        context.registerAdapter(UUID.class,new UUIDAdapter());
         context.registerAdapter(Dependency.class,new DependencyAdapter(manager,DEPENDENCY_FACTORIES));
         context.registerAdapter(MainClass.class,new MainClassAdapter());
         context.registerAdapter(PluginVersion.class,new PluginVersionAdapter());

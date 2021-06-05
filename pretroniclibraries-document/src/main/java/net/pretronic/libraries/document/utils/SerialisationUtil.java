@@ -201,24 +201,28 @@ public class SerialisationUtil {
         DocumentNode document = entry.toNode();
         for(Class<?> clazz = type.getRawClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
             for(Field field : clazz.getDeclaredFields()) {
-                try{
-                    field.setAccessible(true);
-                    if(field.getAnnotation(DocumentIgnored.class) == null){
-                        DocumentAttribute attribute = field.getAnnotation(DocumentAttribute.class);
-                        DocumentNode node = attribute == null ? document :document.toDocument().getAttributes();
+                if(!Modifier.isStatic(field.getModifiers())){
+                    try{
+                        field.setAccessible(true);
+                        if(field.getAnnotation(DocumentIgnored.class) == null){
+                            DocumentAttribute attribute = field.getAnnotation(DocumentAttribute.class);
+                            DocumentNode node = attribute == null ? document :document.toDocument().getAttributes();
 
-                        DocumentKey name = field.getAnnotation(DocumentKey.class);
-                        String endName = name!=null?name.value():field.getName();
+                            DocumentKey name = field.getAnnotation(DocumentKey.class);
+                            String endName = name!=null?name.value():field.getName();
 
-                        if(node.contains(endName)) field.set(clazz.cast(instance),deserialize(context,node.getEntry(endName),field.getGenericType()));
-                        else if(field.getAnnotation(DocumentRequired.class) == null){
-                            if(Primitives.isPrimitive(field.getType())){
-                                if(field.getType().equals(boolean.class)) field.set(clazz.cast(instance),false);
-                                else field.set(clazz.cast(instance),0);
-                            }else field.set(clazz.cast(instance),null);
-                        }else throw new IllegalArgumentException("The key "+name+" is required");
+                            if(node.contains(endName)) field.set(clazz.cast(instance),deserialize(context,node.getEntry(endName),field.getGenericType()));
+                            else if(field.getAnnotation(DocumentRequired.class) == null){
+                                if(field.getType().isPrimitive()){
+                                    if(field.getType().equals(boolean.class)) field.set(clazz.cast(instance),false);
+                                    else field.set(clazz.cast(instance),0);
+                                }else field.set(clazz.cast(instance),null);
+                            }else throw new IllegalArgumentException("The key "+name+" is required");
+                        }
+                    }catch (Exception ignored){
+                        ignored.printStackTrace();
                     }
-                }catch (Exception ignored){}
+                }
             }
         }
         if(DocumentRegistry.getInstanceFactory() != null){
