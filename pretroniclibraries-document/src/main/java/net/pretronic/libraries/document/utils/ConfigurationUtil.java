@@ -45,14 +45,12 @@ public class ConfigurationUtil {
             for(Field field : clazz.getDeclaredFields()){
                 if(Modifier.isStatic(field.getModifiers()) && field.getAnnotation(DocumentIgnored.class) == null && !Modifier.isTransient(field.getModifiers())){
                     field.setAccessible(true);
-                    ReflectionUtil.grantFinalPrivileges(field);
 
                     DocumentKey key = field.getAnnotation(DocumentKey.class);
                     String name = key != null ? key.value() : field.getName().toLowerCase().replace('_','.');
                     Object result = data.getObject(name,field.getGenericType());
 
                     try{
-                        if(result != null) field.set(null,result);
                         if(result != null) ReflectionUtil.setUnsafeObjectFieldValue(field,result);
                         else if(appendMissing) {
                             Object defaultValue = field.get(null);
