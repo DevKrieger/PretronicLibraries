@@ -194,7 +194,7 @@ public class SerialisationUtil {
         DocumentAdapter<?> adapter = context.findAdapter(type);
         if(adapter != null) return adapter.read(entry, type);
 
-        if(Primitives.isPrimitive(type.getRawClass())) throw new IllegalArgumentException("Entry is not a primitive");
+        if(Primitives.isPrimitive(type.getRawClass())) throw new IllegalArgumentException("Entry is not a object");
 
         Object instance = DocumentRegistry.getInstanceFactory().newInstance(type.getRawClass());
 
@@ -219,8 +219,11 @@ public class SerialisationUtil {
                                 }else field.set(clazz.cast(instance),null);
                             }else throw new IllegalArgumentException("The key "+name+" is required");
                         }
-                    }catch (Exception ignored){
-                        ignored.printStackTrace();
+                    }catch (IllegalAccessException ignored){
+
+                    }catch (Exception e){
+                        System.out.println("(Document) Failed to initialize field "+field.getName()+" for "+field.getDeclaringClass());
+                        System.out.println("(Document) Error "+e.getMessage());//@Todo remove in future
                     }
                 }
             }

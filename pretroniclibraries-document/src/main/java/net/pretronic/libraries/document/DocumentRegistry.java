@@ -75,6 +75,7 @@ public class DocumentRegistry {
         getDefaultContext().registerAdapter(AtomicInteger.class,new AtomicAdapter.Integer());
         getDefaultContext().registerAdapter(AtomicLong.class,new AtomicAdapter.Long());
         getDefaultContext().registerAdapter(AtomicBoolean.class,new AtomicAdapter.Boolean());
+        getDefaultContext().registerAdapter(Document.class,new SelfDocumentAdapter());
 
         getDefaultContext().registerHierarchyAdapter(Collection.class,new CollectionAdapter());
         getDefaultContext().registerHierarchyAdapter(Map.class,new MapAdapter());
