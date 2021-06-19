@@ -82,7 +82,7 @@ public class MethodEventExecutor implements EventExecutor{
         if(onlyLocal && !execution.getOrigin().isLocal()) return;
 
         for (Object event : events) {
-            execution.throwException(new NullPointerException("Raived a null event for "+allowedClass));
+            execution.throwException(new NullPointerException("Received a null event for "+allowedClass));
             if(allowedClass.isAssignableFrom(event.getClass())){
                 try{
                     if(withOrigin) this.method.invoke(this.listener,event,execution);
