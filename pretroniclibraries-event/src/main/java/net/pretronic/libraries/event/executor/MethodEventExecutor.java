@@ -43,7 +43,7 @@ public class MethodEventExecutor implements EventExecutor{
     }
 
     public MethodEventExecutor(ObjectOwner owner, byte priority,ExecutionType executionType, Object listener,Class<?> allowedClass, Method method,boolean onlyRemote,boolean onlyLocal) {
-        if(listener == null) throw new NullPointerException("Listener can not be null "+owner.getName());
+        if(listener == null || allowedClass == null) throw new NullPointerException("Listener can not be null "+owner.getName());
         this.owner = owner;
         this.priority = priority;
         this.executionType = executionType;
@@ -82,8 +82,8 @@ public class MethodEventExecutor implements EventExecutor{
         if(onlyLocal && !execution.getOrigin().isLocal()) return;
 
         for (Object event : events) {
-            execution.throwException(new NullPointerException("Received a null event for "+allowedClass));
-            if(allowedClass.isAssignableFrom(event.getClass())){
+            if(event == null) execution.throwException(new NullPointerException("Received a null event for "+allowedClass));
+            else if(allowedClass.isAssignableFrom(event.getClass())){
                 try{
                     if(withOrigin) this.method.invoke(this.listener,event,execution);
                     else this.method.invoke(this.listener,event);
