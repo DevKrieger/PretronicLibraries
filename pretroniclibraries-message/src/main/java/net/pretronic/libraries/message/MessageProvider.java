@@ -84,6 +84,13 @@ public interface MessageProvider {
     Message getMessage(String key, LanguageAble object);
 
 
+    Message getMessageOrNull(String key);
+
+    Message getMessageOrNull(String key, Language language);
+
+    Message getMessageOrNull(String key, LanguageAble object);
+
+
     String buildMessage(String key, VariableSet variables);
 
     String buildMessage(String key, Language language);
