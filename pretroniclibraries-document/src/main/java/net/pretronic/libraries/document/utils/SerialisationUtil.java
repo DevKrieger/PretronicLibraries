@@ -150,7 +150,7 @@ public class SerialisationUtil {
             else{
                 DocumentAdapter<?> adapter = context.findAdapter(type);
                 if(adapter != null) return adapter.read(entry, type);
-                else throw new IllegalArgumentException("Invalid Primitive type");
+                else throw new IllegalArgumentException("Invalid Primitive type " + type.getType());
             }
         }else if(type.isArray() && entry.isObject()) return deserializeArray(context,entry, type);
         else if(entry.isObject()) return deserializeObject(context,entry, type);
@@ -176,7 +176,7 @@ public class SerialisationUtil {
             return entry.toPrimitive().getAsBoolean();
         }else if(type.getRawClass() == char.class || type.getRawClass() == Character.class){
             return entry.toPrimitive().getAsCharacter();
-        }else throw new IllegalArgumentException("Invalid Primitive type");
+        }else throw new IllegalArgumentException("Invalid Primitive type " + type.getType());
     }
 
     public static Object deserializeArray(DocumentContext context,DocumentBase entry,TypeReference type){
