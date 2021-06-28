@@ -404,6 +404,7 @@ public interface ParserState {
                 yaml.markNext(parser);
             }else if(parser.isLineFinished()){
                 String value = parser.getOnLine(yaml.getCharacterMark(),parser.currentChar()).trim();
+                if(value.startsWith("'") && value.endsWith("'")) value = value.substring(1,value.length()-1);
                 yaml.getSequence().pushEntry(Document.factory().newPrimitiveEntry("value",value));
                 yaml.setState(DOCUMENT_NEXT);
             }
