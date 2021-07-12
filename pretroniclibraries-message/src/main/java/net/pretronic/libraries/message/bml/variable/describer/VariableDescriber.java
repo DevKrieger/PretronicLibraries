@@ -20,8 +20,6 @@
 
 package net.pretronic.libraries.message.bml.variable.describer;
 
-import net.pretronic.libraries.message.bml.variable.Variable;
-import net.pretronic.libraries.message.bml.variable.VariableSet;
 import net.pretronic.libraries.utility.Validate;
 import net.pretronic.libraries.utility.exception.OperationFailedException;
 import net.pretronic.libraries.utility.map.caseintensive.CaseIntensiveHashMap;
@@ -165,6 +163,9 @@ public class VariableDescriber<T> {
                 describer  = VariableDescriberRegistry.getDescriber(clazz);
                 if(describer != null) return describer;
             }
+        }
+        if(describer == null){
+            return VariableDescriberRegistry.registerDescriber(clazz0);
         }
         return describer;
     }
