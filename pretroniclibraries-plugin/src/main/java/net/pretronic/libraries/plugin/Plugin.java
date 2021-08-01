@@ -48,6 +48,7 @@ public abstract class Plugin<R> implements ObjectOwner, Castable<Plugin<R>> {
     }
 
     public PluginLoader getLoader(){
+        if(this.loader == null) throw new IllegalArgumentException("This plugin instance is not initialized.");
         return this.loader;
     }
 
@@ -60,6 +61,7 @@ public abstract class Plugin<R> implements ObjectOwner, Castable<Plugin<R>> {
     }
 
     public File getWorkingDirectory(){
+        if(this.loader == null) throw new IllegalArgumentException("This plugin instance is not initialized.");
         return new File(loader.getLocation().getParentFile(),getName().toLowerCase()+"/");
     }
 

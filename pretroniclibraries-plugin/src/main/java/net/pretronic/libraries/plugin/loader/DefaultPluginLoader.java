@@ -216,6 +216,12 @@ public class DefaultPluginLoader implements PluginLoader, InjectorAdapterAble {
     }
 
     @Override
+    public void reload() {
+        executeLifeCycleState(LifecycleState.RELOAD);
+        if(lifecycleLogging) pluginManager.getLogger().info("Reloaded plugin {} v{} by {}",description.getName(),description.getVersion().getName(),description.getAuthor());
+    }
+
+    @Override
     public void shutdown() {
         enabled = false;
         executeLifeCycleState(LifecycleState.SHUTDOWN);
