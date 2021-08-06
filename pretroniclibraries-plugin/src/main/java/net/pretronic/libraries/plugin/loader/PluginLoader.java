@@ -64,6 +64,8 @@ public interface PluginLoader {
 
     void bootstrap();
 
+    void reload();//Configuration reload (internal plugin reload)
+
     void shutdown();
 
     void unload();

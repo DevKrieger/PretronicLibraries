@@ -26,26 +26,15 @@ package net.pretronic.libraries.event;
  */
 public class EventPriority {
 
-    public static final byte HIGHEST = 127;
+    public static final byte MONITOR = 127;
 
-    @Deprecated
-    public final static byte EXTREM_HEIGHT = 127;
-
+    public static final byte HIGHEST = 126;
 
     public static final byte HIGH = 64;
 
-    @Deprecated
-    public final static byte HEIGHT = 64;
-
-
     public final static byte NORMAL = 0;
 
-
     public final static byte LOW = -64;
-
-
-    @Deprecated
-    public final static byte EXTREM_LOW = -128;
 
     public static final byte LOWEST = -128;
 
