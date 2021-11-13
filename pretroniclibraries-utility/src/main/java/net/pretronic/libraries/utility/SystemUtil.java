@@ -64,7 +64,12 @@ public final class SystemUtil {
         } else {
             int dot = version.indexOf(".");
             if(dot != -1) { version = version.substring(0, dot); }
-        } return Integer.parseInt(version);
+        }
+
+        int qualifierIndex = version.indexOf("-");
+        if(qualifierIndex > 0) version = version.substring(0,qualifierIndex);
+
+        return Integer.parseInt(version);
     }
 
 }
