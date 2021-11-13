@@ -24,27 +24,18 @@ import net.pretronic.libraries.utility.Validate;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/*
-.put(ChronoUnit.YEARS, "y(?:ear)?s?")
-            .put(ChronoUnit.MONTHS, "mo(?:nth)?s?")
-            .put(ChronoUnit.WEEKS, "w(?:eek)?s?")
-            .put(ChronoUnit.DAYS, "d(?:ay)?s?")
-            .put(ChronoUnit.HOURS, "h(?:our|r)?s?")
-            .put(ChronoUnit.MINUTES, "m(?:inute|in)?s?")
-            .put(ChronoUnit.SECONDS, "(?:s(?:econd|ec)?s?)?")
- */
 public class DurationProcessor {
 
     private static final DurationProcessor STANDARD = newBuilder()
             .addUnit(ChronoUnit.YEARS,"Year","Years","y","y(?:ear)?s?")
-            .addUnit(ChronoUnit.MONTHS,"Month","Months","mo","mo(?:nth)?s?")
+            .addUnit(FixedChronoUnit.MONTHS,"Month","Months","mo","mo(?:nth)?s?")
             .addUnit(ChronoUnit.WEEKS,"Week","Weeks","w","w(?:eek)?s?")
             .addUnit(ChronoUnit.DAYS,"Day","Days","d","d(?:ay)?s?")
             .addUnit(ChronoUnit.HOURS,"Hour","Hours","h","h(?:our|r)?s?")
@@ -139,6 +130,12 @@ public class DurationProcessor {
         throw new IllegalArgumentException(String.format("Input (%s) cannot be parsed to a Duration", input));
     }
 
+    public static void main(String[] args) {
+        long seconds = DurationProcessor.getStandard().parse("90d").getSeconds();
+        System.out.println(seconds);
+        System.out.println(DurationProcessor.getStandard().format(seconds));;
+    }
+
     public static Builder newBuilder(){
         return new Builder();
     }
@@ -161,7 +158,7 @@ public class DurationProcessor {
             return this;
         }
 
-        public Builder addUnit(ChronoUnit unit,String singular,String plural,String short0, String pattern){
+        public Builder addUnit(TemporalUnit unit, String singular, String plural, String short0, String pattern){
             return addUnit(new DurationUnit(unit,plural,singular,short0,pattern));
         }
 

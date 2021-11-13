@@ -23,17 +23,18 @@ package net.pretronic.libraries.utility.duration;
 import net.pretronic.libraries.utility.Validate;
 
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 public class DurationUnit {
 
 
-    private final ChronoUnit unit;
+    private final TemporalUnit unit;
     private final String plural;
     private final String singular;
     private final String short0;
     private final String pattern;
 
-    protected DurationUnit(ChronoUnit unit, String plural, String singular, String short0, String pattern) {
+    protected DurationUnit(TemporalUnit unit, String plural, String singular, String short0, String pattern) {
         Validate.notNull(unit,plural,short0,short0,pattern);
         this.unit = unit;
         this.plural = plural;
@@ -42,7 +43,7 @@ public class DurationUnit {
         this.pattern = pattern;
     }
 
-    public ChronoUnit getUnit() {
+    public TemporalUnit getUnit() {
         return unit;
     }
 
